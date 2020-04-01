@@ -31,8 +31,8 @@ namespace ApiDTC.Data
                         string query = string.Empty;                        
                         
                         sql.Open();
-
-                         var conteo = 1; //<-- actualiza
+                        int conteo = 1;
+                         
                         foreach (var item in requestedComponent)
                         {
 
@@ -60,11 +60,12 @@ namespace ApiDTC.Data
 
                                 cmd.Parameters.Add("@intPartida", SqlDbType.Int).Value = conteo;
 
-                            conteo++;
+                            
 
                             cmd.ExecuteNonQuery();
                             }
-                        }
+                        conteo++;
+                    }
 
                     conteo = 1;
                     foreach (var item in requestedComponent)
@@ -93,10 +94,11 @@ namespace ApiDTC.Data
                             cmd.Parameters.Add("@dateLifeTimeReal", SqlDbType.DateTime).Value = item.dateLifeTimeReal;
 
                             cmd.Parameters.Add("@intPartida", SqlDbType.Int).Value = conteo;
-                            conteo++;
+                            
 
                             cmd.ExecuteNonQuery();
                         }
+                        conteo++;
                     }
 
                     return null;
