@@ -41,33 +41,7 @@ namespace ApiDTC.Data
                         bool insertUp = Convert.ToBoolean(cmd.ExecuteNonQuery());
 
                         return insertUp;
-                        //bool exist = Convert.ToBoolean(cmd.ExecuteScalar());
-                        //int noRegistros = Convert.ToInt32(cmd.ExecuteScalar());
-
-                        ////Terminar Funcion para Agregar Consecutivos :)
-                        //if(exist)
-                        //{
-                        //    noRegistros++;
-                        //    dtcData.ReferenceNumber += "-" + noRegistros.ToString("D2");
-                            
-
-
-                        //    cmd.CommandText = query;
-                        //    bool insertUp = Convert.ToBoolean(cmd.ExecuteNonQuery());
-
-                        //    return insertUp;
-                        //}
-                        //else
-                        //{
-                        //    query = $"insert into DTCData (ReferenceNumber, SinisterNumber, ReportNumber, SinisterDate, FailureDate, FailureNumber, ShippingDate, ElaborationDate, Observation, Diagnosis, TypeDescriptionId, UserId, AgremmentInfoId)  values ('{dtcData.ReferenceNumber}','{dtcData.SinisterNumber}', '{dtcData.ReportNumber}', '{dtcData.SinisterDate.ToString("yyyy-MM-dd")}', '{dtcData.FailureDate.ToString("yyyy-MM-dd")}', '{dtcData.FailureNumber}', '{dtcData.ShippingDate.ToString("yyyy-MM-dd")}', '{dtcData.ElaborationDate.ToString("yyyy-MM-dd")}', '{dtcData.Observation}', '{dtcData.Diagnosis}', {dtcData.TypeDescriptionId}, {dtcData.UserId},  {dtcData.AgremmentInfoId} )";
-
-
-                        //    cmd.CommandText = query;
-                        //    bool insertUp = Convert.ToBoolean(cmd.ExecuteNonQuery());
-
-                        //    return insertUp;
-                        //}
-
+                  
                         
                     }
                     catch (Exception ex)
