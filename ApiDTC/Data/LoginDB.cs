@@ -1,21 +1,19 @@
-﻿using ApiDTC.Models;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.SqlClient;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace ApiDTC.Data
+﻿namespace ApiDTC.Data
 {
-    public class LoginDB
+    using Models;
+    using Microsoft.AspNetCore.Mvc.Rendering;
+    using Microsoft.Extensions.Configuration;
+    using System;
+    using System.Collections.Generic;
+    using System.Data;
+    using System.Data.SqlClient;
+    
+    public class LoginDb
     {
 
         private readonly string _connectionString;
 
-        public LoginDB(IConfiguration configuration)
+        public LoginDb(IConfiguration configuration)
         {
             _connectionString = configuration.GetConnectionString("defaultConnection");
         }

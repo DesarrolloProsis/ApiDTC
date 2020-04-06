@@ -27,17 +27,15 @@ namespace ApiDTC
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
-
             services.AddCors();
-            services.AddScoped<SqlMapper>();
+            services.AddScoped<ApiLogger>();
             services.AddScoped<DtcDataDb>();
-            services.AddScoped<ComponentDB>();
-            services.AddScoped<LoginDB>();
-            services.AddScoped<PDFConsultasDB>();
-            services.AddScoped<TypeDescriptionsDB>();
-            services.AddScoped<RequestedComponentDB>();
-            services.AddScoped<SquaresCatalogDB>();
+            services.AddScoped<ComponentDb>();
+            services.AddScoped<LoginDb>();
+            services.AddScoped<PdfConsultasDb>();
+            services.AddScoped<TypeDescriptionsDb>();
+            services.AddScoped<RequestedComponentDb>();
+            services.AddScoped<SquaresCatalogDb>();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
 

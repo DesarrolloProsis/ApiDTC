@@ -31,17 +31,18 @@
         //}
 
         [HttpGet("{refNum}")]
-        public IActionResult GetdtcData(string refNum)
+        public ActionResult<SqlResult> GetDtcData(string refNum)
         {
-            string resultado = _db.GetReferenceNum(refNum);
-            return Ok(resultado);
+            //string resultado = _db.GetReferenceNum(refNum);
+            SqlResult result = _db.GetReferenceNumber(refNum);
+            return result;
         }
 
         // POST: api/dtcData
         [HttpPost]
         public bool Post([FromBody] DtcData dtcData)
         {
-             return _db.GetStoredtcData(dtcData);
+             return _db.GetStoredDtcData(dtcData);
 
         }
 

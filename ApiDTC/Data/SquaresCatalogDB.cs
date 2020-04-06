@@ -9,11 +9,11 @@ using System.Threading.Tasks;
 
 namespace ApiDTC.Data
 {
-    public class SquaresCatalogDB
+    public class SquaresCatalogDb
     {
         private readonly string _connectionString;
 
-        public SquaresCatalogDB(IConfiguration configuration)
+        public SquaresCatalogDb(IConfiguration configuration)
         {
             _connectionString = configuration.GetConnectionString("defaultConnection");
         }

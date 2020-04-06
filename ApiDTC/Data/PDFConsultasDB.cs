@@ -10,15 +10,12 @@ using System.Threading.Tasks;
 
 namespace ApiDTC.Data
 {
-    public class PDFConsultasDB
+    public class PdfConsultasDb
     {
-        private SqlMapper _sqlMapper;
-
         private readonly string _connectionString;
 
-        public PDFConsultasDB(IConfiguration configuration, SqlMapper sqlMapper)
+        public PdfConsultasDb(IConfiguration configuration)
         {
-            _sqlMapper = sqlMapper;
             _connectionString = configuration.GetConnectionString("defaultConnection");
         }
 
@@ -27,20 +24,7 @@ namespace ApiDTC.Data
         {
             using (SqlConnection sql = new SqlConnection(_connectionString))
             {
-                using (SqlCommand cmd = new SqlCommand("sp_header", sql))
-                {
-
-                    var header = new PdfHeader();
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.Add("@ReferenceNumber", SqlDbType.NVarChar).Value = numeroReferencia;
-
-                    sql.Open();
-                    using(SqlDataReader reader = cmd.ExecuteReader())
-                    {
-                        if(reader.HasRows)
-                            header = _sqlMapper.ConvertToObject<PdfHeader>(reader);
-                    }
-                }
+                
                 using (SqlCommand cmd = new SqlCommand("sp_DTCtoPDF", sql))
                 {
 

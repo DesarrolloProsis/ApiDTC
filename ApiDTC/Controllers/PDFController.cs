@@ -19,8 +19,8 @@ namespace ApiDTC.Controllers
     public class PDFController : ControllerBase
     {
 
-        private readonly PDFConsultasDB _db;
-        public PDFController(PDFConsultasDB db)
+        private readonly PdfConsultasDb _db;
+        public PDFController(PdfConsultasDb db)
         {
             this._db = db ?? throw new ArgumentNullException(nameof(db));
         }

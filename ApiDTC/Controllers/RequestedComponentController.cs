@@ -13,8 +13,8 @@ namespace ApiDTC.Controllers
     [ApiController]
     public class RequestedComponentController : ControllerBase
     {
-        private readonly RequestedComponentDB _db;
-        public RequestedComponentController(RequestedComponentDB db)
+        private readonly RequestedComponentDb _db;
+        public RequestedComponentController(RequestedComponentDb db)
         {
 
             this._db = db ?? throw new ArgumentNullException(nameof(db));

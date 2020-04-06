@@ -15,8 +15,8 @@ namespace ApiDTC.Controllers
     public class LoginController : ControllerBase
     {
 
-        private readonly LoginDB _db;
-        public LoginController(LoginDB db) {
+        private readonly LoginDb _db;
+        public LoginController(LoginDb db) {
 
             this._db = db ?? throw new ArgumentNullException(nameof(db));
 
