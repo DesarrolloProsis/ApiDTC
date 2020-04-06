@@ -132,7 +132,7 @@ namespace ApiDTC.Data
                 }
             }
         }
-        public List<Cokie> GetStoreLoginCokie(string nombreUsuario, string passWord, bool flag)
+        public List<Cookie> GetStoreLoginCokie(string nombreUsuario, string passWord, bool flag)
         {
             using (SqlConnection sql = new SqlConnection(_connectionString))
             {
@@ -149,7 +149,7 @@ namespace ApiDTC.Data
 
                         sql.Open();
 
-                        var response = new List<Cokie>();
+                        var response = new List<Cookie>();
                         var reader = cmd.ExecuteReader();
 
                         while (reader.Read())
@@ -184,9 +184,9 @@ namespace ApiDTC.Data
                 RegionalCoordination = reader["RegionalCoordination"].ToString(),
             };
         }
-        private Cokie MapToCokie(SqlDataReader reader)
+        private Cookie MapToCokie(SqlDataReader reader)
         {
-            return new Cokie()
+            return new Cookie()
             {
                 UserId =  (int)reader["UserId"],
                 SquareCatalogId = Convert.ToString(reader["SquareCatalogId"]),

@@ -9,18 +9,18 @@ using System.Threading.Tasks;
 
 namespace ApiDTC.Data
 {
-    public class dtcDataDb
+    public class DtcDataDb
     {
         private readonly string _connectionString;
         
 
-        public dtcDataDb(IConfiguration configuration)
+        public DtcDataDb(IConfiguration configuration)
         {
             _connectionString = configuration.GetConnectionString("defaultConnection");
         }
 
 
-        public bool GetStoredtcData(DTCData dtcData)
+        public bool GetStoredtcData(DtcData dtcData)
         {
 
             
@@ -117,7 +117,7 @@ namespace ApiDTC.Data
                         }
                         else
                         {
-                            var response = new List<DTCData>();
+                            var response = new List<DtcData>();
                             return refNum;
                         }
                         //var response = new List<DTCData>();
@@ -138,7 +138,7 @@ namespace ApiDTC.Data
             }
         }
 
-        public List<DTCData> GetDTC()
+        public List<DtcData> GetDTC()
         {
             using (SqlConnection sql = new SqlConnection(_connectionString))
             {
@@ -154,7 +154,7 @@ namespace ApiDTC.Data
                         query = $"Select * From DTCData";
                         sql.Open();
                         cmd.CommandText = query;
-                        var response = new List<DTCData>();
+                        var response = new List<DtcData>();
                         var reader = cmd.ExecuteReader();
 
                         while (reader.Read())
@@ -179,9 +179,9 @@ namespace ApiDTC.Data
             }
         }
 
-        private DTCData MapTodtcData(SqlDataReader reader)
+        private DtcData MapTodtcData(SqlDataReader reader)
         {
-            return new DTCData()
+            return new DtcData()
             {
                 ReferenceNumber = reader["ReferenceNumber"].ToString(),
                 SinisterNumber = reader["SinisterNumber"].ToString(),

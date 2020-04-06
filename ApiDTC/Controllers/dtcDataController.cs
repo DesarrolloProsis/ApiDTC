@@ -1,29 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using ApiDTC.Data;
-using ApiDTC.Models;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-
-namespace ApiDTC.Controllers
+﻿namespace ApiDTC.Controllers
 {
+    using System;
+    using System.Collections.Generic;
+    using ApiDTC.Data;
+    using ApiDTC.Models;
+    using Microsoft.AspNetCore.Mvc;
+
     [Route("api/[controller]")]
     [ApiController]
-    public class dtcDataController : ControllerBase
+    public class DtcDataController : ControllerBase
     {
-        private readonly dtcDataDb _db;
-        public dtcDataController(dtcDataDb db)
+        private readonly DtcDataDb _db;
+        public DtcDataController(DtcDataDb db)
         {
-
             this._db = db ?? throw new ArgumentNullException(nameof(db));
-
         }
 
         //GET: api/dtcData
        [HttpGet]
-        public ActionResult<List<DTCData>> Get()
+        public ActionResult<List<DtcData>> Get()
         {
             return _db.GetDTC();
         }
@@ -44,7 +39,7 @@ namespace ApiDTC.Controllers
 
         // POST: api/dtcData
         [HttpPost]
-        public bool Post([FromBody] DTCData dtcData)
+        public bool Post([FromBody] DtcData dtcData)
         {
              return _db.GetStoredtcData(dtcData);
 

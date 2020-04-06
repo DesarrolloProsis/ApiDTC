@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ApiDTC.Data;
+using ApiDTC.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -29,7 +30,8 @@ namespace ApiDTC
 
 
             services.AddCors();
-            services.AddScoped<dtcDataDb>();
+            services.AddScoped<SqlMapper>();
+            services.AddScoped<DtcDataDb>();
             services.AddScoped<ComponentDB>();
             services.AddScoped<LoginDB>();
             services.AddScoped<PDFConsultasDB>();

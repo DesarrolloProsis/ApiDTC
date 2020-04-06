@@ -15,7 +15,7 @@ namespace ApiDTC.Data
         private readonly string _connectionString;
 
 
-       public TypeDescriptionsDB(IConfiguration configuration)
+        public TypeDescriptionsDB(IConfiguration configuration)
         {
             _connectionString = configuration.GetConnectionString("defaultConnection");
         }

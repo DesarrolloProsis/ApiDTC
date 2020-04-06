@@ -32,7 +32,7 @@ namespace ApiDTC.Controllers
         }
         // GET: api/Login
         [HttpGet("ValidUser/{userName}/{passWord}/{flag}")]
-        public IEnumerable<Cokie> GetCokie(string userName, string passWord, bool flag)
+        public IEnumerable<Cookie> GetCokie(string userName, string passWord, bool flag)
         {
                                       
                 return _db.GetStoreLoginCokie(userName, passWord, flag);

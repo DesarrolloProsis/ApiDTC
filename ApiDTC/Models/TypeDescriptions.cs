@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace ApiDTC.Models
+﻿namespace ApiDTC.Models
 {
     public class TypeDescriptions
     {
+        #region Properties
         public int TypeDescriptionId { get; set; }
+        
         public string Description { get; set; }
+        #endregion
     }
 }

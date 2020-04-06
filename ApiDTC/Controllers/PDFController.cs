@@ -22,10 +22,9 @@ namespace ApiDTC.Controllers
         private readonly PDFConsultasDB _db;
         public PDFController(PDFConsultasDB db)
         {
-
             this._db = db ?? throw new ArgumentNullException(nameof(db));
-
         }
+        
         // GET: api/PDF
         [HttpGet("{refNum}")]
         public IActionResult GetPDF(string refNum)
@@ -70,17 +69,14 @@ namespace ApiDTC.Controllers
                 BaseFont NormalChicaSubAzul = BaseFont.CreateFont(BaseFont.HELVETICA, BaseFont.CP1250, true);
                 iTextSharp.text.Font letraSubAzulChica = new iTextSharp.text.Font(NormalChicaSubAzul, 5f, iTextSharp.text.Font.UNDERLINE, BaseColor.Blue);
 
-
-
-
-
                 BaseFont fuenteLetrita = BaseFont.CreateFont(BaseFont.HELVETICA, BaseFont.CP1250, true);
                 iTextSharp.text.Font letritasMiniMini = new iTextSharp.text.Font(fuenteLetrita, 1f, iTextSharp.text.Font.NORMAL, BaseColor.Black);
                 BaseFont fuenteMini = BaseFont.CreateFont(BaseFont.HELVETICA, BaseFont.CP1250, true);
                 iTextSharp.text.Font letritasMini = new iTextSharp.text.Font(fuenteMini, 6f, iTextSharp.text.Font.NORMAL, BaseColor.Black);
 
-
-
+                if(System.IO.File.Exists($@"{System.Environment.CurrentDirectory}\ReporteDTC-{refNum}.pdf"))
+                    System.IO.File.Delete($@"{System.Environment.CurrentDirectory}\ReporteDTC-{refNum}.pdf");
+                
                 FileStream file = new FileStream(System.Environment.CurrentDirectory + "\\ReporteDTC-" + refNum + ".pdf", FileMode.OpenOrCreate, FileAccess.ReadWrite);
                 PdfWriter write = PdfWriter.GetInstance(doc, file);
                 doc.AddAuthor("Prosis");

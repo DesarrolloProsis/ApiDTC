@@ -1,4 +1,5 @@
 ﻿using ApiDTC.Models;
+using ApiDTC.Services;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
 using System;
@@ -11,39 +12,55 @@ using System.Threading.Tasks;
 namespace ApiDTC.Data
 {
     public class ComponentDB
-
     {
-
+        #region Attributes
         private readonly string _connectionString;
+        private SqlMapper _sqlMapper;
+        #endregion
 
-
+        #region Constructor
         public ComponentDB(IConfiguration configuration)
         {
             _connectionString = configuration.GetConnectionString("defaultConnection");
         }
+        #endregion
 
-
-        public object GetComponentData(string convenio, string plaza, string Id)
+        
+        public SqlResult GetComponentData(string convenio, string plaza, string Id)
         {
-
-
             using (SqlConnection sql = new SqlConnection(_connectionString))
             {
-
                 using (SqlCommand cmd = new SqlCommand("dbo.sp_ComponentInfoDTC", sql))
                 {
-
                     try
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.Add("@Agremmnt", SqlDbType.NVarChar).Value = convenio;
                         cmd.Parameters.Add("@SquareId", SqlDbType.NVarChar).Value = plaza;
                         cmd.Parameters.Add("@Component", SqlDbType.NVarChar).Value = Id;
-                        var response = new List<Components>();
+                        
+                        
                         sql.Open();
-
+                        if(sql.State != ConnectionState.Open)
+                        {
+                            return new SqlResult
+                            {
+                                Message = "SqlConnection is closed",
+                                Result = null
+                            };
+                        }
+                        
                         var reader = cmd.ExecuteReader();
+                        if(!reader.HasRows)
+                        {
+                            return new SqlResult
+                            {
+                                Message = "Result not found",
+                                Result = null
+                            };
+                        }
 
+                        var response = new List<Components>();
                         while (reader.Read())
                         {
                             response.Add(MapToComponents(reader));
@@ -62,11 +79,15 @@ namespace ApiDTC.Data
                             listLane[i++] = lane.Lane;
                         }
 
-                        object json = new { response, listLane };
-                        return json;
+                        //object json = new { response, listLane };
+                        //return json;
                         //string query = string.Empty;
                 
-
+                        return new SqlResult
+                            {
+                                Message = "Result not found",
+                                Result = null
+                            };
                     }
                     catch (Exception ex)
                     {
