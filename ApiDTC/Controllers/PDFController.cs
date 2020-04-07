@@ -11,6 +11,7 @@ using ApiDTC.Data;
 using System.Data;
 
 using System.Reflection;
+using System.Globalization;
 
 namespace ApiDTC.Controllers
 {
@@ -35,6 +36,8 @@ namespace ApiDTC.Controllers
 
                 Document doc = new Document();
 
+
+                
                 var dataSet = _db.GetStorePDF(refNum);
 
                 DataTable TableHeader = dataSet.Tables[0];
@@ -79,7 +82,8 @@ namespace ApiDTC.Controllers
                 BaseFont fuenteMini = BaseFont.CreateFont(BaseFont.HELVETICA, BaseFont.CP1250, true);
                 iTextSharp.text.Font letritasMini = new iTextSharp.text.Font(fuenteMini, 6f, iTextSharp.text.Font.NORMAL, BaseColor.Black);
 
-
+                if (System.IO.File.Exists($@"{System.Environment.CurrentDirectory}\ReporteDTC-{refNum}.pdf"))
+                    System.IO.File.Delete($@"{System.Environment.CurrentDirectory}\ReporteDTC-{refNum}.pdf");
 
                 FileStream file = new FileStream(System.Environment.CurrentDirectory + "\\ReporteDTC-" + refNum + ".pdf", FileMode.OpenOrCreate, FileAccess.ReadWrite);
                 PdfWriter write = PdfWriter.GetInstance(doc, file);
@@ -99,7 +103,7 @@ namespace ApiDTC.Controllers
                 var col2 = new PdfPCell(new Phrase("DICTAMEN TÉCNICO Y COTIZACION", letraoNegritaMediana)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, Padding = 10, PaddingRight = 20, PaddingLeft = 20 };
                 //Creamos Chunk Para dosTipo deLetra en un Parrafo
                 var referencia = new Chunk("Referencia:    ", letraNormalMediana);
-                var numreferencia = new Chunk("PMO-20068", letraoNegritaMediana);
+                var numreferencia = new Chunk(refNum, letraoNegritaMediana);
                 var refCompleta = new Phrase(referencia);
                 refCompleta.Add(numreferencia);
                 var col3 = new PdfPCell(refCompleta) { Border = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_MIDDLE };
@@ -395,7 +399,7 @@ namespace ApiDTC.Controllers
 
 
                 var colDignostico = new PdfPCell();
-                colDignostico.Phrase = new Phrase("");
+                colDignostico.Phrase = new Phrase(TableDTCData.Rows[0]["Diagnosis"].ToString(), letraoNegritaMediana);
                 colDignostico.BorderWidthTop = 1;
                 colDignostico.BorderWidthLeft = 1;
                 colDignostico.BorderWidthRight = 1;
@@ -418,6 +422,7 @@ namespace ApiDTC.Controllers
 
                 int totalFilas = TableEquipoPropuesto.Rows.Count;
                 int filaRecorrida = 1;
+                double precioTotalMoneda = 0;
 
                 foreach (DataRow item2 in TableEquipoPropuesto.Rows)
                 {
@@ -430,7 +435,7 @@ namespace ApiDTC.Controllers
                     var colModeloProList = new PdfPCell(new Phrase(item2["Modelo"].ToString(), letritasMini)) { HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
                     var colPrecioProList = new PdfPCell(new Phrase("$" + item2["PrecioUnitario"].ToString(), letritasMini)) { HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
                     var colPrecioDolarProList = new PdfPCell(new Phrase("$" + item2["PrecoDollarUnitario"].ToString(), letritasMini)) { HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
-                    var colPrecioTotalProList = new PdfPCell(new Phrase("$" + item2["PrecioTotal"].ToString(), letritasMini)) { HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
+                    var colPrecioTotalProList = new PdfPCell(new Phrase(Convert.ToDouble(item2["PrecioTotal"]).ToString("C", CultureInfo.CurrentCulture), letritasMini)) { HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
                     var colPrecioTotalDolarProList = new PdfPCell(new Phrase("", letritasMini)) { HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
                     var colVaciaProList = new PdfPCell(new Phrase(" ")) { HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
 
@@ -463,6 +468,8 @@ namespace ApiDTC.Controllers
                     tablaEquipoPropuesto.AddCell(colVaciaProList);
                     tablaEquipoPropuesto.AddCell(colDignosticoList);
 
+                    precioTotalMoneda += Convert.ToDouble(item2["PrecioTotal"]);
+
                     filaRecorrida++;
 
                 }
@@ -476,16 +483,16 @@ namespace ApiDTC.Controllers
                 tablaTotal.HorizontalAlignment = Element.ALIGN_LEFT;
 
 
-                var colTotalLetra = new PdfPCell(new Phrase("TOTAL M.N  ", letraoNegritaMediana)) { HorizontalAlignment = Element.ALIGN_LEFT };
+                var colTotalLetra = new PdfPCell(new Phrase(_db.ConverToMoneda(precioTotalMoneda.ToString()), letraoNegritaMediana)) { HorizontalAlignment = Element.ALIGN_LEFT };
                 colTotalLetra.Border = 0;
-                var colTotalNumero = new PdfPCell(new Phrase("", letritasMini)) { HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
+                var colTotalNumero = new PdfPCell(new Phrase(precioTotalMoneda.ToString("C", CultureInfo.CurrentCulture), letritasMini)) { HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
                 var colTotalDolarNumero = new PdfPCell(new Phrase("", letritasMini)) { HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
 
                 tablaTotal.AddCell(colTotalLetra);
                 tablaTotal.AddCell(colTotalNumero);
                 tablaTotal.AddCell(colTotalDolarNumero);
 
-                //DESCOMENTAR, NO SÉ QUÉ ANDABAN PROBANDO AQUÍ
+                
                 var colRelleno1 = new PdfPCell(new Phrase("TOTAL:", letraoNegritaChica)) { HorizontalAlignment = Element.ALIGN_LEFT };
                 colRelleno1.BorderWidthTop = 0;
                 colRelleno1.BorderWidthLeft = 0;
@@ -583,8 +590,8 @@ namespace ApiDTC.Controllers
             }
         }
 
-
+ 
     }
 
-    
+
 }
