@@ -31,7 +31,6 @@ namespace ApiDTC.Data
 
                     try
                     {
-
                         SqlDataAdapter sqlDataAdapter = new SqlDataAdapter();
                         DataSet dataSet = new DataSet();
                         

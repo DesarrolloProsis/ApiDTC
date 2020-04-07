@@ -32,7 +32,6 @@ namespace ApiDTC.Controllers
         {
             try
             {
-
                 Document doc = new Document();
                 
                 var dataSet = _db.GetStorePDF(refNum);

@@ -182,6 +182,7 @@
                 RegionalCoordination = reader["RegionalCoordination"].ToString(),
             };
         }
+
         private Cookie MapToCokie(SqlDataReader reader)
         {
             return new Cookie()
@@ -191,8 +192,6 @@
                 RollId = (int)reader["RollId"]
             };
         }
-      
-
     }
 
 }

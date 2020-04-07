@@ -83,28 +83,23 @@
                     else
                     {
                         SqlCommand lastReferenceCommand = new SqlCommand($"SELECT TOP 1 ReferenceNumber FROM [ProsisDTC3].[dbo].[DTCData] WHERE ReferenceNumber LIKE '{referenceNumber}%' ORDER BY ReferenceNumber DESC", sql);
-                        using (SqlDataReader reader = lastReferenceCommand.ExecuteReader())
+                        var reader = lastReferenceCommand.ExecuteReader();
+                        if(reader.Read())
                         {
-                            if(reader.HasRows)
+                            string result = reader["ReferenceNumber"].ToString();
+                            int lastReference = Convert.ToInt32(result.Substring(result.Length - 1)) + 1;
+                            return new SqlResult
                             {
-                                if(reader.Read())
-                                {
-                                    string result = reader["ReferenceNumber"].ToString();
-                                    int lastReference = Convert.ToInt32(result.Substring(result.Length - 1)) + 1;
-                                    return new SqlResult
-                                    {
-                                        Message = "Ok",
-                                        Result = $"{referenceNumber}-{lastReference.ToString("00")}"
-                                    };
-                                }
-                            }
+                                Message = "Ok",
+                                Result = $"{referenceNumber}-{lastReference.ToString("00")}"
+                            };
                         }
+                        return new SqlResult
+                        {
+                            Message = "Empty result",
+                            Result = null
+                        };
                     }
-                    return new SqlResult
-                    {
-                        Message = $"Error: ",
-                        Result = null
-                    };
                 }
                 catch(SqlException ex)
                 {
@@ -113,84 +108,6 @@
                         Message = $"Error: {ex.Message}",
                         Result = null
                     };
-                }
-            }
-        }
-        public string GetReferenceNum(string refNum)
-        {
-            using (SqlConnection sql = new SqlConnection(_connectionString))
-            {
-
-                using (SqlCommand cmd = new SqlCommand("", sql))
-                {
-                    try
-                    {
-                        string query = string.Empty;
-                        //Query para saber si existe ReferenceNumber
-                        query = $"Select Count(*) From DTCData  where ReferenceNumber = '{refNum}' ";
-                        sql.Open();
-                        cmd.CommandText = query;
-                        bool exist = Convert.ToBoolean(cmd.ExecuteScalar());
-                        if (exist)
-                        {
-                            query = $"Select Count(*) From DTCData  where ReferenceNumber = '{refNum}-02' ";
-                            cmd.CommandText = query;
-                            exist = Convert.ToBoolean(cmd.ExecuteScalar());
-                            if (exist)
-                            {
-                                query = $"Select Count(*) From DTCData  where ReferenceNumber = '{refNum}-03' ";
-                                cmd.CommandText = query;
-                                exist = Convert.ToBoolean(cmd.ExecuteScalar());
-                                if (exist)
-                                {
-                                    query = $"Select Count(*) From DTCData  where ReferenceNumber = '{refNum}-04' ";
-                                    cmd.CommandText = query;
-                                    exist = Convert.ToBoolean(cmd.ExecuteScalar());
-                                    if (exist)
-                                    {
-                                        query = $"Select Count(*) From DTCData  where ReferenceNumber = '{refNum}-05' ";
-                                        cmd.CommandText = query;
-                                        exist = Convert.ToBoolean(cmd.ExecuteScalar());
-                                        var refNum2 = refNum + "-05";
-                                        return refNum2;
-                                    }
-                                    else
-                                    {
-                                        var refNum2 = refNum + "-04";
-                                        return refNum2;
-                                    }
-                                }
-                                else
-                                {
-                                    var refNum2 = refNum + "-03";
-                                    return refNum2;
-                                }
-                            }
-                            else
-                            {
-                                var refNum2 = refNum + "-02";
-                                return refNum2;
-                            }
-                        }
-                        else
-                        {
-                            var response = new List<DtcData>();
-                            return refNum;
-                        }
-                        //var response = new List<DTCData>();
-                        //int noRegistros = Convert.ToInt32(cmd.ExecuteScalar());
-                        //return noRegistros;
-
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine("\nMessage ---\n{0}", ex.Message);
-                        return null;
-                    }
-                    finally
-                    {
-                        sql.Close();
-                    }
                 }
             }
         }

@@ -72,23 +72,20 @@
                         }
 
                         object json = new { response, listLane };
+                        sql.Close();
                         return new SqlResult
                         {
                             Message = "Ok",
                             Result = json
                         };
                     }
-                    catch (Exception ex)
+                    catch (SqlException ex)
                     {
                         return new SqlResult
                         {
                             Message = $"Error: {ex.Message}",
                             Result = null
                         };
-                    }
-                    finally
-                    {
-                        sql.Close();
                     }
                 }
             }
