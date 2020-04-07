@@ -30,6 +30,8 @@
         public int TypeDescriptionId { get; set; }
         
         public int AgremmentInfoId { get; set; }
+
+        public DateTime DateStamp { get; set;}
         #endregion
     }
 }
