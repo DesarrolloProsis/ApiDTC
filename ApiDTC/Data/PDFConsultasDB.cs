@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using ApiDTC.Models;
+using ApiDTC.Services;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -9,13 +11,11 @@ using System.Threading.Tasks;
 
 namespace ApiDTC.Data
 {
-    public class PDFConsultasDB
+    public class PdfConsultasDb
     {
-
-
         private readonly string _connectionString;
 
-        public PDFConsultasDB(IConfiguration configuration)
+        public PdfConsultasDb(IConfiguration configuration)
         {
             _connectionString = configuration.GetConnectionString("defaultConnection");
         }
@@ -25,6 +25,7 @@ namespace ApiDTC.Data
         {
             using (SqlConnection sql = new SqlConnection(_connectionString))
             {
+                
                 using (SqlCommand cmd = new SqlCommand("sp_DTCtoPDF", sql))
                 {
 

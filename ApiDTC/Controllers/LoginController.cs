@@ -15,8 +15,8 @@ namespace ApiDTC.Controllers
     public class LoginController : ControllerBase
     {
 
-        private readonly LoginDB _db;
-        public LoginController(LoginDB db) {
+        private readonly LoginDb _db;
+        public LoginController(LoginDb db) {
 
             this._db = db ?? throw new ArgumentNullException(nameof(db));
 
@@ -32,7 +32,7 @@ namespace ApiDTC.Controllers
         }
         // GET: api/Login
         [HttpGet("ValidUser/{userName}/{passWord}/{flag}")]
-        public IEnumerable<Cokie> GetCokie(string userName, string passWord, bool flag)
+        public IEnumerable<Cookie> GetCokie(string userName, string passWord, bool flag)
         {
                                       
                 return _db.GetStoreLoginCokie(userName, passWord, flag);

@@ -13,8 +13,8 @@ namespace ApiDTC.Controllers
     [ApiController]
     public class SquaresCatalogController : ControllerBase
     {
-        private readonly SquaresCatalogDB _db;
-        public SquaresCatalogController(SquaresCatalogDB db)
+        private readonly SquaresCatalogDb _db;
+        public SquaresCatalogController(SquaresCatalogDb db)
         {
 
             this._db = db ?? throw new ArgumentNullException(nameof(db));

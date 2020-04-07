@@ -14,8 +14,8 @@ namespace ApiDTC.Controllers
     [ApiController]
     public class TypeDescriptionsController : ControllerBase
     {
-        private readonly TypeDescriptionsDB _db;
-        public TypeDescriptionsController(TypeDescriptionsDB db)
+        private readonly TypeDescriptionsDb _db;
+        public TypeDescriptionsController(TypeDescriptionsDb db)
         {
 
             this._db = db ?? throw new ArgumentNullException(nameof(db));

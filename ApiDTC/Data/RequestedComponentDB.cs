@@ -9,12 +9,12 @@ using System.Threading.Tasks;
 
 namespace ApiDTC.Data
 {
-    public class RequestedComponentDB
+    public class RequestedComponentDb
     {
         private readonly string _connectionString;
 
 
-        public RequestedComponentDB(IConfiguration configuration)
+        public RequestedComponentDb(IConfiguration configuration)
         {
             _connectionString = configuration.GetConnectionString("defaultConnection");
         }

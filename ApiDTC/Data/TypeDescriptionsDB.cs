@@ -10,12 +10,12 @@ using System.Threading.Tasks;
 
 namespace ApiDTC.Data
 {
-    public class TypeDescriptionsDB
+    public class TypeDescriptionsDb
     {
         private readonly string _connectionString;
 
 
-       public TypeDescriptionsDB(IConfiguration configuration)
+        public TypeDescriptionsDb(IConfiguration configuration)
         {
             _connectionString = configuration.GetConnectionString("defaultConnection");
         }

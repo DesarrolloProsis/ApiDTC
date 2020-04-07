@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ApiDTC.Data;
+using ApiDTC.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -26,16 +27,15 @@ namespace ApiDTC
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
-
             services.AddCors();
-            services.AddScoped<dtcDataDb>();
-            services.AddScoped<ComponentDB>();
-            services.AddScoped<LoginDB>();
-            services.AddScoped<PDFConsultasDB>();
-            services.AddScoped<TypeDescriptionsDB>();
-            services.AddScoped<RequestedComponentDB>();
-            services.AddScoped<SquaresCatalogDB>();
+            services.AddScoped<ApiLogger>();
+            services.AddScoped<DtcDataDb>();
+            services.AddScoped<ComponentDb>();
+            services.AddScoped<LoginDb>();
+            services.AddScoped<PdfConsultasDb>();
+            services.AddScoped<TypeDescriptionsDb>();
+            services.AddScoped<RequestedComponentDb>();
+            services.AddScoped<SquaresCatalogDb>();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
 

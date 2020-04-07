@@ -1,21 +1,19 @@
-﻿using ApiDTC.Models;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.SqlClient;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace ApiDTC.Data
+﻿namespace ApiDTC.Data
 {
-    public class LoginDB
+    using Models;
+    using Microsoft.AspNetCore.Mvc.Rendering;
+    using Microsoft.Extensions.Configuration;
+    using System;
+    using System.Collections.Generic;
+    using System.Data;
+    using System.Data.SqlClient;
+    
+    public class LoginDb
     {
 
         private readonly string _connectionString;
 
-        public LoginDB(IConfiguration configuration)
+        public LoginDb(IConfiguration configuration)
         {
             _connectionString = configuration.GetConnectionString("defaultConnection");
         }
@@ -132,7 +130,7 @@ namespace ApiDTC.Data
                 }
             }
         }
-        public List<Cokie> GetStoreLoginCokie(string nombreUsuario, string passWord, bool flag)
+        public List<Cookie> GetStoreLoginCokie(string nombreUsuario, string passWord, bool flag)
         {
             using (SqlConnection sql = new SqlConnection(_connectionString))
             {
@@ -149,7 +147,7 @@ namespace ApiDTC.Data
 
                         sql.Open();
 
-                        var response = new List<Cokie>();
+                        var response = new List<Cookie>();
                         var reader = cmd.ExecuteReader();
 
                         while (reader.Read())
@@ -184,9 +182,9 @@ namespace ApiDTC.Data
                 RegionalCoordination = reader["RegionalCoordination"].ToString(),
             };
         }
-        private Cokie MapToCokie(SqlDataReader reader)
+        private Cookie MapToCokie(SqlDataReader reader)
         {
-            return new Cokie()
+            return new Cookie()
             {
                 UserId =  (int)reader["UserId"],
                 SquareCatalogId = Convert.ToString(reader["SquareCatalogId"]),

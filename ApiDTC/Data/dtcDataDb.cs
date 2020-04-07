@@ -1,35 +1,32 @@
-﻿using ApiDTC.Models;
-using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.SqlClient;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace ApiDTC.Data
+﻿namespace ApiDTC.Data
 {
-    public class dtcDataDb
-    {
-        private readonly string _connectionString;
-        
+    using Models;
+    using Microsoft.Extensions.Configuration;
+    using System;
+    using System.Collections.Generic;
+    using System.Data.SqlClient;
+    using System.Data;
 
-        public dtcDataDb(IConfiguration configuration)
+    public class DtcDataDb
+    {
+        #region Attributes
+        private readonly string _connectionString;
+        #endregion
+
+        #region Constructor
+        public DtcDataDb(IConfiguration configuration)
         {
             _connectionString = configuration.GetConnectionString("defaultConnection");
         }
+        #endregion
 
-
-        public bool GetStoredtcData(DTCData dtcData)
+        #region Methods
+        public bool GetStoredDtcData(DtcData dtcData)
         {
-
-            
             using (SqlConnection sql = new SqlConnection(_connectionString))
             {
-
                 using (SqlCommand cmd = new SqlCommand("",sql))
                 {
-
                     try
                     {
                         string query = string.Empty;
@@ -57,6 +54,68 @@ namespace ApiDTC.Data
             }
         }
 
+        public SqlResult GetReferenceNumber(string referenceNumber)
+        {
+            using(SqlConnection sql = new SqlConnection(_connectionString))
+            {
+                try
+                {
+                    sql.Open();
+                    if(sql.State != ConnectionState.Open)
+                    {
+                        return new SqlResult
+                        {
+                            Message = "Sql connection is closed",
+                            Result = null
+                        };
+                    }
+
+                    SqlCommand countCommand = new SqlCommand($"SELECT Count(*) FROM [ProsisDTC3].[dbo].[DTCData] WHERE ReferenceNumber LIKE '{referenceNumber}%'", sql);
+                    Int32 count = (Int32) countCommand.ExecuteScalar();
+                    if(count == 0)
+                    {
+                        return new SqlResult
+                        {
+                            Message = "Ok",
+                            Result = $"{referenceNumber}"
+                        };
+                    }
+                    else
+                    {
+                        SqlCommand lastReferenceCommand = new SqlCommand($"SELECT TOP 1 ReferenceNumber FROM [ProsisDTC3].[dbo].[DTCData] WHERE ReferenceNumber LIKE '{referenceNumber}%' ORDER BY ReferenceNumber DESC", sql);
+                        using (SqlDataReader reader = lastReferenceCommand.ExecuteReader())
+                        {
+                            if(reader.HasRows)
+                            {
+                                if(reader.Read())
+                                {
+                                    string result = reader["ReferenceNumber"].ToString();
+                                    int lastReference = Convert.ToInt32(result.Substring(result.Length - 1)) + 1;
+                                    return new SqlResult
+                                    {
+                                        Message = "Ok",
+                                        Result = $"{referenceNumber}-{lastReference.ToString("00")}"
+                                    };
+                                }
+                            }
+                        }
+                    }
+                    return new SqlResult
+                    {
+                        Message = $"Error: ",
+                        Result = null
+                    };
+                }
+                catch(SqlException ex)
+                {
+                    return new SqlResult
+                    {
+                        Message = $"Error: {ex.Message}",
+                        Result = null
+                    };
+                }
+            }
+        }
         public string GetReferenceNum(string refNum)
         {
             using (SqlConnection sql = new SqlConnection(_connectionString))
@@ -66,9 +125,7 @@ namespace ApiDTC.Data
                 {
                     try
                     {
-
                         string query = string.Empty;
-
                         //Query para saber si existe ReferenceNumber
                         query = $"Select Count(*) From DTCData  where ReferenceNumber = '{refNum}' ";
                         sql.Open();
@@ -117,7 +174,7 @@ namespace ApiDTC.Data
                         }
                         else
                         {
-                            var response = new List<DTCData>();
+                            var response = new List<DtcData>();
                             return refNum;
                         }
                         //var response = new List<DTCData>();
@@ -138,7 +195,7 @@ namespace ApiDTC.Data
             }
         }
 
-        public List<DTCData> GetDTC()
+        public List<DtcData> GetDTC()
         {
             using (SqlConnection sql = new SqlConnection(_connectionString))
             {
@@ -154,7 +211,7 @@ namespace ApiDTC.Data
                         query = $"Select * From DTCData";
                         sql.Open();
                         cmd.CommandText = query;
-                        var response = new List<DTCData>();
+                        var response = new List<DtcData>();
                         var reader = cmd.ExecuteReader();
 
                         while (reader.Read())
@@ -179,9 +236,9 @@ namespace ApiDTC.Data
             }
         }
 
-        private DTCData MapTodtcData(SqlDataReader reader)
+        private DtcData MapTodtcData(SqlDataReader reader)
         {
-            return new DTCData()
+            return new DtcData()
             {
                 ReferenceNumber = reader["ReferenceNumber"].ToString(),
                 SinisterNumber = reader["SinisterNumber"].ToString(),
@@ -198,6 +255,6 @@ namespace ApiDTC.Data
                 AgremmentInfoId = (int)reader["AgremmentInfoId"],
             };
         }
-
+        #endregion
     }
 }
