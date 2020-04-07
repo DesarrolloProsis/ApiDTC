@@ -571,14 +571,16 @@ namespace ApiDTC.Controllers
             catch (Exception ex)
             {
 
-                string path = @"c:\CazaErrores.txt";                
+                string path = @"c:\temporal\CazaErrores.txt";
 
-                using (StreamWriter file = new StreamWriter(path , true))
+                if (System.IO.File.Exists(@"C:\temporal\Log.txt"))
                 {
-                    file.WriteLine(ex.ToString());
-                    file.Dispose();
-                    file.Close();
+                    string[] lineas = System.IO.File.ReadAllLines(@"C:\temporal\Log.txt");
+                    lineas[0] = $"PDF. {DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss")}. {Convert.ToInt32(ex.StackTrace.Substring(ex.StackTrace.LastIndexOf(" ") + 1))}. {ex.Message}.\n{lineas[0]}";
+                    System.IO.File.Delete(@"C:\temporal\Log.txt");
+                    System.IO.File.WriteAllLines(@"C:\temporal\Log.txt", lineas);
                 }
+                else System.IO.File.WriteAllText(@"C:\temporal\Log.txt", $"PDF. {DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss")}. {Convert.ToInt32(ex.StackTrace.Substring(ex.StackTrace.LastIndexOf(" ") + 1))}. {ex.Message}.");
                 return null;
             }
         }
