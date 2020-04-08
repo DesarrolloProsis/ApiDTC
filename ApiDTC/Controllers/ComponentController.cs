@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using ApiDTC.Data;
+    using ApiDTC.Models;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Rendering;
     
@@ -24,16 +25,22 @@
         
         // GET: api/Component
         [HttpGet("{convenio}/{plaza}/{Id}")]
-        public object GetComponents(string convenio, string plaza, string Id)
+        public IActionResult GetComponents(string convenio, string plaza, string Id)
         {
-            return _db.GetComponentData(convenio, plaza, Id);
+            var response = _db.GetComponentData(convenio, plaza, Id);
+            if(response.Result == null)
+                return NotFound(response);
+            return Ok(response);
         }
 
         //GET: api/Component/5
         [HttpGet]
-        public ActionResult<List<SelectListItem>> Get()
+        public IActionResult Get()
         {
-            return _db.GetComponentsData();
+            var response = _db.GetComponentsData();
+            if(response.Result == null)
+                return NotFound(response);
+            return Ok(response);
         }
 
         // POST: api/Component

@@ -1,6 +1,7 @@
 ﻿namespace ApiDTC.Data
 {
     using ApiDTC.Models;
+    using ApiDTC.Services;
     using Microsoft.AspNetCore.Mvc.Rendering;
     using Microsoft.Extensions.Configuration;
     using System;
@@ -13,16 +14,21 @@
 
         #region Attributes
         private readonly string _connectionString;
+
+        private ApiLogger _apiLogger;
         #endregion
 
         #region Constructor
-        public TypeDescriptionsDb(IConfiguration configuration)
+        public TypeDescriptionsDb(IConfiguration configuration, ApiLogger apiLogger)
         {
+            _apiLogger = apiLogger;
             _connectionString = configuration.GetConnectionString("defaultConnection");
         }
         #endregion
 
         #region Methods
+
+        //TODO Test TypeDescriptions
         public SqlResult GetTypeDescriptionsData()
         {
             using (SqlConnection sql = new SqlConnection(_connectionString))
@@ -73,6 +79,7 @@
                 }
                 catch (SqlException ex)
                 {
+                    _apiLogger.WriteLog(ex, "GetComponentData");
                     return new SqlResult
                     {
                         Message = $"Error: {ex.Message}",
@@ -81,7 +88,9 @@
                 }
             }
         }
+        #endregion
 
+        #region Mappers
         private TypeDescriptions MapToTypeDescriptions(SqlDataReader reader)
         {
             return new TypeDescriptions()

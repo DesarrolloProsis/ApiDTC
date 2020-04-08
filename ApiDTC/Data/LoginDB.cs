@@ -7,37 +7,58 @@
     using System.Collections.Generic;
     using System.Data;
     using System.Data.SqlClient;
-    
+    using ApiDTC.Services;
+
     public class LoginDb
     {
-
+        #region Attributes
         private readonly string _connectionString;
 
-        public LoginDb(IConfiguration configuration)
+        private ApiLogger _apiLogger;
+        #endregion
+
+        #region Constructor
+        public LoginDb(IConfiguration configuration, ApiLogger apiLogger)
         {
+            _apiLogger = apiLogger;
             _connectionString = configuration.GetConnectionString("defaultConnection");
         }
+        #endregion
 
-
-        public List<SelectListItem> GetTec(string numPlaza)
+        #region Methods
+        //TODO test Login
+        public SqlResult GetTec(string numPlaza)
         {
             using (SqlConnection sql = new SqlConnection(_connectionString))
             {
                 using (SqlCommand cmd = new SqlCommand("dbo.sp_TecnicosPlaza", sql))
                 {
-
                     try
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.Add("@PlazaId", SqlDbType.NVarChar).Value = numPlaza;
 
                         sql.Open();
+                        if(sql.State != ConnectionState.Open)
+                        {
+                            return new SqlResult
+                            {
+                                Message = "Sql connection is closed",
+                                Result = null
+                            };
+                        }
 
-
+                        var reader = cmd.ExecuteReader();
+                        if(!reader.HasRows)
+                        {
+                            return new SqlResult
+                            {
+                                Message = "Result not found",
+                                Result = null
+                            };
+                        }
 
                         var response = new List<SelectListItem>();
-                        var reader = cmd.ExecuteReader();
-
                         while (reader.Read())
                         {
                             response.Add(new SelectListItem
@@ -48,60 +69,86 @@
 
                             });
                         }
-
-                        return response;
+                        sql.Close();
+                        return new SqlResult
+                        {
+                            Message = "Ok",
+                            Result = response
+                        };
                     }
-                    catch (Exception ex)
+                    catch (SqlException ex)
                     {
-                        return null;
+                        _apiLogger.WriteLog(ex, "GetTec");
+                        return new SqlResult
+                        {
+                            Message = $"Error: {ex.Message}",
+                            Result = null
+                        };
                     }
                 }
             }
         }
-        public List<Login> GetHeadTec(int idTec)
+        public SqlResult GetHeadTec(int idTec)
         {
             using (SqlConnection sql = new SqlConnection(_connectionString))
             {
                 using (SqlCommand cmd = new SqlCommand("sp_LiquidacionTerceroHeader", sql))
                 {
-
-
                     try
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.Add("@user", SqlDbType.Int).Value = idTec;
-             
-
                         sql.Open();
-
+                        if(sql.State != ConnectionState.Open)
+                        {
+                            return new SqlResult
+                            {
+                                Message = "Sql connection is closed",
+                                Result = null
+                            };
+                        }
 
 
                         var response = new List<Login>();
                         var reader = cmd.ExecuteReader();
-
+                        if(!reader.HasRows)
+                        {
+                            return new SqlResult
+                            {
+                                Message = "Result not found",
+                                Result = null
+                            };
+                        }
                         while (reader.Read())
                         {
                             response.Add(MapToLogin(reader));
                         }
-
-                        return response;
+                        sql.Close();
+                        return new SqlResult
+                        {
+                            Message = "Ok",
+                            Result = response
+                        };
                     }
-                    catch (Exception ex)
+                    catch (SqlException ex)
                     {
-                        return null;
+                        _apiLogger.WriteLog(ex, "GetHeadTec");
+                        return new SqlResult
+                        {
+                            Message = $"Error: {ex.Message}",
+                            Result = null
+                        };
                     }
                 }
             }
         }
 
-        public List<Login> GetStoreLogin(string nombreUsuario, string passWord, bool flag)
+        public SqlResult GetStoreLogin(string nombreUsuario, string passWord, bool flag)
         {
             using (SqlConnection sql = new SqlConnection(_connectionString))
             {
                 using (SqlCommand cmd = new SqlCommand("dbo.sp_Login", sql))
                 {
-
-
                     try
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
@@ -110,34 +157,55 @@
                         cmd.Parameters.Add("@Flag", SqlDbType.Bit).Value = flag;
                         
                         sql.Open();
-
+                        if(sql.State != ConnectionState.Open)
+                        {
+                            return new SqlResult
+                            {
+                                Message = "Sql connection is closed",
+                                Result = null
+                            };
+                        }
 
 
                         var response = new List<Login>();
                         var reader = cmd.ExecuteReader();
-                        
-                            while (reader.Read())
+                        if(!reader.HasRows)
+                        {
+                            return new SqlResult
                             {
-                                response.Add(MapToLogin(reader));
-                            }
-                        
-                        return response;
+                                Message = "Result not found",
+                                Result = null
+                            };
+                        }
+                        while (reader.Read())
+                        {
+                            response.Add(MapToLogin(reader));
+                        }
+                        sql.Close();
+                        return new SqlResult
+                        {
+                            Message = "Ok",
+                            Result = response
+                        };
                     }
-                    catch(Exception ex)
-                    {                        
-                        return null;
+                    catch (SqlException ex)
+                    {
+                        _apiLogger.WriteLog(ex, "GetStoreLogin");
+                        return new SqlResult
+                        {
+                            Message = $"Error: {ex.Message}",
+                            Result = null
+                        };
                     }
                 }
             }
         }
-        public List<Cookie> GetStoreLoginCokie(string nombreUsuario, string passWord, bool flag)
+        public SqlResult GetStoreLoginCookie(string nombreUsuario, string passWord, bool flag)
         {
             using (SqlConnection sql = new SqlConnection(_connectionString))
             {
                 using (SqlCommand cmd = new SqlCommand("dbo.sp_Login", sql))
                 {
-
-
                     try
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
@@ -146,20 +214,44 @@
                         cmd.Parameters.Add("@Flag", SqlDbType.Bit).Value = flag;
 
                         sql.Open();
-
-                        var response = new List<Cookie>();
+                        if(sql.State != ConnectionState.Open)
+                        {
+                            return new SqlResult
+                            {
+                                Message = "Sql connection is closed",
+                                Result = null
+                            };
+                        }
+                        
                         var reader = cmd.ExecuteReader();
-
+                        if(!reader.HasRows)
+                        {
+                            return new SqlResult
+                            {
+                                Message = "Result not found",
+                                Result = null
+                            };
+                        }
+                        var response = new List<Cookie>();
                         while (reader.Read())
                         {
-                            response.Add(MapToCokie(reader));
+                            response.Add(MapToCookie(reader));
                         }
-
-                        return response;
+                        sql.Close();
+                        return new SqlResult
+                        {
+                            Message = "Ok",
+                            Result = response
+                        };
                     }
-                    catch (Exception ex)
+                    catch (SqlException ex)
                     {
-                        return null;
+                        _apiLogger.WriteLog(ex, "GetComponentData");
+                        return new SqlResult
+                        {
+                            Message = $"Error: {ex.Message}",
+                            Result = null
+                        };
                     }
                 }
             }
@@ -183,7 +275,7 @@
             };
         }
 
-        private Cookie MapToCokie(SqlDataReader reader)
+        private Cookie MapToCookie(SqlDataReader reader)
         {
             return new Cookie()
             {
@@ -192,6 +284,6 @@
                 RollId = (int)reader["RollId"]
             };
         }
+        #endregion
     }
-
 }

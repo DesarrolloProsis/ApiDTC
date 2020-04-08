@@ -8,16 +8,20 @@
     using System.Data;
     using System.Data.SqlClient;
     using System.Linq;
+    using ApiDTC.Services;
 
     public class ComponentDb
     {
         #region Attributes
         private readonly string _connectionString;
+
+        private ApiLogger _apiLogger;
         #endregion
 
         #region Constructor
-        public ComponentDb(IConfiguration configuration)
+        public ComponentDb(IConfiguration configuration, ApiLogger apiLogger)
         {
+            _apiLogger = apiLogger;
             _connectionString = configuration.GetConnectionString("defaultConnection");
         }
         #endregion
@@ -81,6 +85,7 @@
                     }
                     catch (SqlException ex)
                     {
+                        _apiLogger.WriteLog(ex, "GetComponentData");
                         return new SqlResult
                         {
                             Message = $"Error: {ex.Message}",
@@ -92,46 +97,59 @@
         }
 
         //Revisar
-        public List<SelectListItem> GetComponentsData()
+        public SqlResult GetComponentsData()
         {
             using (SqlConnection sql = new SqlConnection(_connectionString))
             {
-                using (SqlCommand cmd = new SqlCommand("", sql))
+                try
                 {
-                    try
+                    SqlCommand cmd = new SqlCommand("select a.Component as description from SquareInventory a join LanesCatalog b on (a.CapufeLaneNum = b.CapufeLaneNum and a.IdGare = b.IdGare) where b.SquareCatalogId = '102' group by a.Component", sql);
+                    sql.Open();
+                    if(sql.State != ConnectionState.Open)
                     {
-                        string query = string.Empty;
-                        //Query para saber si existe ReferenceNumber
-                        query = "select a.Component as description from SquareInventory a join LanesCatalog b on (a.CapufeLaneNum = b.CapufeLaneNum and a.IdGare = b.IdGare) where b.SquareCatalogId = '102' group by a.Component";
-                        sql.Open();
-                        cmd.CommandText = query;
-
-                        var response = new List<SelectListItem>();
-
-                        
-                        var reader = cmd.ExecuteReader();
-                        while (reader.Read())
+                        return new SqlResult
                         {
-                            response.Add(new SelectListItem
-                            {
-                                //Value = reader["ComponentsStockId"].ToString(),
-                                Text = reader["Description"].ToString()
-
-                            }) ;
-                        }
-                        return response;
-
+                            Message = "Sql connection is closed",
+                            Result = null
+                        };
                     }
-                        catch (Exception ex)
+                    var response = new List<SelectListItem>();
+                    var reader = cmd.ExecuteReader();
+                    
+                    if(!reader.HasRows)
+                    {
+                        return new SqlResult
                         {
-                            Console.WriteLine("\nMessage ---\n{0}", ex.Message);
-                            return null;
-                        }
-                        finally
-                        {
-                            sql.Close();
-                        }
+                            Message = "Result not found",
+                            Result = null
+                        };
                     }
+
+                    while (reader.Read())
+                    {
+                        response.Add(new SelectListItem
+                        {
+                            //Value = reader["ComponentsStockId"].ToString(),
+                            Text = reader["Description"].ToString()
+
+                        }) ;
+                    }
+                    sql.Close();
+                    return new SqlResult
+                    {
+                        Message = "Ok",
+                        Result = response
+                    };
+                }
+                catch (SqlException ex)
+                {
+                    _apiLogger.WriteLog(ex, "GetComponentData");
+                    return new SqlResult
+                    {
+                        Message = $"Error: {ex.Message}",
+                        Result = null
+                    };
+                }
             }
         }
 

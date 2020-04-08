@@ -22,6 +22,7 @@
         #endregion
 
         #region Methods
+        //Test SquaresCatalog
         public SqlResult GetSquaresCatalog()
         {
             using (SqlConnection sql = new SqlConnection(_connectionString))
