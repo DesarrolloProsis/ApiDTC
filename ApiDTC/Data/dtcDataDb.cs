@@ -53,56 +53,6 @@
             }
         }
 
-        public SqlResult GetInvalidNumbers()
-        {
-            using (SqlConnection sql = new SqlConnection(_connectionString))
-            {
-                try
-                {
-                    sql.Open();
-                    if (sql.State != ConnectionState.Open)
-                    {
-                        return new SqlResult
-                        {
-                            Message = "Sql connection is closed",
-                            Result = null
-                        };
-                    }
-
-                    SqlCommand cmd = new SqlCommand($"SELECT SinisterNumber, ReportNumber FROM [ProsisDTC3].[dbo].[DTCData]", sql);
-                    var reader = cmd.ExecuteReader();
-                    if (!reader.HasRows)
-                    {
-                        return new SqlResult
-                        {
-                            Message = "Result not found",
-                            Result = null
-                        };
-                    }
-                    var response = new List<InvalidReferenceNumbers>();
-                    while (reader.Read())
-                    {
-                        response.Add(MapToInvalidReferenceNumbers(reader));
-                    }
-                    sql.Close();
-                    return new SqlResult
-                    {
-                        Message = "Ok",
-                        Result = response
-                    };
-                }
-                catch (SqlException ex)
-                {
-                    _apiLogger.WriteLog(ex, "GetValidNumbers");
-                    return new SqlResult
-                    {
-                        Message = $"Error: {ex.Message}",
-                        Result = null
-                    };
-                }
-            }
-        }
-
         public SqlResult GetReferenceNumber(string referenceNumber)
         {
             using(SqlConnection sql = new SqlConnection(_connectionString))
@@ -270,15 +220,6 @@
                     };
                 }
             }
-        }
-
-        private InvalidReferenceNumbers MapToInvalidReferenceNumbers(SqlDataReader reader)
-        {
-            return new InvalidReferenceNumbers()
-            {
-                SinisterNumber = reader["SinisterNumber"].ToString(),
-                ReportNumber = reader["ReportNumber"].ToString(),
-            };
         }
 
         private DtcData MapTodtcData(SqlDataReader reader)
