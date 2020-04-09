@@ -25,35 +25,30 @@
         #endregion
 
         #region Methods
-        public object GetStoredDtcData(DtcData dtcData)
+        public SqlResult GetStoredDtcData(DtcData dtcData)
         {
             using (SqlConnection sql = new SqlConnection(_connectionString))
             {
-                using (SqlCommand cmd = new SqlCommand("",sql))
+                try
                 {
-                    try
+                    SqlCommand cmd = new SqlCommand($"insert into DTCData (ReferenceNumber, SinisterNumber, ReportNumber, SinisterDate, FailureDate, FailureNumber, ShippingDate, ElaborationDate, Observation, Diagnosis, TypeDescriptionId, UserId, AgremmentInfoId)  values ('{dtcData.ReferenceNumber}','{dtcData.SinisterNumber}', '{dtcData.ReportNumber}', '{dtcData.SinisterDate.ToString("yyyy-MM-dd")}', '{dtcData.FailureDate.ToString("yyyy-MM-dd")}', '{dtcData.FailureNumber}', '{dtcData.ShippingDate.ToString("yyyy-MM-dd")}', '{dtcData.ElaborationDate.ToString("yyyy-MM-dd")}', '{dtcData.Observation}', '{dtcData.Diagnosis}', {dtcData.TypeDescriptionId}, {dtcData.UserId},  {dtcData.AgremmentInfoId} )", sql);
+                    sql.Open();
+                    bool insertUp = Convert.ToBoolean(cmd.ExecuteNonQuery());
+                    sql.Close();
+                    return new SqlResult
                     {
-                        string query = string.Empty;
-
-                        //Query para saber si existe ReferenceNumber
-                        query = $"insert into DTCData (ReferenceNumber, SinisterNumber, ReportNumber, SinisterDate, FailureDate, FailureNumber, ShippingDate, ElaborationDate, Observation, Diagnosis, TypeDescriptionId, UserId, AgremmentInfoId,DateStamp)  values ('{dtcData.ReferenceNumber}','{dtcData.SinisterNumber}', '{dtcData.ReportNumber}', '{dtcData.SinisterDate.ToString("yyyy-MM-dd")}', '{dtcData.FailureDate.ToString("yyyy-MM-dd")}', '{dtcData.FailureNumber}', '{dtcData.ShippingDate.ToString("yyyy-MM-dd")}', '{dtcData.ElaborationDate.ToString("yyyy-MM-dd")}', '{dtcData.Observation}', '{dtcData.Diagnosis}', {dtcData.TypeDescriptionId}, {dtcData.UserId},  {dtcData.AgremmentInfoId}, '{DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss")}' )";
-                        sql.Open();
-                        cmd.CommandText = query;
-                        bool insertUp = Convert.ToBoolean(cmd.ExecuteNonQuery());
-
-                        return insertUp;
-                  
-                        
-                    }
-                    catch (Exception ex)
+                        Message = "Ok",
+                        Result = $"{dtcData.ReferenceNumber}"
+                    };               
+                }
+                catch (SqlException ex)
+                {
+                    _apiLogger.WriteLog(ex, "GetStoredDtcData");
+                    return new SqlResult
                     {
-                        Console.WriteLine("\nMessage ---\n{0}", ex.Message);
-                        return ex.Message;
-                    }
-                    finally
-                    {
-                        sql.Close();
-                    }
+                        Message = $"Error: {ex.Message}",
+                        Result = null
+                    };
                 }
             }
         }
@@ -134,7 +129,7 @@
                             Result = $"{referenceNumber}"
                         };
                     }
-                    else if (count == 1)
+                    else if(count == 1)
                     {
                         return new SqlResult
                         {
@@ -145,31 +140,27 @@
                     else
                     {
                         SqlCommand lastReferenceCommand = new SqlCommand($"SELECT TOP 1 ReferenceNumber FROM [ProsisDTC3].[dbo].[DTCData] WHERE ReferenceNumber LIKE '{referenceNumber}%' ORDER BY ReferenceNumber DESC", sql);
-                        using (SqlDataReader reader = lastReferenceCommand.ExecuteReader())
+                        var reader = lastReferenceCommand.ExecuteReader();
+                        if(reader.Read())
                         {
-                            if(reader.HasRows)
+                            string result = reader["ReferenceNumber"].ToString();
+                            int lastReference = Convert.ToInt32(result.Substring(result.Length - 1)) + 1;
+                            return new SqlResult
                             {
-                                if(reader.Read())
-                                {
-                                    string result = reader["ReferenceNumber"].ToString();
-                                    int lastReference = Convert.ToInt32(result.Substring(result.Length - 1)) + 1;
-                                    return new SqlResult
-                                    {
-                                        Message = "Ok",
-                                        Result = $"{referenceNumber}-{lastReference.ToString("00")}"
-                                    };
-                                }
-                            }
+                                Message = "Ok",
+                                Result = $"{referenceNumber}-{lastReference.ToString("00")}"
+                            };
                         }
+                        return new SqlResult
+                        {
+                            Message = "Empty result",
+                            Result = null
+                        };
                     }
-                    return new SqlResult
-                    {
-                        Message = $"Error: ",
-                        Result = null
-                    };
                 }
-                catch(SqlException ex)
+                catch (SqlException ex)
                 {
+                    _apiLogger.WriteLog(ex, "GetStoredDtcData");
                     return new SqlResult
                     {
                         Message = $"Error: {ex.Message}",
@@ -178,122 +169,105 @@
                 }
             }
         }
-        public string GetReferenceNum(string refNum)
+
+        public SqlResult GetInvalidNumbers()
         {
-            using (SqlConnection sql = new SqlConnection(_connectionString))
+            using(SqlConnection sql = new SqlConnection(_connectionString))
             {
-
-                using (SqlCommand cmd = new SqlCommand("", sql))
+                try
                 {
-                    try
+                    sql.Open();
+                    if(sql.State != ConnectionState.Open)
                     {
-                        string query = string.Empty;
-                        //Query para saber si existe ReferenceNumber
-                        query = $"Select Count(*) From DTCData  where ReferenceNumber = '{refNum}' ";
-                        sql.Open();
-                        cmd.CommandText = query;
-                        bool exist = Convert.ToBoolean(cmd.ExecuteScalar());
-                        if (exist)
+                        return new SqlResult
                         {
-                            query = $"Select Count(*) From DTCData  where ReferenceNumber = '{refNum}-02' ";
-                            cmd.CommandText = query;
-                            exist = Convert.ToBoolean(cmd.ExecuteScalar());
-                            if (exist)
-                            {
-                                query = $"Select Count(*) From DTCData  where ReferenceNumber = '{refNum}-03' ";
-                                cmd.CommandText = query;
-                                exist = Convert.ToBoolean(cmd.ExecuteScalar());
-                                if (exist)
-                                {
-                                    query = $"Select Count(*) From DTCData  where ReferenceNumber = '{refNum}-04' ";
-                                    cmd.CommandText = query;
-                                    exist = Convert.ToBoolean(cmd.ExecuteScalar());
-                                    if (exist)
-                                    {
-                                        query = $"Select Count(*) From DTCData  where ReferenceNumber = '{refNum}-05' ";
-                                        cmd.CommandText = query;
-                                        exist = Convert.ToBoolean(cmd.ExecuteScalar());
-                                        var refNum2 = refNum + "-05";
-                                        return refNum2;
-                                    }
-                                    else
-                                    {
-                                        var refNum2 = refNum + "-04";
-                                        return refNum2;
-                                    }
-                                }
-                                else
-                                {
-                                    var refNum2 = refNum + "-03";
-                                    return refNum2;
-                                }
-                            }
-                            else
-                            {
-                                var refNum2 = refNum + "-02";
-                                return refNum2;
-                            }
-                        }
-                        else
-                        {
-                            var response = new List<DtcData>();
-                            return refNum;
-                        }
-                        //var response = new List<DTCData>();
-                        //int noRegistros = Convert.ToInt32(cmd.ExecuteScalar());
-                        //return noRegistros;
+                            Message = "Sql connection is closed",
+                            Result = null
+                        };
+                    }
 
-                    }
-                    catch (Exception ex)
+                    SqlCommand cmd = new SqlCommand($"SELECT SinisterNumber, ReportNumber FROM [ProsisDTC3].[dbo].[DTCData]", sql);
+                    var reader = cmd.ExecuteReader();
+                    if(!reader.HasRows)
                     {
-                        Console.WriteLine("\nMessage ---\n{0}", ex.Message);
-                        return null;
+                        return new SqlResult
+                        {
+                            Message = "Result not found",
+                            Result = null
+                        };
                     }
-                    finally
+                    var response = new List<InvalidReferenceNumbers>();
+                    while (reader.Read())
                     {
-                        sql.Close();
+                        response.Add(MapToInvalidReferenceNumbers(reader));
                     }
+                    sql.Close();
+                    return new SqlResult
+                    {
+                        Message = "Ok",
+                        Result = response
+                    };
+                }
+                catch (SqlException ex)
+                {
+                    _apiLogger.WriteLog(ex, "GetValidNumbers");
+                    return new SqlResult
+                    {
+                        Message = $"Error: {ex.Message}",
+                        Result = null
+                    };
                 }
             }
         }
 
-        public List<DtcData> GetDTC()
+        public SqlResult GetDTC()
         {
             using (SqlConnection sql = new SqlConnection(_connectionString))
             {
-
-                using (SqlCommand cmd = new SqlCommand("", sql))
+                try
                 {
-                    try
+                    SqlCommand cmd = new SqlCommand("Select * From DTCData", sql);
+                    //Query para saber si existe ReferenceNumber
+                    sql.Open();
+                    if(sql.State != ConnectionState.Open)
                     {
-
-                        string query = string.Empty;
-
-                        //Query para saber si existe ReferenceNumber
-                        query = $"Select * From DTCData";
-                        sql.Open();
-                        cmd.CommandText = query;
-                        var response = new List<DtcData>();
-                        var reader = cmd.ExecuteReader();
-
-                        while (reader.Read())
+                        return new SqlResult
                         {
-                            response.Add(MapTodtcData(reader));
-                        }
-
-                        return response;
-                        //int noRegistros = Convert.ToInt32(cmd.ExecuteScalar());
-
+                            Message = "Sql connection is closed",
+                            Result = null
+                        };
                     }
-                    catch (Exception ex)
+                    var response = new List<DtcData>();
+                    var reader = cmd.ExecuteReader();
+                    if(!reader.HasRows)
                     {
-                        Console.WriteLine("\nMessage ---\n{0}", ex.Message);
-                        return null;
+                        return new SqlResult
+                        {
+                            Message = "Result not found",
+                            Result = null
+                        };
                     }
-                    finally
+                    while (reader.Read())
                     {
-                        sql.Close();
+                        response.Add(MapTodtcData(reader));
                     }
+                    sql.Close();
+                    return new SqlResult
+                    {
+                        Message = "Ok",
+                        Result = response
+                    };
+                    //int noRegistros = Convert.ToInt32(cmd.ExecuteScalar());
+
+                }
+                catch (SqlException ex)
+                {
+                    _apiLogger.WriteLog(ex, "GetStoredDtcData");
+                    return new SqlResult
+                    {
+                        Message = $"Error: {ex.Message}",
+                        Result = null
+                    };
                 }
             }
         }
@@ -324,6 +298,14 @@
                 TypeDescriptionId = (int)reader["TypeDescriptionId"],
                 UserId = (int)reader["UserId"],
                 AgremmentInfoId = (int)reader["AgremmentInfoId"],
+            };
+        }
+        private InvalidReferenceNumbers MapToInvalidReferenceNumbers(SqlDataReader reader)
+        {
+            return new InvalidReferenceNumbers()
+            {
+                SinisterNumber = reader["SinisterNumber"].ToString(),
+                ReportNumber = reader["ReportNumber"].ToString(),
             };
         }
         #endregion

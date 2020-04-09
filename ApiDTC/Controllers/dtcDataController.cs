@@ -18,7 +18,7 @@
 
         //GET: api/dtcData
        [HttpGet]
-        public ActionResult<List<DtcData>> Get()
+        public ActionResult<SqlResult> Get()
         {
             return _db.GetDTC();
         }
@@ -46,9 +46,10 @@
             return result;
         }
 
+        //TODO Ajustar petición POST nuevo DTC
         // POST: api/dtcData
         [HttpPost]
-        public object Post([FromBody] DtcData dtcData)
+        public SqlResult Post([FromBody] DtcData dtcData)
         {
              return _db.GetStoredDtcData(dtcData);
 

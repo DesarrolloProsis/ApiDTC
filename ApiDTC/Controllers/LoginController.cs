@@ -24,24 +24,25 @@ namespace ApiDTC.Controllers
 
         // GET: api/Login
         [HttpGet("{userName}/{passWord}/{flag}")]
-        public IEnumerable<Login> GetLogin(string userName, string passWord, bool flag)
-        {                        
-               return _db.GetStoreLogin(userName, passWord, flag);
-
-
+        public IActionResult GetLogin(string userName, string passWord, bool flag)
+        {        
+            var response = _db.GetStoreLogin(userName, passWord, flag);
+            if(response.Result == null)
+                return NotFound(response);
+            else
+                return Ok(response);
         }
         // GET: api/Login
         [HttpGet("ValidUser/{userName}/{passWord}/{flag}")]
-        public IEnumerable<Cookie> GetCokie(string userName, string passWord, bool flag)
+        public ActionResult<SqlResult> GetCookie(string userName, string passWord, bool flag)
         {
-                                      
-                return _db.GetStoreLoginCokie(userName, passWord, flag);
+            return _db.GetStoreLoginCookie(userName, passWord, flag);
 
         }
         // GET: api/Login
         //Regresa técnicos de plaza
         [HttpGet("buscarTec/{numPlaza}")]
-        public List<SelectListItem> GetCokie(string numPlaza)
+        public ActionResult<SqlResult> GetCookie(string numPlaza)
         {
 
             return _db.GetTec(numPlaza);
@@ -50,12 +51,9 @@ namespace ApiDTC.Controllers
         }
         // GET: api/Login
         [HttpGet("buscarHeaderTec/{idTec}")]
-        public IEnumerable<Login> GetCokie(int idTec)
+        public ActionResult<SqlResult> GetCokie(int idTec)
         {
-
             return _db.GetHeadTec(idTec);
-
-
         }
        
     }
