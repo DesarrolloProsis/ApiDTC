@@ -18,7 +18,7 @@
 
         //GET: api/dtcData
        [HttpGet]
-        public ActionResult<SqlResult> Get()
+        public ActionResult<OperationResult> Get()
         {
             return _db.GetDTC();
         }
@@ -31,25 +31,25 @@
         //}
 
         [HttpGet("{refNum}")]
-        public ActionResult<SqlResult> GetDtcData(string refNum)
+        public ActionResult<OperationResult> GetDtcData(string refNum)
         {
             //string resultado = _db.GetReferenceNum(refNum);
-            SqlResult result = _db.GetReferenceNumber(refNum);
+            OperationResult result = _db.GetReferenceNumber(refNum);
             return result;
         }
 
         [HttpGet("InvalidReferenceNumbers")]
-        public ActionResult<SqlResult> GetInvalidReferenceNumbers()
+        public ActionResult<OperationResult> GetInvalidReferenceNumbers()
         {
             //string resultado = _db.GetReferenceNum(refNum);
-            SqlResult result = _db.GetInvalidNumbers();
+            OperationResult result = _db.GetInvalidNumbers();
             return result;
         }
 
         //TODO Ajustar petición POST nuevo DTC
         // POST: api/dtcData
         [HttpPost]
-        public SqlResult Post([FromBody] DtcData dtcData)
+        public OperationResult Post([FromBody] DtcData dtcData)
         {
              return _db.GetStoredDtcData(dtcData);
 

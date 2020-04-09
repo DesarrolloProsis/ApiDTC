@@ -58,12 +58,7 @@
             }
         }
 
-        public string ConverToMoneda(string value)
-        {
-            Moneda moneda = new Moneda();
-            return moneda.Convertir(value, true);
-
-        }
+        
         #endregion
     }
 }

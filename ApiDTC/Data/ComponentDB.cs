@@ -27,7 +27,7 @@
         #endregion
 
         #region Methods
-        public SqlResult GetComponentData(string convenio, string plaza, string Id)
+        public OperationResult GetComponentData(string convenio, string plaza, string Id)
         {
             using (SqlConnection sql = new SqlConnection(_connectionString))
             {
@@ -44,7 +44,7 @@
                         sql.Open();
                         if(sql.State != ConnectionState.Open)
                         {
-                            return new SqlResult
+                            return new OperationResult
                             {
                                 Message = "Sql connection is closed",
                                 Result = null
@@ -54,7 +54,7 @@
                         var reader = cmd.ExecuteReader();
                         if(!reader.HasRows)
                         {
-                            return new SqlResult
+                            return new OperationResult
                             {
                                 Message = "Result not found",
                                 Result = null
@@ -77,7 +77,7 @@
 
                         object json = new { response, listLane };
                         sql.Close();
-                        return new SqlResult
+                        return new OperationResult
                         {
                             Message = "Ok",
                             Result = json
@@ -86,7 +86,7 @@
                     catch (SqlException ex)
                     {
                         _apiLogger.WriteLog(ex, "GetComponentData");
-                        return new SqlResult
+                        return new OperationResult
                         {
                             Message = $"Error: {ex.Message}",
                             Result = null
@@ -97,7 +97,7 @@
         }
 
         //Revisar
-        public SqlResult GetComponentsData()
+        public OperationResult GetComponentsData()
         {
             using (SqlConnection sql = new SqlConnection(_connectionString))
             {
@@ -107,7 +107,7 @@
                     sql.Open();
                     if(sql.State != ConnectionState.Open)
                     {
-                        return new SqlResult
+                        return new OperationResult
                         {
                             Message = "Sql connection is closed",
                             Result = null
@@ -118,7 +118,7 @@
                     
                     if(!reader.HasRows)
                     {
-                        return new SqlResult
+                        return new OperationResult
                         {
                             Message = "Result not found",
                             Result = null
@@ -135,7 +135,7 @@
                         }) ;
                     }
                     sql.Close();
-                    return new SqlResult
+                    return new OperationResult
                     {
                         Message = "Ok",
                         Result = response
@@ -144,7 +144,7 @@
                 catch (SqlException ex)
                 {
                     _apiLogger.WriteLog(ex, "GetComponentData");
-                    return new SqlResult
+                    return new OperationResult
                     {
                         Message = $"Error: {ex.Message}",
                         Result = null

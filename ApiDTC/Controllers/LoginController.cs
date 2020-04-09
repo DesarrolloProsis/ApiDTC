@@ -34,7 +34,7 @@ namespace ApiDTC.Controllers
         }
         // GET: api/Login
         [HttpGet("ValidUser/{userName}/{passWord}/{flag}")]
-        public ActionResult<SqlResult> GetCookie(string userName, string passWord, bool flag)
+        public ActionResult<OperationResult> GetCookie(string userName, string passWord, bool flag)
         {
             return _db.GetStoreLoginCookie(userName, passWord, flag);
 
@@ -42,7 +42,7 @@ namespace ApiDTC.Controllers
         // GET: api/Login
         //Regresa técnicos de plaza
         [HttpGet("buscarTec/{numPlaza}")]
-        public ActionResult<SqlResult> GetCookie(string numPlaza)
+        public ActionResult<OperationResult> GetCookie(string numPlaza)
         {
 
             return _db.GetTec(numPlaza);
@@ -51,7 +51,7 @@ namespace ApiDTC.Controllers
         }
         // GET: api/Login
         [HttpGet("buscarHeaderTec/{idTec}")]
-        public ActionResult<SqlResult> GetCokie(int idTec)
+        public ActionResult<OperationResult> GetCokie(int idTec)
         {
             return _db.GetHeadTec(idTec);
         }

@@ -24,7 +24,7 @@ namespace ApiDTC.Controllers
 
         // GET: api/SquaresCatalog
         [HttpGet]
-        public ActionResult<SqlResult> Get()
+        public ActionResult<OperationResult> Get()
         {
             return _db.GetSquaresCatalog();
         }

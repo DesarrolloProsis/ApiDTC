@@ -1,6 +1,6 @@
 namespace ApiDTC.Models
 {
-    public class SqlResult
+    public class OperationResult
     {
         #region Properties
         public string Message { get; set; }

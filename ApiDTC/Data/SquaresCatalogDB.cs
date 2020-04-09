@@ -23,7 +23,7 @@
 
         #region Methods
         //Test SquaresCatalog
-        public SqlResult GetSquaresCatalog()
+        public OperationResult GetSquaresCatalog()
         {
             using (SqlConnection sql = new SqlConnection(_connectionString))
             {
@@ -33,7 +33,7 @@
                     
                     if(sql.State != ConnectionState.Open)
                     {
-                        return new SqlResult
+                        return new OperationResult
                         {
                             Message = "SQL connection is closed",
                             Result = null
@@ -54,7 +54,7 @@
                             });
                         }
                         sql.Close();
-                        return new SqlResult
+                        return new OperationResult
                         {
                             Message = "Ok",
                             Result = response
@@ -62,7 +62,7 @@
                     }
                     else
                     {
-                        return new SqlResult
+                        return new OperationResult
                         {
                             Message = "Empty result",
                             Result = null
@@ -71,7 +71,7 @@
                 }
                 catch (SqlException ex)
                 {
-                    return new SqlResult
+                    return new OperationResult
                     {
                         Message = $"Error: {ex.Message}",
                         Result = null

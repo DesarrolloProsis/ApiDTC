@@ -25,7 +25,7 @@
         #endregion
 
         #region Methods
-        public SqlResult GetStoredDtcData(DtcData dtcData)
+        public OperationResult GetStoredDtcData(DtcData dtcData)
         {
             using (SqlConnection sql = new SqlConnection(_connectionString))
             {
@@ -35,7 +35,7 @@
                     sql.Open();
                     bool insertUp = Convert.ToBoolean(cmd.ExecuteNonQuery());
                     sql.Close();
-                    return new SqlResult
+                    return new OperationResult
                     {
                         Message = "Ok",
                         Result = $"{dtcData.ReferenceNumber}"
@@ -44,7 +44,7 @@
                 catch (SqlException ex)
                 {
                     _apiLogger.WriteLog(ex, "GetStoredDtcData");
-                    return new SqlResult
+                    return new OperationResult
                     {
                         Message = $"Error: {ex.Message}",
                         Result = null
@@ -53,7 +53,7 @@
             }
         }
 
-        public SqlResult GetReferenceNumber(string referenceNumber)
+        public OperationResult GetReferenceNumber(string referenceNumber)
         {
             using(SqlConnection sql = new SqlConnection(_connectionString))
             {
@@ -62,7 +62,7 @@
                     sql.Open();
                     if(sql.State != ConnectionState.Open)
                     {
-                        return new SqlResult
+                        return new OperationResult
                         {
                             Message = "Sql connection is closed",
                             Result = null
@@ -73,7 +73,7 @@
                     Int32 count = (Int32) countCommand.ExecuteScalar();
                     if(count == 0)
                     {
-                        return new SqlResult
+                        return new OperationResult
                         {
                             Message = "Ok",
                             Result = $"{referenceNumber}"
@@ -81,7 +81,7 @@
                     }
                     else if(count == 1)
                     {
-                        return new SqlResult
+                        return new OperationResult
                         {
                             Message = "Ok",
                             Result = $"{referenceNumber}-02"
@@ -95,13 +95,13 @@
                         {
                             string result = reader["ReferenceNumber"].ToString();
                             int lastReference = Convert.ToInt32(result.Substring(result.Length - 1)) + 1;
-                            return new SqlResult
+                            return new OperationResult
                             {
                                 Message = "Ok",
                                 Result = $"{referenceNumber}-{lastReference.ToString("00")}"
                             };
                         }
-                        return new SqlResult
+                        return new OperationResult
                         {
                             Message = "Empty result",
                             Result = null
@@ -111,7 +111,7 @@
                 catch (SqlException ex)
                 {
                     _apiLogger.WriteLog(ex, "GetStoredDtcData");
-                    return new SqlResult
+                    return new OperationResult
                     {
                         Message = $"Error: {ex.Message}",
                         Result = null
@@ -120,7 +120,7 @@
             }
         }
 
-        public SqlResult GetInvalidNumbers()
+        public OperationResult GetInvalidNumbers()
         {
             using(SqlConnection sql = new SqlConnection(_connectionString))
             {
@@ -129,7 +129,7 @@
                     sql.Open();
                     if(sql.State != ConnectionState.Open)
                     {
-                        return new SqlResult
+                        return new OperationResult
                         {
                             Message = "Sql connection is closed",
                             Result = null
@@ -140,7 +140,7 @@
                     var reader = cmd.ExecuteReader();
                     if(!reader.HasRows)
                     {
-                        return new SqlResult
+                        return new OperationResult
                         {
                             Message = "Result not found",
                             Result = null
@@ -152,7 +152,7 @@
                         response.Add(MapToInvalidReferenceNumbers(reader));
                     }
                     sql.Close();
-                    return new SqlResult
+                    return new OperationResult
                     {
                         Message = "Ok",
                         Result = response
@@ -161,7 +161,7 @@
                 catch (SqlException ex)
                 {
                     _apiLogger.WriteLog(ex, "GetValidNumbers");
-                    return new SqlResult
+                    return new OperationResult
                     {
                         Message = $"Error: {ex.Message}",
                         Result = null
@@ -170,7 +170,7 @@
             }
         }
 
-        public SqlResult GetDTC()
+        public OperationResult GetDTC()
         {
             using (SqlConnection sql = new SqlConnection(_connectionString))
             {
@@ -181,7 +181,7 @@
                     sql.Open();
                     if(sql.State != ConnectionState.Open)
                     {
-                        return new SqlResult
+                        return new OperationResult
                         {
                             Message = "Sql connection is closed",
                             Result = null
@@ -191,7 +191,7 @@
                     var reader = cmd.ExecuteReader();
                     if(!reader.HasRows)
                     {
-                        return new SqlResult
+                        return new OperationResult
                         {
                             Message = "Result not found",
                             Result = null
@@ -202,7 +202,7 @@
                         response.Add(MapTodtcData(reader));
                     }
                     sql.Close();
-                    return new SqlResult
+                    return new OperationResult
                     {
                         Message = "Ok",
                         Result = response
@@ -213,7 +213,7 @@
                 catch (SqlException ex)
                 {
                     _apiLogger.WriteLog(ex, "GetStoredDtcData");
-                    return new SqlResult
+                    return new OperationResult
                     {
                         Message = $"Error: {ex.Message}",
                         Result = null

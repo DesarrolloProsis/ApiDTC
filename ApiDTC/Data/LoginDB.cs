@@ -27,7 +27,7 @@
 
         #region Methods
         //TODO test Login
-        public SqlResult GetTec(string numPlaza)
+        public OperationResult GetTec(string numPlaza)
         {
             using (SqlConnection sql = new SqlConnection(_connectionString))
             {
@@ -41,7 +41,7 @@
                         sql.Open();
                         if(sql.State != ConnectionState.Open)
                         {
-                            return new SqlResult
+                            return new OperationResult
                             {
                                 Message = "Sql connection is closed",
                                 Result = null
@@ -51,7 +51,7 @@
                         var reader = cmd.ExecuteReader();
                         if(!reader.HasRows)
                         {
-                            return new SqlResult
+                            return new OperationResult
                             {
                                 Message = "Result not found",
                                 Result = null
@@ -70,7 +70,7 @@
                             });
                         }
                         sql.Close();
-                        return new SqlResult
+                        return new OperationResult
                         {
                             Message = "Ok",
                             Result = response
@@ -79,7 +79,7 @@
                     catch (SqlException ex)
                     {
                         _apiLogger.WriteLog(ex, "GetTec");
-                        return new SqlResult
+                        return new OperationResult
                         {
                             Message = $"Error: {ex.Message}",
                             Result = null
@@ -88,7 +88,7 @@
                 }
             }
         }
-        public SqlResult GetHeadTec(int idTec)
+        public OperationResult GetHeadTec(int idTec)
         {
             using (SqlConnection sql = new SqlConnection(_connectionString))
             {
@@ -101,7 +101,7 @@
                         sql.Open();
                         if(sql.State != ConnectionState.Open)
                         {
-                            return new SqlResult
+                            return new OperationResult
                             {
                                 Message = "Sql connection is closed",
                                 Result = null
@@ -113,7 +113,7 @@
                         var reader = cmd.ExecuteReader();
                         if(!reader.HasRows)
                         {
-                            return new SqlResult
+                            return new OperationResult
                             {
                                 Message = "Result not found",
                                 Result = null
@@ -124,7 +124,7 @@
                             response.Add(MapToLogin(reader));
                         }
                         sql.Close();
-                        return new SqlResult
+                        return new OperationResult
                         {
                             Message = "Ok",
                             Result = response
@@ -133,7 +133,7 @@
                     catch (SqlException ex)
                     {
                         _apiLogger.WriteLog(ex, "GetHeadTec");
-                        return new SqlResult
+                        return new OperationResult
                         {
                             Message = $"Error: {ex.Message}",
                             Result = null
@@ -143,7 +143,7 @@
             }
         }
 
-        public SqlResult GetStoreLogin(string nombreUsuario, string passWord, bool flag)
+        public OperationResult GetStoreLogin(string nombreUsuario, string passWord, bool flag)
         {
             using (SqlConnection sql = new SqlConnection(_connectionString))
             {
@@ -159,7 +159,7 @@
                         sql.Open();
                         if(sql.State != ConnectionState.Open)
                         {
-                            return new SqlResult
+                            return new OperationResult
                             {
                                 Message = "Sql connection is closed",
                                 Result = null
@@ -171,7 +171,7 @@
                         var reader = cmd.ExecuteReader();
                         if(!reader.HasRows)
                         {
-                            return new SqlResult
+                            return new OperationResult
                             {
                                 Message = "Result not found",
                                 Result = null
@@ -182,7 +182,7 @@
                             response.Add(MapToLogin(reader));
                         }
                         sql.Close();
-                        return new SqlResult
+                        return new OperationResult
                         {
                             Message = "Ok",
                             Result = response
@@ -191,7 +191,7 @@
                     catch (SqlException ex)
                     {
                         _apiLogger.WriteLog(ex, "GetStoreLogin");
-                        return new SqlResult
+                        return new OperationResult
                         {
                             Message = $"Error: {ex.Message}",
                             Result = null
@@ -200,7 +200,7 @@
                 }
             }
         }
-        public SqlResult GetStoreLoginCookie(string nombreUsuario, string passWord, bool flag)
+        public OperationResult GetStoreLoginCookie(string nombreUsuario, string passWord, bool flag)
         {
             using (SqlConnection sql = new SqlConnection(_connectionString))
             {
@@ -216,7 +216,7 @@
                         sql.Open();
                         if(sql.State != ConnectionState.Open)
                         {
-                            return new SqlResult
+                            return new OperationResult
                             {
                                 Message = "Sql connection is closed",
                                 Result = null
@@ -226,7 +226,7 @@
                         var reader = cmd.ExecuteReader();
                         if(!reader.HasRows)
                         {
-                            return new SqlResult
+                            return new OperationResult
                             {
                                 Message = "Result not found",
                                 Result = null
@@ -238,7 +238,7 @@
                             response.Add(MapToCookie(reader));
                         }
                         sql.Close();
-                        return new SqlResult
+                        return new OperationResult
                         {
                             Message = "Ok",
                             Result = response
@@ -247,7 +247,7 @@
                     catch (SqlException ex)
                     {
                         _apiLogger.WriteLog(ex, "GetComponentData");
-                        return new SqlResult
+                        return new OperationResult
                         {
                             Message = $"Error: {ex.Message}",
                             Result = null

@@ -1,11 +1,8 @@
 ﻿namespace ApiDTC.Controllers
 {
     using System;
-    using System.Collections.Generic;
     using ApiDTC.Data;
-    using ApiDTC.Models;
     using Microsoft.AspNetCore.Mvc;
-    using Microsoft.AspNetCore.Mvc.Rendering;
     
     [Route("api/[controller]")]
     [ApiController]

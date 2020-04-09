@@ -32,7 +32,7 @@
                 {
                     sql.Open();
                     int conteo = 1;
-                    SqlResult sqlResult = new SqlResult();
+                    OperationResult sqlResult = new OperationResult();
                     bool insertUp;     
                     foreach (var item in requestedComponent)
                     {
@@ -61,7 +61,7 @@
                             cmd.Parameters.Add("@intPartida", SqlDbType.Int).Value = conteo;
                             //TODO test components insert
                             insertUp = Convert.ToBoolean(cmd.ExecuteNonQuery());
-                            sqlResult.Message = insertUp ? "Ok" : $"No se pudo insertar la fila número {conteo} del modelo {item.Modelo}";
+                            sqlResult.Message = insertUp ? "Ok" : $"No se pudo insertar la fila número {conteo} del modelo {item.Modelo} tipo 1.";
                             if(!insertUp)
                             {
                                 sqlResult.Result = false;
@@ -99,12 +99,19 @@
 
                             cmd.Parameters.Add("@intPartida", SqlDbType.Int).Value = conteo;
                             
-
-                            cmd.ExecuteNonQuery();
+                            //TODO test components insert
+                            insertUp = Convert.ToBoolean(cmd.ExecuteNonQuery());
+                            sqlResult.Message = insertUp ? "Ok" : $"No se pudo insertar la fila número {conteo} del modelo {item.Modelo} tipo 2.";
+                            if(!insertUp)
+                            {
+                                sqlResult.Result = false;
+                                return sqlResult;
+                            }
+                            sqlResult.Result = insertUp ? true : false;
                         }
                         conteo++;
                     }
-                    return null;
+                    return sqlResult;
                 }
                 catch (Exception ex)
                 {
