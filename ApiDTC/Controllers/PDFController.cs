@@ -562,7 +562,7 @@ namespace ApiDTC.Controllers
 
                 write.Close();
                 doc.Close();
-                file.Dispose();
+                file.Close();
 
 
                 var pdf = new FileStream("ReporteDTC-" + refNum + ".pdf", FileMode.Open, FileAccess.Read);

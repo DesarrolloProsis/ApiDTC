@@ -6,22 +6,26 @@
     using System.Collections.Generic;
     using System.Data.SqlClient;
     using System.Data;
+    using ApiDTC.Services;
 
     public class DtcDataDb
     {
         #region Attributes
         private readonly string _connectionString;
+
+        private ApiLogger _apiLogger;
         #endregion
 
         #region Constructor
-        public DtcDataDb(IConfiguration configuration)
+        public DtcDataDb(IConfiguration configuration, ApiLogger apiLogger)
         {
+            _apiLogger = apiLogger;
             _connectionString = configuration.GetConnectionString("defaultConnection");
         }
         #endregion
 
         #region Methods
-        public bool GetStoredDtcData(DtcData dtcData)
+        public object GetStoredDtcData(DtcData dtcData)
         {
             using (SqlConnection sql = new SqlConnection(_connectionString))
             {
@@ -32,7 +36,7 @@
                         string query = string.Empty;
 
                         //Query para saber si existe ReferenceNumber
-                        query = $"insert into DTCData (ReferenceNumber, SinisterNumber, ReportNumber, SinisterDate, FailureDate, FailureNumber, ShippingDate, ElaborationDate, Observation, Diagnosis, TypeDescriptionId, UserId, AgremmentInfoId)  values ('{dtcData.ReferenceNumber}','{dtcData.SinisterNumber}', '{dtcData.ReportNumber}', '{dtcData.SinisterDate.ToString("yyyy-MM-dd")}', '{dtcData.FailureDate.ToString("yyyy-MM-dd")}', '{dtcData.FailureNumber}', '{dtcData.ShippingDate.ToString("yyyy-MM-dd")}', '{dtcData.ElaborationDate.ToString("yyyy-MM-dd")}', '{dtcData.Observation}', '{dtcData.Diagnosis}', {dtcData.TypeDescriptionId}, {dtcData.UserId},  {dtcData.AgremmentInfoId} )";
+                        query = $"insert into DTCData (ReferenceNumber, SinisterNumber, ReportNumber, SinisterDate, FailureDate, FailureNumber, ShippingDate, ElaborationDate, Observation, Diagnosis, TypeDescriptionId, UserId, AgremmentInfoId,DateStamp)  values ('{dtcData.ReferenceNumber}','{dtcData.SinisterNumber}', '{dtcData.ReportNumber}', '{dtcData.SinisterDate.ToString("yyyy-MM-dd")}', '{dtcData.FailureDate.ToString("yyyy-MM-dd")}', '{dtcData.FailureNumber}', '{dtcData.ShippingDate.ToString("yyyy-MM-dd")}', '{dtcData.ElaborationDate.ToString("yyyy-MM-dd")}', '{dtcData.Observation}', '{dtcData.Diagnosis}', {dtcData.TypeDescriptionId}, {dtcData.UserId},  {dtcData.AgremmentInfoId}, '{DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss")}' )";
                         sql.Open();
                         cmd.CommandText = query;
                         bool insertUp = Convert.ToBoolean(cmd.ExecuteNonQuery());
@@ -44,12 +48,62 @@
                     catch (Exception ex)
                     {
                         Console.WriteLine("\nMessage ---\n{0}", ex.Message);
-                        return false;
+                        return ex.Message;
                     }
                     finally
                     {
                         sql.Close();
                     }
+                }
+            }
+        }
+
+        public SqlResult GetInvalidNumbers()
+        {
+            using (SqlConnection sql = new SqlConnection(_connectionString))
+            {
+                try
+                {
+                    sql.Open();
+                    if (sql.State != ConnectionState.Open)
+                    {
+                        return new SqlResult
+                        {
+                            Message = "Sql connection is closed",
+                            Result = null
+                        };
+                    }
+
+                    SqlCommand cmd = new SqlCommand($"SELECT SinisterNumber, ReportNumber FROM [ProsisDTC3].[dbo].[DTCData]", sql);
+                    var reader = cmd.ExecuteReader();
+                    if (!reader.HasRows)
+                    {
+                        return new SqlResult
+                        {
+                            Message = "Result not found",
+                            Result = null
+                        };
+                    }
+                    var response = new List<InvalidReferenceNumbers>();
+                    while (reader.Read())
+                    {
+                        response.Add(MapToInvalidReferenceNumbers(reader));
+                    }
+                    sql.Close();
+                    return new SqlResult
+                    {
+                        Message = "Ok",
+                        Result = response
+                    };
+                }
+                catch (SqlException ex)
+                {
+                    _apiLogger.WriteLog(ex, "GetValidNumbers");
+                    return new SqlResult
+                    {
+                        Message = $"Error: {ex.Message}",
+                        Result = null
+                    };
                 }
             }
         }
@@ -78,6 +132,14 @@
                         {
                             Message = "Ok",
                             Result = $"{referenceNumber}"
+                        };
+                    }
+                    else if (count == 1)
+                    {
+                        return new SqlResult
+                        {
+                            Message = "Ok",
+                            Result = $"{referenceNumber}-02"
                         };
                     }
                     else
@@ -234,6 +296,15 @@
                     }
                 }
             }
+        }
+
+        private InvalidReferenceNumbers MapToInvalidReferenceNumbers(SqlDataReader reader)
+        {
+            return new InvalidReferenceNumbers()
+            {
+                SinisterNumber = reader["SinisterNumber"].ToString(),
+                ReportNumber = reader["ReportNumber"].ToString(),
+            };
         }
 
         private DtcData MapTodtcData(SqlDataReader reader)

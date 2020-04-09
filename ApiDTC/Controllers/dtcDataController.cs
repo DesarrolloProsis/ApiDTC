@@ -38,9 +38,17 @@
             return result;
         }
 
+        [HttpGet("InvalidReferenceNumbers")]
+        public ActionResult<SqlResult> GetInvalidReferenceNumbers()
+        {
+            //string resultado = _db.GetReferenceNum(refNum);
+            SqlResult result = _db.GetInvalidNumbers();
+            return result;
+        }
+
         // POST: api/dtcData
         [HttpPost]
-        public bool Post([FromBody] DtcData dtcData)
+        public object Post([FromBody] DtcData dtcData)
         {
              return _db.GetStoredDtcData(dtcData);
 

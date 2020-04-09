@@ -58,11 +58,8 @@ namespace ApiDTC.Data
                                 cmd.Parameters.Add("@intLifeTimeExpected", SqlDbType.Int).Value = item.intLifeTimeExpected;
                                 cmd.Parameters.Add("@dateLifeTimeReal", SqlDbType.DateTime).Value = item.dateLifeTimeReal;
 
-                                cmd.Parameters.Add("@intPartida", SqlDbType.Int).Value = conteo;
-
-                            
-
-                            cmd.ExecuteNonQuery();
+                                cmd.Parameters.Add("@intPartida", SqlDbType.Int).Value = conteo;                            
+                                cmd.ExecuteNonQuery();
                             }
                         conteo++;
                     }
