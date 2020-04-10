@@ -24,7 +24,7 @@ namespace ApiDTC.Controllers
 
         // GET: api/TypeDescriptions
         [HttpGet]
-        public ActionResult<OperationResult> Get()
+        public ActionResult<Response> Get()
         {
             return _db.GetTypeDescriptionsData();
         }

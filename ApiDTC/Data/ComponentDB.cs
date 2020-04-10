@@ -16,18 +16,23 @@
         private readonly string _connectionString;
 
         private ApiLogger _apiLogger;
+
+        private SqlResult _sqlResult;
         #endregion
 
         #region Constructor
-        public ComponentDb(IConfiguration configuration, ApiLogger apiLogger)
+        public ComponentDb(IConfiguration configuration, ApiLogger apiLogger, SqlResult sqlResult)
         {
+            _sqlResult = sqlResult;
             _apiLogger = apiLogger;
             _connectionString = configuration.GetConnectionString("defaultConnection");
         }
         #endregion
 
         #region Methods
-        public OperationResult GetComponentData(string convenio, string plaza, string Id)
+
+        //TODO Mapper foreach var lane
+        public Response GetComponentData(string convenio, string plaza, string Id)
         {
             using (SqlConnection sql = new SqlConnection(_connectionString))
             {
@@ -44,7 +49,7 @@
                         sql.Open();
                         if(sql.State != ConnectionState.Open)
                         {
-                            return new OperationResult
+                            return new Response
                             {
                                 Message = "Sql connection is closed",
                                 Result = null
@@ -54,7 +59,7 @@
                         var reader = cmd.ExecuteReader();
                         if(!reader.HasRows)
                         {
-                            return new OperationResult
+                            return new Response
                             {
                                 Message = "Result not found",
                                 Result = null
@@ -77,7 +82,7 @@
 
                         object json = new { response, listLane };
                         sql.Close();
-                        return new OperationResult
+                        return new Response
                         {
                             Message = "Ok",
                             Result = json
@@ -86,7 +91,7 @@
                     catch (SqlException ex)
                     {
                         _apiLogger.WriteLog(ex, "GetComponentData");
-                        return new OperationResult
+                        return new Response
                         {
                             Message = $"Error: {ex.Message}",
                             Result = null
@@ -97,59 +102,12 @@
         }
 
         //Revisar
-        public OperationResult GetComponentsData()
+        public Response GetComponentsData()
         {
             using (SqlConnection sql = new SqlConnection(_connectionString))
             {
-                try
-                {
-                    SqlCommand cmd = new SqlCommand("select a.Component as description from SquareInventory a join LanesCatalog b on (a.CapufeLaneNum = b.CapufeLaneNum and a.IdGare = b.IdGare) where b.SquareCatalogId = '102' group by a.Component", sql);
-                    sql.Open();
-                    if(sql.State != ConnectionState.Open)
-                    {
-                        return new OperationResult
-                        {
-                            Message = "Sql connection is closed",
-                            Result = null
-                        };
-                    }
-                    var response = new List<SelectListItem>();
-                    var reader = cmd.ExecuteReader();
-                    
-                    if(!reader.HasRows)
-                    {
-                        return new OperationResult
-                        {
-                            Message = "Result not found",
-                            Result = null
-                        };
-                    }
-
-                    while (reader.Read())
-                    {
-                        response.Add(new SelectListItem
-                        {
-                            //Value = reader["ComponentsStockId"].ToString(),
-                            Text = reader["Description"].ToString()
-
-                        }) ;
-                    }
-                    sql.Close();
-                    return new OperationResult
-                    {
-                        Message = "Ok",
-                        Result = response
-                    };
-                }
-                catch (SqlException ex)
-                {
-                    _apiLogger.WriteLog(ex, "GetComponentData");
-                    return new OperationResult
-                    {
-                        Message = $"Error: {ex.Message}",
-                        Result = null
-                    };
-                }
+                SqlCommand cmd = new SqlCommand("select a.Component as description from SquareInventory a join LanesCatalog b on (a.CapufeLaneNum = b.CapufeLaneNum and a.IdGare = b.IdGare) where b.SquareCatalogId = '102' group by a.Component", sql);
+                return _sqlResult.GetList<ComponentsDescription>(cmd, sql);
             }
         }
 

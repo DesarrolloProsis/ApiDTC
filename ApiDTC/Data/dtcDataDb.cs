@@ -13,19 +13,24 @@
         #region Attributes
         private readonly string _connectionString;
 
+        private SqlResult _sqlResult;
+
         private ApiLogger _apiLogger;
         #endregion
 
         #region Constructor
-        public DtcDataDb(IConfiguration configuration, ApiLogger apiLogger)
+        public DtcDataDb(IConfiguration configuration, SqlResult sqlResult, ApiLogger apiLogger)
         {
+            _sqlResult = sqlResult;
             _apiLogger = apiLogger;
             _connectionString = configuration.GetConnectionString("defaultConnection");
         }
         #endregion
 
         #region Methods
-        public OperationResult GetStoredDtcData(DtcData dtcData)
+
+        //TODO Insert generic method
+        public Response GetStoredDtcData(DtcData dtcData)
         {
             using (SqlConnection sql = new SqlConnection(_connectionString))
             {
@@ -35,7 +40,7 @@
                     sql.Open();
                     bool insertUp = Convert.ToBoolean(cmd.ExecuteNonQuery());
                     sql.Close();
-                    return new OperationResult
+                    return new Response
                     {
                         Message = "Ok",
                         Result = $"{dtcData.ReferenceNumber}"
@@ -44,7 +49,7 @@
                 catch (SqlException ex)
                 {
                     _apiLogger.WriteLog(ex, "GetStoredDtcData");
-                    return new OperationResult
+                    return new Response
                     {
                         Message = $"Error: {ex.Message}",
                         Result = null
@@ -53,7 +58,8 @@
             }
         }
 
-        public OperationResult GetReferenceNumber(string referenceNumber)
+        //TODO Count generic method
+        public Response GetReferenceNumber(string referenceNumber)
         {
             using(SqlConnection sql = new SqlConnection(_connectionString))
             {
@@ -62,7 +68,7 @@
                     sql.Open();
                     if(sql.State != ConnectionState.Open)
                     {
-                        return new OperationResult
+                        return new Response
                         {
                             Message = "Sql connection is closed",
                             Result = null
@@ -73,7 +79,7 @@
                     Int32 count = (Int32) countCommand.ExecuteScalar();
                     if(count == 0)
                     {
-                        return new OperationResult
+                        return new Response
                         {
                             Message = "Ok",
                             Result = $"{referenceNumber}"
@@ -81,7 +87,7 @@
                     }
                     else if(count == 1)
                     {
-                        return new OperationResult
+                        return new Response
                         {
                             Message = "Ok",
                             Result = $"{referenceNumber}-02"
@@ -95,13 +101,13 @@
                         {
                             string result = reader["ReferenceNumber"].ToString();
                             int lastReference = Convert.ToInt32(result.Substring(result.Length - 1)) + 1;
-                            return new OperationResult
+                            return new Response
                             {
                                 Message = "Ok",
                                 Result = $"{referenceNumber}-{lastReference.ToString("00")}"
                             };
                         }
-                        return new OperationResult
+                        return new Response
                         {
                             Message = "Empty result",
                             Result = null
@@ -111,7 +117,7 @@
                 catch (SqlException ex)
                 {
                     _apiLogger.WriteLog(ex, "GetStoredDtcData");
-                    return new OperationResult
+                    return new Response
                     {
                         Message = $"Error: {ex.Message}",
                         Result = null
@@ -120,105 +126,34 @@
             }
         }
 
-        public OperationResult GetInvalidNumbers()
+        public Response GetInvalidNumbers()
         {
             using(SqlConnection sql = new SqlConnection(_connectionString))
             {
-                try
-                {
-                    sql.Open();
-                    if(sql.State != ConnectionState.Open)
-                    {
-                        return new OperationResult
-                        {
-                            Message = "Sql connection is closed",
-                            Result = null
-                        };
-                    }
-
-                    SqlCommand cmd = new SqlCommand($"SELECT SinisterNumber, ReportNumber FROM [ProsisDTC3].[dbo].[DTCData]", sql);
-                    var reader = cmd.ExecuteReader();
-                    if(!reader.HasRows)
-                    {
-                        return new OperationResult
-                        {
-                            Message = "Result not found",
-                            Result = null
-                        };
-                    }
-                    var response = new List<InvalidReferenceNumbers>();
-                    while (reader.Read())
-                    {
-                        response.Add(MapToInvalidReferenceNumbers(reader));
-                    }
-                    sql.Close();
-                    return new OperationResult
-                    {
-                        Message = "Ok",
-                        Result = response
-                    };
-                }
-                catch (SqlException ex)
-                {
-                    _apiLogger.WriteLog(ex, "GetValidNumbers");
-                    return new OperationResult
-                    {
-                        Message = $"Error: {ex.Message}",
-                        Result = null
-                    };
-                }
+                SqlCommand cmd = new SqlCommand($"SELECT SinisterNumber, ReportNumber FROM [ProsisDTC3].[dbo].[DTCData]", sql);
+                return _sqlResult.GetList<InvalidReferenceNumbers>(cmd, sql);
             }
         }
 
-        public OperationResult GetDTC()
+        public Response GetDTC()
         {
             using (SqlConnection sql = new SqlConnection(_connectionString))
             {
                 try
                 {
                     SqlCommand cmd = new SqlCommand("Select * From DTCData", sql);
-                    //Query para saber si existe ReferenceNumber
-                    sql.Open();
-                    if(sql.State != ConnectionState.Open)
-                    {
-                        return new OperationResult
-                        {
-                            Message = "Sql connection is closed",
-                            Result = null
-                        };
-                    }
-                    var response = new List<DtcData>();
-                    var reader = cmd.ExecuteReader();
-                    if(!reader.HasRows)
-                    {
-                        return new OperationResult
-                        {
-                            Message = "Result not found",
-                            Result = null
-                        };
-                    }
-                    while (reader.Read())
-                    {
-                        response.Add(MapTodtcData(reader));
-                    }
-                    sql.Close();
-                    return new OperationResult
-                    {
-                        Message = "Ok",
-                        Result = response
-                    };
-                    //int noRegistros = Convert.ToInt32(cmd.ExecuteScalar());
-
+                    return _sqlResult.GetList<DtcData>(cmd, sql);
+//
                 }
-                catch (SqlException ex)
+                catch(SqlException ex)
                 {
                     _apiLogger.WriteLog(ex, "GetStoredDtcData");
-                    return new OperationResult
+                    return new Response
                     {
                         Message = $"Error: {ex.Message}",
                         Result = null
                     };
-                }
+                } 
             }
         }
 
@@ -239,6 +174,7 @@
                 TypeDescriptionId = (int)reader["TypeDescriptionId"],
                 UserId = (int)reader["UserId"],
                 AgremmentInfoId = (int)reader["AgremmentInfoId"],
+                DateStamp = Convert.ToDateTime(reader["DateStamp"].ToString())
             };
         }
         private InvalidReferenceNumbers MapToInvalidReferenceNumbers(SqlDataReader reader)

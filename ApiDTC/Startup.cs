@@ -29,6 +29,7 @@ namespace ApiDTC
         {
             services.AddCors();
             services.AddScoped<ApiLogger>();
+            services.AddScoped<SqlResult>();
             services.AddScoped<DtcDataDb>();
             services.AddScoped<ComponentDb>();
             services.AddScoped<LoginDb>();

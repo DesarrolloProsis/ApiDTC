@@ -32,7 +32,7 @@
                 {
                     sql.Open();
                     int conteo = 1;
-                    OperationResult sqlResult = new OperationResult();
+                    Response sqlResult = new Response();
                     bool insertUp;     
                     foreach (var item in requestedComponent)
                     {
