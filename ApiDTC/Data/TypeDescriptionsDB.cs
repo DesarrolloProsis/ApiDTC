@@ -29,7 +29,7 @@
         #region Methods
 
         //TODO Test TypeDescriptions
-        public OperationResult GetTypeDescriptionsData()
+        public Response GetTypeDescriptionsData()
         {
             using (SqlConnection sql = new SqlConnection(_connectionString))
             {
@@ -40,7 +40,7 @@
                     sql.Open();
                     if(sql.State != ConnectionState.Open)
                     {
-                        return new OperationResult
+                        return new Response
                         {
                             Message = "SQL connection is closed",
                             Result = null
@@ -62,7 +62,7 @@
                             });
                         }
                         sql.Close();
-                        return new OperationResult
+                        return new Response
                         {
                             Message = "Ok",
                             Result = response
@@ -70,7 +70,7 @@
                     }
                     else
                     {
-                        return new OperationResult
+                        return new Response
                         {
                             Message = "Empty result",
                             Result = null
@@ -80,7 +80,7 @@
                 catch (SqlException ex)
                 {
                     _apiLogger.WriteLog(ex, "GetTypeDescriptionsData");
-                    return new OperationResult
+                    return new Response
                     {
                         Message = $"Error: {ex.Message}",
                         Result = null

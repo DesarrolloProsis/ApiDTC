@@ -1,7 +1,6 @@
 ﻿namespace ApiDTC.Controllers
 {
     using System;
-    using System.Collections.Generic;
     using ApiDTC.Data;
     using ApiDTC.Models;
     using Microsoft.AspNetCore.Mvc;
@@ -17,10 +16,14 @@
         }
 
         //GET: api/dtcData
-       [HttpGet]
-        public ActionResult<OperationResult> Get()
-        {
-            return _db.GetDTC();
+        [HttpGet]
+        public IActionResult Get()
+        {   
+            var get = _db.GetDTC();
+            if(get.Result == null)
+                return NotFound(get);
+            else
+                return Ok(get);
         }
 
         // GET: api/dtcData/5
@@ -31,28 +34,31 @@
         //}
 
         [HttpGet("{refNum}")]
-        public ActionResult<OperationResult> GetDtcData(string refNum)
+        public IActionResult GetDtcData(string refNum)
         {
-            //string resultado = _db.GetReferenceNum(refNum);
-            OperationResult result = _db.GetReferenceNumber(refNum);
-            return result;
+            var get = _db.GetReferenceNumber(refNum);
+            if(get.Result == null)
+                return NotFound(get);
+            else
+                return Ok(get);
         }
 
         [HttpGet("InvalidReferenceNumbers")]
-        public ActionResult<OperationResult> GetInvalidReferenceNumbers()
+        public IActionResult GetInvalidReferenceNumbers()
         {
-            //string resultado = _db.GetReferenceNum(refNum);
-            OperationResult result = _db.GetInvalidNumbers();
-            return result;
+            var get = _db.GetInvalidNumbers();
+            if(get.Result == null)
+                return NotFound(get);
+            else
+                return Ok(get);
         }
 
         //TODO Ajustar petición POST nuevo DTC
         // POST: api/dtcData
         [HttpPost]
-        public OperationResult Post([FromBody] DtcData dtcData)
+        public Response Post([FromBody] DtcData dtcData)
         {
              return _db.GetStoredDtcData(dtcData);
-
         }
 
         // PUT: api/dtcData/5

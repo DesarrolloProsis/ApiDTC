@@ -14,27 +14,30 @@ namespace ApiDTC.Controllers
     [ApiController]
     public class LoginController : ControllerBase
     {
-
+        #region Attributes
         private readonly LoginDb _db;
-        public LoginController(LoginDb db) {
-
+        #endregion
+        
+        #region Constructor
+        public LoginController(LoginDb db) 
+        {
             this._db = db ?? throw new ArgumentNullException(nameof(db));
-
         }
+        #endregion
 
         // GET: api/Login
         [HttpGet("{userName}/{passWord}/{flag}")]
         public IActionResult GetLogin(string userName, string passWord, bool flag)
         {        
-            var response = _db.GetStoreLogin(userName, passWord, flag);
-            if(response.Result == null)
-                return NotFound(response);
+            var get = _db.GetStoreLogin(userName, passWord, flag);
+            if(get.Result == null)
+                return NotFound(get);
             else
-                return Ok(response);
+                return Ok(get);
         }
         // GET: api/Login
         [HttpGet("ValidUser/{userName}/{passWord}/{flag}")]
-        public ActionResult<OperationResult> GetCookie(string userName, string passWord, bool flag)
+        public ActionResult<Response> GetCookie(string userName, string passWord, bool flag)
         {
             return _db.GetStoreLoginCookie(userName, passWord, flag);
 
@@ -42,7 +45,7 @@ namespace ApiDTC.Controllers
         // GET: api/Login
         //Regresa técnicos de plaza
         [HttpGet("buscarTec/{numPlaza}")]
-        public ActionResult<OperationResult> GetCookie(string numPlaza)
+        public ActionResult<Response> GetCookie(string numPlaza)
         {
 
             return _db.GetTec(numPlaza);
@@ -51,7 +54,7 @@ namespace ApiDTC.Controllers
         }
         // GET: api/Login
         [HttpGet("buscarHeaderTec/{idTec}")]
-        public ActionResult<OperationResult> GetCokie(int idTec)
+        public ActionResult<Response> GetCokie(int idTec)
         {
             return _db.GetHeadTec(idTec);
         }

@@ -24,20 +24,20 @@
         [HttpGet("{convenio}/{plaza}/{Id}")]
         public IActionResult GetComponents(string convenio, string plaza, string Id)
         {
-            var response = _db.GetComponentData(convenio, plaza, Id);
-            if(response.Result == null)
-                return NotFound(response);
-            return Ok(response);
+            var get = _db.GetComponentData(convenio, plaza, Id);
+            if(get.Result == null)
+                return NotFound(get);
+            return Ok(get);
         }
 
         //GET: api/Component/5
         [HttpGet]
         public IActionResult Get()
         {
-            var response = _db.GetComponentsData();
-            if(response.Result == null)
-                return NotFound(response);
-            return Ok(response);
+            var get = _db.GetComponentsData();
+            if(get.Result == null)
+                return NotFound(get);
+            return Ok(get);
         }
 
         // POST: api/Component

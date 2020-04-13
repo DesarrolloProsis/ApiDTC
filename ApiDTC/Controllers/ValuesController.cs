@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
+using System.Text;
 using System.Threading.Tasks;
+using ApiDTC.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ApiDTC.Controllers
@@ -14,7 +17,16 @@ namespace ApiDTC.Controllers
         [HttpGet]
         public ActionResult<IEnumerable<string>> Get()
         {
-            return new string[] { "value1", "value2" };
+            TypeInfo t = typeof(Components).GetTypeInfo();
+            IEnumerable<PropertyInfo> pList = t.DeclaredProperties;
+
+            StringBuilder sb = new StringBuilder();
+           var propiedades = new List<string>();
+            foreach (PropertyInfo p in pList)
+            {
+                propiedades.Add(p.DeclaringType.Name + ": " + p.Name);
+            }
+            return propiedades;
         }
 
         // GET api/values/5

@@ -69,7 +69,7 @@ namespace ApiDTC.Services
         #endregion
         
         #region Methods
-        public OperationResult NewPdf()
+        public Response NewPdf()
         {
             try
             {
@@ -112,7 +112,7 @@ namespace ApiDTC.Services
                 write.Close();
                 doc.Close();
                 file.Close();
-                return new OperationResult
+                return new Response
                 {
                     Message = "Ok",
                     Result = $@"{System.Environment.CurrentDirectory}\Reportes\{DateTime.Now.Year}\{MesActual()}\{DateTime.Now.Day}\ReporteDTC-{_refNum}.pdf"
@@ -121,7 +121,7 @@ namespace ApiDTC.Services
             catch (IOException ex)
             {
                 _apiLogger.WriteLog(ex, "NewPdf");
-                return new OperationResult
+                return new Response
                 {
                     Message = $"Error: {ex.Message}",
                     Result = null
