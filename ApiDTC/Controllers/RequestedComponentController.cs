@@ -1,40 +1,27 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using ApiDTC.Data;
-using ApiDTC.Models;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-
-namespace ApiDTC.Controllers
+﻿namespace ApiDTC.Controllers
 {
+    using System;
+    using System.Collections.Generic;
+    using ApiDTC.Data;
+    using ApiDTC.Models;
+    using Microsoft.AspNetCore.Mvc;
+    
     [Route("api/[controller]")]
     [ApiController]
     public class RequestedComponentController : ControllerBase
     {
+        #region Attributes
         private readonly RequestedComponentDb _db;
+        #endregion
+        
+        #region Constructor
         public RequestedComponentController(RequestedComponentDb db)
         {
-
             this._db = db ?? throw new ArgumentNullException(nameof(db));
-
         }
+        #endregion
 
-        // GET: api/RequestedComponent
-        [HttpGet]
-        public IEnumerable<string> Get()
-        {
-            return new string[] { "value1", "value2" };
-        }
-
-        // GET: api/RequestedComponent/5
-        //[HttpGet("{id}", Name = "Get")]
-        //public string Get(int id)
-        //{
-        //    return "value";
-        //}
-
+        //TODO POST RequestedComponents
         // POST: api/RequestedComponent
         [HttpPost]
         public object Post([FromBody] List<RequestedComponent> requestedComponent)

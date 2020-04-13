@@ -32,10 +32,16 @@ namespace ApiDTC.Controllers
         public IActionResult GetPDF(string refNum)
         {
             //TODO If getstore is null on
-            var dataSet = _db.GetStorePDF(refNum);
-            PdfCreation pdf = new PdfCreation(dataSet.Tables[0], dataSet.Tables[1], dataSet.Tables[2], dataSet.Tables[3], refNum, new ApiLogger());
-            var pdfResult = pdf.NewPdf();
-            return File(new FileStream(pdfResult.Result.ToString(), FileMode.Open, FileAccess.Read), "application/pdf");
+            var get = _db.SearchReference(refNum);
+            if(get.Result == null)
+                return NotFound(get);
+            else
+            {
+                var dataSet = _db.GetStorePDF(refNum);
+                PdfCreation pdf = new PdfCreation(dataSet.Tables[0], dataSet.Tables[1], dataSet.Tables[2], dataSet.Tables[3], refNum, new ApiLogger());
+                var pdfResult = pdf.NewPdf();
+                return File(new FileStream(pdfResult.Result.ToString(), FileMode.Open, FileAccess.Read), "application/pdf");
+            }
         }
 
  

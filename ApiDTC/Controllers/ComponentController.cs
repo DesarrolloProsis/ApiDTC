@@ -2,6 +2,7 @@
 {
     using System;
     using ApiDTC.Data;
+    using ApiDTC.Models;
     using Microsoft.AspNetCore.Mvc;
     
     [Route("api/[controller]")]
@@ -18,8 +19,7 @@
             this._db = db ?? throw new ArgumentNullException(nameof(db));
         }
         #endregion
-        
-        
+              
         // GET: api/Component
         [HttpGet("{convenio}/{plaza}/{Id}")]
         public IActionResult GetComponents(string convenio, string plaza, string Id)
@@ -32,7 +32,7 @@
 
         //GET: api/Component/5
         [HttpGet]
-        public IActionResult Get()
+        public ActionResult<Response> Get()
         {
             var get = _db.GetComponentsData();
             if(get.Result == null)

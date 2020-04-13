@@ -13,17 +13,30 @@
         private readonly string _connectionString;
 
         private ApiLogger _apiLogger;
+
+        private SqlResult _sqlResult;
         #endregion
 
         #region Constructor
-        public PdfConsultasDb(IConfiguration configuration, ApiLogger apiLogger)
+        public PdfConsultasDb(IConfiguration configuration, ApiLogger apiLogger, SqlResult sqlResult)
         {
+            _sqlResult = sqlResult;
             _apiLogger = apiLogger;
             _connectionString = configuration.GetConnectionString("defaultConnection");
         }
         #endregion
 
         #region Methods
+        
+        public Response SearchReference(string referenceNumber)
+        {
+            using(SqlConnection sql = new SqlConnection(_connectionString))
+            {
+                SqlCommand cmd = new SqlCommand($"SELECT * FROM [ProsisDTC3].[dbo].[DTCData] WHERE ReferenceNumber = {referenceNumber}", sql);
+                return _sqlResult.GetList<DtcData>(cmd, sql);
+            }
+        }
+        
         //TODO Check procedure
         public DataSet GetStorePDF(string numeroReferencia)
         {
