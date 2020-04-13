@@ -1,7 +1,6 @@
 ﻿namespace ApiDTC.Data
 {
     using Models;
-    using Microsoft.AspNetCore.Mvc.Rendering;
     using Microsoft.Extensions.Configuration;
     using System;
     using System.Collections.Generic;
@@ -45,47 +44,54 @@
                         cmd.Parameters.Add("@SquareId", SqlDbType.NVarChar).Value = plaza;
                         cmd.Parameters.Add("@Component", SqlDbType.NVarChar).Value = Id;
                         
-                        
-                        sql.Open();
-                        if(sql.State != ConnectionState.Open)
-                        {
-                            return new Response
-                            {
-                                Message = "Sql connection is closed",
-                                Result = null
-                            };
-                        }
-                        
-                        var reader = cmd.ExecuteReader();
-                        if(!reader.HasRows)
-                        {
-                            return new Response
-                            {
-                                Message = "Result not found",
-                                Result = null
-                            };
-                        }
+                        var storedResult = _sqlResult.GetList<Components>(cmd, sql);
+                        var list = (List<Components>)storedResult.Result;
+                        //sql.Open();
+                        //if(sql.State != ConnectionState.Open)
+                        //{
+                        //    return new Response
+                        //    {
+                        //        Message = "Sql connection is closed",
+                        //        Result = null
+                        //    };
+                        //}
+                        //
+                        //var reader = cmd.ExecuteReader();
+                        //if(!reader.HasRows)
+                        //{
+                        //    return new Response
+                        //    {
+                        //        Message = "Result not found",
+                        //        Result = null
+                        //    };
+                        //}
+//
+                        //var response = new List<Components>();
+                        //while (reader.Read())
+                        //{
+                        //    response.Add(MapToComponents(reader));
+                        //}
+                        //var limite = response.Count();
+                        string[] listLane = new string[list.Count];
 
-                        var response = new List<Components>();
-                        while (reader.Read())
-                        {
-                            response.Add(MapToComponents(reader));
-                        }
-                        var limite = response.Count();
-                        string[] listLane = new string[limite];
-
+                        //int i = 0;
+                        //foreach(var lane in response)
+                        //{
+                        //    listLane[i++] = lane.Lane;
+                        //}
+//
+                        //object json = new { response, listLane };
+                        //sql.Close();
                         int i = 0;
-                        foreach(var lane in response)
+                        foreach (var item in list)
                         {
-                            listLane[i++] = lane.Lane;
+                            listLane[i++] = item.Lane;
                         }
-
-                        object json = new { response, listLane };
-                        sql.Close();
+                        storedResult.Result = new { storedResult.Result, listLane };
                         return new Response
                         {
                             Message = "Ok",
-                            Result = json
+                            Result = storedResult.Result
                         };
                     }
                     catch (SqlException ex)

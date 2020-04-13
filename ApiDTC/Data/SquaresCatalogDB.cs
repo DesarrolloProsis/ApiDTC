@@ -1,6 +1,7 @@
 ﻿namespace ApiDTC.Data
 {
     using ApiDTC.Models;
+    using ApiDTC.Services;
     using Microsoft.AspNetCore.Mvc.Rendering;
     using Microsoft.Extensions.Configuration;
     using System;
@@ -12,11 +13,14 @@
     {
         #region Attributes
         private readonly string _connectionString;
+
+        private SqlResult _sqlResult;
         #endregion
         
         #region Constructor
-        public SquaresCatalogDb(IConfiguration configuration)
+        public SquaresCatalogDb(IConfiguration configuration, SqlResult sqlResult)
         {
+            _sqlResult = sqlResult;
             _connectionString = configuration.GetConnectionString("defaultConnection");
         }
         #endregion
@@ -27,68 +31,9 @@
         {
             using (SqlConnection sql = new SqlConnection(_connectionString))
             {
-                try
-                {
-                    SqlCommand cmd = new SqlCommand("Select * From SquaresCatalog", sql);
-                    sql.Open();
-                    
-                    if(sql.State != ConnectionState.Open)
-                    {
-                        return new Response
-                        {
-                            Message = "SQL connection is closed",
-                            Result = null
-                        };
-                    }
-
-                    var response = new List<SelectListItem>();
-                    var reader = cmd.ExecuteReader();
-                    if(reader.HasRows)
-                    {
-                        while (reader.Read())
-                        {
-                            response.Add(new SelectListItem
-                            {
-                                Value = reader["SquareCatalogId"].ToString(),
-                                Text = reader["SquareName"].ToString()
-
-                            });
-                        }
-                        sql.Close();
-                        return new Response
-                        {
-                            Message = "Ok",
-                            Result = response
-                        };
-                    }
-                    else
-                    {
-                        return new Response
-                        {
-                            Message = "Empty result",
-                            Result = null
-                        };
-                    }
-                }
-                catch (SqlException ex)
-                {
-                    return new Response
-                    {
-                        Message = $"Error: {ex.Message}",
-                        Result = null
-                    };
-                }
+                SqlCommand cmd = new SqlCommand("Select * From SquaresCatalog", sql);
+                return _sqlResult.GetList<SquaresCatalog>(cmd, sql);
             }
-        }
-
-        private SquaresCatalog MapToSquaresCatalog(SqlDataReader reader)
-        {
-            return new SquaresCatalog()
-            {
-                SquareCatalogId = reader["SquareCatalogId"].ToString(),
-                SquareName = reader["SquareName"].ToString(),
-                DelegationId = (int)reader["DelegationId"],
-            };
         }
         #endregion
     }

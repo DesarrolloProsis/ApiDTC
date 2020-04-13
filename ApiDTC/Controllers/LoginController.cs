@@ -27,7 +27,7 @@ namespace ApiDTC.Controllers
 
         // GET: api/Login
         [HttpGet("{userName}/{passWord}/{flag}")]
-        public IActionResult GetLogin(string userName, string passWord, bool flag)
+        public ActionResult<Response> GetLogin(string userName, string passWord, bool flag)
         {        
             var get = _db.GetStoreLogin(userName, passWord, flag);
             if(get.Result == null)
@@ -39,24 +39,32 @@ namespace ApiDTC.Controllers
         [HttpGet("ValidUser/{userName}/{passWord}/{flag}")]
         public ActionResult<Response> GetCookie(string userName, string passWord, bool flag)
         {
-            return _db.GetStoreLoginCookie(userName, passWord, flag);
-
+            var get = _db.GetStoreLoginCookie(userName, passWord, flag);
+            if(get.Result == null)
+                return NotFound(get);
+            else
+                return Ok(get);
         }
         // GET: api/Login
         //Regresa técnicos de plaza
         [HttpGet("buscarTec/{numPlaza}")]
         public ActionResult<Response> GetCookie(string numPlaza)
         {
-
-            return _db.GetTec(numPlaza);
-                
-
+            var get = _db.GetTec(numPlaza);
+            if(get.Result == null)
+                return NotFound(get);
+            else
+                return Ok(get);
         }
         // GET: api/Login
         [HttpGet("buscarHeaderTec/{idTec}")]
-        public ActionResult<Response> GetCokie(int idTec)
+        public ActionResult<Response> GetCookie(int idTec)
         {
-            return _db.GetHeadTec(idTec);
+            var get = _db.GetHeadTec(idTec);
+            if(get.Result == null)
+                return NotFound(get);
+            else   
+                return Ok(get);
         }
        
     }

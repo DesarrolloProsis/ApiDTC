@@ -38,7 +38,7 @@
                 {
                     SqlCommand cmd = new SqlCommand($"insert into DTCData (ReferenceNumber, SinisterNumber, ReportNumber, SinisterDate, FailureDate, FailureNumber, ShippingDate, ElaborationDate, Observation, Diagnosis, TypeDescriptionId, UserId, AgremmentInfoId)  values ('{dtcData.ReferenceNumber}','{dtcData.SinisterNumber}', '{dtcData.ReportNumber}', '{dtcData.SinisterDate.ToString("yyyy-MM-dd")}', '{dtcData.FailureDate.ToString("yyyy-MM-dd")}', '{dtcData.FailureNumber}', '{dtcData.ShippingDate.ToString("yyyy-MM-dd")}', '{dtcData.ElaborationDate.ToString("yyyy-MM-dd")}', '{dtcData.Observation}', '{dtcData.Diagnosis}', {dtcData.TypeDescriptionId}, {dtcData.UserId},  {dtcData.AgremmentInfoId} )", sql);
                     sql.Open();
-                    bool insertUp = Convert.ToBoolean(cmd.ExecuteNonQuery());
+                    bool insertUp = Convert.ToBoolean(cmd.ExecuteNonQueryAsync());
                     sql.Close();
                     return new Response
                     {
@@ -75,7 +75,7 @@
                         };
                     }
 
-                    SqlCommand countCommand = new SqlCommand($"SELECT Count(*) FROM [ProsisDTC3].[dbo].[DTCData] WHERE ReferenceNumber LIKE '{referenceNumber.Substring(0, 9)}%'", sql);
+                    SqlCommand countCommand = new SqlCommand($"SELECT Count(*) FROM [ProsisDTC3].[dbo].[DTCData] WHERE ReferenceNumber LIKE '{referenceNumber}%'", sql);
                     Int32 count = (Int32) countCommand.ExecuteScalar();
                     if(count == 0)
                     {
@@ -155,35 +155,6 @@
                     };
                 } 
             }
-        }
-
-        private DtcData MapTodtcData(SqlDataReader reader)
-        {
-            return new DtcData()
-            {
-                ReferenceNumber = reader["ReferenceNumber"].ToString(),
-                SinisterNumber = reader["SinisterNumber"].ToString(),
-                ReportNumber = reader["ReportNumber"].ToString(),
-                SinisterDate = Convert.ToDateTime(reader["SinisterDate"].ToString()),
-                FailureDate = Convert.ToDateTime(reader["FailureDate"].ToString()),
-                FailureNumber = reader["FailureNumber"].ToString(),
-                ShippingDate = Convert.ToDateTime(reader["ShippingDate"].ToString()),
-                ElaborationDate = Convert.ToDateTime(reader["ElaborationDate"].ToString()),
-                Observation = reader["Observation"].ToString(),
-                Diagnosis = reader["Diagnosis"].ToString(),
-                TypeDescriptionId = (int)reader["TypeDescriptionId"],
-                UserId = (int)reader["UserId"],
-                AgremmentInfoId = (int)reader["AgremmentInfoId"],
-                DateStamp = Convert.ToDateTime(reader["DateStamp"].ToString())
-            };
-        }
-        private InvalidReferenceNumbers MapToInvalidReferenceNumbers(SqlDataReader reader)
-        {
-            return new InvalidReferenceNumbers()
-            {
-                SinisterNumber = reader["SinisterNumber"].ToString(),
-                ReportNumber = reader["ReportNumber"].ToString(),
-            };
         }
         #endregion
     }

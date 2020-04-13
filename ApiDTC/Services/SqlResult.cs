@@ -5,6 +5,7 @@ namespace ApiDTC.Services
     using System.Data;
     using System.Data.SqlClient;
     using System.Reflection;
+    using System.Threading.Tasks;
     using ApiDTC.Models;
 
     public class SqlResult
@@ -16,6 +17,13 @@ namespace ApiDTC.Services
             _apiLogger = apiLogger;
         }
 
+        //public async Task<Response> Post<T>()
+        //{
+        //    try
+        //    {
+        //        
+        //    }
+        //}
         public Response GetList<T>(SqlCommand command, SqlConnection con)
         {
             try

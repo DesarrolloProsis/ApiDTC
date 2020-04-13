@@ -1,40 +1,35 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using ApiDTC.Data;
-using ApiDTC.Models;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-
-namespace ApiDTC.Controllers
+﻿namespace ApiDTC.Controllers
 {
+    using System;
+    using ApiDTC.Data;
+    using ApiDTC.Models;
+    using Microsoft.AspNetCore.Mvc;
+
     [Route("api/[controller]")]
     [ApiController]
     public class SquaresCatalogController : ControllerBase
     {
+        #region Attributes
         private readonly SquaresCatalogDb _db;
+        #endregion
+
+        #region Constructor
         public SquaresCatalogController(SquaresCatalogDb db)
         {
-
             this._db = db ?? throw new ArgumentNullException(nameof(db));
-
         }
+        #endregion
 
         // GET: api/SquaresCatalog
         [HttpGet]
         public ActionResult<Response> Get()
         {
-            return _db.GetSquaresCatalog();
+            var get = _db.GetSquaresCatalog();
+            if(get.Result == null)
+                return NotFound(get);
+            else
+                return Ok(get);
         }
-
-        // GET: api/SquaresCatalog/5
-        //[HttpGet("{id}", Name = "Get")]
-        //public string Get(int id)
-        //{
-        //    return "value";
-        //}
 
         // POST: api/SquaresCatalog
         [HttpPost]

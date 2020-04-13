@@ -1,6 +1,7 @@
 ﻿namespace ApiDTC.Controllers
 {
     using System;
+    using System.Threading.Tasks;
     using ApiDTC.Data;
     using ApiDTC.Models;
     using Microsoft.AspNetCore.Mvc;
@@ -17,7 +18,7 @@
 
         //GET: api/dtcData
         [HttpGet]
-        public IActionResult Get()
+        public ActionResult<Response> Get()
         {   
             var get = _db.GetDTC();
             if(get.Result == null)
@@ -26,17 +27,10 @@
                 return Ok(get);
         }
 
-        // GET: api/dtcData/5
-        //[HttpGet("{refNum}")]
-        //public string<dtcData> Get(string refNum)
-        //{
-        //    return "value";
-        //}
-
         [HttpGet("{refNum}")]
-        public IActionResult GetDtcData(string refNum)
+        public ActionResult<Response> GetDtcData(string refNum)
         {
-            var get = _db.GetReferenceNumber(refNum);
+            var get = _db.GetReferenceNumber(refNum.Substring(0, 9));
             if(get.Result == null)
                 return NotFound(get);
             else
@@ -44,7 +38,7 @@
         }
 
         [HttpGet("InvalidReferenceNumbers")]
-        public IActionResult GetInvalidReferenceNumbers()
+        public ActionResult<Response> GetInvalidReferenceNumbers()
         {
             var get = _db.GetInvalidNumbers();
             if(get.Result == null)
@@ -58,7 +52,7 @@
         [HttpPost]
         public Response Post([FromBody] DtcData dtcData)
         {
-             return _db.GetStoredDtcData(dtcData);
+            return _db.GetStoredDtcData(dtcData);
         }
 
         // PUT: api/dtcData/5

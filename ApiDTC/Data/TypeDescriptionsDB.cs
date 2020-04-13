@@ -15,13 +15,13 @@
         #region Attributes
         private readonly string _connectionString;
 
-        private ApiLogger _apiLogger;
+        private SqlResult _sqlResult;
         #endregion
 
         #region Constructor
-        public TypeDescriptionsDb(IConfiguration configuration, ApiLogger apiLogger)
+        public TypeDescriptionsDb(IConfiguration configuration, SqlResult sqlResult)
         {
-            _apiLogger = apiLogger;
+            _sqlResult = sqlResult;
             _connectionString = configuration.GetConnectionString("defaultConnection");
         }
         #endregion
@@ -33,71 +33,9 @@
         {
             using (SqlConnection sql = new SqlConnection(_connectionString))
             {
-                try
-                {
-                    SqlCommand descriptionsCommand = new SqlCommand("Select * From TypeDescriptions", sql);
-                    
-                    sql.Open();
-                    if(sql.State != ConnectionState.Open)
-                    {
-                        return new Response
-                        {
-                            Message = "SQL connection is closed",
-                            Result = null
-                        };
-                    }
-                    
-                    var response = new List<SelectListItem>();
-
-                    var reader = descriptionsCommand.ExecuteReader();
-                    if(reader.HasRows)
-                    {
-                        while (reader.Read())
-                        {
-                            response.Add(new SelectListItem
-                            {
-                                Value = reader["TypeDescriptionId"].ToString(),
-                                Text = reader["Description"].ToString()
-
-                            });
-                        }
-                        sql.Close();
-                        return new Response
-                        {
-                            Message = "Ok",
-                            Result = response
-                        };
-                    }
-                    else
-                    {
-                        return new Response
-                        {
-                            Message = "Empty result",
-                            Result = null
-                        };
-                    }
-                }
-                catch (SqlException ex)
-                {
-                    _apiLogger.WriteLog(ex, "GetTypeDescriptionsData");
-                    return new Response
-                    {
-                        Message = $"Error: {ex.Message}",
-                        Result = null
-                    };
-                }
+                SqlCommand descriptionsCommand = new SqlCommand("Select * From TypeDescriptions", sql);
+                return _sqlResult.GetList<TypeDescriptions>(descriptionsCommand, sql);
             }
-        }
-        #endregion
-
-        #region Mappers
-        private TypeDescriptions MapToTypeDescriptions(SqlDataReader reader)
-        {
-            return new TypeDescriptions()
-            {
-                TypeDescriptionId = (int)reader["TypeDescriptionId"],
-                Description = reader["Description"].ToString(),
-            };
         }
         #endregion
     }
