@@ -75,14 +75,14 @@
                         };
                     }
 
-                    SqlCommand countCommand = new SqlCommand($"SELECT Count(*) FROM [ProsisDTC3].[dbo].[DTCData] WHERE ReferenceNumber LIKE '{referenceNumber}%'", sql);
+                    SqlCommand countCommand = new SqlCommand($"SELECT Count(*) FROM [ProsisDTC3].[dbo].[DTCData] WHERE ReferenceNumber LIKE '{referenceNumber.Substring(0, 9)}%'", sql);
                     Int32 count = (Int32) countCommand.ExecuteScalar();
                     if(count == 0)
                     {
                         return new Response
                         {
                             Message = "Ok",
-                            Result = $"{referenceNumber}"
+                            Result = $"{referenceNumber.Substring(0, 9)}"
                         };
                     }
                     else if(count == 1)
@@ -90,12 +90,12 @@
                         return new Response
                         {
                             Message = "Ok",
-                            Result = $"{referenceNumber}-02"
+                            Result = $"{referenceNumber.Substring(0, 9)}-02"
                         };
                     }
                     else
                     {
-                        SqlCommand lastReferenceCommand = new SqlCommand($"SELECT TOP 1 ReferenceNumber FROM [ProsisDTC3].[dbo].[DTCData] WHERE ReferenceNumber LIKE '{referenceNumber}%' ORDER BY ReferenceNumber DESC", sql);
+                        SqlCommand lastReferenceCommand = new SqlCommand($"SELECT TOP 1 ReferenceNumber FROM [ProsisDTC3].[dbo].[DTCData] WHERE ReferenceNumber LIKE '{referenceNumber.Substring(0, 9)}%' ORDER BY ReferenceNumber DESC", sql);
                         var reader = lastReferenceCommand.ExecuteReader();
                         if(reader.Read())
                         {
@@ -104,7 +104,7 @@
                             return new Response
                             {
                                 Message = "Ok",
-                                Result = $"{referenceNumber}-{lastReference.ToString("00")}"
+                                Result = $"{referenceNumber.Substring(0, 9)}-{lastReference.ToString("00")}"
                             };
                         }
                         return new Response

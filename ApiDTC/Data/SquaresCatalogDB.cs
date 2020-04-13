@@ -30,6 +30,7 @@
                 try
                 {
                     SqlCommand cmd = new SqlCommand("Select * From SquaresCatalog", sql);
+                    sql.Open();
                     
                     if(sql.State != ConnectionState.Open)
                     {
