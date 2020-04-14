@@ -14,16 +14,13 @@
         #region Attributes
         private readonly string _connectionString;
 
-        private ApiLogger _apiLogger;
-
         private SqlResult _sqlResult;
         #endregion
 
         #region Constructor
-        public ComponentDb(IConfiguration configuration, ApiLogger apiLogger, SqlResult sqlResult)
+        public ComponentDb(IConfiguration configuration, SqlResult sqlResult)
         {
             _sqlResult = sqlResult;
-            _apiLogger = apiLogger;
             _connectionString = configuration.GetConnectionString("defaultConnection");
         }
         #endregion
@@ -37,72 +34,25 @@
             {
                 using (SqlCommand cmd = new SqlCommand("dbo.sp_ComponentInfoDTC", sql))
                 {
-                    try
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.Add("@Agremmnt", SqlDbType.NVarChar).Value = convenio;
+                    cmd.Parameters.Add("@SquareId", SqlDbType.NVarChar).Value = plaza;
+                    cmd.Parameters.Add("@Component", SqlDbType.NVarChar).Value = Id;
+                    
+                    var storedResult = _sqlResult.GetList<Components>(cmd, sql);
+                    var list = (List<Components>)storedResult.Result;
+                    string[] listLane = new string[list.Count];
+                    int i = 0;
+                    foreach (var item in list)
                     {
-                        cmd.CommandType = CommandType.StoredProcedure;
-                        cmd.Parameters.Add("@Agremmnt", SqlDbType.NVarChar).Value = convenio;
-                        cmd.Parameters.Add("@SquareId", SqlDbType.NVarChar).Value = plaza;
-                        cmd.Parameters.Add("@Component", SqlDbType.NVarChar).Value = Id;
-                        
-                        var storedResult = _sqlResult.GetList<Components>(cmd, sql);
-                        var list = (List<Components>)storedResult.Result;
-                        //sql.Open();
-                        //if(sql.State != ConnectionState.Open)
-                        //{
-                        //    return new Response
-                        //    {
-                        //        Message = "Sql connection is closed",
-                        //        Result = null
-                        //    };
-                        //}
-                        //
-                        //var reader = cmd.ExecuteReader();
-                        //if(!reader.HasRows)
-                        //{
-                        //    return new Response
-                        //    {
-                        //        Message = "Result not found",
-                        //        Result = null
-                        //    };
-                        //}
-//
-                        //var response = new List<Components>();
-                        //while (reader.Read())
-                        //{
-                        //    response.Add(MapToComponents(reader));
-                        //}
-                        //var limite = response.Count();
-                        string[] listLane = new string[list.Count];
-
-                        //int i = 0;
-                        //foreach(var lane in response)
-                        //{
-                        //    listLane[i++] = lane.Lane;
-                        //}
-//
-                        //object json = new { response, listLane };
-                        //sql.Close();
-                        int i = 0;
-                        foreach (var item in list)
-                        {
-                            listLane[i++] = item.Lane;
-                        }
-                        storedResult.Result = new { storedResult.Result, listLane };
-                        return new Response
-                        {
-                            Message = "Ok",
-                            Result = storedResult.Result
-                        };
+                        listLane[i++] = item.Lane;
                     }
-                    catch (SqlException ex)
+                    storedResult.Result = new { storedResult.Result, listLane };
+                    return new Response
                     {
-                        _apiLogger.WriteLog(ex, "GetComponentData");
-                        return new Response
-                        {
-                            Message = $"Error: {ex.Message}",
-                            Result = null
-                        };
-                    }
+                        Message = "Ok",
+                        Result = storedResult.Result
+                    };
                 }
             }
         }
@@ -115,29 +65,6 @@
                 SqlCommand cmd = new SqlCommand("select a.Component as description from SquareInventory a join LanesCatalog b on (a.CapufeLaneNum = b.CapufeLaneNum and a.IdGare = b.IdGare) where b.SquareCatalogId = '102' group by a.Component", sql);
                 return _sqlResult.GetList<ComponentsDescription>(cmd, sql);
             }
-        }
-
-        private Components MapToComponents(SqlDataReader reader)
-        {
-            return new Components()
-            {
-                Unity = reader["Unity"].ToString(),
-                Description = reader["Description"].ToString(),
-                Brand = reader["Brand"].ToString(),
-                Model = reader["Model"].ToString(),
-                SerialNumber = reader["SerialNumber"].ToString(),
-                InstalationDate = Convert.ToDateTime(reader["InstalationDate"].ToString()),
-                LifeTime = (int)reader["LifeTime"],
-                Lane = reader["Lane"].ToString(),
-                IdGare = reader["IdGare"].ToString(),
-                CapufeLaneNum = reader["CapufeLaneNum"].ToString(),
-                ComponentsStockId = (int)reader["ComponentsStockId"],
-                UnitaryPrice = (decimal)reader["UnitaryPrice"],
-                SelfAssignable = (bool)reader["SelfAssignable"],
-                VitalComponent = (bool)reader["VitalComponent"],
-                CatalogBrand = reader["CatalogBrand"].ToString(),
-                CatalogModel = reader["CatalogModel"].ToString()
-            };
         }
         #endregion
     }

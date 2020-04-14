@@ -11,7 +11,6 @@ namespace ApiDTC.Services
     public class SqlResult
     {
         private ApiLogger _apiLogger;
-
         public SqlResult(ApiLogger apiLogger)
         {
             _apiLogger = apiLogger;
@@ -64,10 +63,12 @@ namespace ApiDTC.Services
 
         private Response Mapper<T>(SqlDataReader rdr)
         {
+            string classMapped, propertyMapped;
             try
             {
                 var list = new List<T>();
                 T obj = default(T);
+                classMapped = nameof(obj);
                 int rows = 0; 
                 while(rdr.Read())
                 {
