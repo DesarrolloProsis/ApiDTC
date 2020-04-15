@@ -34,29 +34,26 @@
         {
             using (SqlConnection sql = new SqlConnection(_connectionString))
             {
-            }
-            using (SqlCommand cmd = new SqlCommand("dbo.sp_InsertDtcData", sql))
-            {
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.Add("@referenceNumber", SqlDbType.NVarChar).Value = dtcData.ReferenceNumber;
-                cmd.Parameters.Add("@sinisterNumber", SqlDbType.NVarChar).Value = dtcData.SinisterNumber;
-                cmd.Parameters.Add("@reportNumber", SqlDbType.NVarChar).Value = dtcData.ReportNumber;
-                cmd.Parameters.Add("@sinisterDate", SqlDbType.Date).Value = dtcData.SinisterDate;
-                cmd.Parameters.Add("@failureDate", SqlDbType.Date).Value = dtcData.FailureDate;
-                cmd.Parameters.Add("@failureNumber", SqlDbType.NVarChar).Value = dtcData.FailureNumber;
-                cmd.Parameters.Add("@shippingDate", SqlDbType.Date).Value = dtcData.ShippingDate;
-                cmd.Parameters.Add("@elaborationDate", SqlDbType.Date).Value = dtcData.ElaborationDate;
-                cmd.Parameters.Add("@observation", SqlDbType.NVarChar).Value = dtcData.Observation;
-                cmd.Parameters.Add("@diagnosis", SqlDbType.NVarChar).Value = dtcData.Diagnosis;
-                cmd.Parameters.Add("@typeDescriptionId", SqlDbType.Int).Value = dtcData.TypeDescriptionId;
-                cmd.Parameters.Add("@userId", SqlDbType.Int).Value = dtcData.AgremmentInfoId;
-                cmd.Parameters.Add("@agremmentInfoId", SqlDbType.Int).Value = dtcData.AgremmentInfoId;
-                cmd.Parameters.Add("@dateStamp", SqlDbType.Date).Value = dtcData.DateStamp;
-
-                return _sqlResult.Post(cmd, sql);
+                using (SqlCommand cmd = new SqlCommand("dbo.sp_InsertDtcData", sql))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.Add("@referenceNumber", SqlDbType.NVarChar).Value = dtcData.ReferenceNumber;
+                    cmd.Parameters.Add("@sinisterNumber", SqlDbType.NVarChar).Value = dtcData.SinisterNumber;
+                    cmd.Parameters.Add("@reportNumber", SqlDbType.NVarChar).Value = dtcData.ReportNumber;
+                    cmd.Parameters.Add("@sinisterDate", SqlDbType.Date).Value = dtcData.SinisterDate;
+                    cmd.Parameters.Add("@failureDate", SqlDbType.Date).Value = dtcData.FailureDate;
+                    cmd.Parameters.Add("@failureNumber", SqlDbType.NVarChar).Value = dtcData.FailureNumber;
+                    cmd.Parameters.Add("@shippingDate", SqlDbType.Date).Value = dtcData.ShippingDate;
+                    cmd.Parameters.Add("@elaborationDate", SqlDbType.Date).Value = dtcData.ElaborationDate;
+                    cmd.Parameters.Add("@observation", SqlDbType.NVarChar).Value = dtcData.Observation;
+                    cmd.Parameters.Add("@diagnosis", SqlDbType.NVarChar).Value = dtcData.Diagnosis;
+                    cmd.Parameters.Add("@typeDescriptionId", SqlDbType.Int).Value = dtcData.TypeDescriptionId;
+                    cmd.Parameters.Add("@userId", SqlDbType.Int).Value = dtcData.AgremmentInfoId;
+                    cmd.Parameters.Add("@agremmentInfoId", SqlDbType.Int).Value = dtcData.AgremmentInfoId;
+                    return _sqlResult.Post(cmd, sql);
+                }
             }
         }
-
         //TODO Count generic method
         public Response GetReferenceNumber(string referenceNumber)
         {
