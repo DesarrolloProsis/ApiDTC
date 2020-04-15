@@ -30,10 +30,11 @@
         #region Methods
 
         //TODO Insert generic method
-        public Response GetStoredDtcData(DtcData dtcData)
+        public InsertResponse GetStoredDtcData(DtcData dtcData)
         {
             using (SqlConnection sql = new SqlConnection(_connectionString))
             {
+<<<<<<< HEAD
                 try
                 {
                     SqlCommand cmd = new SqlCommand($"insert into DTCData (ReferenceNumber, SinisterNumber, ReportNumber, SinisterDate, FailureDate, FailureNumber, ShippingDate, ElaborationDate, Observation, Diagnosis, TypeDescriptionId, UserId, AgremmentInfoId, DateStamp)  values ('{dtcData.ReferenceNumber}','{dtcData.SinisterNumber}', '{dtcData.ReportNumber}', '{dtcData.SinisterDate.ToString("yyyy-MM-dd")}', '{dtcData.FailureDate.ToString("yyyy-MM-dd")}', '{dtcData.FailureNumber}', '{dtcData.ShippingDate.ToString("yyyy-MM-dd")}', '{dtcData.ElaborationDate.ToString("yyyy-MM-dd")}', '{dtcData.Observation}', '{dtcData.Diagnosis}', {dtcData.TypeDescriptionId}, {dtcData.UserId},  {dtcData.AgremmentInfoId}, '{DateTime.Now.ToString("yyyy-MM-dd")}')", sql);
@@ -47,13 +48,27 @@
                     };               
                 }
                 catch (SqlException ex)
+=======
+                using(SqlCommand cmd = new SqlCommand("dbo.sp_InsertDtcData", sql))
+>>>>>>> 8d96d5597f1a9207494859e40cea9ef7a082d5f0
                 {
-                    _apiLogger.WriteLog(ex, "GetStoredDtcData");
-                    return new Response
-                    {
-                        Message = $"Error: {ex.Message}",
-                        Result = null
-                    };
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.Add("@referenceNumber", SqlDbType.NVarChar).Value = dtcData.ReferenceNumber  ;
+                    cmd.Parameters.Add("@sinisterNumber", SqlDbType.NVarChar).Value = dtcData.SinisterNumber;
+                    cmd.Parameters.Add("@reportNumber", SqlDbType.NVarChar).Value = dtcData.ReportNumber;
+                    cmd.Parameters.Add("@sinisterDate", SqlDbType.Date).Value = dtcData.SinisterDate;
+                    cmd.Parameters.Add("@failureDate", SqlDbType.Date).Value = dtcData.FailureDate;
+                    cmd.Parameters.Add("@failureNumber", SqlDbType.NVarChar).Value = dtcData.FailureNumber;
+                    cmd.Parameters.Add("@shippingDate", SqlDbType.Date).Value = dtcData.ShippingDate;
+                    cmd.Parameters.Add("@elaborationDate", SqlDbType.Date).Value = dtcData.ElaborationDate;
+                    cmd.Parameters.Add("@observation", SqlDbType.NVarChar).Value = dtcData.Observation;
+                    cmd.Parameters.Add("@diagnosis", SqlDbType.NVarChar).Value = dtcData.Diagnosis;
+                    cmd.Parameters.Add("@typeDescriptionId", SqlDbType.Int).Value = dtcData.TypeDescriptionId;
+                    cmd.Parameters.Add("@userId", SqlDbType.Int).Value = dtcData.AgremmentInfoId;
+                    cmd.Parameters.Add("@agremmentInfoId", SqlDbType.Int).Value = dtcData.AgremmentInfoId;
+                    cmd.Parameters.Add("@dateStamp", SqlDbType.Date).Value = dtcData.DateStamp;
+
+                    return _sqlResult.Post(cmd, sql);
                 }
             }
         }
