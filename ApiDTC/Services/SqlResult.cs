@@ -10,6 +10,8 @@ namespace ApiDTC.Services
 
     public class SqlResult
     {
+        private string _propertyError;
+        private string _classMapped;
         private ApiLogger _apiLogger;
 
         public SqlResult(ApiLogger apiLogger)
@@ -55,7 +57,7 @@ namespace ApiDTC.Services
                 _apiLogger.WriteLog(ex, "GetList<T>");
                 return new Response
                 {
-                    Message = $"Error: {ex.Message}",
+                    Message = $"Error: {ex.Message}.",
                     Result = null
                     
                 };
@@ -68,13 +70,17 @@ namespace ApiDTC.Services
             {
                 var list = new List<T>();
                 T obj = default(T);
+                _classMapped = nameof(obj);
                 int rows = 0; 
                 while(rdr.Read())
                 {
                     ++rows;
                     obj = Activator.CreateInstance<T>();
                     foreach (PropertyInfo p in obj.GetType().GetProperties())
+                    {
+                        _propertyError = p.Name;
                         p.SetValue(obj, rdr[p.Name], null);
+                    }
                     list.Add(obj);
                 }
                 return new Response
@@ -86,10 +92,10 @@ namespace ApiDTC.Services
             }
             catch(Exception ex)
             {
-                _apiLogger.WriteLog(ex, "Mapper");
+                _apiLogger.WriteLog(ex, $"Mapper Clase: {_classMapped} no mapeada en propiedad {_propertyError}");
                 return new Response
                 {
-                    Message = $"Error: {ex.Message}",
+                    Message = $"Error: {ex.Message} Clase: {_classMapped} no mapeada en propiedad {_propertyError}",
                     Result = null
                 };
             } 

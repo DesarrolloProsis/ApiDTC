@@ -48,7 +48,7 @@
         }
 
         //TODO Ajustar petición POST nuevo DTC
-        // POST: api/dtcData
+        // POST: api/dtcData/NuevoDtc
         [HttpPost]
         public Response Post([FromBody] DtcData dtcData)
         {
