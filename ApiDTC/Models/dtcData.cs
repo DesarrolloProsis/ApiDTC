@@ -1,10 +1,13 @@
 ﻿namespace ApiDTC.Models
 {
     using System;
-    
+    using System.ComponentModel.DataAnnotations;
+
     public class DtcData
     {
         #region Properties
+        
+        [Required]
         public string ReferenceNumber { get; set; }
         
         public string SinisterNumber { get; set; }

@@ -1,6 +1,7 @@
 ﻿namespace ApiDTC.Controllers
 {
     using System;
+    using System.Collections.Generic;
     using System.Threading.Tasks;
     using ApiDTC.Data;
     using ApiDTC.Models;
@@ -50,9 +51,17 @@
         //TODO Ajustar petición POST nuevo DTC
         // POST: api/dtcData
         [HttpPost]
-        public Response Post([FromBody] DtcData dtcData)
+        public ActionResult<InsertResponse> Post([FromBody] DtcData dtcData)
         {
-            return _db.GetStoredDtcData(dtcData);
+            if(ModelState.IsValid)
+            {
+                var get = _db.GetStoredDtcData(dtcData);
+                if(get.SqlResult == null)
+                    return BadRequest(get);
+                else
+                    return Created($"api/dtcdata/{dtcData.ReferenceNumber}", dtcData);
+            }
+            return BadRequest(ModelState);
         }
 
         // PUT: api/dtcData/5
