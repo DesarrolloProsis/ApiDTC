@@ -11,12 +11,7 @@ namespace ApiDTC.Services
 
     public class SqlResult
     {
-<<<<<<< HEAD
-        private string _propertyError;
-        private string _classMapped;
-=======
         #region Attributes
->>>>>>> 8d96d5597f1a9207494859e40cea9ef7a082d5f0
         private ApiLogger _apiLogger;
 
         private string _classMapped, _propertyMapped;
@@ -31,7 +26,7 @@ namespace ApiDTC.Services
             try
             {
                 con.Open();
-                if(con.State != ConnectionState.Open)
+                if (con.State != ConnectionState.Open)
                 {
                     return new InsertResponse
                     {
@@ -40,7 +35,7 @@ namespace ApiDTC.Services
                     };
                 }
                 var reader = cmd.ExecuteReader();
-                if(!reader.HasRows)
+                if (!reader.HasRows)
                 {
                     return new InsertResponse
                     {
@@ -50,25 +45,25 @@ namespace ApiDTC.Services
                 }
                 var result = PostMapper(reader);
                 con.Close();
-                return (InsertResponse)result;   
+                return (InsertResponse)result;
             }
-            catch(SqlException ex)
+            catch (SqlException ex)
             {
                 _apiLogger.WriteLog(ex, "Post");
                 return new InsertResponse
                 {
                     SqlMessage = $"Error: {ex.Message}",
                     SqlResult = null
-                    
+
                 };
-            }    
+            }
         }
         public Response GetList<T>(SqlCommand command, SqlConnection con)
         {
             try
             {
                 con.Open();
-                if(con.State != ConnectionState.Open)
+                if (con.State != ConnectionState.Open)
                 {
                     return new Response
                     {
@@ -77,7 +72,7 @@ namespace ApiDTC.Services
                     };
                 }
                 var reader = command.ExecuteReader();
-                if(!reader.HasRows)
+                if (!reader.HasRows)
                 {
                     return new Response
                     {
@@ -87,28 +82,31 @@ namespace ApiDTC.Services
                 }
                 var result = GetMapper<T>(reader);
                 con.Close();
-                return (Response)result;   
+                return (Response)result;
             }
-            catch(SqlException ex)
+            catch (SqlException ex)
             {
                 _apiLogger.WriteLog(ex, "GetList<T>");
                 return new Response
                 {
-                    Message = $"Error: {ex.Message}.",
+                    Message = $"Error: {ex.Message}",
                     Result = null
-                    
+
                 };
-            }       
+            }
         }
 
         private InsertResponse PostMapper(SqlDataReader rdr)
         {
-            
+
             try
             {
                 var obj = new InsertResponse();
-                if(rdr.Read())
+                if (rdr.Read())
                 {
+                    //if (rdr["SqlResult"].IsDBNull)
+                    //{
+                    //}
                     _propertyMapped = obj.GetType().Name;
                     foreach (PropertyInfo p in obj.GetType().GetProperties())
                     {
@@ -119,7 +117,7 @@ namespace ApiDTC.Services
                 _propertyMapped = null;
                 return obj;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _apiLogger.WriteLog(ex, $"PostMapper. La clase InsertResponse no pudo ser mapeada en propiedad {_propertyMapped}");
                 _propertyMapped = null;
@@ -128,7 +126,7 @@ namespace ApiDTC.Services
                     SqlMessage = $"Error: {ex.Message}",
                     SqlResult = null
                 };
-            } 
+            }
         }
 
         private Response GetMapper<T>(SqlDataReader rdr)
@@ -137,20 +135,15 @@ namespace ApiDTC.Services
             {
                 var list = new List<T>();
                 T obj = default(T);
-                _classMapped = nameof(obj);
-                int rows = 0; 
-                while(rdr.Read())
+                int rows = 0;
+                while (rdr.Read())
                 {
                     rows++;
                     obj = Activator.CreateInstance<T>();
                     _propertyMapped = obj.GetType().Name;
                     foreach (PropertyInfo p in obj.GetType().GetProperties())
                     {
-<<<<<<< HEAD
-                        _propertyError = p.Name;
-=======
                         _propertyMapped = p.Name;
->>>>>>> 8d96d5597f1a9207494859e40cea9ef7a082d5f0
                         p.SetValue(obj, rdr[p.Name], null);
                     }
                     list.Add(obj);
@@ -164,21 +157,17 @@ namespace ApiDTC.Services
                     Rows = rows
                 };
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-<<<<<<< HEAD
-                _apiLogger.WriteLog(ex, $"Mapper Clase: {_classMapped} no mapeada en propiedad {_propertyError}");
-=======
                 _apiLogger.WriteLog(ex, $"Mapper. La clase {_classMapped} no pudo ser mapeada en propiedad {_propertyMapped}");
                 _propertyMapped = null;
                 _classMapped = null;
->>>>>>> 8d96d5597f1a9207494859e40cea9ef7a082d5f0
                 return new Response
                 {
-                    Message = $"Error: {ex.Message} Clase: {_classMapped} no mapeada en propiedad {_propertyError}",
+                    Message = $"Error: {ex.Message}",
                     Result = null
                 };
-            } 
+            }
         }
     }
 }
