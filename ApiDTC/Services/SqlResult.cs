@@ -4,9 +4,7 @@ namespace ApiDTC.Services
     using System.Collections.Generic;
     using System.Data;
     using System.Data.SqlClient;
-    using System.Linq;
     using System.Reflection;
-    using System.Threading.Tasks;
     using ApiDTC.Models;
 
     public class SqlResult
@@ -98,18 +96,18 @@ namespace ApiDTC.Services
 
         private InsertResponse PostMapper(SqlDataReader rdr)
         {
-            
             try
             {
                 var obj = new InsertResponse();
                 if(rdr.Read())
                 {
+                    if(rdr.IsDBNull(0))
+                        obj.SqlResult = null;
+                    else
+                        obj.SqlResult = rdr[0];
+
+                    obj.SqlMessage = rdr["SqlMessage"].ToString();
                     _propertyMapped = obj.GetType().Name;
-                    foreach (PropertyInfo p in obj.GetType().GetProperties())
-                    {
-                        _propertyMapped = p.Name;
-                        p.SetValue(obj, rdr[p.Name], null);
-                    };
                 }
                 _propertyMapped = null;
                 return obj;

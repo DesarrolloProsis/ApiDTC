@@ -50,13 +50,11 @@
                     cmd.Parameters.Add("@typeDescriptionId", SqlDbType.Int).Value = dtcData.TypeDescriptionId;
                     cmd.Parameters.Add("@userId", SqlDbType.Int).Value = dtcData.AgremmentInfoId;
                     cmd.Parameters.Add("@agremmentInfoId", SqlDbType.Int).Value = dtcData.AgremmentInfoId;
-                    cmd.Parameters.Add("@dateStamp", SqlDbType.Date).Value = dtcData.DateStamp;
 
                     return _sqlResult.Post(cmd, sql);
                 }
             }
         }
-
         //TODO Count generic method
         public Response GetReferenceNumber(string referenceNumber)
         {

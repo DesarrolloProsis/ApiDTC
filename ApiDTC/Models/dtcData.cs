@@ -7,7 +7,6 @@
     {
         #region Properties
         
-        [Required]
         public string ReferenceNumber { get; set; }
         
         public string SinisterNumber { get; set; }
@@ -34,7 +33,6 @@
         
         public int AgremmentInfoId { get; set; }
 
-        public DateTime DateStamp { get; set;}
         #endregion
     }
 }
