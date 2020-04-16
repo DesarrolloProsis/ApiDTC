@@ -34,10 +34,10 @@
         {
             using (SqlConnection sql = new SqlConnection(_connectionString))
             {
-                using(SqlCommand cmd = new SqlCommand("dbo.sp_InsertDtcData", sql))
+                using (SqlCommand cmd = new SqlCommand("dbo.sp_InsertDtcData", sql))
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.Add("@referenceNumber", SqlDbType.NVarChar).Value = dtcData.ReferenceNumber  ;
+                    cmd.Parameters.Add("@referenceNumber", SqlDbType.NVarChar).Value = dtcData.ReferenceNumber;
                     cmd.Parameters.Add("@sinisterNumber", SqlDbType.NVarChar).Value = dtcData.SinisterNumber;
                     cmd.Parameters.Add("@reportNumber", SqlDbType.NVarChar).Value = dtcData.ReportNumber;
                     cmd.Parameters.Add("@sinisterDate", SqlDbType.Date).Value = dtcData.SinisterDate;
@@ -50,7 +50,6 @@
                     cmd.Parameters.Add("@typeDescriptionId", SqlDbType.Int).Value = dtcData.TypeDescriptionId;
                     cmd.Parameters.Add("@userId", SqlDbType.Int).Value = dtcData.AgremmentInfoId;
                     cmd.Parameters.Add("@agremmentInfoId", SqlDbType.Int).Value = dtcData.AgremmentInfoId;
-
                     return _sqlResult.Post(cmd, sql);
                 }
             }
@@ -72,7 +71,6 @@
                         };
                     }
 
-                    //TODO Referencias con distintas longitudes
                     SqlCommand countCommand = new SqlCommand($"SELECT Count(*) FROM [ProsisDTC3].[dbo].[DTCData] WHERE ReferenceNumber LIKE '{referenceNumber}%'", sql);
                     Int32 count = (Int32) countCommand.ExecuteScalar();
                     if(count == 0)
@@ -80,7 +78,7 @@
                         return new Response
                         {
                             Message = "Ok",
-                            Result = $"{referenceNumber}"
+                            Result = $"{referenceNumber.Substring(0, 9)}"
                         };
                     }
                     else if(count == 1)
@@ -88,12 +86,12 @@
                         return new Response
                         {
                             Message = "Ok",
-                            Result = $"{referenceNumber}-02"
+                            Result = $"{referenceNumber.Substring(0, 9)}-02"
                         };
                     }
                     else
                     {
-                        SqlCommand lastReferenceCommand = new SqlCommand($"SELECT TOP 1 ReferenceNumber FROM [ProsisDTC3].[dbo].[DTCData] WHERE ReferenceNumber LIKE '{referenceNumber}%' ORDER BY ReferenceNumber DESC", sql);
+                        SqlCommand lastReferenceCommand = new SqlCommand($"SELECT TOP 1 ReferenceNumber FROM [ProsisDTC3].[dbo].[DTCData] WHERE ReferenceNumber LIKE '{referenceNumber.Substring(0, 9)}%' ORDER BY ReferenceNumber DESC", sql);
                         var reader = lastReferenceCommand.ExecuteReader();
                         if(reader.Read())
                         {
@@ -102,7 +100,7 @@
                             return new Response
                             {
                                 Message = "Ok",
-                                Result = $"{referenceNumber}-{lastReference.ToString("00")}"
+                                Result = $"{referenceNumber.Substring(0, 9)}-{lastReference.ToString("00")}"
                             };
                         }
                         return new Response

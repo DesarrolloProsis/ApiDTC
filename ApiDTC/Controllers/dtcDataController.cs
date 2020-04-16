@@ -49,7 +49,7 @@
         }
 
         //TODO Ajustar petición POST nuevo DTC
-        // POST: api/dtcData
+        // POST: api/dtcData/NuevoDtc
         [HttpPost]
         public ActionResult<InsertResponse> Post([FromBody] DtcData dtcData)
         {

@@ -53,12 +53,13 @@
                             cmd.Parameters.Add("@strSerialNumber", SqlDbType.NVarChar).Value = item.NumSerie[i];
 
                             cmd.Parameters.Add("@strUnity", SqlDbType.NVarChar).Value = item.Unity;
-                            cmd.Parameters.Add("@dateInstallationDate", SqlDbType.DateTime).Value = item.dateInstallationDate;
-                            cmd.Parameters.Add("@dateMaintenanceDate", SqlDbType.DateTime).Value = item.dateMaintenanceDate;
-                            cmd.Parameters.Add("@intLifeTimeExpected", SqlDbType.Int).Value = item.intLifeTimeExpected;
-                            cmd.Parameters.Add("@dateLifeTimeReal", SqlDbType.DateTime).Value = item.dateLifeTimeReal;
+                            cmd.Parameters.Add("@dateInstallationDate", SqlDbType.DateTime).Value = item.DateInstallationDate;
+                            cmd.Parameters.Add("@dateMaintenanceDate", SqlDbType.DateTime).Value = item.DateMaintenanceDate;
+                            cmd.Parameters.Add("@intLifeTimeExpected", SqlDbType.Int).Value = item.IntLifeTimeExpected;
+                            cmd.Parameters.Add("@dateLifeTimeReal", SqlDbType.DateTime).Value = item.DateLifeTimeReal;
 
                             cmd.Parameters.Add("@intPartida", SqlDbType.Int).Value = conteo;
+                            cmd.Parameters.Add("@strFolioMatenimiento", SqlDbType.NVarChar).Value = item.MaintenanceFolio[i];
                             //TODO test components insert
                             insertUp = Convert.ToBoolean(cmd.ExecuteNonQuery());
                             sqlResult.Message = insertUp ? "Ok" : $"No se pudo insertar la fila número {conteo} del modelo {item.Modelo} tipo 1.";
@@ -92,10 +93,10 @@
                             cmd.Parameters.Add("@strSerialNumber", SqlDbType.NVarChar).Value = item.NumSerie[i];
 
                             cmd.Parameters.Add("@strUnity", SqlDbType.NVarChar).Value = item.Unity;
-                            cmd.Parameters.Add("@dateInstallationDate", SqlDbType.DateTime).Value = item.dateInstallationDate;
-                            cmd.Parameters.Add("@dateMaintenanceDate", SqlDbType.DateTime).Value = item.dateMaintenanceDate;
-                            cmd.Parameters.Add("@intLifeTimeExpected", SqlDbType.Int).Value = item.intLifeTimeExpected;
-                            cmd.Parameters.Add("@dateLifeTimeReal", SqlDbType.DateTime).Value = item.dateLifeTimeReal;
+                            cmd.Parameters.Add("@dateInstallationDate", SqlDbType.DateTime).Value = item.DateInstallationDate;
+                            cmd.Parameters.Add("@dateMaintenanceDate", SqlDbType.DateTime).Value = item.DateMaintenanceDate;
+                            cmd.Parameters.Add("@intLifeTimeExpected", SqlDbType.Int).Value = item.IntLifeTimeExpected;
+                            cmd.Parameters.Add("@dateLifeTimeReal", SqlDbType.DateTime).Value = item.DateLifeTimeReal;
 
                             cmd.Parameters.Add("@intPartida", SqlDbType.Int).Value = conteo;
                             
