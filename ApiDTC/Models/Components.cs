@@ -36,6 +36,10 @@
         public string CatalogBrand { get; set; }
         
         public string CatalogModel { get; set; }
+
+        public DateTime MaintenanceDate { get; set; }
+
+        public string MaintenanceFolio { get; set; }
         #endregion
     }
 }
