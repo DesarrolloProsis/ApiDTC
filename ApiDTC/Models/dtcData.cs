@@ -33,7 +33,6 @@
         public int TypeDescriptionId { get; set; }
         
         public int AgremmentInfoId { get; set; }
-
         #endregion
     }
 }

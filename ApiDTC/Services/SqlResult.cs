@@ -14,6 +14,7 @@ namespace ApiDTC.Services
 
         private string _classMapped, _propertyMapped;
         #endregion
+        
         public SqlResult(ApiLogger apiLogger)
         {
             _apiLogger = apiLogger;
@@ -37,13 +38,13 @@ namespace ApiDTC.Services
                 {
                     return new InsertResponse
                     {
-                        SqlMessage = "Result not found",
+                        SqlMessage = "No se pudo insertar el registro",
                         SqlResult = null
                     };
                 }
                 var result = PostMapper(reader);
                 con.Close();
-                return (InsertResponse)result;
+                return result;
             }
             catch (SqlException ex)
             {
@@ -80,7 +81,7 @@ namespace ApiDTC.Services
                 }
                 var result = GetMapper<T>(reader);
                 con.Close();
-                return (Response)result;
+                return result;
             }
             catch (SqlException ex)
             {

@@ -14,31 +14,30 @@
         private readonly string _connectionString;
         
         private ApiLogger _apiLogger;
+
+        private SqlResult _sqlResult;
         #endregion
 
         #region Constructor
-        public RequestedComponentDb(IConfiguration configuration, ApiLogger apiLogger)
+        public RequestedComponentDb(IConfiguration configuration, SqlResult sqlResult)
         {
-            _apiLogger = apiLogger;
+            _sqlResult = sqlResult;
             _connectionString = configuration.GetConnectionString("defaultConnection");
         }
         #endregion
 
-        public object PostRequestedComponent(List<RequestedComponent> requestedComponent)
+        public InsertResponse PostRequestedComponent(List<RequestedComponent> requestedComponent)
         {
             using (SqlConnection sql = new SqlConnection(_connectionString))
-            {        
-                try
+            {
+                using (SqlCommand cmd = new SqlCommand("dbo.sp_InsertComponents", sql))
                 {
-                    sql.Open();
+                    var result = new InsertResponse();
                     int conteo = 1;
-                    Response sqlResult = new Response();
-                    bool insertUp;     
                     foreach (var item in requestedComponent)
                     {
-                        for (int i = 0; i < item.CapufeLaneNum.Length; i++)
+                        for(int i = 0; i < item.CapufeLaneNum.Length; i++)
                         {
-                            SqlCommand cmd = new SqlCommand("sp_InsertComponents", sql);
                             cmd.CommandType = CommandType.StoredProcedure;
 
                             cmd.Parameters.Add("@intType", SqlDbType.Int).Value = 1;
@@ -60,80 +59,51 @@
 
                             cmd.Parameters.Add("@intPartida", SqlDbType.Int).Value = conteo;
                             cmd.Parameters.Add("@strFolioMatenimiento", SqlDbType.NVarChar).Value = item.MaintenanceFolio[i];
-                            //TODO test components insert
-                            insertUp = Convert.ToBoolean(cmd.ExecuteNonQuery());
-                            sqlResult.Message = insertUp ? "Ok" : $"No se pudo insertar la fila número {conteo} del modelo {item.Modelo} tipo 1.";
-                            if(!insertUp)
+
+                            result = _sqlResult.Post(cmd, sql);
+                            if(result.SqlResult == null)
                             {
-                                sqlResult.Result = false;
-                                return sqlResult;
+                                result.SqlMessage = $"{result.SqlMessage}. No se pudo insertar la fila número {conteo} del modelo {item.Modelo} tipo 1.";
+                                return result;
                             }
-                            sqlResult.Result = insertUp ? true : false;
                         }
                         conteo++;
                     }
                     conteo = 1;
                     foreach (var item in requestedComponent)
                     {
-
                         for (int i = 0; i < item.CapufeLaneNum.Length; i++)
                         {
-                            SqlCommand cmd = new SqlCommand("sp_InsertComponents", sql);
                             cmd.CommandType = CommandType.StoredProcedure;
-
                             cmd.Parameters.Add("@intType", SqlDbType.Int).Value = 2;
                             cmd.Parameters.Add("@intComponentStockId", SqlDbType.Int).Value = item.ComponentsStockId;
                             cmd.Parameters.Add("@strReferenceNumber", SqlDbType.NVarChar).Value = item.ReferenceNumber;
                             cmd.Parameters.Add("@datetimeDate", SqlDbType.DateTime).Value = DateTime.Now;
                             cmd.Parameters.Add("@strBrand", SqlDbType.NChar).Value = item.Marca;
                             cmd.Parameters.Add("@strModel", SqlDbType.NChar).Value = item.Modelo;
-
                             cmd.Parameters.Add("@strCapufeLaneNum", SqlDbType.NVarChar).Value = item.CapufeLaneNum[i];
                             cmd.Parameters.Add("@strIdGare", SqlDbType.NVarChar).Value = item.IdGare[i];
                             cmd.Parameters.Add("@strSerialNumber", SqlDbType.NVarChar).Value = item.NumSerie[i];
-
                             cmd.Parameters.Add("@strUnity", SqlDbType.NVarChar).Value = item.Unity;
                             cmd.Parameters.Add("@dateInstallationDate", SqlDbType.DateTime).Value = item.DateInstallationDate;
                             cmd.Parameters.Add("@dateMaintenanceDate", SqlDbType.DateTime).Value = item.DateMaintenanceDate;
                             cmd.Parameters.Add("@intLifeTimeExpected", SqlDbType.Int).Value = item.IntLifeTimeExpected;
                             cmd.Parameters.Add("@dateLifeTimeReal", SqlDbType.DateTime).Value = item.DateLifeTimeReal;
-
                             cmd.Parameters.Add("@intPartida", SqlDbType.Int).Value = conteo;
                             
                             //TODO test components insert
-                            insertUp = Convert.ToBoolean(cmd.ExecuteNonQuery());
-                            sqlResult.Message = insertUp ? "Ok" : $"No se pudo insertar la fila número {conteo} del modelo {item.Modelo} tipo 2.";
-                            if(!insertUp)
+                            result = _sqlResult.Post(cmd, sql);
+                            if(result.SqlResult == null)
                             {
-                                sqlResult.Result = false;
-                                return sqlResult;
+                                result.SqlMessage = $"{result.SqlMessage}. No se pudo insertar la fila número {conteo} del modelo {item.Modelo} tipo 2.";
+                                return result;
                             }
-                            sqlResult.Result = insertUp ? true : false;
                         }
                         conteo++;
                     }
-                    return sqlResult;
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine("\nMessage ---\n{0}", ex.Message);
-                    var error = ex.Message;
-                    return error;
-                }                
+                    return result;
+                }                 
             }
         }
-
-        //private RequestedComponent MapToRequestedComponent(SqlDataReader reader)
-        //{
-        //    return new RequestedComponent()
-        //    {
-        //        RequestedComponentId = (int)reader["RequestedComponentId"],
-        //        ComponentsStockId = (int)reader["ComponentsStockId"],
-        //        ReferenceNumber = reader["ReferenceNumber"].ToString(),
-        //        CapufeLaneNum = reader["CapufeLaneNum"].ToString(),
-        //        IdGare = reader["IdGare"].ToString(),
-        //        RequestDate = Convert.ToDateTime(reader["RequestDate"].ToString()),
-        //    };
-        //}
     }
 }

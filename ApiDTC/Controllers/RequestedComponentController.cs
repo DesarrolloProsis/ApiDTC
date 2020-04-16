@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using ApiDTC.Data;
     using ApiDTC.Models;
     using Microsoft.AspNetCore.Mvc;
@@ -24,9 +25,17 @@
         //TODO POST RequestedComponents
         // POST: api/RequestedComponent
         [HttpPost]
-        public object Post([FromBody] List<RequestedComponent> requestedComponent)
+        public ActionResult Post([FromBody] List<RequestedComponent> requestedComponent)
         {
-            return _db.PostRequestedComponent(requestedComponent);
+            if(ModelState.IsValid)
+            {
+                var get = _db.PostRequestedComponent(requestedComponent);
+                if(get.SqlResult == null)
+                    return BadRequest(get);
+                else
+                    return StatusCode(201, get);
+            }
+            return BadRequest(ModelState);
             //return new object { };
         }
 
