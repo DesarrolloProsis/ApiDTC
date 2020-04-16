@@ -6,7 +6,8 @@
     public class DtcData
     {
         #region Properties
-        
+
+        [Required]        
         public string ReferenceNumber { get; set; }
         
         public string SinisterNumber { get; set; }
