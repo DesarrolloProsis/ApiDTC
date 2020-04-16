@@ -122,18 +122,5 @@
                 }                
             }
         }
-
-        //private RequestedComponent MapToRequestedComponent(SqlDataReader reader)
-        //{
-        //    return new RequestedComponent()
-        //    {
-        //        RequestedComponentId = (int)reader["RequestedComponentId"],
-        //        ComponentsStockId = (int)reader["ComponentsStockId"],
-        //        ReferenceNumber = reader["ReferenceNumber"].ToString(),
-        //        CapufeLaneNum = reader["CapufeLaneNum"].ToString(),
-        //        IdGare = reader["IdGare"].ToString(),
-        //        RequestDate = Convert.ToDateTime(reader["RequestDate"].ToString()),
-        //    };
-        //}
     }
 }
