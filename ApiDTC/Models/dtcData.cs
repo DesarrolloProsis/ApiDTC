@@ -6,7 +6,8 @@
     public class DtcData
     {
         #region Properties
-        
+
+        [Required]        
         public string ReferenceNumber { get; set; }
         
         public string SinisterNumber { get; set; }
@@ -32,7 +33,6 @@
         public int TypeDescriptionId { get; set; }
         
         public int AgremmentInfoId { get; set; }
-
         #endregion
     }
 }

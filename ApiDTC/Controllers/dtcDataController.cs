@@ -51,7 +51,7 @@
         //TODO Ajustar petición POST nuevo DTC
         // POST: api/dtcData/NuevoDtc
         [HttpPost]
-        public ActionResult<InsertResponse> Post([FromBody] DtcData dtcData)
+        public ActionResult Post([FromBody] DtcData dtcData)
         {
             if(ModelState.IsValid)
             {
@@ -59,7 +59,8 @@
                 if(get.SqlResult == null)
                     return BadRequest(get);
                 else
-                    return Created($"api/dtcdata/{dtcData.ReferenceNumber}", dtcData);
+                    return StatusCode(201, get);    
+                    //return Created($"api/dtcdata/{dtcData.ReferenceNumber}", dtcData);
             }
             return BadRequest(ModelState);
         }
