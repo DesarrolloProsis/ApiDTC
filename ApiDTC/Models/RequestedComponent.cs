@@ -25,7 +25,6 @@
         public DateTime DateMaintenanceDate { get; set; }
 
         public string MaintenanceFolio { get; set; }
-
         public int IntLifeTimeExpected { get; set; }
         
         public DateTime DateLifeTimeReal { get; set; }
