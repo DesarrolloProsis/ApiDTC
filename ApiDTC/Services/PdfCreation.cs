@@ -20,7 +20,6 @@ namespace ApiDTC.Services
         private DataTable _tableEquipoPropuesto;
         
         private string _refNum;
-        private Document doc;
 
         private ApiLogger _apiLogger;
 
@@ -71,62 +70,74 @@ namespace ApiDTC.Services
         #region Methods
         public Response NewPdf()
         {
+            if(!Directory.Exists($@"{System.Environment.CurrentDirectory}\Reportes\{DateTime.Now.Year}\{MesActual()}\{DateTime.Now.Day}\"))
+                Directory.CreateDirectory($@"{System.Environment.CurrentDirectory}\Reportes\{DateTime.Now.Year}\{MesActual()}\{DateTime.Now.Day}\");
+
+            if(File.Exists($@"{System.Environment.CurrentDirectory}\Reportes\{DateTime.Now.Year}\{MesActual()}\{DateTime.Now.Day}\ReporteDTC-{_refNum}.pdf"))
+            {
+                if(FileInUse($@"{System.Environment.CurrentDirectory}\Reportes\{DateTime.Now.Year}\{MesActual()}\{DateTime.Now.Day}\ReporteDTC-{_refNum}.pdf"))
+                {
+                    return new Response
+                    {
+                        Message = $"Error: Archivo ReporteDTC-{_refNum} en uso o inaccesible",
+                        Result = null
+                    };
+                }  
+            }
+            
+            Document doc = new Document();
             try
             {
-                doc = new Document();
-                doc.SetPageSize(new Rectangle(793.701f, 609.4488f));
-                doc.SetMargins(70.8661f, 42.5197f, 28.3465f, 28.3465f);
-                doc.AddAuthor("Prosis");
-                doc.AddTitle("Reporte Correctivo");
-                
-                if(!Directory.Exists($@"{System.Environment.CurrentDirectory}\Reportes\{DateTime.Now.Year}\{MesActual()}\{DateTime.Now.Day}\"))
-                    Directory.CreateDirectory($@"{System.Environment.CurrentDirectory}\Reportes\{DateTime.Now.Year}\{MesActual()}\{DateTime.Now.Day}\");
+                using(FileStream file = new FileStream($@"{System.Environment.CurrentDirectory}\Reportes\{DateTime.Now.Year}\{MesActual()}\{DateTime.Now.Day}\ReporteDTC-{_refNum}.pdf", FileMode.Create))
+                {
+                    doc.SetPageSize(new Rectangle(793.701f, 609.4488f));
+                    doc.SetMargins(70.8661f, 42.5197f, 28.3465f, 28.3465f);
+                    doc.AddAuthor("Prosis");
+                    doc.AddTitle("Reporte Correctivo");
+                    
+                    PdfWriter.GetInstance(doc, file);
+                    doc.Open();
 
-                if(System.IO.File.Exists($@"{System.Environment.CurrentDirectory}\Reportes\{DateTime.Now.Year}\{MesActual()}\{DateTime.Now.Day}\ReporteDTC-{_refNum}.pdf"))
-                    System.IO.File.Delete($@"{System.Environment.CurrentDirectory}\Reportes\{DateTime.Now.Year}\{MesActual()}\{DateTime.Now.Day}\ReporteDTC-{_refNum}.pdf");
-                
-                FileStream file = new FileStream($@"{System.Environment.CurrentDirectory}\Reportes\{DateTime.Now.Year}\{MesActual()}\{DateTime.Now.Day}\ReporteDTC-{_refNum}.pdf", FileMode.OpenOrCreate, FileAccess.ReadWrite);
-                PdfWriter write = PdfWriter.GetInstance(doc, file);
-                doc.Open();
+                    doc.Add(tablaEncabezado());
+                    doc.Add(new Phrase(" "));
+                    doc.Add(new Phrase(" "));
+                    doc.Add(new Phrase(" "));
+                    doc.Add(tablaSiniestro());
+                    doc.Add(tablaSiniestroMore());
+                    doc.Add(new Phrase(" "));
+                    doc.Add(new Phrase("EQUIPO DAÑADO", letraoNegritaMediana));
+                    doc.Add(tablaEquipoDañado());
+                    doc.Add(tablaTituloPropuesto());
+                    doc.Add(tablaEquipoPropuesto());
+                    doc.Add(tablaTotal());
+                    doc.Add(new Phrase(".", letritasMiniMini));
+                    doc.Add(tablaEstatica());
+                    doc.Add(new Phrase(".", letritasMiniMini));
+                    doc.Add(tablaFinal());
+                    doc.Add(new Phrase("\n"));
+                    doc.Add(new Phrase("\n"));
+                    doc.Add(new Phrase("PROYECTOS Y SISTEMAS INFORMATICOS, S.A DE C.V AV.DOCTOR JOSE MARIA VERTIZ No.1238 INT.1 LETRAN VALLE C.P 03650 BENITO JUAREZ D.F TEL. 44442306", letraNormalMediana));
 
-                doc.Add(tablaEncabezado());
-                doc.Add(new Phrase(" "));
-                doc.Add(new Phrase(" "));
-                doc.Add(new Phrase(" "));
-                doc.Add(tablaSiniestro());
-                doc.Add(tablaSiniestroMore());
-                doc.Add(new Phrase(" "));
-                doc.Add(new Phrase("EQUIPO DAÑADO", letraoNegritaMediana));
-                doc.Add(tablaEquipoDañado());
-                doc.Add(tablaTituloPropuesto());
-                doc.Add(tablaEquipoPropuesto());
-                doc.Add(tablaTotal());
-                doc.Add(new Phrase(".", letritasMiniMini));
-                doc.Add(tablaEstatica());
-                doc.Add(new Phrase(".", letritasMiniMini));
-                doc.Add(tablaFinal());
-                doc.Add(new Phrase("\n"));
-                doc.Add(new Phrase("\n"));
-                doc.Add(new Phrase("PROYECTOS Y SISTEMAS INFORMATICOS, S.A DE C.V AV.DOCTOR JOSE MARIA VERTIZ No.1238 INT.1 LETRAN VALLE C.P 03650 BENITO JUAREZ D.F TEL. 44442306", letraNormalMediana));
-
-                write.Close();
-                doc.Close();
-                file.Close();
+                    doc.Close();
+                }
                 return new Response
                 {
                     Message = "Ok",
                     Result = $@"{System.Environment.CurrentDirectory}\Reportes\{DateTime.Now.Year}\{MesActual()}\{DateTime.Now.Day}\ReporteDTC-{_refNum}.pdf"
                 };
             }
-            catch (IOException ex)
+            catch(IOException ex)
             {
+                doc.Close();
+                if(System.IO.File.Exists($@"{System.Environment.CurrentDirectory}\Reportes\{DateTime.Now.Year}\{MesActual()}\{DateTime.Now.Day}\ReporteDTC-{_refNum}.pdf"))
+                    System.IO.File.Delete($@"{System.Environment.CurrentDirectory}\Reportes\{DateTime.Now.Year}\{MesActual()}\{DateTime.Now.Day}\ReporteDTC-{_refNum}.pdf");
                 _apiLogger.WriteLog(ex, "NewPdf");
                 return new Response
                 {
-                    Message = $"Error: {ex.Message}",
+                    Message = $"Error: {ex.Message}. Archivo temporal eliminado",
                     Result = null
                 };
-            }
+            }        
         }
 
         private IElement tablaFinal()
@@ -566,6 +577,21 @@ namespace ApiDTC.Services
             tablaEncabezado.AddCell(col2);
             tablaEncabezado.AddCell(col3);
             return tablaEncabezado;
+        }
+
+        private bool FileInUse(string file)
+        {
+            bool fileInUse = false;
+            try
+            {
+                FileStream fs = File.Open(file, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
+                fs.Close();
+            }
+            catch(IOException ex)
+            {
+                fileInUse = true;
+            }
+            return fileInUse;
         }
 
         private string MesActual() { return new System.Globalization.CultureInfo("es-ES", false).DateTimeFormat.GetMonthName(DateTime.Now.Month); }
