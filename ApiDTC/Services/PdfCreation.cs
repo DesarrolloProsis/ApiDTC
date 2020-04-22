@@ -589,6 +589,7 @@ namespace ApiDTC.Services
             }
             catch(IOException ex)
             {
+                _apiLogger.WriteLog(ex, "FileInUse");
                 fileInUse = true;
             }
             return fileInUse;

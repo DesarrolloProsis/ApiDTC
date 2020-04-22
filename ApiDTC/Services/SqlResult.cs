@@ -57,6 +57,46 @@ namespace ApiDTC.Services
                 };
             }
         }
+
+        public Response DataExists(SqlCommand command, SqlConnection con)
+        {
+            try
+            {
+                con.Open();
+                if (con.State != ConnectionState.Open)
+                {
+                    return new Response
+                    {
+                        Message = "SQL connection is closed",
+                        Result = null
+                    };
+                }
+                var reader = command.ExecuteReader();
+                if (!reader.HasRows)
+                {
+                    return new Response
+                    {
+                        Message = "Result not found",
+                        Result = null
+                    };
+                }
+                return new Response
+                {
+                    Message = "Result found",
+                    Result = true
+                };
+            }
+            catch (SqlException ex)
+            {
+                _apiLogger.WriteLog(ex, "GetList<T>");
+                return new Response
+                {
+                    Message = $"Error: {ex.Message}",
+                    Result = null
+
+                };
+            }
+        }
         public Response GetList<T>(SqlCommand command, SqlConnection con)
         {
             try

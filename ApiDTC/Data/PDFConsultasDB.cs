@@ -33,7 +33,7 @@
             using(SqlConnection sql = new SqlConnection(_connectionString))
             {
                 SqlCommand cmd = new SqlCommand($"SELECT * FROM [ProsisDTC3].[dbo].[DTCData] WHERE ReferenceNumber = '{referenceNumber}'", sql);
-                return _sqlResult.GetList<DtcData>(cmd, sql);
+                return _sqlResult.DataExists(cmd, sql);
             }
         }
         
