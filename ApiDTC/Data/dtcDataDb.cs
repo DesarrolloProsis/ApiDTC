@@ -78,7 +78,7 @@
                         return new Response
                         {
                             Message = "Ok",
-                            Result = $"{referenceNumber.Substring(0, 9)}"
+                            Result = $"{referenceNumber}"
                         };
                     }
                     else if(count == 1)
@@ -86,12 +86,12 @@
                         return new Response
                         {
                             Message = "Ok",
-                            Result = $"{referenceNumber.Substring(0, 9)}-02"
+                            Result = $"{referenceNumber}-02"
                         };
                     }
                     else
                     {
-                        SqlCommand lastReferenceCommand = new SqlCommand($"SELECT TOP 1 ReferenceNumber FROM [ProsisDTC3].[dbo].[DTCData] WHERE ReferenceNumber LIKE '{referenceNumber.Substring(0, 9)}%' ORDER BY ReferenceNumber DESC", sql);
+                        SqlCommand lastReferenceCommand = new SqlCommand($"SELECT TOP 1 ReferenceNumber FROM [ProsisDTC3].[dbo].[DTCData] WHERE ReferenceNumber LIKE '{referenceNumber}%' ORDER BY ReferenceNumber DESC", sql);
                         var reader = lastReferenceCommand.ExecuteReader();
                         if(reader.Read())
                         {
@@ -100,7 +100,7 @@
                             return new Response
                             {
                                 Message = "Ok",
-                                Result = $"{referenceNumber.Substring(0, 9)}-{lastReference.ToString("00")}"
+                                Result = $"{referenceNumber}-{lastReference.ToString("00")}"
                             };
                         }
                         return new Response

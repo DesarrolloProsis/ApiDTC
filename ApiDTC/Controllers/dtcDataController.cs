@@ -31,7 +31,7 @@
         [HttpGet("{refNum}")]
         public ActionResult<Response> GetDtcData(string refNum)
         {
-            var get = _db.GetReferenceNumber(refNum.Substring(0, 9));
+            var get = _db.GetReferenceNumber(FormatUtil.ReferenceFormat(refNum));
             if(get.Result == null)
                 return NotFound(get);
             else
