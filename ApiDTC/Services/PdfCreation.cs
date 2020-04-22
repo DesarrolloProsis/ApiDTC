@@ -460,11 +460,11 @@ namespace ApiDTC.Services
 
                 PdfPCell colAnidada2List = new PdfPCell();
 
-                colAnidada2List.Phrase = new Phrase("31/01/2020", letritasMini);
+                colAnidada2List.Phrase = new Phrase(item["FechaUltimoMantenimiento"].ToString(), letritasMini);
                 colAnidada2List.Border = 0;
                 colAnidada2List.BorderWidthRight = 1;
                 tablaEquipoDanadoAnidadaList.AddCell(colAnidada2List);
-                colAnidada2List.Phrase = new Phrase("S/M", letritasMini);
+                colAnidada2List.Phrase = new Phrase(item["FolioMantenimiento"].ToString(), letritasMini);
                 colAnidada2List.Border = 0;
                 tablaEquipoDanadoAnidadaList.AddCell(colAnidada2List);
 
