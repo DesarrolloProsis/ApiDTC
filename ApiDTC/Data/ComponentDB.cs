@@ -40,6 +40,8 @@
                     cmd.Parameters.Add("@Component", SqlDbType.NVarChar).Value = Id;
                     
                     var storedResult = _sqlResult.GetList<Components>(cmd, sql);
+                    if(storedResult.Result == null)
+                        return storedResult;
                     var list = (List<Components>)storedResult.Result;
                     string[] listLane = new string[list.Count];
                     int i = 0;
@@ -58,11 +60,11 @@
         }
 
         //Revisar
-        public Response GetComponentsData()
+        public Response GetComponentsData(int plaza, string numConvenio)
         {
             using (SqlConnection sql = new SqlConnection(_connectionString))
             {
-                SqlCommand cmd = new SqlCommand("select a.Component as description from SquareInventory a join LanesCatalog b on (a.CapufeLaneNum = b.CapufeLaneNum and a.IdGare = b.IdGare) where b.SquareCatalogId = '102' group by a.Component", sql);
+                SqlCommand cmd = new SqlCommand($"select a.Component as description from SquareInventory a join LanesCatalog b on (a.CapufeLaneNum = b.CapufeLaneNum and a.IdGare = b.IdGare) join ComponentsStock c on a.Component = c.Description join AgreementInfo d on c.AgremmentInfoId = d.AgremmentInfoId where b.SquareCatalogid = '{plaza}' and	d.Agrement = '{numConvenio}' group by a.Component)", sql);
                 return _sqlResult.GetList<ComponentsDescription>(cmd, sql);
             }
         }

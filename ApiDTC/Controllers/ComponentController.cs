@@ -31,10 +31,10 @@
         }
 
         //GET: api/Component/5
-        [HttpGet]
-        public ActionResult<Response> Get()
+        [HttpGet("{plaza}/{numConvenio}")]
+        public ActionResult<Response> Get(int plaza, string numConvenio)
         {
-            var get = _db.GetComponentsData();
+            var get = _db.GetComponentsData(plaza, numConvenio);
             if(get.Result == null)
                 return NotFound(get);
             return Ok(get);

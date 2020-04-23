@@ -38,8 +38,19 @@
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.Add("@referenceNumber", SqlDbType.NVarChar).Value = dtcData.ReferenceNumber;
-                    cmd.Parameters.Add("@sinisterNumber", SqlDbType.NVarChar).Value = dtcData.SinisterNumber;
-                    cmd.Parameters.Add("@reportNumber", SqlDbType.NVarChar).Value = dtcData.ReportNumber;
+                    
+                    cmd.Parameters.Add("@sinisterNumber", SqlDbType.NVarChar);
+                    if(string.IsNullOrEmpty(dtcData.SinisterNumber))
+                        cmd.Parameters["@sinisterNumber"].Value = DBNull.Value;
+                    else
+                        cmd.Parameters["@sinisterNumber"].Value = dtcData.SinisterNumber;
+
+                    cmd.Parameters.Add("@reportNumber", SqlDbType.NVarChar);
+                    if(string.IsNullOrEmpty(dtcData.ReportNumber))
+                        cmd.Parameters["@reportNumber"].Value = DBNull.Value;
+                    else
+                        cmd.Parameters["@reportNumber"].Value = dtcData.ReportNumber;
+
                     cmd.Parameters.Add("@sinisterDate", SqlDbType.Date).Value = dtcData.SinisterDate;
                     cmd.Parameters.Add("@failureDate", SqlDbType.Date).Value = dtcData.FailureDate;
                     cmd.Parameters.Add("@failureNumber", SqlDbType.NVarChar).Value = dtcData.FailureNumber;
