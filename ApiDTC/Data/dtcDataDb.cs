@@ -82,7 +82,7 @@
                         };
                     }
 
-                    SqlCommand countCommand = new SqlCommand($"SELECT Count(*) FROM [ProsisDTC3].[dbo].[DTCData] WHERE ReferenceNumber LIKE '{referenceNumber}%'", sql);
+                    SqlCommand countCommand = new SqlCommand($"SELECT Count(*) FROM [ProsisDTC].[dbo].[DTCData] WHERE ReferenceNumber LIKE '{referenceNumber}%'", sql);
                     Int32 count = (Int32) countCommand.ExecuteScalar();
                     if(count == 0)
                     {
@@ -102,7 +102,7 @@
                     }
                     else
                     {
-                        SqlCommand lastReferenceCommand = new SqlCommand($"SELECT TOP 1 ReferenceNumber FROM [ProsisDTC3].[dbo].[DTCData] WHERE ReferenceNumber LIKE '{referenceNumber}%' ORDER BY ReferenceNumber DESC", sql);
+                        SqlCommand lastReferenceCommand = new SqlCommand($"SELECT TOP 1 ReferenceNumber FROM [ProsisDTC].[dbo].[DTCData] WHERE ReferenceNumber LIKE '{referenceNumber}%' ORDER BY ReferenceNumber DESC", sql);
                         var reader = lastReferenceCommand.ExecuteReader();
                         if(reader.Read())
                         {
@@ -137,7 +137,7 @@
         {
             using(SqlConnection sql = new SqlConnection(_connectionString))
             {
-                SqlCommand cmd = new SqlCommand($"SELECT SinisterNumber, ReportNumber FROM [ProsisDTC3].[dbo].[DTCData]", sql);
+                SqlCommand cmd = new SqlCommand($"SELECT SinisterNumber, ReportNumber FROM [ProsisDTC].[dbo].[DTCData]", sql);
                 return _sqlResult.GetList<InvalidReferenceNumbers>(cmd, sql);
             }
         }
