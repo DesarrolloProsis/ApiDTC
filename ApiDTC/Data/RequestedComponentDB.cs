@@ -47,7 +47,7 @@
                     cmd.Parameters.Add("@dateInstallationDate", SqlDbType.DateTime).Value = item.DateInstallationDate;
                     cmd.Parameters.Add("@dateMaintenanceDate", SqlDbType.DateTime).Value = item.DateMaintenanceDate;
                     cmd.Parameters.Add("@intLifeTimeExpected", SqlDbType.Int).Value = item.IntLifeTimeExpected;
-                    cmd.Parameters.Add("@dateLifeTimeReal", SqlDbType.DateTime).Value = item.DateLifeTimeReal;
+                    cmd.Parameters.Add("@strLifeTimeReal", SqlDbType.NVarChar).Value = item.strLifeTimeReal;
                     cmd.Parameters.Add("@intPartida", SqlDbType.Int).Value = item.IntPartida;
                     cmd.Parameters.Add("@strMaintenanceFolio", SqlDbType.NVarChar).Value = item.MaintenanceFolio;
 
@@ -75,7 +75,7 @@
                     cmd.Parameters.Add("@dateInstallationDate", SqlDbType.DateTime).Value = item.DateInstallationDate;
                     cmd.Parameters.Add("@dateMaintenanceDate", SqlDbType.DateTime).Value = item.DateMaintenanceDate;
                     cmd.Parameters.Add("@intLifeTimeExpected", SqlDbType.Int).Value = item.IntLifeTimeExpected;
-                    cmd.Parameters.Add("@dateLifeTimeReal", SqlDbType.DateTime).Value = item.DateLifeTimeReal;
+                    cmd.Parameters.Add("@strLifeTimeReal", SqlDbType.NVarChar).Value = item.strLifeTimeReal;
                     cmd.Parameters.Add("@intPartida", SqlDbType.Int).Value = item.IntPartida;
                     cmd.Parameters.Add("@strMaintenanceFolio", SqlDbType.NVarChar).Value = item.MaintenanceFolio;
 

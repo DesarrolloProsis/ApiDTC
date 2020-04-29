@@ -25,9 +25,10 @@
         public DateTime DateMaintenanceDate { get; set; }
 
         public string MaintenanceFolio { get; set; }
+        
         public int IntLifeTimeExpected { get; set; }
         
-        public DateTime DateLifeTimeReal { get; set; }
+        public string strLifeTimeReal { get; set; }
         
         public int IntPartida { get; set; }
         #endregion

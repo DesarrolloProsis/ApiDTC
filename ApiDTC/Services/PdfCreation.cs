@@ -304,7 +304,7 @@ namespace ApiDTC.Services
                 var colComponenteProList = new PdfPCell(new Phrase(item2["Componente"].ToString(), letritasMini)) { HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
                 var colMarcaProList = new PdfPCell(new Phrase(item2["Marca"].ToString(), letritasMini)) { HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
                 var colModeloProList = new PdfPCell(new Phrase(item2["Modelo"].ToString(), letritasMini)) { HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
-                var colPrecioProList = new PdfPCell(new Phrase("$" + item2["PrecioUnitario"].ToString(), letritasMini)) { HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
+                var colPrecioProList = new PdfPCell(new Phrase("$" + Convert.ToDouble(item2["PrecioUnitario"]).ToString("C", CultureInfo.CurrentCulture), letritasMini)) { HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
                 var colPrecioDolarProList = new PdfPCell(new Phrase("$" + item2["PrecoDollarUnitario"].ToString(), letritasMini)) { HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
                 var colPrecioTotalProList = new PdfPCell(new Phrase(Convert.ToDouble(item2["PrecioTotal"]).ToString("C", CultureInfo.CurrentCulture), letritasMini)) { HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
                 var colPrecioTotalDolarProList = new PdfPCell(new Phrase("", letritasMini)) { HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
@@ -460,11 +460,11 @@ namespace ApiDTC.Services
 
                 PdfPCell colAnidada2List = new PdfPCell();
 
-                colAnidada2List.Phrase = new Phrase("31/01/2020", letritasMini);
+                colAnidada2List.Phrase = new Phrase(item["FechaUltimoMantenimiento"].ToString(), letritasMini);
                 colAnidada2List.Border = 0;
                 colAnidada2List.BorderWidthRight = 1;
                 tablaEquipoDanadoAnidadaList.AddCell(colAnidada2List);
-                colAnidada2List.Phrase = new Phrase("S/M", letritasMini);
+                colAnidada2List.Phrase = new Phrase(item["FolioMantenimiento"].ToString(), letritasMini);
                 colAnidada2List.Border = 0;
                 tablaEquipoDanadoAnidadaList.AddCell(colAnidada2List);
 
@@ -547,7 +547,7 @@ namespace ApiDTC.Services
 
 
             var col16 = new PdfPCell(new Phrase("Plaza de Cobro:" + "      " + Convert.ToString(_tableHeader.Rows[0]["Plaza"]), letraNormalChica)) { Border = 0, HorizontalAlignment = Element.ALIGN_LEFT, Padding = 1f };
-            var col17 = new PdfPCell(new Phrase("Folio(s) Fallas(s):" + ' ', letraNormalChica)) { Border = 0, };
+            var col17 = new PdfPCell(new Phrase("Folio(s) Fallas(s): " + " " + Convert.ToString(_tableDTCData.Rows[0]["FailureNumber"]), letraNormalChica)) { Border = 0, };
             var col18 = new PdfPCell(new Phrase("Coordinacion Regional:" + ' ' + Convert.ToString(_tableHeader.Rows[0]["RegionalCoordination"]), letraNormalChica)) { Border = 0, HorizontalAlignment = Element.ALIGN_RIGHT };
 
             var col19 = new PdfPCell(new Phrase(" ", letraNormalChica)) { Border = 0, HorizontalAlignment = Element.ALIGN_LEFT, Padding = 1f };

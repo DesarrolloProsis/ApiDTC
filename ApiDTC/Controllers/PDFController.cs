@@ -1,26 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using iTextSharp.text;
-using iTextSharp.text.pdf;
-using System.IO;
-using ApiDTC.Data;
-using System.Data;
-
-using System.Reflection;
-using System.Globalization;
-using ApiDTC.Services;
-
-namespace ApiDTC.Controllers
+﻿namespace ApiDTC.Controllers
 {
+    using System;
+    using Microsoft.AspNetCore.Mvc;
+    using System.IO;
+    using ApiDTC.Services;
+    using ApiDTC.Data;
+
     [Route("api/[controller]")]
     [ApiController]
     public class PDFController : ControllerBase
     {
-
         private readonly PdfConsultasDb _db;
         public PDFController(PdfConsultasDb db)
         {
