@@ -52,7 +52,7 @@
 
                     cmd.Parameters.Add("@sinisterDate", SqlDbType.Date).Value = dtcData.SinisterDate;
                     cmd.Parameters.Add("@failureDate", SqlDbType.Date).Value = dtcData.FailureDate;
-                    cmd.Parameters.Add("@failureNumber", SqlDbType.NVarChar).Value = dtcData.FailureNumber;
+                    cmd.Parameters.Add("@failureNumber", SqlDbType.NVarChar).Value = dtcData.FailureNumber.PadLeft(6, '0');
                     cmd.Parameters.Add("@shippingDate", SqlDbType.Date).Value = dtcData.ShippingDate;
                     cmd.Parameters.Add("@elaborationDate", SqlDbType.Date).Value = dtcData.ElaborationDate;
                     cmd.Parameters.Add("@observation", SqlDbType.NVarChar).Value = dtcData.Observation;
