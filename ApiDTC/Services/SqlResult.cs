@@ -180,7 +180,10 @@ namespace ApiDTC.Services
                     foreach (PropertyInfo p in obj.GetType().GetProperties())
                     {
                         _propertyMapped = p.Name;
-                        p.SetValue(obj, rdr[p.Name], null);
+                        if (!DBNull.Value.Equals(rdr[p.Name]))
+                            p.SetValue(obj, rdr[p.Name], null);
+                        else
+                            p.SetValue(obj, null, null);
                     }
                     list.Add(obj);
                 }

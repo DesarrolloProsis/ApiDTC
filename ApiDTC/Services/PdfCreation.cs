@@ -1,5 +1,5 @@
 namespace ApiDTC.Services
-{
+{           
     using System;
     using System.Data;
     using System.Globalization;
@@ -7,6 +7,7 @@ namespace ApiDTC.Services
     using ApiDTC.Models;
     using iTextSharp.text;
     using iTextSharp.text.pdf;
+    
 
     public class PdfCreation
     {
@@ -41,17 +42,17 @@ namespace ApiDTC.Services
         #region Pdf Configuration
         //Tipo de Letras 
         #region BaseFont
-        public static BaseFont fuenteTitulos = BaseFont.CreateFont(BaseFont.HELVETICA, BaseFont.CP1250, true);
-        public static BaseFont NegritaGrande = BaseFont.CreateFont(BaseFont.HELVETICA, BaseFont.CP1250, true);
-        public static BaseFont NegritaChica = BaseFont.CreateFont(BaseFont.HELVETICA, BaseFont.CP1250, true);
-        public static BaseFont NegritaMediana = BaseFont.CreateFont(BaseFont.HELVETICA, BaseFont.CP1250, true);
-        public static BaseFont NormalGrande = BaseFont.CreateFont(BaseFont.HELVETICA, BaseFont.CP1250, true);
-        public static BaseFont NormalMediana = BaseFont.CreateFont(BaseFont.HELVETICA, BaseFont.CP1250, true);
-        public static BaseFont NormalChica = BaseFont.CreateFont(BaseFont.HELVETICA, BaseFont.CP1250, true);
-        public static BaseFont NormalChicaSubAzul = BaseFont.CreateFont(BaseFont.HELVETICA, BaseFont.CP1250, true);
-        public static BaseFont fuenteLetrita = BaseFont.CreateFont(BaseFont.HELVETICA, BaseFont.CP1250, true);
-        public static BaseFont fuenteMini = BaseFont.CreateFont(BaseFont.HELVETICA, BaseFont.CP1250, true);
-        public static BaseFont NormalMedianaInline = BaseFont.CreateFont(BaseFont.HELVETICA, BaseFont.CP1250, true);
+        public static BaseFont fuenteTitulos = BaseFont.CreateFont(BaseFont.HELVETICA, BaseFont.WINANSI, true);
+        public static BaseFont NegritaGrande = BaseFont.CreateFont(BaseFont.HELVETICA, BaseFont.WINANSI, true);
+        public static BaseFont NegritaChica = BaseFont.CreateFont(BaseFont.HELVETICA, BaseFont.WINANSI, true);
+        public static BaseFont NegritaMediana = BaseFont.CreateFont(BaseFont.HELVETICA, BaseFont.WINANSI, true);
+        public static BaseFont NormalGrande = BaseFont.CreateFont(BaseFont.HELVETICA, BaseFont.WINANSI, true);
+        public static BaseFont NormalMediana = BaseFont.CreateFont(BaseFont.HELVETICA, BaseFont.WINANSI, true);
+        public static BaseFont NormalChica = BaseFont.CreateFont(BaseFont.HELVETICA, BaseFont.WINANSI, true);
+        public static BaseFont NormalChicaSubAzul = BaseFont.CreateFont(BaseFont.HELVETICA, BaseFont.WINANSI, true);
+        public static BaseFont fuenteLetrita = BaseFont.CreateFont(BaseFont.HELVETICA, BaseFont.WINANSI, true);
+        public static BaseFont fuenteMini = BaseFont.CreateFont(BaseFont.HELVETICA, BaseFont.WINANSI, true);
+        public static BaseFont NormalMedianaInline = BaseFont.CreateFont(BaseFont.HELVETICA, BaseFont.WINANSI, true);
         #endregion
         #region iText.Font
         public static iTextSharp.text.Font letraoNegritaGrande = new iTextSharp.text.Font(NegritaGrande, 15f, iTextSharp.text.Font.BOLD, BaseColor.Black);
@@ -93,12 +94,28 @@ namespace ApiDTC.Services
                 using(FileStream file = new FileStream($@"{System.Environment.CurrentDirectory}\Reportes\{DateTime.Now.Year}\{MesActual()}\{DateTime.Now.Day}\ReporteDTC-{_refNum}.pdf", FileMode.Create))
                 {
                     doc.SetPageSize(new Rectangle(793.701f, 609.4488f));
-                    doc.SetMargins(70.8661f, 42.5197f, 28.3465f, 28.3465f);
+                    //doc.SetMargins(70.8661f, 42.5197f, 28.3465f, 28.3465f);                    
+                    doc.SetMargins(70.8661f, 70.8661f, 40f, 28.3465f);
                     doc.AddAuthor("Prosis");
                     doc.AddTitle("Reporte Correctivo");
-                    
+                    MemoryStream ms = new MemoryStream();
+                    PdfWriter writer = PdfWriter.GetInstance(doc,ms);
+                    writer.PageEvent = new PageEventHelper();
+
+
+
+
+
+
                     PdfWriter.GetInstance(doc, file);
+
+
                     doc.Open();
+
+
+                    doc.NewPage();
+                    doc.NewPage();
+                    doc.NewPage();
 
                     doc.Add(tablaEncabezado());
                     doc.Add(new Phrase(" "));
@@ -118,9 +135,12 @@ namespace ApiDTC.Services
                     doc.Add(tablaFinal());
                     doc.Add(new Phrase("\n"));
                     doc.Add(new Phrase("\n"));
-                    doc.Add(new Phrase("PROYECTOS Y SISTEMAS INFORMATICOS, S.A DE C.V AV.DOCTOR JOSE MARIA VERTIZ No.1238 INT.1 LETRAN VALLE C.P 03650 BENITO JUAREZ D.F TEL. 44442306", letraNormalMediana));
+                    //doc.Add(new Phrase("PROYECTOS Y SISTEMAS INFORMATICOS, S.A DE C.V AV.DOCTOR JOSE MARIA VERTIZ No.1238 INT.1 LETRAN VALLE C.P 03650 BENITO JUAREZ D.F TEL. 44442306", letraNormalMediana));
 
+
+                    writer.Close();
                     doc.Close();
+                    ms.Seek(0, SeekOrigin.Begin);
                 }
                 return new Response
                 {
@@ -141,6 +161,8 @@ namespace ApiDTC.Services
                 };
             }        
         }
+
+   
 
         private IElement tablaFinal()
         {
@@ -217,7 +239,7 @@ namespace ApiDTC.Services
 
         private IElement tablaTotal()
         {
-            var tablaTotal = new PdfPTable(new float[] { 83.3f, 11.2f, 11.3f }) { WidthPercentage = 71.1f };
+            var tablaTotal = new PdfPTable(new float[] { 66.5f, 7.2f, 7.2f }) { WidthPercentage = 72.7f };
             tablaTotal.HorizontalAlignment = Element.ALIGN_LEFT;
 
 
@@ -254,7 +276,7 @@ namespace ApiDTC.Services
         
         private IElement tablaEquipoPropuesto()
         {
-            var tablaEquipoPropuesto = new PdfPTable(new float[] { 13f, 13f, 13f, 65f, 20f, 20f, 20f, 20f, 25f, 25f, 20f, 75f }) { WidthPercentage = 100f };
+            var tablaEquipoPropuesto = new PdfPTable(new float[] { 13f, 13f, 13f, 59f, 24f, 24f, 20f, 20f, 20f, 20.2f, 10f, 75f }) { WidthPercentage = 100f };
             tablaEquipoPropuesto.HorizontalAlignment = Element.ALIGN_LEFT;
 
             var colPartidaPro = new PdfPCell(new Phrase("Partida", letraoNegritaChica)) { HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
@@ -272,7 +294,7 @@ namespace ApiDTC.Services
 
 
             var colDignostico = new PdfPCell();
-            colDignostico.Phrase = new Phrase(_tableDTCData.Rows[0]["Diagnosis"].ToString().ToUpper(), letraoNegritaMediana);
+            colDignostico.Phrase = new Phrase("\n\n" + _tableDTCData.Rows[0]["Diagnosis"].ToString().ToUpper(), letraoNegritaMediana);
             colDignostico.BorderWidthTop = 1;
             colDignostico.BorderWidthLeft = 1;
             colDignostico.BorderWidthRight = 1;
@@ -353,7 +375,7 @@ namespace ApiDTC.Services
             var colEmpyTitulo = new PdfPCell(new Phrase("")) { HorizontalAlignment = Element.ALIGN_LEFT, PaddingLeft = 0, PaddingBottom = 5, PaddingTop = 5, PaddingRight = 0 };
             colEmpyTitulo.Border = 0;
 
-            var colTitulo2EquipoPropuesto = new PdfPCell(new Phrase("DIAGNÓSTICO:", letraoNegritaMediana)) { HorizontalAlignment = Element.ALIGN_CENTER, PaddingLeft = 0, PaddingBottom = 5, PaddingTop = 5, PaddingRight = 0 };
+            var colTitulo2EquipoPropuesto = new PdfPCell(new Phrase("DIAGNÓSTICO:", letraoNegritaMediana)) { HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, PaddingLeft = 0, PaddingBottom = 5, PaddingTop = 5, PaddingRight = 0 };
             colTitulo2EquipoPropuesto.Border = 0;
 
             tablaTituloPropuesto.AddCell(colTitulo1EquipoPropuesto);
@@ -383,7 +405,7 @@ namespace ApiDTC.Services
             PdfPCell colAnidada = new PdfPCell();
             PdfPCell colAnidada2 = new PdfPCell();
             colAnidada.Colspan = 2;
-            colAnidada.Phrase = new Phrase("Vida Util", letraoNegritaChica);
+            colAnidada.Phrase = new Phrase("Ultimo Mantenimiento", letraoNegritaChica);
             colAnidada.HorizontalAlignment = Element.ALIGN_CENTER;
             colAnidada.Border = 1;
             colAnidada.Border = 0;
@@ -474,11 +496,11 @@ namespace ApiDTC.Services
 
                 PdfPCell colAnidada4List = new PdfPCell();
 
-                colAnidada4List.Phrase = new Phrase("-------", letritasMini);
+                colAnidada4List.Phrase = new Phrase(item["FechaTiempoVidaReal"].ToString() , letritasMini);
                 colAnidada4List.Border = 0;
                 colAnidada4List.BorderWidthRight = 1;
                 tablaEquipoDanadoAnidada2List.AddCell(colAnidada4List);
-                colAnidada4List.Phrase = new Phrase("-------", letritasMini);
+                colAnidada4List.Phrase = new Phrase(item["TiempoVidaEsperado"].ToString() + "  " +"años", letritasMini);
                 colAnidada4List.Border = 0;
                 tablaEquipoDanadoAnidada2List.AddCell(colAnidada4List);
 
@@ -513,7 +535,26 @@ namespace ApiDTC.Services
         {
             var tablaSiniestroMore = new PdfPTable(new float[] { 35f, 35f, 35f }) { WidthPercentage = 100f };
 
-            var col10 = new PdfPCell(new Phrase("Cargo:  " + "   " + Convert.ToString(_tableHeader.Rows[0]["Position"]), letraNormalChica)) { Border = 0, HorizontalAlignment = Element.ALIGN_LEFT, Padding = 1f, VerticalAlignment = Element.ALIGN_CENTER };
+            var tablaEquipoDanadoAnidada = new PdfPTable(new float[] { 8f, 70f }) { WidthPercentage = 100f };
+
+            PdfPCell colAnidada = new PdfPCell();
+            PdfPCell colAnidada2 = new PdfPCell();
+            
+            colAnidada.Phrase = new Phrase("Cargo: ", letraNormalChica);
+            colAnidada2.Phrase = new Phrase(Convert.ToString(_tableHeader.Rows[0]["Position"]), letraNormalChica);
+            colAnidada.Border = 0;
+            colAnidada2.Border = 0;
+
+
+            tablaEquipoDanadoAnidada.AddCell(colAnidada);
+            tablaEquipoDanadoAnidada.AddCell(colAnidada2);
+
+            PdfPCell col10 = new PdfPCell();
+            col10.AddElement(tablaEquipoDanadoAnidada);
+            col10.Border = 0;
+
+            //var col10 = new PdfPCell(new Phrase("Cargo:" + " " + Convert.ToString(_tableHeader.Rows[0]["Position"]), letraNormalChica)) { Border = 0, HorizontalAlignment = Element.ALIGN_MIDDLE, Padding = 1f, VerticalAlignment = Element.ALIGN_CENTER };
+            
             //Agregamos Chunk 4 Letras
             var siniestro = new Chunk("No.Siniestro    ", letraNormalChica);
             var numSiniestro = new Chunk(Convert.ToString(_tableDTCData.Rows[0]["SinisterNumber"]), letraoNegritaChica);
@@ -552,7 +593,11 @@ namespace ApiDTC.Services
 
             var col19 = new PdfPCell(new Phrase(" ", letraNormalChica)) { Border = 0, HorizontalAlignment = Element.ALIGN_LEFT, Padding = 1f };
             var col20 = new PdfPCell(new Phrase("Fecha de Falla:" + ' ' + Convert.ToDateTime(_tableDTCData.Rows[0]["FailureDate"]).ToString("dd/MM/yyyy"), letraNormalChica)) { Border = 0 };
-            var col21 = new PdfPCell(new Phrase("Centro de Servicio:" + "                     " + "\nFecha de Elaboracion:" + ' ' + Convert.ToDateTime(_tableDTCData.Rows[0]["ElaborationDate"]).ToString("dd/MM/yyyy"), letraNormalChica)) { Border = 0, HorizontalAlignment = Element.ALIGN_RIGHT };
+            var col21 = new PdfPCell(new Phrase("                                                                                                    Centro de Servicio:", letraNormalChica)) { Border = 0, HorizontalAlignment = Element.ALIGN_CENTER };
+
+            var col22 = new PdfPCell(new Phrase(" ", letraNormalChica)) { Border = 0 };
+            var col23 = new PdfPCell(new Phrase(" ", letraNormalChica)) { Border = 0 };
+            var col24 = new PdfPCell(new Phrase("Fecha de Elaboracion:" + ' ' + Convert.ToDateTime(_tableDTCData.Rows[0]["ElaborationDate"]).ToString("dd/MM/yyyy"), letraNormalChica)) { Border = 0, HorizontalAlignment = Element.ALIGN_RIGHT };
 
 
             tablaSiniestroMore.AddCell(col10);
@@ -567,6 +612,9 @@ namespace ApiDTC.Services
             tablaSiniestroMore.AddCell(col19);
             tablaSiniestroMore.AddCell(col20);
             tablaSiniestroMore.AddCell(col21);
+            tablaSiniestroMore.AddCell(col22);
+            tablaSiniestroMore.AddCell(col23);
+            tablaSiniestroMore.AddCell(col24);
             return tablaSiniestroMore;
         }
 

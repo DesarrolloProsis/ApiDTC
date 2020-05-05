@@ -28,7 +28,7 @@
         #region Methods
 
         //TODO Mapper foreach var lane
-        public Response GetComponentData(string convenio, string plaza, string Id)
+        public Response GetComponentData(string convenio, string plaza, string Id, string marca)
         {
             using (SqlConnection sql = new SqlConnection(_connectionString))
             {
@@ -45,11 +45,21 @@
                     var list = (List<Components>)storedResult.Result;
                     string[] listLane = new string[list.Count];
                     int i = 0;
+
+                    List<Components> listaFiltro = new List<Components>();
+
+
+
                     foreach (var item in list)
                     {
-                        listLane[i++] = item.Lane;
+                        if(item.Brand == marca)
+                        {
+                            listLane[i++] = item.Lane;
+                            listaFiltro.Add(item);
+                        }
+                        
                     }
-                    storedResult.Result = new { storedResult.Result, listLane };
+                    storedResult.Result = new { listaFiltro, listLane };
                     return new Response
                     {
                         Message = "Ok",
