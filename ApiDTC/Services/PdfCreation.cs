@@ -265,7 +265,7 @@ namespace ApiDTC.Services
         
         private IElement tablaEquipoPropuesto()
         {
-            var tablaEquipoPropuesto = new PdfPTable(new float[] { 13f, 13f, 13f, 59f, 24f, 24f, 20f, 20f, 20f, 20.2f, 10f, 75f }) { WidthPercentage = 100f };
+            var tablaEquipoPropuesto = new PdfPTable(new float[] { 12f, 12f, 12f, 62f, 24f, 24f, 20f, 20f, 20f, 20.2f, 10f, 75f }) { WidthPercentage = 100f };
             tablaEquipoPropuesto.HorizontalAlignment = Element.ALIGN_LEFT;
 
             var colPartidaPro = new PdfPCell(new Phrase("Partida", letraoNegritaChica)) { HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
@@ -455,7 +455,7 @@ namespace ApiDTC.Services
 
             foreach (DataRow item in _tableEquipoMalo.Rows)
             {
-                var colPartidaList = new PdfPCell(new Phrase(item["Partida"].ToString(), letritasMini)) { BorderWidth = 1 };
+                var colPartidaList = new PdfPCell(new Phrase(item["Partida"].ToString(), letritasMini)) { BorderWidth = 1, HorizontalAlignment = Element.ALIGN_CENTER };
 
                 var colUnidadList = new PdfPCell(new Phrase(item["Unidad"].ToString(), letritasMini)) { HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
                 var colCantidadList = new PdfPCell(new Phrase(item["Cantidad"].ToString(), letritasMini)) { HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };

@@ -12,6 +12,7 @@
     public class ComponentDb
     {
         #region Attributes
+       
         private readonly string _connectionString;
 
         private SqlResult _sqlResult;
@@ -38,9 +39,9 @@
                     cmd.Parameters.Add("@Agremmnt", SqlDbType.NVarChar).Value = convenio;
                     cmd.Parameters.Add("@SquareId", SqlDbType.NVarChar).Value = plaza;
                     cmd.Parameters.Add("@Component", SqlDbType.NVarChar).Value = Id;
-                    
+
                     var storedResult = _sqlResult.GetList<Components>(cmd, sql);
-                    if(storedResult.Result == null)
+                    if (storedResult.Result == null)
                         return storedResult;
                     var list = (List<Components>)storedResult.Result;
                     string[] listLane = new string[list.Count];
@@ -52,12 +53,12 @@
 
                     foreach (var item in list)
                     {
-                        if(item.Brand == marca)
+                        if (item.Brand == marca)
                         {
                             listLane[i++] = item.Lane;
                             listaFiltro.Add(item);
                         }
-                        
+
                     }
                     storedResult.Result = new { listaFiltro, listLane };
                     return new Response
@@ -78,6 +79,66 @@
                 return _sqlResult.GetList<ComponentsDescription>(cmd, sql);
             }
         }
+
+        public Response GetComponentsInventory(string squareId)
+        {
+            using (SqlConnection sql = new SqlConnection(_connectionString))
+            {
+                SqlCommand cmd = new SqlCommand($"select Component Componente"+
+    " from SquareInventory a join LanesCatalog b on (a.CapufeLaneNum = b.CapufeLaneNum and a.IdGare = b.IdGare)"+
+    $" where b.SquareCatalogId = {squareId}"+
+    " group by Component", sql);
+                return _sqlResult.GetList<ComponentsInventory>(cmd, sql);
+            }
+        }
+
+
+        public Response GetComponentsInventoryUbication()
+        {
+            using (SqlConnection sql = new SqlConnection(_connectionString))
+            {
+                SqlCommand cmd = new SqlCommand($"select TypeUbicationId,Name Ubicacion from TypesUbication", sql);
+                return _sqlResult.GetList<ComponentsInventoryUbication>(cmd, sql);
+            }
+        }
+
+        public Response GetComponentsInventoryLane(string Component,string squareId)
+        {
+            using (SqlConnection sql = new SqlConnection(_connectionString))
+            {
+                SqlCommand cmd = new SqlCommand($"select b.Lane "+
+                    "from SquareInventory a "+
+                    "join LanesCatalog b "+
+                    "on (a.CapufeLaneNum = b.CapufeLaneNum and a.IdGare = b.IdGare) "+
+                    $"where a.Component = '{Component}' and b.SquareCatalogId = '{squareId}' " +
+                    "group by b.Lane", sql);
+                return _sqlResult.GetList<ComponentsInventoryLane>(cmd, sql);
+            }
+        }
+
+        public Response GetComponentsInventoryDescription(string Component, string Lane, string squareId)
+        {
+            using (SqlConnection sql = new SqlConnection(_connectionString))
+            {
+                SqlCommand cmd = new SqlCommand($"select InventaryNumCapufe, " +
+       "InventaryNumProsis, " +
+       "Model, " +
+       "Brand, " +
+       "SerialNumber, " +
+       "cast(InstalationDate as nvarchar) InstalationDate, " +
+       "Observations, " +
+       "c.Name Ubication, " +
+       "cast(MaintenanceDate as nvarchar) MaintenanceDate, " +
+       "MaintenanceFolio " +
+    "from SquareInventory a join LanesCatalog b " +
+        "on (a.CapufeLaneNum = b.CapufeLaneNum and a.IdGare = b.IdGare) " +
+    "join TypesUbication c on a.TypeUbicationId = c.TypeUbicationId " +
+    $"where Component = '{Component}' and b.Lane = '{Lane}' and b.SquareCatalogId = {squareId}", sql);
+                return _sqlResult.GetList<ComponentsInventoryDescription>(cmd, sql);
+            }
+        }
+
+
         #endregion
     }
 }

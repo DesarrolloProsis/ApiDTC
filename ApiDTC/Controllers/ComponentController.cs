@@ -40,16 +40,54 @@
             return Ok(get);
         }
 
+        [HttpGet("Inventario/{plaza}")]
+        public ActionResult<Response> GetComponentsInventory(string plaza)
+        {
+            var get = _db.GetComponentsInventory(plaza);
+            if (get.Result == null)
+                return NotFound(get);
+            return Ok(get);
+        }
+
+        [HttpGet("InventarioUbicacion")]
+        public ActionResult<Response> GetComponentsInventoryUbication()
+        {
+            var get = _db.GetComponentsInventoryUbication();
+            if (get.Result == null)
+                return NotFound(get);
+            return Ok(get);
+        }
+
+        [HttpGet("Inventario/{componente}/{plaza}")]
+        public ActionResult<Response> GetComponentsInventoryLane(string componente, string plaza)
+        {
+            var get = _db.GetComponentsInventoryLane(componente, plaza);
+            if (get.Result == null)
+                return NotFound(get);
+            return Ok(get);
+        }
+
+        [HttpGet("Inventario/{componente}/{linea}/{plaza}")]
+        public ActionResult<Response> GetComponentsInventoryDescription(string componente, string linea, string plaza)
+        { 
+            var get = _db.GetComponentsInventoryDescription(componente, linea, plaza);
+            if (get.Result == null)
+                return NotFound(get);
+            return Ok(get);
+        }
+
         // POST: api/Component
         [HttpPost]
         public void Post([FromBody] string value)
         {
+
         }
 
         // PUT: api/Component/5
         [HttpPut("{id}")]
         public void Put(int id, [FromBody] string value)
         {
+
         }
 
         // DELETE: api/ApiWithActions/5
