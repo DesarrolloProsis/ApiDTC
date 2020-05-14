@@ -87,19 +87,41 @@ namespace ApiDTC.Services
                     };
                 }  
             }
-            
+
+            //using (MemoryStream myMemoryStream = new MemoryStream())
+            //{
+            //    Document myDocument = new Document();
+            //    PdfWriter myPDFWriter = PdfWriter.GetInstance(myDocument, myMemoryStream);
+
+            //    myDocument.Open();
+
+            //    // Add to content to your PDF here...
+            //    myDocument.Add(new Paragraph("I hope this works for you."));
+
+            //    // We're done adding stuff to our PDF.
+            //    myDocument.Close();
+
+            //    byte[] content = myMemoryStream.ToArray();
+
+            //    // Write out PDF from memory stream.
+            //    using (FileStream fs = File.Create("aTestFile.pdf"))
+            //    {
+            //        fs.Write(content, 0, (int)content.Length);
+            //    }
+            //}
+
+
             Document doc = new Document();
             try
             {
-                using(FileStream file = new FileStream($@"{System.Environment.CurrentDirectory}\Reportes\{DateTime.Now.Year}\{MesActual()}\{DateTime.Now.Day}\ReporteDTC-{_refNum}.pdf", FileMode.Create))
+                //using(FileStream file = new FileStream($@"{System.Environment.CurrentDirectory}\Reportes\{DateTime.Now.Year}\{MesActual()}\{DateTime.Now.Day}\ReporteDTC-{_refNum}.pdf", FileMode.Create))
+                using (MemoryStream myMemoryStream = new MemoryStream())
                 {
-                    doc.SetPageSize(new Rectangle(793.701f, 609.4488f));
-                    //doc.SetMargins(70.8661f, 42.5197f, 28.3465f, 28.3465f);                    
+                    doc.SetPageSize(new Rectangle(793.701f, 609.4488f));                                     
                     doc.SetMargins(70.8661f, 70.8661f, 40f, 28.3465f);
                     doc.AddAuthor("Prosis");
-                    doc.AddTitle("Reporte Correctivo");
-                    //MemoryStream ms = new MemoryStream();
-                    PdfWriter writer = PdfWriter.GetInstance(doc, file);
+                    doc.AddTitle("Reporte Correctivo");                    
+                    PdfWriter writer = PdfWriter.GetInstance(doc, myMemoryStream);
                     writer.PageEvent = new PageEventHelper();                   
                     writer.Open();
 
@@ -125,11 +147,18 @@ namespace ApiDTC.Services
                     doc.Add(new Phrase(".", letritasMiniMini));
                     doc.Add(tablaFinal());
                     doc.Add(new Phrase("\n"));
-                    doc.Add(new Phrase("\n"));
-                    //doc.Add(new Phrase("PROYECTOS Y SISTEMAS INFORMATICOS, S.A DE C.V AV.DOCTOR JOSE MARIA VERTIZ No.1238 INT.1 LETRAN VALLE C.P 03650 BENITO JUAREZ D.F TEL. 44442306", letraNormalMediana));
-                    writer.Close();
+                    doc.Add(new Phrase("\n"));                                        
                     doc.Close();
-                    //ms.Seek(0, SeekOrigin.Begin);
+                    writer.Close();
+
+
+                    byte[] content = myMemoryStream.ToArray();
+
+
+                    using (FileStream fs = File.Create($@"{System.Environment.CurrentDirectory}\Reportes\{DateTime.Now.Year}\{MesActual()}\{DateTime.Now.Day}\ReporteDTC-{_refNum}.pdf"))
+                    {
+                        fs.Write(content, 0, (int)content.Length);
+                    }
                 }
                 return new Response
                 {
