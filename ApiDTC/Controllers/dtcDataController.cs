@@ -18,14 +18,21 @@
         }
 
         //GET: api/dtcData
-        [HttpGet]
-        public ActionResult<Response> Get()
+        [HttpGet("{IdUser}/{SquareCatalog}")]
+        public ActionResult<Response> Get(int IdUser, string SquareCatalog)
         {   
-            var get = _db.GetDTC();
+            var get = _db.GetDTC(IdUser, SquareCatalog);
             if(get.Result == null)
                 return NotFound(get);
             else
                 return Ok(get);
+        }
+        
+        [HttpGet("TableForm/{refNum}")]
+        public ActionResult<Response> Ge(string refNum)
+        {
+            var get = _db.GetTableForm(refNum);
+            return Ok(get);
         }
 
         [HttpGet("{refNum}")]
@@ -37,7 +44,6 @@
             else
                 return Ok(get);
         }
-
         [HttpGet("InvalidReferenceNumbers")]
         public ActionResult<Response> GetInvalidReferenceNumbers()
         {
@@ -47,7 +53,6 @@
             else
                 return Ok(get);
         }
-
         //TODO Ajustar petición POST nuevo DTC
         // POST: api/dtcData/NuevoDtc
         [HttpPost]
@@ -65,16 +70,6 @@
             return BadRequest(ModelState);
         }
 
-        // PUT: api/dtcData/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-        }
-
-        // DELETE: api/ApiWithActions/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
-        }
+  
     }
 }

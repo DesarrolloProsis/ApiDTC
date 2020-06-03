@@ -26,6 +26,12 @@
         public string DelegationName { get; set; }
         
         public string RegionalCoordination { get; set; }
+
+        public string ReferenceSquare { get; set; }
+
+        public string AdminName { get; set; }
+
+        public string AdminMail { get; set; }
         #endregion
     }
 }

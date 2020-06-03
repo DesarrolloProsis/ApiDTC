@@ -57,7 +57,44 @@ namespace ApiDTC.Services
                 };
             }
         }
+        public InsertResponse Put(SqlCommand cmd, SqlConnection con)
+        {
+            try
+            {
+                con.Open();
+                if (con.State != ConnectionState.Open)
+                {
+                    return new InsertResponse
+                    {
+                        SqlMessage = "SQL connection is closed",
+                        SqlResult = null
+                    };
+                }
+                var reader = cmd.ExecuteReader();
+                
+                if (!reader.HasRows)
+                {
+                    return new InsertResponse
+                    {
+                        SqlMessage = "No se pudo insertar el registro",
+                        SqlResult = null
+                    };
+                }
+                var result = PostMapper(reader);
+                con.Close();
+                return result;
+            }
+            catch (SqlException ex)
+            {
+                _apiLogger.WriteLog(ex, "Post");
+                return new InsertResponse
+                {
+                    SqlMessage = $"Error: {ex.Message}",
+                    SqlResult = null
 
+                };
+            }
+        }
         public Response DataExists(SqlCommand command, SqlConnection con)
         {
             try
@@ -134,7 +171,6 @@ namespace ApiDTC.Services
                 };
             }
         }
-
         private InsertResponse PostMapper(SqlDataReader rdr)
         {
             try
@@ -164,7 +200,6 @@ namespace ApiDTC.Services
                 };
             }
         }
-
         private Response GetMapper<T>(SqlDataReader rdr)
         {
             try

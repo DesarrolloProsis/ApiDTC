@@ -6,6 +6,7 @@
     using System.Data.SqlClient;
     using System.Data;
     using ApiDTC.Services;
+    using System.Collections.Generic;
 
     public class DtcDataDb
     {
@@ -131,7 +132,6 @@
                 }
             }
         }
-
         public Response GetInvalidNumbers()
         {
             using(SqlConnection sql = new SqlConnection(_connectionString))
@@ -140,15 +140,35 @@
                 return _sqlResult.GetList<InvalidReferenceNumbers>(cmd, sql);
             }
         }
-
-        public Response GetDTC()
+        public Response GetDTC(int idUser, string squareCatalog)
         {
             using (SqlConnection sql = new SqlConnection(_connectionString))
             {
                 try
                 {
-                    SqlCommand cmd = new SqlCommand("Select * From DTCData", sql);
-                    return _sqlResult.GetList<DtcData>(cmd, sql);
+                    SqlCommand cmd = new SqlCommand("", sql);
+                    cmd.CommandText = "select " +
+                                        "ReferenceNumber, " +
+	                                    "SinisterNumber, " +
+	                                    "ReportNumber, " +
+	                                    "SinisterDate, " +
+	                                    "FailureDate, " + 
+	                                    "FailureNumber, " + 
+	                                    "ShippingDate, " +
+	                                    "ElaborationDate, " +
+                                        "DateStamp, " +
+                                        "Name as TypeDescription, " +                                                                                
+                                        "Observation, " +
+                                        "Diagnosis " +                                        
+                                      "from DTCData d " +
+                                      "inner join UserSquare u " +
+                                      "on d.UserId = u.UserId " +
+                                      "inner join TypesUbication t " +
+                                      "on d.TypeDescriptionId = t.TypeUbicationId " +
+                                      "where d.UserId = '"+ idUser + "' and u.SquareCatalogId = '" + squareCatalog + "' ";
+
+                    var info_dtc = _sqlResult.GetList<DtcDataStr>(cmd, sql);                    
+                    return info_dtc;
 //
                 }
                 catch(SqlException ex)
@@ -160,6 +180,30 @@
                         Result = null
                     };
                 } 
+            }
+        }
+        public Response GetTableForm(string refNum)
+        {
+            using (SqlConnection sql = new SqlConnection(_connectionString))
+            {
+                using (SqlCommand cmd = new SqlCommand("dbo.sp_DescProposedComponent", sql))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.Add("@ReferenceNumber", SqlDbType.NVarChar).Value = refNum;
+
+
+                    var storedResult = _sqlResult.GetList<ComponentTableForm>(cmd, sql);
+                    if (storedResult.Result == null)
+                        return storedResult;
+                    var list = (List<ComponentTableForm>)storedResult.Result;
+
+
+                    return new Response
+                    {
+                        Message = "Ok",
+                        Result = storedResult.Result
+                    };
+                }
             }
         }
         #endregion

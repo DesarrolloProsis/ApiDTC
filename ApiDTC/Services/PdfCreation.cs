@@ -593,12 +593,12 @@ namespace ApiDTC.Services
             var col25 = new PdfPCell(new Phrase("Plaza de Cobro:", letraNormalChica)) { Border = 0 };
             var col26 = new PdfPCell(new Phrase(Convert.ToString(_tableHeader.Rows[0]["Plaza"]), letraNormalChica)) { Border = 0 };
 
-            var col27 = new PdfPCell(new Phrase("Folio(s):", letraNormalChica)) { Border = 0 };
-            var col28 = new PdfPCell(new Phrase("", letraNormalChica)) { Border = 0 };
+            var col27 = new PdfPCell(new Phrase("Folio(s) Fallas(s)", letraNormalChica)) { Border = 0 };
+            var col28 = new PdfPCell(new Phrase(Convert.ToString(_tableDTCData.Rows[0]["FailureNumber"]), letraNormalChica)) { Border = 0 };
 
 
-            var col29 = new PdfPCell(new Phrase("Fallas(s):", letraNormalChica)) { Border = 0 };
-            var col30 = new PdfPCell(new Phrase(Convert.ToString(_tableDTCData.Rows[0]["FailureNumber"]), letraNormalChica)) { Border = 0 };
+            var col29 = new PdfPCell(new Phrase("", letraNormalChica)) { Border = 0 };
+            var col30 = new PdfPCell(new Phrase("", letraNormalChica)) { Border = 0 };
 
             var col31 = new PdfPCell(new Phrase("Cordinacion Regional:", letraNormalChica)) { Border = 0 };
             var col32 = new PdfPCell(new Phrase(Convert.ToString(_tableHeader.Rows[0]["RegionalCoordination"]), letraoNegritaChica)) { HorizontalAlignment = Element.ALIGN_RIGHT, Border = 0 };

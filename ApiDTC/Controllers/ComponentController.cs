@@ -32,7 +32,7 @@
 
         //GET: api/Component/5
         [HttpGet("{plaza}/{numConvenio}")]
-        public ActionResult<Response> Get(int plaza, string numConvenio)
+        public ActionResult<Response> Get(string plaza, string numConvenio)
         {
             var get = _db.GetComponentsData(plaza, numConvenio);
             if(get.Result == null)
@@ -75,25 +75,17 @@
                 return NotFound(get);
             return Ok(get);
         }
-
-        // POST: api/Component
-        [HttpPost]
-        public void Post([FromBody] string value)
-        {
-
-        }
-
+  
         // PUT: api/Component/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        [HttpPut("updateInventary")]
+        public ActionResult<Response> Put([FromBody] UpdateInventory updateInventory)
         {
+            var put = _db.PutComponentInventary(updateInventory);
+            if (put.Result == "Fail")
+                return NotFound(put);
+            return Ok(put);
 
         }
 
-        // DELETE: api/ApiWithActions/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
-        }
     }
 }

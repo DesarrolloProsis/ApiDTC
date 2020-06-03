@@ -49,8 +49,6 @@
 
                     List<Components> listaFiltro = new List<Components>();
 
-
-
                     foreach (var item in list)
                     {
                         if (item.Brand == marca)
@@ -69,9 +67,53 @@
                 }
             }
         }
+   
+
+        public Response PutComponentInventary(UpdateInventory updateInventory)
+        {
+            using (SqlConnection sql = new SqlConnection(_connectionString))
+            {
+                using (SqlCommand cmd = new SqlCommand("dbo.sp_UpdateInventory", sql))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.Add("@strFltLane", SqlDbType.NVarChar).Value = updateInventory.strFltLane;
+                    cmd.Parameters.Add("@strFltComponent", SqlDbType.NVarChar).Value = updateInventory.strFltComponent;
+                    cmd.Parameters.Add("@strFltSerialNumber", SqlDbType.NVarChar).Value = updateInventory.strFltSerialNumber;
+                    cmd.Parameters.Add("@strFltSquare", SqlDbType.NVarChar).Value = updateInventory.strFltSquare;
+                    cmd.Parameters.Add("@strInventaryNumCapufe", SqlDbType.NVarChar).Value = updateInventory.strInventaryNumCapufe;
+                    cmd.Parameters.Add("@strInventaryNumProsis", SqlDbType.NVarChar).Value = updateInventory.strInventaryNumProsis;
+                    cmd.Parameters.Add("@strMorel", SqlDbType.NVarChar).Value = updateInventory.strMorel;
+                    cmd.Parameters.Add("@strBrand", SqlDbType.NVarChar).Value = updateInventory.strBrand;
+                    cmd.Parameters.Add("@strSerialNumber", SqlDbType.NVarChar).Value = updateInventory.strSerialNumber;
+                    cmd.Parameters.Add("@strInstalationDate", SqlDbType.NVarChar).Value = updateInventory.strInstalationDate;
+                    cmd.Parameters.Add("@strObservation", SqlDbType.NVarChar).Value = updateInventory.strObservation;
+                    cmd.Parameters.Add("@intUbicacion", SqlDbType.Int).Value = updateInventory.intUbicacion;
+                    cmd.Parameters.Add("@strMaintenanceDate", SqlDbType.NVarChar).Value = updateInventory.strMaintenanceDate;
+                    cmd.Parameters.Add("@strMaintenanceFolio", SqlDbType.NVarChar).Value = updateInventory.strMaintenanceFolio;
+
+
+                    var reader = _sqlResult.Put(cmd, sql);
+                    if(reader.SqlResult == null)
+                    {
+                        return new Response
+                        {
+                            Message = "Fail",
+                            Result = updateInventory
+
+                        };
+                    }
+                    return new Response
+                    {
+                        Message = "Ok",
+                        Result = updateInventory
+                    };
+                }
+            }
+        }
+
 
         //Revisar
-        public Response GetComponentsData(int plaza, string numConvenio)
+        public Response GetComponentsData(string plaza, string numConvenio)
         {
             using (SqlConnection sql = new SqlConnection(_connectionString))
             {
