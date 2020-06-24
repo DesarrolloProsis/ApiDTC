@@ -88,28 +88,6 @@ namespace ApiDTC.Services
                 }  
             }
 
-            //using (MemoryStream myMemoryStream = new MemoryStream())
-            //{
-            //    Document myDocument = new Document();
-            //    PdfWriter myPDFWriter = PdfWriter.GetInstance(myDocument, myMemoryStream);
-
-            //    myDocument.Open();
-
-            //    // Add to content to your PDF here...
-            //    myDocument.Add(new Paragraph("I hope this works for you."));
-
-            //    // We're done adding stuff to our PDF.
-            //    myDocument.Close();
-
-            //    byte[] content = myMemoryStream.ToArray();
-
-            //    // Write out PDF from memory stream.
-            //    using (FileStream fs = File.Create("aTestFile.pdf"))
-            //    {
-            //        fs.Write(content, 0, (int)content.Length);
-            //    }
-            //}
-
 
             Document doc = new Document();
             try
@@ -197,10 +175,8 @@ namespace ApiDTC.Services
             var colEmpy6 = new PdfPCell(new Phrase("")) { HorizontalAlignment = Element.ALIGN_LEFT };
             colEmpy6.Border = 0;
 
-            var administradorLine = new Chunk("Jose Juan Iturbe Espin", letraNormalMedianaSub);
-            var administrador = new Chunk("Administrador Plaza de Cobro\nc102adm@capufe.gob.mx", letraNormalMediana);
-            //var adminCompleto = new Phrase(administradorLine);
-            //adminCompleto.Add(administrador);
+            var administradorLine = new Chunk(Convert.ToString(_tableHeader.Rows[0]["AdminName"]), letraNormalMedianaSub);
+            var administrador = new Chunk("Administrador Plaza de Cobro\n" + Convert.ToString(_tableHeader.Rows[0]["AdminMail"]), letraNormalMediana);
 
             var colAdministrador = new PdfPCell(new Phrase(administradorLine)) { HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_BOTTOM };            
             colAdministrador.Border = 0;
@@ -677,88 +653,6 @@ namespace ApiDTC.Services
             tablaSiniestroMore.AddCell(col47);
             tablaSiniestroMore.AddCell(col48);
 
-
-
-            //var tablaEquipoDanadoAnidada = new PdfPTable(new float[] { 8f, 70f }) { WidthPercentage = 100f };
-
-            //PdfPCell colAnidada = new PdfPCell();
-            //PdfPCell colAnidada2 = new PdfPCell();
-
-            //colAnidada.Phrase = new Phrase("Cargo: ", letraNormalChica);
-            //colAnidada2.Phrase = new Phrase(Convert.ToString(_tableHeader.Rows[0]["Position"]), letraNormalChica);
-            //colAnidada.Border = 0;
-            //colAnidada2.Border = 0;
-
-
-            //tablaEquipoDanadoAnidada.AddCell(colAnidada);
-            //tablaEquipoDanadoAnidada.AddCell(colAnidada2);
-
-            //PdfPCell col10 = new PdfPCell();
-            //col10.AddElement(tablaEquipoDanadoAnidada);
-            //col10.Border = 0;
-
-            ////var col10 = new PdfPCell(new Phrase("Cargo:" + " " + Convert.ToString(_tableHeader.Rows[0]["Position"]), letraNormalChica)) { Border = 0, HorizontalAlignment = Element.ALIGN_MIDDLE, Padding = 1f, VerticalAlignment = Element.ALIGN_CENTER };
-
-            ////Agregamos Chunk 4 Letras
-            //var siniestro = new Chunk("No.Siniestro    ", letraNormalChica);
-            //var numSiniestro = new Chunk(Convert.ToString(_tableDTCData.Rows[0]["SinisterNumber"]), letraoNegritaChica);
-            //var reporte = new Chunk("Reporte          ", letraNormalChica);
-            //var numReporte = new Chunk(Convert.ToString(_tableDTCData.Rows[0]["ReportNumber"]), letraoNegritaChica);
-            //var numSiniestroCompleto = new Phrase(siniestro);
-            //numSiniestroCompleto.Add(numSiniestro);
-            //numSiniestroCompleto.Add("               ");
-            //numSiniestroCompleto.Add(reporte);
-            //numSiniestroCompleto.Add(numReporte);
-            //var col11 = new PdfPCell(new Phrase(numSiniestroCompleto)) { Border = 0 };
-            ////Agregamo Chunk 2 Letras
-            //var lugarFecha = new Chunk("Lugar de Fecha de Envio:   ", letraNormalChica);
-            //var lugarFechaText = new Chunk("CDMX a " + Convert.ToDateTime(_tableDTCData.Rows[0]["ElaborationDate"]).ToString("dd/MM/yyyy"), letraoNegritaChica);
-            //var lugarFechaComplete = new Phrase(lugarFecha);
-            //lugarFechaComplete.Add(lugarFechaText);
-            //var col12 = new PdfPCell(new Phrase(lugarFechaComplete)) { Border = 0, HorizontalAlignment = Element.ALIGN_RIGHT };
-            ////Agregar Chunk 2 Letras
-            //var correo = new Chunk("Correo:     ", letraNormalChica);
-            //var CorreoText = new Chunk(Convert.ToString(_tableHeader.Rows[0]["Mail"]), letraSubAzulChica);
-            //var correoCompleto = new Phrase(correo);
-            //correoCompleto.Add(CorreoText);
-            //var col13 = new PdfPCell(new Phrase(correoCompleto)) { Border = 0, HorizontalAlignment = Element.ALIGN_LEFT, Padding = 1f };
-            //var col14 = new PdfPCell(new Phrase("Fecha Siniestro:" + ' ' + Convert.ToDateTime(_tableDTCData.Rows[0]["SinisterDate"]).ToString("dd/MM/yyyy"), letraNormalChica)) { Border = 0 };
-            ////Agregamos Chunk 2 Letras 
-            //var tecnicoResponsable = new Chunk("Tecnico Responsable:  ", letraNormalChica);
-            //var tecnicoResponsableText = new Chunk(Convert.ToString(_tableDTCData.Rows[0]["TecnicoResponsable"]), letraNormalChica);
-            //var tecnicoResponsableCompleto = new Phrase(tecnicoResponsable);
-            //tecnicoResponsableCompleto.Add(tecnicoResponsableText);
-            //var col15 = new PdfPCell(new Phrase(tecnicoResponsableCompleto)) { Border = 0, HorizontalAlignment = Element.ALIGN_RIGHT };
-
-
-            //var col16 = new PdfPCell(new Phrase("Plaza de Cobro:" + "      " + Convert.ToString(_tableHeader.Rows[0]["Plaza"]), letraNormalChica)) { Border = 0, HorizontalAlignment = Element.ALIGN_LEFT, Padding = 1f };
-            //var col17 = new PdfPCell(new Phrase("Folio(s) Fallas(s): " + " " + Convert.ToString(_tableDTCData.Rows[0]["FailureNumber"]), letraNormalChica)) { Border = 0, };
-            //var col18 = new PdfPCell(new Phrase("Coordinacion Regional:" + ' ' + Convert.ToString(_tableHeader.Rows[0]["RegionalCoordination"]), letraNormalChica)) { Border = 0, HorizontalAlignment = Element.ALIGN_RIGHT };
-
-            //var col19 = new PdfPCell(new Phrase(" ", letraNormalChica)) { Border = 0, HorizontalAlignment = Element.ALIGN_LEFT, Padding = 1f };
-            //var col20 = new PdfPCell(new Phrase("Fecha de Falla:" + ' ' + Convert.ToDateTime(_tableDTCData.Rows[0]["FailureDate"]).ToString("dd/MM/yyyy"), letraNormalChica)) { Border = 0 };
-            //var col21 = new PdfPCell(new Phrase("                                                                                                    Centro de Servicio:", letraNormalChica)) { Border = 0, HorizontalAlignment = Element.ALIGN_CENTER };
-
-            //var col22 = new PdfPCell(new Phrase(" ", letraNormalChica)) { Border = 0 };
-            //var col23 = new PdfPCell(new Phrase(" ", letraNormalChica)) { Border = 0 };
-            //var col24 = new PdfPCell(new Phrase("Fecha de Elaboracion:" + ' ' + Convert.ToDateTime(_tableDTCData.Rows[0]["ElaborationDate"]).ToString("dd/MM/yyyy"), letraNormalChica)) { Border = 0, HorizontalAlignment = Element.ALIGN_RIGHT };
-
-
-            //tablaSiniestroMore.AddCell(col10);
-            //tablaSiniestroMore.AddCell(col11);
-            //tablaSiniestroMore.AddCell(col12);
-            //tablaSiniestroMore.AddCell(col13);
-            //tablaSiniestroMore.AddCell(col14);
-            //tablaSiniestroMore.AddCell(col15);
-            //tablaSiniestroMore.AddCell(col16);
-            //tablaSiniestroMore.AddCell(col17);
-            //tablaSiniestroMore.AddCell(col18);
-            //tablaSiniestroMore.AddCell(col19);
-            //tablaSiniestroMore.AddCell(col20);
-            //tablaSiniestroMore.AddCell(col21);
-            //tablaSiniestroMore.AddCell(col22);
-            //tablaSiniestroMore.AddCell(col23);
-            //tablaSiniestroMore.AddCell(col24);
             return tablaSiniestroMore;
         }
 

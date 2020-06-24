@@ -33,6 +33,8 @@
         public int TypeDescriptionId { get; set; }
         
         public int AgremmentInfoId { get; set; }
+
+        public int DTCStatus { get; set; }
         #endregion
     }
 
@@ -61,10 +63,13 @@
 
         public string Diagnosis { get; set; }
         
+        public string TypeDescription { get; set;  }
 
-        public string TypeDescription { get; set; }
+        public string StatusDescription { get; set; }
 
-        
+        public int StatusId { get; set; }
+
+
         #endregion
     }
 }

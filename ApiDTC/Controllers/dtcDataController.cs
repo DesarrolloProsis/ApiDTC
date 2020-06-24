@@ -70,6 +70,18 @@
             return BadRequest(ModelState);
         }
 
-  
+        [HttpDelete("Delete/{referenceNumber}")]
+        public ActionResult Delete(string referenceNumber)
+        {
+            if (ModelState.IsValid)
+            {
+                var delete = _db.DeleteDtcData(referenceNumber);
+                if (delete.SqlResult == null)
+                    return NotFound(delete);
+                else
+                    return Ok(delete);
+            }
+            return BadRequest(ModelState);
+        }
     }
 }

@@ -20,14 +20,14 @@ namespace ApiDTC.Services
             _apiLogger = apiLogger;
         }
 
-        public InsertResponse Post(SqlCommand cmd, SqlConnection con)
+        public SqlResponse Post(SqlCommand cmd, SqlConnection con)
         {
             try
             {
                 con.Open();
                 if (con.State != ConnectionState.Open)
                 {
-                    return new InsertResponse
+                    return new SqlResponse
                     {
                         SqlMessage = "SQL connection is closed",
                         SqlResult = null
@@ -36,7 +36,7 @@ namespace ApiDTC.Services
                 var reader = cmd.ExecuteReader();
                 if (!reader.HasRows)
                 {
-                    return new InsertResponse
+                    return new SqlResponse
                     {
                         SqlMessage = "No se pudo insertar el registro",
                         SqlResult = null
@@ -49,7 +49,7 @@ namespace ApiDTC.Services
             catch (SqlException ex)
             {
                 _apiLogger.WriteLog(ex, "Post");
-                return new InsertResponse
+                return new SqlResponse
                 {
                     SqlMessage = $"Error: {ex.Message}",
                     SqlResult = null
@@ -57,14 +57,14 @@ namespace ApiDTC.Services
                 };
             }
         }
-        public InsertResponse Put(SqlCommand cmd, SqlConnection con)
+        public SqlResponse Put(SqlCommand cmd, SqlConnection con)
         {
             try
             {
                 con.Open();
                 if (con.State != ConnectionState.Open)
                 {
-                    return new InsertResponse
+                    return new SqlResponse
                     {
                         SqlMessage = "SQL connection is closed",
                         SqlResult = null
@@ -74,7 +74,7 @@ namespace ApiDTC.Services
                 
                 if (!reader.HasRows)
                 {
-                    return new InsertResponse
+                    return new SqlResponse
                     {
                         SqlMessage = "No se pudo insertar el registro",
                         SqlResult = null
@@ -87,7 +87,7 @@ namespace ApiDTC.Services
             catch (SqlException ex)
             {
                 _apiLogger.WriteLog(ex, "Post");
-                return new InsertResponse
+                return new SqlResponse
                 {
                     SqlMessage = $"Error: {ex.Message}",
                     SqlResult = null
@@ -171,11 +171,11 @@ namespace ApiDTC.Services
                 };
             }
         }
-        private InsertResponse PostMapper(SqlDataReader rdr)
+        private SqlResponse PostMapper(SqlDataReader rdr)
         {
             try
             {
-                var obj = new InsertResponse();
+                var obj = new SqlResponse();
                 if (rdr.Read())
                 {
                     if(rdr.IsDBNull(0))
@@ -193,7 +193,7 @@ namespace ApiDTC.Services
             {
                 _apiLogger.WriteLog(ex, $"PostMapper. La clase InsertResponse no pudo ser mapeada en propiedad {_propertyMapped}");
                 _propertyMapped = null;
-                return new InsertResponse
+                return new SqlResponse
                 {
                     SqlMessage = $"Error: {ex.Message}",
                     SqlResult = null

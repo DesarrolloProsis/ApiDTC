@@ -30,7 +30,7 @@
         #region Methods
 
         //TODO Insert generic method
-        public InsertResponse GetStoredDtcData(DtcData dtcData)
+        public SqlResponse GetStoredDtcData(DtcData dtcData)
         {
             using (SqlConnection sql = new SqlConnection(_connectionString))
             {
@@ -59,8 +59,9 @@
                     cmd.Parameters.Add("@observation", SqlDbType.NVarChar).Value = dtcData.Observation;
                     cmd.Parameters.Add("@diagnosis", SqlDbType.NVarChar).Value = dtcData.Diagnosis;
                     cmd.Parameters.Add("@typeDescriptionId", SqlDbType.Int).Value = dtcData.TypeDescriptionId;
-                    cmd.Parameters.Add("@userId", SqlDbType.Int).Value = dtcData.AgremmentInfoId;
+                    cmd.Parameters.Add("@userId", SqlDbType.Int).Value = dtcData.UserId;
                     cmd.Parameters.Add("@agremmentInfoId", SqlDbType.Int).Value = dtcData.AgremmentInfoId;
+                    cmd.Parameters.Add("@DTCStatus", SqlDbType.Int).Value = dtcData.DTCStatus;
                     return _sqlResult.Post(cmd, sql);
                 }
             }
@@ -149,23 +150,25 @@
                     SqlCommand cmd = new SqlCommand("", sql);
                     cmd.CommandText = "select " +
                                         "ReferenceNumber, " +
-	                                    "SinisterNumber, " +
+	                                    "SinisterNumber, " +                                        
 	                                    "ReportNumber, " +
 	                                    "SinisterDate, " +
-	                                    "FailureDate, " + 
+                                        "d.StatusId, " +
+                                        "FailureDate, " + 
 	                                    "FailureNumber, " + 
 	                                    "ShippingDate, " +
 	                                    "ElaborationDate, " +
                                         "DateStamp, " +
-                                        "Name as TypeDescription, " +                                                                                
+                                        "t.Description as TypeDescription, " +                                                                                
                                         "Observation, " +
-                                        "Diagnosis " +                                        
+                                        "Diagnosis, " +
+                                        "s.StatusDescription "+
                                       "from DTCData d " +
                                       "inner join UserSquare u " +
                                       "on d.UserId = u.UserId " +
-                                      "inner join TypesUbication t " +
-                                      "on d.TypeDescriptionId = t.TypeUbicationId " +
-                                      "where d.UserId = '"+ idUser + "' and u.SquareCatalogId = '" + squareCatalog + "' ";
+                                      "inner join TypeDescriptions t on d.TypeDescriptionId = t.TypeDescriptionId " +
+                                      "join DTCStatusCatalog s on d.StatusId = s.StatusId "+
+                                      "where d.UserId = '" + idUser + "' and u.SquareCatalogId = '" + squareCatalog + "' and d.StatusId != 0 ";
 
                     var info_dtc = _sqlResult.GetList<DtcDataStr>(cmd, sql);                    
                     return info_dtc;
@@ -206,6 +209,20 @@
                 }
             }
         }
+
+        public SqlResponse DeleteDtcData(string referenceNumber)
+        {
+            using (SqlConnection sql = new SqlConnection(_connectionString))
+            {
+                using (SqlCommand cmd = new SqlCommand("dbo.sp_DeleteDTC", sql))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.Add("@referenceNumber", SqlDbType.NVarChar).Value = referenceNumber;
+                    return _sqlResult.Post(cmd, sql);
+                }
+            }
+        }
+
         #endregion
     }
 }

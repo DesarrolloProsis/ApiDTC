@@ -24,11 +24,11 @@
         }
         #endregion
 
-        public InsertResponse PostRequestedComponent(List<RequestedComponent> requestedComponent)
+        public SqlResponse PostRequestedComponent(List<RequestedComponent> requestedComponent)
         {
             using (SqlConnection sql = new SqlConnection(_connectionString))
             {
-                var result = new InsertResponse();
+                var result = new SqlResponse();
                 foreach (var item in requestedComponent)
                 {
                     SqlCommand cmd = new SqlCommand("dbo.sp_InsertComponents", sql);
