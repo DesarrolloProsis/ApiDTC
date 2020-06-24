@@ -159,6 +159,7 @@
 	                                    "ShippingDate, " +
 	                                    "ElaborationDate, " +
                                         "DateStamp, " +
+                                        "d.TypeDescriptionId, " +
                                         "t.Description as TypeDescription, " +                                                                                
                                         "Observation, " +
                                         "Diagnosis, " +
@@ -222,6 +223,14 @@
                 }
             }
         }
+
+        /*public SqlResponse EditReference(string referenceNumber)
+        {
+            using(SqlConnection sql = new SqlConnection(_connectionString))
+            {
+                using()
+            }
+        }*/
 
         #endregion
     }
