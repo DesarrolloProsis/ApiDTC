@@ -61,8 +61,8 @@
                     cmd.Parameters.Add("@typeDescriptionId", SqlDbType.Int).Value = dtcData.TypeDescriptionId;
                     cmd.Parameters.Add("@userId", SqlDbType.Int).Value = dtcData.UserId;
                     cmd.Parameters.Add("@agremmentInfoId", SqlDbType.Int).Value = dtcData.AgremmentInfoId;
-                    cmd.Parameters.Add("@DTCStatus", SqlDbType.Int).Value = dtcData.DTCStatus;
-                    cmd.Parameters.Add("@flag", SqlDbType.Bit).Value = dtcData.flag;
+                    cmd.Parameters.Add("@status", SqlDbType.Int).Value = dtcData.DTCStatus;
+                    cmd.Parameters.Add("@flag", SqlDbType.Bit).Value = dtcData.Flag;
                     return _sqlResult.Post(cmd, sql);
                 }
             }
