@@ -35,6 +35,8 @@
         public int AgremmentInfoId { get; set; }
 
         public int DTCStatus { get; set; }
+
+        public bool flag { get; set; }
         #endregion
     }
 
@@ -59,6 +61,7 @@
 
         public DateTime ElaborationDate { get; set; }
 
+
         public string Observation { get; set; }
 
         public string Diagnosis { get; set; }
@@ -68,6 +71,8 @@
         public string StatusDescription { get; set; }
 
         public int StatusId { get; set; }
+
+        public int TypeDescriptionId { get; set; }
 
 
         #endregion

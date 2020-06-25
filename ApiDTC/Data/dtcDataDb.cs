@@ -62,6 +62,7 @@
                     cmd.Parameters.Add("@userId", SqlDbType.Int).Value = dtcData.UserId;
                     cmd.Parameters.Add("@agremmentInfoId", SqlDbType.Int).Value = dtcData.AgremmentInfoId;
                     cmd.Parameters.Add("@DTCStatus", SqlDbType.Int).Value = dtcData.DTCStatus;
+                    cmd.Parameters.Add("@flag", SqlDbType.Bit).Value = dtcData.flag;
                     return _sqlResult.Post(cmd, sql);
                 }
             }
@@ -159,6 +160,7 @@
 	                                    "ShippingDate, " +
 	                                    "ElaborationDate, " +
                                         "DateStamp, " +
+                                        "d.TypeDescriptionId, " +
                                         "t.Description as TypeDescription, " +                                                                                
                                         "Observation, " +
                                         "Diagnosis, " +
