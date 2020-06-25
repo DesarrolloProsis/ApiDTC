@@ -35,6 +35,16 @@
             return Ok(get);
         }
 
+        [HttpGet("EditInfo/{refNum}")]
+        public ActionResult<Response> GetEditInfo(string refNum)
+        {
+            var get = _db.EditReferece(refNum);
+            if (get.Result == null)
+                return NotFound(get);
+            else
+                return Ok(get);
+        }
+
         [HttpGet("{refNum}")]
         public ActionResult<Response> GetDtcData(string refNum)
         {
