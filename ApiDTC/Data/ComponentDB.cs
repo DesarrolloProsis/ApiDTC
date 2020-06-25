@@ -163,19 +163,19 @@
             using (SqlConnection sql = new SqlConnection(_connectionString))
             {
                 SqlCommand cmd = new SqlCommand($"select InventaryNumCapufe, " +
-       "InventaryNumProsis, " +
-       "Model, " +
-       "Brand, " +
-       "SerialNumber, " +
-       "cast(InstalationDate as nvarchar) InstalationDate, " +
-       "Observations, " +
-       "c.Name Ubication, " +
-       "cast(MaintenanceDate as nvarchar) MaintenanceDate, " +
-       "MaintenanceFolio " +
-    "from SquareInventory a join LanesCatalog b " +
-        "on (a.CapufeLaneNum = b.CapufeLaneNum and a.IdGare = b.IdGare) " +
-    "join TypesUbication c on a.TypeUbicationId = c.TypeUbicationId " +
-    $"where Component = '{Component}' and b.Lane = '{Lane}' and b.SquareCatalogId = {squareId}", sql);
+                       "InventaryNumProsis, " +
+                       "Model, " +
+                       "Brand, " +
+                       "SerialNumber, " +
+                       "cast(InstalationDate as nvarchar) InstalationDate, " +
+                       "Observations, " +
+                       "c.Name Ubication, " +
+                       "cast(MaintenanceDate as nvarchar) MaintenanceDate, " +
+                       "MaintenanceFolio " +
+                    "from SquareInventory a join LanesCatalog b " +
+                        "on (a.CapufeLaneNum = b.CapufeLaneNum and a.IdGare = b.IdGare) " +
+                    "join TypesUbication c on a.TypeUbicationId = c.TypeUbicationId " +
+                    $"where Component = '{Component}' and b.Lane = '{Lane}' and b.SquareCatalogId = {squareId}", sql);
                 return _sqlResult.GetList<ComponentsInventoryDescription>(cmd, sql);
             }
         }

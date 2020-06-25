@@ -57,6 +57,8 @@ namespace ApiDTC.Services
                 };
             }
         }
+        
+       
         public SqlResponse Put(SqlCommand cmd, SqlConnection con)
         {
             try
@@ -171,6 +173,41 @@ namespace ApiDTC.Services
                 };
             }
         }
+
+        public List<T> DataSetMapper<T>(DataTable dataSet)
+        {
+            try
+            {
+                var list = new List<T>();
+                T obj = default;
+                foreach(DataRow row in dataSet.Rows)
+                {
+                    obj = Activator.CreateInstance<T>();
+                    _propertyMapped = obj.GetType().Name;
+                    foreach (PropertyInfo p in obj.GetType().GetProperties())
+                    {
+                        _propertyMapped = p.Name;
+                        if (!DBNull.Value.Equals(row[p.Name]))
+                            p.SetValue(obj, row[p.Name], null);
+                        else
+                            p.SetValue(obj, null, null);
+                    }
+                    list.Add(obj);
+                }
+                _propertyMapped = null;
+                _classMapped = null;
+                return list;
+            }
+            catch (Exception ex)
+            {
+                _apiLogger.WriteLog(ex, $"DataSetMapper. La clase {_classMapped} no pudo ser mapeada en propiedad {_propertyMapped}");
+                _propertyMapped = null;
+                _classMapped = null;
+                return null;
+            }
+        }
+    
+
         private SqlResponse PostMapper(SqlDataReader rdr)
         {
             try

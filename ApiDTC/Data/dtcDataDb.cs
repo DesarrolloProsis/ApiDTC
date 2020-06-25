@@ -200,7 +200,6 @@
                     var storedResult = _sqlResult.GetList<ComponentTableForm>(cmd, sql);
                     if (storedResult.Result == null)
                         return storedResult;
-                    var list = (List<ComponentTableForm>)storedResult.Result;
 
 
                     return new Response
@@ -225,13 +224,64 @@
             }
         }
 
-        /*public SqlResponse EditReference(string referenceNumber)
+        public Response EditReferece(string referenceNumber)
         {
-            using(SqlConnection sql = new SqlConnection(_connectionString))
+            using (SqlConnection sql = new SqlConnection(_connectionString))
             {
-                using()
+                using (SqlCommand cmd = new SqlCommand("dbo.sp_EditReference", sql))
+                {
+                    SqlDataAdapter sqlDataAdapter = new SqlDataAdapter();
+                    DataSet dataSet = new DataSet();
+
+
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.Add("@ReferenceNumber", SqlDbType.NVarChar).Value = referenceNumber;
+
+                    sql.Open();
+                    sqlDataAdapter = new SqlDataAdapter(cmd);
+                    sqlDataAdapter.Fill(dataSet);
+
+                    sql.Close();
+
+                    if (dataSet.Tables[0].Rows.Count == 0 || dataSet.Tables[0].Rows.Count == 0)
+                    {
+                        return new Response
+                        {
+                            Message = "Data not found",
+                            Result = null
+                        };
+                    }
+
+                    var serialNumbers = _sqlResult.DataSetMapper<DtcItems>(dataSet.Tables[0]);
+                    if(serialNumbers == null)
+                    {
+                        return new Response
+                        {
+                            Message = "No se pudo obtener los números de serie. Revisar registros de error.",
+                            Result = null
+                        };
+                    }
+                    var items = _sqlResult.DataSetMapper<DtcSerialNumbers>(dataSet.Tables[1]);
+                    if (items == null)
+                    {
+                        return new Response
+                        {
+                            Message = "No se pudieron obtener los artículos. Revisar registros de error",
+                            Result = null
+                        };
+                    }
+                    return new Response
+                    {
+                        Message = "Ok",
+                        Result = new EditReferenceInformation
+                        {
+                            SerialNumbers = items,
+                            Items = serialNumbers
+                        }
+                    };
+                }
             }
-        }*/
+        }
 
         #endregion
     }
