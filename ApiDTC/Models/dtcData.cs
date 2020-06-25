@@ -35,6 +35,8 @@
         public int AgremmentInfoId { get; set; }
 
         public int DTCStatus { get; set; }
+
+        public bool flag { get; set; }
         #endregion
     }
 
