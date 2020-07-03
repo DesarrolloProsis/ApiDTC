@@ -31,6 +31,7 @@
         public string strLifeTimeReal { get; set; }
         
         public int IntPartida { get; set; }
+
         #endregion
     }
 }

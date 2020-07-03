@@ -24,12 +24,12 @@
 
         //TODO POST RequestedComponents
         // POST: api/RequestedComponent
-        [HttpPost]
-        public ActionResult Post([FromBody] List<RequestedComponent> requestedComponent)
+        [HttpPost("{flag}")]
+        public ActionResult Post([FromBody] List<RequestedComponent> requestedComponent, bool flag)
         {
             if(ModelState.IsValid)
             {
-                var get = _db.PostRequestedComponent(requestedComponent);
+                var get = _db.PostRequestedComponent(requestedComponent, flag);
                 if(get.SqlResult == null)
                     return BadRequest(get);
                 else

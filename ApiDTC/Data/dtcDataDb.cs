@@ -134,6 +134,21 @@
                 }
             }
         }
+
+        public Response GetComponentsInventoryList(string squareId)
+        {
+            using (SqlConnection sql = new SqlConnection(_connectionString))
+            {
+                SqlCommand cmd = new SqlCommand("select b.Lane, a.Component, a.SerialNumber, cast(a.InstalationDate as nvarchar) InstallationDate, cast(a.MaintenanceDate as nvarchar) MaintenanceDate, MaintenanceFolio " +
+                    "from SquareInventory a join LanesCatalog b on (a.CapufeLaneNum = b.CapufeLaneNum and a.IdGare = b.IdGare) " +
+                    "join SquaresCatalog c on b.SquareCatalogId = c.SquareCatalogId " +
+                    $"where c.SquareCatalogId = '{squareId}'", sql);
+                return _sqlResult.GetList<ComponentsInventoryList>(cmd, sql);
+            }
+        }
+
+
+
         public Response GetInvalidNumbers()
         {
             using(SqlConnection sql = new SqlConnection(_connectionString))

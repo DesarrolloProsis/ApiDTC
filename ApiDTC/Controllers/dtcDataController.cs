@@ -32,7 +32,10 @@
         public ActionResult<Response> Ge(string refNum)
         {
             var get = _db.GetTableForm(refNum);
-            return Ok(get);
+            if (get.Result == null)
+                return NotFound(get);
+            else
+                return Ok(get);
         }
 
         [HttpGet("EditInfo/{refNum}")]
@@ -63,6 +66,20 @@
             else
                 return Ok(get);
         }
+
+
+        [HttpGet("InventoryComponentsList/{squareCatalog}")]
+        public ActionResult<Response> GetComponentsInventoryList(string squareCatalog)
+        {
+            var get = _db.GetComponentsInventoryList(squareCatalog);
+            if (get.Result == null)
+                return NotFound(get);
+            else
+                return Ok(get);
+        }
+
+
+
         //TODO Ajustar petición POST nuevo DTC
         // POST: api/dtcData/NuevoDtc
         [HttpPost]

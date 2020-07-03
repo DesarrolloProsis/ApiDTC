@@ -24,17 +24,19 @@
         }
         #endregion
 
-        public SqlResponse PostRequestedComponent(List<RequestedComponent> requestedComponent)
+        public SqlResponse PostRequestedComponent(List<RequestedComponent> requestedComponent, bool flag)
         {
             using (SqlConnection sql = new SqlConnection(_connectionString))
             {
                 var result = new SqlResponse();
+
                 foreach (var item in requestedComponent)
                 {
                     SqlCommand cmd = new SqlCommand("dbo.sp_InsertComponents", sql);
                     cmd.CommandType = CommandType.StoredProcedure;
 
                     cmd.Parameters.Add("@intType", SqlDbType.Int).Value = 1;
+                    cmd.Parameters.Add("@flag", SqlDbType.Int).Value = flag;
                     cmd.Parameters.Add("@intComponentStockId", SqlDbType.Int).Value = item.ComponentsStockId;
                     cmd.Parameters.Add("@strReferenceNumber", SqlDbType.NVarChar).Value = item.ReferenceNumber;
                     cmd.Parameters.Add("@datetimeDate", SqlDbType.DateTime).Value = DateTime.Now;
@@ -51,6 +53,10 @@
                     cmd.Parameters.Add("@intPartida", SqlDbType.Int).Value = item.IntPartida;
                     cmd.Parameters.Add("@strMaintenanceFolio", SqlDbType.NVarChar).Value = item.MaintenanceFolio;
 
+                    if(item == requestedComponent[requestedComponent.Count - 1])
+                        cmd.Parameters.Add("@validationFlag", SqlDbType.Bit).Value = 1;
+                    else
+                        cmd.Parameters.Add("@validationFlag", SqlDbType.Bit).Value = 0;
                     result = _sqlResult.Post(cmd, sql);
                     if (result.SqlResult == null)
                     {
@@ -63,6 +69,7 @@
                     SqlCommand cmd = new SqlCommand("dbo.sp_InsertComponents", sql);
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.Add("@intType", SqlDbType.Int).Value = 2;
+                    cmd.Parameters.Add("@flag", SqlDbType.Int).Value = flag;
                     cmd.Parameters.Add("@intComponentStockId", SqlDbType.Int).Value = item.ComponentsStockId;
                     cmd.Parameters.Add("@strReferenceNumber", SqlDbType.NVarChar).Value = item.ReferenceNumber;
                     cmd.Parameters.Add("@datetimeDate", SqlDbType.DateTime).Value = DateTime.Now;
@@ -80,6 +87,12 @@
                     cmd.Parameters.Add("@strMaintenanceFolio", SqlDbType.NVarChar).Value = item.MaintenanceFolio;
 
                     //TODO test components insert
+
+                    if (item == requestedComponent[requestedComponent.Count - 1])
+                        cmd.Parameters.Add("@validationFlag", SqlDbType.Bit).Value = 1;
+                    else
+                        cmd.Parameters.Add("@validationFlag", SqlDbType.Bit).Value = 0;
+
                     result = _sqlResult.Post(cmd, sql);
                     if (result.SqlResult == null)
                     {

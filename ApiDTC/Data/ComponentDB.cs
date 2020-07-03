@@ -135,6 +135,7 @@
         }
 
 
+
         public Response GetComponentsInventoryUbication()
         {
             using (SqlConnection sql = new SqlConnection(_connectionString))
