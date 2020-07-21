@@ -98,7 +98,7 @@
                         return new Response
                         {
                             Message = "Fail",
-                            Result = updateInventory
+                            Result = null
 
                         };
                     }
@@ -110,6 +110,44 @@
                 }
             }
         }
+
+
+
+        public Response InventoryListUpdate(List<ComponentsInventoryList> componentsInventoryList)
+        {
+            using (SqlConnection sql = new SqlConnection(_connectionString))
+            {
+                foreach(var register in componentsInventoryList)
+                {
+                    using (SqlCommand cmd = new SqlCommand("dbo.spListInventoryUpdate", sql))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.Add("@intFltTablFoli", SqlDbType.Int).Value = register.TableFolio;
+                        cmd.Parameters.Add("@strMaintenanceDate", SqlDbType.NVarChar).Value = register.MaintenanceDate;
+                        cmd.Parameters.Add("@strMaintenanceFolio", SqlDbType.NVarChar).Value = register.MaintenanceFolio;
+                        cmd.Parameters.Add("@strSerialNumber", SqlDbType.NVarChar).Value = register.SerialNumber;
+                        cmd.Parameters.Add("@strInstallationDate", SqlDbType.NVarChar).Value = register.InstallationDate;
+
+                        var reader = _sqlResult.Put(cmd, sql);
+                        if (reader.SqlResult == null)
+                        {
+                            return new Response
+                            {
+                                Message = "Fail",
+                                Result = null
+                            };
+                        }
+                    }                    
+                }
+                return new Response
+                {
+                    Message = "Ok",
+                    Result = componentsInventoryList
+                };
+            }
+        }
+
+
 
 
         //Revisar

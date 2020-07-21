@@ -18,5 +18,7 @@ namespace ApiDTC.Models
         public string MaintenanceDate { get; set; }
         
         public string MaintenanceFolio { get; set; }
+        
+        public int TableFolio { get; set; }
     }
 }

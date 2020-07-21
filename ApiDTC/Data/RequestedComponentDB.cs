@@ -57,7 +57,15 @@
                         cmd.Parameters.Add("@validationFlag", SqlDbType.Bit).Value = 1;
                     else
                         cmd.Parameters.Add("@validationFlag", SqlDbType.Bit).Value = 0;
+
+                    if (item == requestedComponent[0])
+                        cmd.Parameters.Add("@startFlag", SqlDbType.Bit).Value = 1;
+                    else
+                        cmd.Parameters.Add("@startFlag", SqlDbType.Bit).Value = 0;
+
                     result = _sqlResult.Post(cmd, sql);
+
+
                     if (result.SqlResult == null)
                     {
                         result.SqlMessage = $"{result.SqlMessage}. No se pudo insertar la partida del modelo {item.Modelo} tipo 1.";
@@ -92,6 +100,12 @@
                         cmd.Parameters.Add("@validationFlag", SqlDbType.Bit).Value = 1;
                     else
                         cmd.Parameters.Add("@validationFlag", SqlDbType.Bit).Value = 0;
+
+
+                    if (item == requestedComponent[0])
+                        cmd.Parameters.Add("@startFlag", SqlDbType.Bit).Value = 1;
+                    else
+                        cmd.Parameters.Add("@startFlag", SqlDbType.Bit).Value = 0;
 
                     result = _sqlResult.Post(cmd, sql);
                     if (result.SqlResult == null)

@@ -1,6 +1,7 @@
 ﻿namespace ApiDTC.Controllers
 {
     using System;
+    using System.Collections.Generic;
     using ApiDTC.Data;
     using ApiDTC.Models;
     using Microsoft.AspNetCore.Mvc;
@@ -77,11 +78,22 @@
         }
   
         // PUT: api/Component/5
-        [HttpPut("updateInventary")]
+        [HttpPut("updateInventory")]
         public ActionResult<Response> Put([FromBody] UpdateInventory updateInventory)
         {
             var put = _db.PutComponentInventary(updateInventory);
-            if (put.Result == "Fail")
+            if (put.Result == null)
+                return NotFound(put);
+            return Ok(put);
+
+        }
+
+
+        [HttpPut("updateInventoryList")]
+        public ActionResult<Response> Put([FromBody] List<ComponentsInventoryList> componentsInventoryList)
+        {
+            var put = _db.InventoryListUpdate(componentsInventoryList);
+            if (put.Result == null)
                 return NotFound(put);
             return Ok(put);
 
