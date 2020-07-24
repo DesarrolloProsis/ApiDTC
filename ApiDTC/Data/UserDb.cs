@@ -34,5 +34,69 @@
                 }
             }
         }
+
+        public SqlResponse NewUser(UserInfo userInfo)
+        {
+            using (SqlConnection sql = new SqlConnection(_connectionString))
+            {
+                using (SqlCommand cmd = new SqlCommand("dbo.spAddUser", sql))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.Add("@Name", SqlDbType.NVarChar).Value = userInfo.Name;
+                    cmd.Parameters.Add("@LastName1", SqlDbType.NVarChar).Value = userInfo.LastName1;
+                    cmd.Parameters.Add("@LastName2", SqlDbType.NVarChar).Value = userInfo.LastName2;
+                    cmd.Parameters.Add("@Password", SqlDbType.NVarChar).Value = userInfo.Password;
+                    cmd.Parameters.Add("@Rol", SqlDbType.Int).Value = userInfo.Rol;
+                    return _sqlResult.Post(cmd, sql);
+                }
+            }
+        }
+
+        public Response PutUser(UserUpdate userUpdate)
+        {
+            using (SqlConnection sql = new SqlConnection(_connectionString))
+            {
+                using (SqlCommand cmd = new SqlCommand("dbo.spUpdateUser", sql))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.Add("@UserId", SqlDbType.Int).Value = userUpdate.UserId;
+                    cmd.Parameters.Add("@UserName", SqlDbType.NVarChar).Value = userUpdate.UserName;
+                    cmd.Parameters.Add("@LastName1", SqlDbType.NVarChar).Value = userUpdate.LastName1;
+                    cmd.Parameters.Add("@LastName2", SqlDbType.NVarChar).Value = userUpdate.LastName2;
+                    cmd.Parameters.Add("@Name", SqlDbType.NVarChar).Value = userUpdate.Name;
+                    cmd.Parameters.Add("@Mail", SqlDbType.NVarChar).Value = userUpdate.Mail;
+                    cmd.Parameters.Add("@Rol", SqlDbType.Int).Value = userUpdate.Rol;
+                
+                    var reader = _sqlResult.Put(cmd, sql);
+                    if (reader.SqlResult == null)
+                    {
+                        return new Response
+                        {
+                            Message = "Fail",
+                            Result = null
+
+                        };
+                    }
+                    return new Response
+                    {
+                        Message = "Ok",
+                        Result = userUpdate
+                    };
+                }
+            }
+        }
+
+        public SqlResponse DeleteUser(UserKey userKey)
+        {
+            using (SqlConnection sql = new SqlConnection(_connectionString))
+            {
+                using (SqlCommand cmd = new SqlCommand("dbo.spRevokeUser", sql))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.Add("@User", SqlDbType.Int).Value = userKey.Id;
+                    return _sqlResult.Post(cmd, sql);
+                }
+            }
+        }
     }
 }

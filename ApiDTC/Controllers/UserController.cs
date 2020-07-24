@@ -16,6 +16,20 @@
             this._db = db ?? throw new ArgumentNullException(nameof(db));
         }
 
+        [HttpPost("nuevo")]
+        public ActionResult CreateUser([FromBody] UserInfo userInfo)
+        {
+            if (ModelState.IsValid)
+            {
+                var get = _db.NewUser(userInfo);
+                if (get.SqlResult == null)
+                    return BadRequest();
+                else
+                    return StatusCode(201, get);
+            }
+            return BadRequest(ModelState);
+        }
+
         [HttpPost("consulta")]
         public ActionResult GetUserInfo([FromBody] UserKey userKey)
         {
@@ -26,6 +40,30 @@
                     return BadRequest();
                 else
                     return StatusCode(201, get);
+            }
+            return BadRequest(ModelState);
+        }
+
+        [HttpPut("update")]
+        public ActionResult Put([FromBody] UserUpdate userUpdate)
+        {
+            var put = _db.PutUser(userUpdate);
+            if (put.Result == null)
+                return NotFound(put);
+            return Ok(put);
+
+        }
+
+        [HttpPut("delete")]
+        public ActionResult Delete([FromBody] UserKey userKey)
+        {
+            if (ModelState.IsValid)
+            {
+                var delete = _db.DeleteUser(userKey);
+                if (delete.SqlResult == null)
+                    return NotFound(delete);
+                else
+                    return Ok(delete);
             }
             return BadRequest(ModelState);
         }
