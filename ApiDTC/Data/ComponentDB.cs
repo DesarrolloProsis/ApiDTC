@@ -76,13 +76,10 @@
                 using (SqlCommand cmd = new SqlCommand("dbo.sp_UpdateInventory", sql))
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.Add("@strFltLane", SqlDbType.NVarChar).Value = updateInventory.strFltLane;
-                    cmd.Parameters.Add("@strFltComponent", SqlDbType.NVarChar).Value = updateInventory.strFltComponent;
-                    cmd.Parameters.Add("@strFltSerialNumber", SqlDbType.NVarChar).Value = updateInventory.strFltSerialNumber;
-                    cmd.Parameters.Add("@strFltSquare", SqlDbType.NVarChar).Value = updateInventory.strFltSquare;
+                    cmd.Parameters.Add("@intFltrId", SqlDbType.NVarChar).Value = updateInventory.TableFolio;                
                     cmd.Parameters.Add("@strInventaryNumCapufe", SqlDbType.NVarChar).Value = updateInventory.strInventaryNumCapufe;
                     cmd.Parameters.Add("@strInventaryNumProsis", SqlDbType.NVarChar).Value = updateInventory.strInventaryNumProsis;
-                    cmd.Parameters.Add("@strMorel", SqlDbType.NVarChar).Value = updateInventory.strMorel;
+                    cmd.Parameters.Add("@strModel", SqlDbType.NVarChar).Value = updateInventory.strMorel;
                     cmd.Parameters.Add("@strBrand", SqlDbType.NVarChar).Value = updateInventory.strBrand;
                     cmd.Parameters.Add("@strSerialNumber", SqlDbType.NVarChar).Value = updateInventory.strSerialNumber;
                     cmd.Parameters.Add("@strInstalationDate", SqlDbType.NVarChar).Value = updateInventory.strInstalationDate;

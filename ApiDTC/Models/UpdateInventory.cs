@@ -3,14 +3,8 @@
     public class UpdateInventory
     {
 
-        public string strFltLane { get; set; }
-        
-        public string strFltComponent { get; set; }
-        
-        public string strFltSerialNumber { get; set; }
-        
-        public string strFltSquare { get; set; }
-        
+        public int TableFolio { get; set; }
+
         public string strInventaryNumCapufe { get; set; }
         
         public string strInventaryNumProsis { get; set; }

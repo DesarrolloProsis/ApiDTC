@@ -54,6 +54,16 @@
 
         }
 
+        [HttpPut("newPassword")]
+        public ActionResult PutPassword([FromBody] UserPassword userPassword)
+        {
+            var put = _db.PutPassword(userPassword);
+            if (put.Result == null)
+                return NotFound(put);
+            return Ok(put);
+
+        }
+
         [HttpPut("delete")]
         public ActionResult Delete([FromBody] UserKey userKey)
         {

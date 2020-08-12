@@ -3,6 +3,7 @@
     using ApiDTC.Models;
     using ApiDTC.Services;
     using Microsoft.Extensions.Configuration;
+    using System;
     using System.Data;
     using System.Data.SqlClient;
 
@@ -48,6 +49,35 @@
                     cmd.Parameters.Add("@Password", SqlDbType.NVarChar).Value = userInfo.Password;
                     cmd.Parameters.Add("@Rol", SqlDbType.Int).Value = userInfo.Rol;
                     return _sqlResult.Post(cmd, sql);
+                }
+            }
+        }
+
+        public Response PutPassword(UserPassword userPassword)
+        {
+            using (SqlConnection sql = new SqlConnection(_connectionString))
+            {
+                using (SqlCommand cmd = new SqlCommand("dbo.spUpdatePass", sql))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.Add("@IdUser", SqlDbType.Int).Value = userPassword.IdUser;
+                    cmd.Parameters.Add("@Password", SqlDbType.NVarChar).Value = userPassword.Password;
+
+                    var reader = _sqlResult.Put(cmd, sql);
+                    if (reader.SqlResult == null)
+                    {
+                        return new Response
+                        {
+                            Message = "Fail",
+                            Result = null
+
+                        };
+                    }
+                    return new Response
+                    {
+                        Message = "Ok",
+                        Result = userPassword
+                    };
                 }
             }
         }
