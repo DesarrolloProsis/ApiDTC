@@ -50,13 +50,17 @@
 
         public string StrModel { get; set; }
 
+        public string StrBrandProposed { get; set; }
+
+        public string StrModelProposed { get; set; }
+
         public string StrSerialNumber { get; set; }
 
         public string StrLane { get; set; }
 
-        public DateTime DateInstallationDate { get; set; }
+        public string StrInstallationDate { get; set; }
 
-        public DateTime DateMaintenanceDate { get; set; }
+        public string StrMaintenanceDate { get; set; }
 
         public string StrLifeTimeExpected { get; set; }
 

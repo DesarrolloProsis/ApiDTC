@@ -74,10 +74,13 @@
                     cmd.Parameters.Add("@strComponent", SqlDbType.NVarChar).Value = item.StrComponent;
                     cmd.Parameters.Add("@strBrand", SqlDbType.NChar).Value = item.StrBrand;
                     cmd.Parameters.Add("@strModel", SqlDbType.NVarChar).Value = item.StrModel;
+                    cmd.Parameters.Add("@strBrandProposed", SqlDbType.NChar).Value = item.StrBrandProposed;
+                    cmd.Parameters.Add("@strModelProposed", SqlDbType.NVarChar).Value = item.StrModelProposed;
                     cmd.Parameters.Add("@strSerialNumber", SqlDbType.NVarChar).Value = item.StrSerialNumber;
                     cmd.Parameters.Add("@strLane", SqlDbType.NVarChar).Value = item.StrLane;
-                    cmd.Parameters.Add("@dateInstallationDate", SqlDbType.DateTime).Value = item.DateInstallationDate;
-                    cmd.Parameters.Add("@dateMaintenanceDate", SqlDbType.DateTime).Value = item.DateMaintenanceDate;
+                    cmd.Parameters.Add("@strQuantity", SqlDbType.NVarChar).Value = item.StrQuantity;
+                    cmd.Parameters.Add("@strInstallationDate", SqlDbType.NVarChar).Value = item.StrInstallationDate;
+                    cmd.Parameters.Add("@strMaintenanceDate", SqlDbType.NVarChar).Value = item.StrMaintenanceDate;
                     cmd.Parameters.Add("@strLifeTimeExpected", SqlDbType.NVarChar).Value = item.StrLifeTimeExpected;
                     cmd.Parameters.Add("@intItem", SqlDbType.Int).Value = item.IntItem;
                     cmd.Parameters.Add("@strMaintenanceFolio", SqlDbType.NVarChar).Value = item.StrMaintenanceFolio;
@@ -85,7 +88,7 @@
                     cmd.Parameters.Add("@strUnitaryPrice", SqlDbType.NVarChar).Value = item.StrUnitaryPrice;
                     cmd.Parameters.Add("@strDollarUnitaryPrice", SqlDbType.NVarChar).Value = item.StrDollarUnitaryPrice;
                     cmd.Parameters.Add("@strTotalPrice", SqlDbType.NVarChar).Value = item.StrTotalPrice;
-                    cmd.Parameters.Add("@srDollarTotalPrice", SqlDbType.NVarChar).Value = item.StrDollarTotalPrice;
+                    cmd.Parameters.Add("@strDollarTotalPrice", SqlDbType.NVarChar).Value = item.StrDollarTotalPrice;
                     result = _sqlResult.Post(cmd, sql);
                     if (result.SqlResult == null)
                     {
@@ -138,10 +141,13 @@
                     cmd.Parameters.Add("@strComponent", SqlDbType.NVarChar).Value = item.StrComponent;
                     cmd.Parameters.Add("@strBrand", SqlDbType.NChar).Value = item.StrBrand;
                     cmd.Parameters.Add("@strModel", SqlDbType.NVarChar).Value = item.StrModel;
+                    cmd.Parameters.Add("@strBrandProposed", SqlDbType.NChar).Value = item.StrBrandProposed;
+                    cmd.Parameters.Add("@strModelProposed", SqlDbType.NVarChar).Value = item.StrModelProposed;
                     cmd.Parameters.Add("@strSerialNumber", SqlDbType.NVarChar).Value = item.StrSerialNumber;
                     cmd.Parameters.Add("@strLane", SqlDbType.NVarChar).Value = item.StrLane;
-                    cmd.Parameters.Add("@dateInstallationDate", SqlDbType.DateTime).Value = item.DateInstallationDate;
-                    cmd.Parameters.Add("@dateMaintenanceDate", SqlDbType.DateTime).Value = item.DateMaintenanceDate;
+                    cmd.Parameters.Add("@strQuantity", SqlDbType.NVarChar).Value = item.StrQuantity;
+                    cmd.Parameters.Add("@strInstallationDate", SqlDbType.NVarChar).Value = item.StrInstallationDate;
+                    cmd.Parameters.Add("@strMaintenanceDate", SqlDbType.NVarChar).Value = item.StrMaintenanceDate;
                     cmd.Parameters.Add("@strLifeTimeExpected", SqlDbType.NVarChar).Value = item.StrLifeTimeExpected;
                     cmd.Parameters.Add("@intItem", SqlDbType.Int).Value = item.IntItem;
                     cmd.Parameters.Add("@strMaintenanceFolio", SqlDbType.NVarChar).Value = item.StrMaintenanceFolio;
@@ -149,8 +155,7 @@
                     cmd.Parameters.Add("@strUnitaryPrice", SqlDbType.NVarChar).Value = item.StrUnitaryPrice;
                     cmd.Parameters.Add("@strDollarUnitaryPrice", SqlDbType.NVarChar).Value = item.StrDollarUnitaryPrice;
                     cmd.Parameters.Add("@strTotalPrice", SqlDbType.NVarChar).Value = item.StrTotalPrice;
-                    cmd.Parameters.Add("@srDollarTotalPrice", SqlDbType.NVarChar).Value = item.StrDollarTotalPrice;
-                    result = _sqlResult.Post(cmd, sql);
+                    cmd.Parameters.Add("@strDollarTotalPrice", SqlDbType.NVarChar).Value = item.StrDollarTotalPrice; ;
                     result = _sqlResult.Post(cmd, sql);
                     if (result.SqlResult == null)
                     {
