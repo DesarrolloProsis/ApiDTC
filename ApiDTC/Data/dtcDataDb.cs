@@ -63,6 +63,7 @@
                     cmd.Parameters.Add("@agremmentInfoId", SqlDbType.Int).Value = dtcData.AgremmentInfoId;
                     cmd.Parameters.Add("@status", SqlDbType.Int).Value = dtcData.DTCStatus;
                     cmd.Parameters.Add("@flag", SqlDbType.Bit).Value = dtcData.Flag;
+                    cmd.Parameters.Add("@openFlag", SqlDbType.Bit).Value = dtcData.OpenFlag;
                     return _sqlResult.Post(cmd, sql);
                 }
             }

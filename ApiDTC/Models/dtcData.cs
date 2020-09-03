@@ -37,6 +37,8 @@
         public int DTCStatus { get; set; }
 
         public bool Flag { get; set; }
+
+        public bool OpenFlag { get; set; }
         #endregion
     }
 
