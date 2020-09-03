@@ -1,24 +1,26 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\MACHINE 1\\Desktop\\CLONE APIDTC\\ApiDTC\\ApiDTC\\ApiDTC.csproj": {}
+    "D:\\Proyectos\\ApiDTC\\ApiDTC\\ApiDTC.csproj": {}
   },
   "projects": {
-    "C:\\Users\\MACHINE 1\\Desktop\\CLONE APIDTC\\ApiDTC\\ApiDTC\\ApiDTC.csproj": {
+    "D:\\Proyectos\\ApiDTC\\ApiDTC\\ApiDTC.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\MACHINE 1\\Desktop\\CLONE APIDTC\\ApiDTC\\ApiDTC\\ApiDTC.csproj",
+        "projectUniqueName": "D:\\Proyectos\\ApiDTC\\ApiDTC\\ApiDTC.csproj",
         "projectName": "ApiDTC",
-        "projectPath": "C:\\Users\\MACHINE 1\\Desktop\\CLONE APIDTC\\ApiDTC\\ApiDTC\\ApiDTC.csproj",
-        "packagesPath": "C:\\Users\\MACHINE 1\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\MACHINE 1\\Desktop\\CLONE APIDTC\\ApiDTC\\ApiDTC\\obj\\",
+        "projectPath": "D:\\Proyectos\\ApiDTC\\ApiDTC\\ApiDTC.csproj",
+        "packagesPath": "C:\\Users\\axelf\\.nuget\\packages\\",
+        "outputPath": "D:\\Proyectos\\ApiDTC\\ApiDTC\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
+          "C:\\Microsoft\\Xamarin\\NuGet\\",
           "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
         ],
         "configFilePaths": [
-          "C:\\Users\\MACHINE 1\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "C:\\Users\\axelf\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
         ],
         "originalTargetFrameworks": [
           "netcoreapp2.1"

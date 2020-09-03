@@ -39,6 +39,19 @@
             //return new object { };
         }
 
-  
+        [HttpPost("Open/{flag}")]
+        public ActionResult PostOpen([FromBody] List<RequestedComponentOpen> requestedComponent, bool flag)
+        {
+            if (ModelState.IsValid)
+            {
+                var get = _db.PostRequestedComponentOpen(requestedComponent, flag);
+                if (get.SqlResult == null)
+                    return BadRequest(get);
+                else
+                    return StatusCode(201, get);
+            }
+            return BadRequest(ModelState);
+            //return new object { };
+        }
     }
 }

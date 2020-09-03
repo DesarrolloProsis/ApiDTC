@@ -32,7 +32,6 @@
 
                 foreach (var item in requestedComponent)
                 {
-                    /* MODO NO LIBRE
                     SqlCommand cmd = new SqlCommand("dbo.sp_InsertComponents", sql);
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.Add("@intType", SqlDbType.Int).Value = 1;
@@ -62,40 +61,15 @@
                         cmd.Parameters.Add("@startFlag", SqlDbType.Bit).Value = 1;
                     else
                         cmd.Parameters.Add("@startFlag", SqlDbType.Bit).Value = 0;
-                    */
-                    SqlCommand cmd = new SqlCommand("dbo.spInsertComponentsOpen", sql);
-                    cmd.CommandType = CommandType.StoredProcedure;
-
-                    cmd.Parameters.Add("@intType", SqlDbType.Int).Value = 1;
-                    cmd.Parameters.Add("@bitflag", SqlDbType.Bit).Value = flag;
-                    cmd.Parameters.Add("@strReferenceNumber", SqlDbType.NVarChar).Value = item.StrReferenceNumber;
-                    cmd.Parameters.Add("@strUnity", SqlDbType.NVarChar).Value = item.StrUnity;
-                    cmd.Parameters.Add("@strComponent", SqlDbType.NVarChar).Value = item.StrComponent;
-                    cmd.Parameters.Add("@strBrand", SqlDbType.NChar).Value = item.StrBrand;
-                    cmd.Parameters.Add("@strModel", SqlDbType.NVarChar).Value = item.StrModel;
-                    cmd.Parameters.Add("@strBrandProposed", SqlDbType.NChar).Value = item.StrBrandProposed;
-                    cmd.Parameters.Add("@strModelProposed", SqlDbType.NVarChar).Value = item.StrModelProposed;
-                    cmd.Parameters.Add("@strSerialNumber", SqlDbType.NVarChar).Value = item.StrSerialNumber;
-                    cmd.Parameters.Add("@strLane", SqlDbType.NVarChar).Value = item.StrLane;
-                    cmd.Parameters.Add("@strQuantity", SqlDbType.NVarChar).Value = item.StrQuantity;
-                    cmd.Parameters.Add("@strInstallationDate", SqlDbType.NVarChar).Value = item.StrInstallationDate;
-                    cmd.Parameters.Add("@strMaintenanceDate", SqlDbType.NVarChar).Value = item.StrMaintenanceDate;
-                    cmd.Parameters.Add("@strLifeTimeExpected", SqlDbType.NVarChar).Value = item.StrLifeTimeExpected;
-                    cmd.Parameters.Add("@intItem", SqlDbType.Int).Value = item.IntItem;
-                    cmd.Parameters.Add("@strMaintenanceFolio", SqlDbType.NVarChar).Value = item.StrMaintenanceFolio;
-                    cmd.Parameters.Add("@strlifeTimeReal", SqlDbType.NVarChar).Value = item.StrLifeTimeReal;
-                    cmd.Parameters.Add("@strUnitaryPrice", SqlDbType.NVarChar).Value = item.StrUnitaryPrice;
-                    cmd.Parameters.Add("@strDollarUnitaryPrice", SqlDbType.NVarChar).Value = item.StrDollarUnitaryPrice;
-                    cmd.Parameters.Add("@strTotalPrice", SqlDbType.NVarChar).Value = item.StrTotalPrice;
-                    cmd.Parameters.Add("@strDollarTotalPrice", SqlDbType.NVarChar).Value = item.StrDollarTotalPrice;
+                    
                     result = _sqlResult.Post(cmd, sql);
                     if (result.SqlResult == null)
                     {
-                        result.SqlMessage = $"{result.SqlMessage}. No se pudo insertar la partida del modelo {item.StrModel} tipo 1.";
+                        result.SqlMessage = $"{result.SqlMessage}. No se pudo insertar la partida del modelo {item.Modelo} tipo 1.";
                         return result;
                     }
                 }
-                /*foreach (var item in requestedComponent)
+                foreach (var item in requestedComponent)
                 {
                     SqlCommand cmd = new SqlCommand("dbo.sp_InsertComponents", sql);
                     cmd.CommandType = CommandType.StoredProcedure;
@@ -134,11 +108,55 @@
                     result = _sqlResult.Post(cmd, sql);
                     if (result.SqlResult == null)
                     {
-                        result.SqlMessage = $"{result.SqlMessage}. No se pudo insertar la partida del modelo {item.StrModel} tipo 2.";
+                        result.SqlMessage = $"{result.SqlMessage}. No se pudo insertar la partida del modelo {item.Modelo} tipo 2.";
                         return result;
                     }
-                }*/
+                }
                 return result;               
+            }
+        }
+
+        public SqlResponse PostRequestedComponentOpen(List<RequestedComponentOpen> requestedComponent, bool flag)
+        {
+            using (SqlConnection sql = new SqlConnection(_connectionString))
+            {
+                var result = new SqlResponse();
+
+                foreach (var item in requestedComponent)
+                {
+                    SqlCommand cmd = new SqlCommand("dbo.spInsertComponentsOpen", sql);
+                    cmd.CommandType = CommandType.StoredProcedure;
+
+                    cmd.Parameters.Add("@intType", SqlDbType.Int).Value = 1;
+                    cmd.Parameters.Add("@bitflag", SqlDbType.Bit).Value = flag;
+                    cmd.Parameters.Add("@strReferenceNumber", SqlDbType.NVarChar).Value = item.StrReferenceNumber;
+                    cmd.Parameters.Add("@strUnity", SqlDbType.NVarChar).Value = item.StrUnity;
+                    cmd.Parameters.Add("@strComponent", SqlDbType.NVarChar).Value = item.StrComponent;
+                    cmd.Parameters.Add("@strBrand", SqlDbType.NChar).Value = item.StrBrand;
+                    cmd.Parameters.Add("@strModel", SqlDbType.NVarChar).Value = item.StrModel;
+                    cmd.Parameters.Add("@strBrandProposed", SqlDbType.NChar).Value = item.StrBrandProposed;
+                    cmd.Parameters.Add("@strModelProposed", SqlDbType.NVarChar).Value = item.StrModelProposed;
+                    cmd.Parameters.Add("@strSerialNumber", SqlDbType.NVarChar).Value = item.StrSerialNumber;
+                    cmd.Parameters.Add("@strLane", SqlDbType.NVarChar).Value = item.StrLane;
+                    cmd.Parameters.Add("@strQuantity", SqlDbType.NVarChar).Value = item.StrQuantity;
+                    cmd.Parameters.Add("@strInstallationDate", SqlDbType.NVarChar).Value = item.StrInstallationDate;
+                    cmd.Parameters.Add("@strMaintenanceDate", SqlDbType.NVarChar).Value = item.StrMaintenanceDate;
+                    cmd.Parameters.Add("@strLifeTimeExpected", SqlDbType.NVarChar).Value = item.StrLifeTimeExpected;
+                    cmd.Parameters.Add("@intItem", SqlDbType.Int).Value = item.IntItem;
+                    cmd.Parameters.Add("@strMaintenanceFolio", SqlDbType.NVarChar).Value = item.StrMaintenanceFolio;
+                    cmd.Parameters.Add("@strlifeTimeReal", SqlDbType.NVarChar).Value = item.StrLifeTimeReal;
+                    cmd.Parameters.Add("@strUnitaryPrice", SqlDbType.NVarChar).Value = item.StrUnitaryPrice;
+                    cmd.Parameters.Add("@strDollarUnitaryPrice", SqlDbType.NVarChar).Value = item.StrDollarUnitaryPrice;
+                    cmd.Parameters.Add("@strTotalPrice", SqlDbType.NVarChar).Value = item.StrTotalPrice;
+                    cmd.Parameters.Add("@strDollarTotalPrice", SqlDbType.NVarChar).Value = item.StrDollarTotalPrice;
+                    result = _sqlResult.Post(cmd, sql);
+                    if (result.SqlResult == null)
+                    {
+                        result.SqlMessage = $"{result.SqlMessage}. No se pudo insertar la partida del modelo {item.StrModel} tipo 1.";
+                        return result;
+                    }
+                }
+                return result;
             }
         }
     }
