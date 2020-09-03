@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\MACHINE 1\\Desktop\\CLONE APIDTC\\ApiDTC-NetCore2.1\\ApiDTC\\ApiDTC.csproj": {}
+    "C:\\Users\\MACHINE 1\\Desktop\\CLONE APIDTC\\ApiDTC\\ApiDTC\\ApiDTC.csproj": {}
   },
   "projects": {
-    "C:\\Users\\MACHINE 1\\Desktop\\CLONE APIDTC\\ApiDTC-NetCore2.1\\ApiDTC\\ApiDTC.csproj": {
+    "C:\\Users\\MACHINE 1\\Desktop\\CLONE APIDTC\\ApiDTC\\ApiDTC\\ApiDTC.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\MACHINE 1\\Desktop\\CLONE APIDTC\\ApiDTC-NetCore2.1\\ApiDTC\\ApiDTC.csproj",
+        "projectUniqueName": "C:\\Users\\MACHINE 1\\Desktop\\CLONE APIDTC\\ApiDTC\\ApiDTC\\ApiDTC.csproj",
         "projectName": "ApiDTC",
-        "projectPath": "C:\\Users\\MACHINE 1\\Desktop\\CLONE APIDTC\\ApiDTC-NetCore2.1\\ApiDTC\\ApiDTC.csproj",
+        "projectPath": "C:\\Users\\MACHINE 1\\Desktop\\CLONE APIDTC\\ApiDTC\\ApiDTC\\ApiDTC.csproj",
         "packagesPath": "C:\\Users\\MACHINE 1\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\MACHINE 1\\Desktop\\CLONE APIDTC\\ApiDTC-NetCore2.1\\ApiDTC\\obj\\",
+        "outputPath": "C:\\Users\\MACHINE 1\\Desktop\\CLONE APIDTC\\ApiDTC\\ApiDTC\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"

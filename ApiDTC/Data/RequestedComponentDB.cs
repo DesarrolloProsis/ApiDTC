@@ -89,7 +89,7 @@
                     result = _sqlResult.Post(cmd, sql);
                     if (result.SqlResult == null)
                     {
-                        result.SqlMessage = $"{result.SqlMessage}. No se pudo insertar la partida del modelo {item.Modelo} tipo 1.";
+                        result.SqlMessage = $"{result.SqlMessage}. No se pudo insertar la partida del modelo {item.StrModel} tipo 1.";
                         return result;
                     }
                 }
@@ -154,7 +154,7 @@
                     result = _sqlResult.Post(cmd, sql);
                     if (result.SqlResult == null)
                     {
-                        result.SqlMessage = $"{result.SqlMessage}. No se pudo insertar la partida del modelo {item.Modelo} tipo 2.";
+                        result.SqlMessage = $"{result.SqlMessage}. No se pudo insertar la partida del modelo {item.StrModel} tipo 2.";
                         return result;
                     }
                 }
