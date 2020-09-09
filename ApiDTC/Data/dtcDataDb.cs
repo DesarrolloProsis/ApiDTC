@@ -180,7 +180,8 @@
                                         "t.Description as TypeDescription, " +                                                                                
                                         "Observation, " +
                                         "Diagnosis, " +
-                                        "s.StatusDescription "+
+                                        "s.StatusDescription, "+
+                                        "d.OpenMode " +
                                       "from DTCData d " +
                                       "inner join UserSquare u " +
                                       "on d.UserId = u.UserId " +
