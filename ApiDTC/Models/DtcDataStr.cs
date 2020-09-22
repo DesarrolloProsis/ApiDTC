@@ -24,7 +24,6 @@
 
         public DateTime ElaborationDate { get; set; }
 
-
         public string Observation { get; set; }
 
         public string Diagnosis { get; set; }
@@ -37,6 +36,7 @@
 
         public int TypeDescriptionId { get; set; }
 
+        public Boolean OpenMode { get; set; }
 
         #endregion
     }
