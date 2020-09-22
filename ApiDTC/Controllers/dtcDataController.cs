@@ -48,7 +48,7 @@
                 return Ok(get);
         }
 
-        [HttpGet("EditInfo/{open}/{refNum}")]
+        [HttpGet("EditInfo/{refNum}")]
         public ActionResult<Response> GetEditInfo(string refNum)
         {
             var get = _db.EditReferece(refNum);
