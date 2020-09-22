@@ -27,7 +27,17 @@
             else
                 return Ok(get);
         }
-        
+
+        [HttpGet("Open/{IdUser}/{SquareCatalog}")]
+        public ActionResult<Response> GetOpen(int IdUser, string SquareCatalog)
+        {
+            var get = _db.GetDTC(IdUser, SquareCatalog);
+            if (get.Result == null)
+                return NotFound(get);
+            else
+                return Ok(get);
+        }
+
         [HttpGet("TableForm/{refNum}")]
         public ActionResult<Response> Ge(string refNum)
         {
@@ -38,10 +48,20 @@
                 return Ok(get);
         }
 
-        [HttpGet("EditInfo/{refNum}")]
+        [HttpGet("EditInfo/{open}/{refNum}")]
         public ActionResult<Response> GetEditInfo(string refNum)
         {
             var get = _db.EditReferece(refNum);
+            if (get.Result == null)
+                return NotFound(get);
+            else
+                return Ok(get);
+        }
+
+        [HttpGet("EditInfo/Open/{refNum}")]
+        public ActionResult<Response> GetEditInfoOpen(string refNum)
+        {
+            var get = _db.EditRefereceOpen(refNum);
             if (get.Result == null)
                 return NotFound(get);
             else

@@ -180,7 +180,8 @@
                                         "t.Description as TypeDescription, " +                                                                                
                                         "Observation, " +
                                         "Diagnosis, " +
-                                        "s.StatusDescription "+
+                                        "s.StatusDescription, "+
+                                        "d.OpenMode " +
                                       "from DTCData d " +
                                       "inner join UserSquare u " +
                                       "on d.UserId = u.UserId " +
@@ -294,6 +295,71 @@
                             SerialNumbers = items,
                             Items = serialNumbers
                         }
+                    };
+                }
+            }
+        }
+
+        public Response EditRefereceOpen(string referenceNumber)
+        {                
+            ///
+            using (SqlConnection sql = new SqlConnection(_connectionString))
+            {
+                using (SqlCommand cmd = new SqlCommand("dbo.spEditReferenceOpen", sql))
+                {
+                    SqlDataAdapter sqlDataAdapter = new SqlDataAdapter();
+                    DataSet dataSet = new DataSet();
+
+
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.Add("@ReferenceNumber", SqlDbType.NVarChar).Value = referenceNumber;
+
+                    sql.Open();
+                    sqlDataAdapter = new SqlDataAdapter(cmd);
+                    sqlDataAdapter.Fill(dataSet);
+
+                    sql.Close();
+
+                    
+                    if (dataSet.Tables[0].Rows.Count == 0 || dataSet.Tables[1].Rows.Count == 0)
+                    {
+                        return new Response
+                        {
+                            Message = "Data not found",
+                            Result = null
+                        };
+                    }
+
+                    var requestedComponent = _sqlResult.DataSetMapper<EditRequestedComponent>(dataSet.Tables[0]);
+                    if (requestedComponent == null)
+                    {
+                        return new Response
+                        {
+                            Message = "No se pudo obtener los números de serie. Revisar registros de error.",
+                            Result = null
+                        };
+                    }
+
+                    var proposedComponent = _sqlResult.DataSetMapper<ProposedComponentsOpen>(dataSet.Tables[1]);
+                    if (proposedComponent == null)
+                    {
+                        return new Response
+                        {
+                            Message = "No se pudieron obtener los artículos. Revisar registros de error",
+                            Result = null
+                        };
+                    }
+
+                    ResultEditReferenceOpen resultEditReferenceOpen = new ResultEditReferenceOpen
+                    {
+                        ProposedComponents = (List<ProposedComponentsOpen>)proposedComponent,
+                        RequestedComponents = (List<EditRequestedComponent>)requestedComponent
+                    };
+
+                    return new Response
+                    {
+                        Message = "Ok",
+                        Result = resultEditReferenceOpen
                     };
                 }
             }
