@@ -36,7 +36,6 @@
                     return StatusCode(201, get);
             }
             return BadRequest(ModelState);
-            //return new object { };
         }
 
         [HttpPost("Open/{flag}")]
@@ -51,7 +50,6 @@
                     return StatusCode(201, get);
             }
             return BadRequest(ModelState);
-            //return new object { };
         }
     }
 }
