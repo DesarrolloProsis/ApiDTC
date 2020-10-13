@@ -187,7 +187,7 @@
                                       "on d.UserId = u.UserId " +
                                       "inner join TypeDescriptions t on d.TypeDescriptionId = t.TypeDescriptionId " +
                                       "join DTCStatusCatalog s on d.StatusId = s.StatusId "+
-                                      "where d.UserId = '" + idUser + "' and u.SquareCatalogId = '" + squareCatalog + "' and d.StatusId != 0 ";
+                                      "where d.UserId = '" + idUser + "' and u.SquareCatalogId = '" + squareCatalog + "' and d.StatusId != 0 order by DateStamp desc ";
 
                     var info_dtc = _sqlResult.GetList<DtcDataStr>(cmd, sql);                    
                     return info_dtc;
