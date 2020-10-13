@@ -4,6 +4,6 @@ namespace ApiDTC.Models
 {
     public class TestImage
     {
-        public IFormFile files { get; set; }
+        public IFormFile Image { get; set; }
     }
 }

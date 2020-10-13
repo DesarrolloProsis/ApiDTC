@@ -24,9 +24,9 @@ namespace ApiDTC.Controllers
         {
             bool get = _db.UpdateUserStatus(Key, IdUser);
             if (!get)
-                return Redirect("https://www.facebook.com");
+                return Redirect("https://www.facebook.com");//404
             else
-                return Redirect("https://www.google.com");
+                return Redirect("https://www.google.com");//200
         }
 
         [HttpGet("DeleteUser/{Key}/{IdUser}")]

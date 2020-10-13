@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using ApiDTC.Models;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
+using ApiDTC.Models;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
+using System.Drawing;
 
 namespace ApiDTC.Controllers
 {
@@ -14,7 +13,7 @@ namespace ApiDTC.Controllers
     [ApiController]
     public class ImageController : ControllerBase
     {
-        public static IHostingEnvironment _environment;
+        private IHostingEnvironment _environment;
 
         public ImageController(IHostingEnvironment environment)
         {
@@ -22,20 +21,19 @@ namespace ApiDTC.Controllers
         }
 
         [HttpPost("Prueba")]
-        public async Task<string> Prueba([Bind("files")] TestImage files)
+        public ActionResult<string> Prueba([FromForm] TestImage file)
         {
-            if (files.files.Length > 0)
+            if (file.Image.Length > 0 || file == null)
             {
                 try
                 {
-                    if (!Directory.Exists($"{_environment.WebRootPath}\\imagenDemo\\"))
-                        Directory.CreateDirectory($"{_environment.WebRootPath}\\imagenDemo\\");
-                    using (FileStream fileStream = System.IO.File.Create($"{_environment.WebRootPath}\\imagenDemo\\{files.files.FileName}"))
-                    {
-                        await files.files.CopyToAsync(fileStream);
-                        fileStream.Flush();
-                        return $"\\imagenDemo\\{files.files.FileName}";
-                    }
+                    var fileName = Path.GetFileName(file.Image.FileName);
+                    string contentType = file.Image.ContentType;
+                    if (!Directory.Exists(_environment.WebRootPath + "DtcImages"))
+                        Directory.CreateDirectory(_environment.WebRootPath + "DtcImages");
+
+                    file.Image.CopyTo(new FileStream(Path.Combine(_environment.WebRootPath + "DtcImages", fileName), FileMode.Create));
+                    return "bien";
                 }
                 catch (IOException ex)
                 {
@@ -45,5 +43,15 @@ namespace ApiDTC.Controllers
             else
                 return "WTF";
         }
+
+        [HttpGet("Download")]
+        public IActionResult Download()
+        {
+            Byte[] bitMap;
+            bitMap = System.IO.File.ReadAllBytes(_environment.ContentRootPath + "\\DtcImages\\ero.jpeg");
+            return File(bitMap, "image/jpeg");
+        }
     }
+
+
 }
