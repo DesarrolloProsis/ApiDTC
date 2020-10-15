@@ -17,6 +17,7 @@
             this._db = db ?? throw new ArgumentNullException(nameof(db));
         }
 
+        //Agregar imágenes
         //GET: api/dtcData
         [HttpGet("{IdUser}/{SquareCatalog}")]
         public ActionResult<Response> Get(int IdUser, string SquareCatalog)
