@@ -12,6 +12,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="DtcImages\descarga.jpg" />
+    <None Remove="DtcImages\images.jpg" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="DtcImages\" />
     <Folder Include="wwwroot\" />
   </ItemGroup>
 
