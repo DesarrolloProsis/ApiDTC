@@ -72,6 +72,28 @@ namespace ApiDTC.Controllers
                 return NotFound(ex.ToString());
             }
         }
+
+        [HttpGet("DeleteImage/{plaza}/{fileName}")]
+        public ActionResult Delete(string plaza, string fileName)
+        {
+            try
+            {
+                string directoy = $@"{_environment.WebRootPath}DtcImages\{plaza}\{referenceNumber}";
+                List<string> files = new List<string>();
+                foreach (var item in Directory.GetFiles(directoy))
+                {
+                    Byte[] bitMap;
+                    bitMap = System.IO.File.ReadAllBytes(item);
+                    files.Add(Convert.ToBase64String(bitMap));
+                }
+                return Ok(files);
+                //return File(bitMap, "image/jpeg");
+            }
+            catch (IOException ex)
+            {
+                return NotFound(ex.ToString());
+            }
+        }
     }
 
 
