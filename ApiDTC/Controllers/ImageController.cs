@@ -67,7 +67,7 @@ namespace ApiDTC.Controllers
                 return Ok(files);
                 //return File(bitMap, "image/jpeg");
             }
-            catch (IOException ex)
+                catch (IOException ex)
             {
                 return NotFound(ex.ToString());
             }
