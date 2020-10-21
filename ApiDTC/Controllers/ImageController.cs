@@ -22,7 +22,7 @@ namespace ApiDTC.Controllers
         }
 
         //SquareCatalogId, ReferenceNumber, Imagen
-        [HttpPost("Prueba")]
+        [HttpPost("InsertImage")]
         public ActionResult Prueba([FromForm(Name = "image")] IFormFile image, [FromForm(Name = "id")] string referenceNumber, [FromForm(Name = "plaza")] string plaza)
         {
             if (image.Length > 0 || image == null)
@@ -37,7 +37,11 @@ namespace ApiDTC.Controllers
                     
                     numberOfImages = Directory.GetFiles(directoy).Length + 1;
                     string fileName = $"{referenceNumber}_Image_{numberOfImages}{image.FileName.Substring(image.FileName.LastIndexOf('.'))}";
-
+                    while (System.IO.File.Exists(Path.Combine(directoy, fileName)))
+                    {
+                        numberOfImages += 1;
+                        fileName = $"{referenceNumber}_Image_{numberOfImages}{image.FileName.Substring(image.FileName.LastIndexOf('.'))}";
+                    }
                     image.CopyTo(new FileStream(Path.Combine(directoy, fileName), FileMode.Create));
 
                     return Ok();
@@ -52,26 +56,49 @@ namespace ApiDTC.Controllers
         }
 
         [HttpGet("Download/{plaza}/{referenceNumber}")]
-        public ActionResult<List<string>> Download(string plaza, string referenceNumber)
+        public ActionResult<List<DtcImage>> Download(string plaza, string referenceNumber)
         {
             try
             {
-                string directoy = $@"{_environment.WebRootPath}DtcImages\{plaza}\{referenceNumber}";
-                List<string> files = new List<string>();
+                string directoy = $@"{_environment.WebRootPath}DtcImages\{plaza}\{referenceNumber}\";
+                if (!Directory.Exists(directoy))
+                    return NotFound(directoy);
+                List<DtcImage> dtcImages = new List<DtcImage>();
                 foreach (var item in Directory.GetFiles(directoy))
                 {
-                    Byte[] bitMap;
-                    bitMap = System.IO.File.ReadAllBytes(item);
-                    files.Add(Convert.ToBase64String(bitMap));
+                    byte[] bitMap = System.IO.File.ReadAllBytes(item);
+                    dtcImages.Add(new DtcImage
+                    {
+                        FileName = item.Substring(item.LastIndexOf('\\') + 1),
+                        Image = Convert.ToBase64String(bitMap)
+                    });
                 }
-                return Ok(files);
-                //return File(bitMap, "image/jpeg");
+                return Ok(dtcImages);
             }
-                catch (IOException ex)
+            catch (IOException ex)
             {
                 return NotFound(ex.ToString());
             }
         }
+        //https://localhost:44358/api/image/Tlalpan/TLA-20002/TLA-20002_Image_1.jpg
+        [HttpGet("Delete/{plaza}/{referenceNumber}/{fileName}")]
+        public ActionResult<string> Download(string plaza, string referenceNumber, string fileName)
+        {
+            try
+            {
+                string file = $@"{_environment.WebRootPath}DtcImages\{plaza}\{referenceNumber}\{fileName}";
+                if (!System.IO.File.Exists(file))
+                    return NotFound(file);
+                System.IO.File.Delete(file);
+                return Ok(file);
+            }
+            catch (IOException ex)
+            {
+                return NotFound(ex.ToString());
+            }
+        }
+
+
     }
 
 
