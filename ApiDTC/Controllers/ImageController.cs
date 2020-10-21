@@ -29,13 +29,12 @@ namespace ApiDTC.Controllers
             {
                 try
                 {
-                    int numberOfImages;
+                    int numberOfImages = 1;
                     string directoy = $@"{_environment.WebRootPath}DtcImages\{plaza}\{referenceNumber}";
 
-                    if(!Directory.Exists(directoy))
-                        Directory.CreateDirectory(directoy);
-                    
-                    numberOfImages = Directory.GetFiles(directoy).Length + 1;
+                    if(!Directory.Exists(directoy))                    
+                        numberOfImages = Directory.GetFiles(directoy).Length + 1;
+
                     string fileName = $"{referenceNumber}_Image_{numberOfImages}{image.FileName.Substring(image.FileName.LastIndexOf('.'))}";
                     while (System.IO.File.Exists(Path.Combine(directoy, fileName)))
                     {
@@ -55,15 +54,21 @@ namespace ApiDTC.Controllers
                 return NotFound("Insert another image");
         }
 
-        [HttpGet("Download/{plaza}/{referenceNumber}")]
-        public ActionResult<List<DtcImage>> Download(string plaza, string referenceNumber)
+        [HttpGet("Download/{plaza}/{referenceNumber}/{fileName}")]
+        public ActionResult<DtcImage> Download(string plaza, string referenceNumber, string fileName)
         {
             try
             {
-                string directoy = $@"{_environment.WebRootPath}DtcImages\{plaza}\{referenceNumber}\";
-                if (!Directory.Exists(directoy))
-                    return NotFound(directoy);
-                List<DtcImage> dtcImages = new List<DtcImage>();
+                string route = $@"{_environment.WebRootPath}DtcImages\{plaza}\{referenceNumber}\{fileName}";
+                if (!System.IO.File.Exists(route))
+                    return NotFound(route);
+                byte[] bitMap = System.IO.File.ReadAllBytes(route);
+                var dtcImage = new DtcImage
+                {
+                    FileName = fileName,
+                    Image = Convert.ToBase64String(bitMap)
+                };
+                /*List<DtcImage> dtcImages = new List<DtcImage>();
                 foreach (var item in Directory.GetFiles(directoy))
                 {
                     byte[] bitMap = System.IO.File.ReadAllBytes(item);
@@ -72,7 +77,43 @@ namespace ApiDTC.Controllers
                         FileName = item.Substring(item.LastIndexOf('\\') + 1),
                         Image = Convert.ToBase64String(bitMap)
                     });
-                }
+                }*/
+                return Ok(dtcImage);
+            }
+            catch (IOException ex)
+            {
+                return NotFound(ex.ToString());
+            }
+        }
+
+        [HttpGet("DownloadFile/{plaza}/{referenceNumber}/{fileName}")]
+        public IActionResult DownloadFile(string plaza, string referenceNumber, string fileName)
+        {
+            try
+            {
+                string route = $@"{_environment.WebRootPath}DtcImages\{plaza}\{referenceNumber}\{fileName}";
+                if (!System.IO.File.Exists(route))
+                    return null;
+                Byte[] bitMap = System.IO.File.ReadAllBytes(route);
+                return File(bitMap, "Image/jpg");
+            }
+            catch (IOException ex)
+            {
+                return null;
+            }
+        }
+
+        [HttpGet("GetImages/{plaza}/{referenceNumber}")]
+        public ActionResult<List<string>> GetImages(string plaza, string referenceNumber)
+        {
+            try
+            {
+                string directoy = $@"{_environment.WebRootPath}DtcImages\{plaza}\{referenceNumber}\";
+                if (!Directory.Exists(directoy))
+                    return NotFound(directoy);
+                List<string> dtcImages = new List<string>();
+                foreach (var item in Directory.GetFiles(directoy))
+                    dtcImages.Add(item.Substring(item.LastIndexOf('\\') + 1));
                 return Ok(dtcImages);
             }
             catch (IOException ex)
@@ -82,7 +123,7 @@ namespace ApiDTC.Controllers
         }
         //https://localhost:44358/api/image/Tlalpan/TLA-20002/TLA-20002_Image_1.jpg
         [HttpGet("Delete/{plaza}/{referenceNumber}/{fileName}")]
-        public ActionResult<string> Download(string plaza, string referenceNumber, string fileName)
+        public ActionResult<string> Delete(string plaza, string referenceNumber, string fileName)
         {
             try
             {
