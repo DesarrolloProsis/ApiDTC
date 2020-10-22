@@ -73,12 +73,12 @@ namespace ApiDTC.Controllers
             }
         }
 
-        [HttpGet("DeleteImage/{plaza}/{fileName}")]
-        public ActionResult Delete(string plaza, string fileName)
+        [HttpGet("DeleteImage/{plaza}/{referenceNumber}/{fileName}")]
+        public ActionResult Delete(string plaza, string referenceNumber, string fileName)
         {
             try
             {
-                string directoy = $@"{_environment.WebRootPath}DtcImages\{plaza}\{referenceNumber}";
+                string directoy = $@"{_environment.WebRootPath}DtcImages\{plaza}\{referenceNumber}\{fileName}";
                 List<string> files = new List<string>();
                 foreach (var item in Directory.GetFiles(directoy))
                 {
