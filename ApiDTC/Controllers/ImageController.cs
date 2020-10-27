@@ -29,19 +29,22 @@ namespace ApiDTC.Controllers
             {
                 try
                 {
-                    int numberOfImages = 1;
+                    int numberOfImages;
                     string directoy = $@"{_environment.WebRootPath}DtcImages\{plaza}\{referenceNumber}";
 
-                    if(!Directory.Exists(directoy))                    
-                        numberOfImages = Directory.GetFiles(directoy).Length + 1;
-
+                    if(!Directory.Exists(directoy))
+                        Directory.CreateDirectory(directoy);
+                    numberOfImages = Directory.GetFiles(directoy).Length + 1;
                     string fileName = $"{referenceNumber}_Image_{numberOfImages}{image.FileName.Substring(image.FileName.LastIndexOf('.'))}";
                     while (System.IO.File.Exists(Path.Combine(directoy, fileName)))
                     {
                         numberOfImages += 1;
                         fileName = $"{referenceNumber}_Image_{numberOfImages}{image.FileName.Substring(image.FileName.LastIndexOf('.'))}";
                     }
-                    image.CopyTo(new FileStream(Path.Combine(directoy, fileName), FileMode.Create));
+                    var fs = new FileStream(Path.Combine(directoy, fileName), FileMode.Create);
+                    //image.CopyTo(new FileStream(Path.Combine(directoy, fileName), FileMode.Create));
+                    image.CopyTo(fs);
+                    fs.Close();
 
                     return Ok();
                 }
@@ -85,7 +88,7 @@ namespace ApiDTC.Controllers
                 return NotFound(ex.ToString());
             }
         }
-
+        
         [HttpGet("DownloadFile/{plaza}/{referenceNumber}/{fileName}")]
         public IActionResult DownloadFile(string plaza, string referenceNumber, string fileName)
         {
