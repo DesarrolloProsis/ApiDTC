@@ -36,7 +36,7 @@
             }
         }
 
-        public SqlResponse NewUser(UserInfo userInfo)
+        public Response NewUser(UserInfo userInfo)
         {
             using (SqlConnection sql = new SqlConnection(_connectionString))
             {
@@ -48,7 +48,21 @@
                     cmd.Parameters.Add("@LastName2", SqlDbType.NVarChar).Value = userInfo.LastName2;
                     cmd.Parameters.Add("@Password", SqlDbType.NVarChar).Value = userInfo.Password;
                     cmd.Parameters.Add("@Rol", SqlDbType.Int).Value = userInfo.Rol;
-                    return _sqlResult.Post(cmd, sql);
+                    var reader = _sqlResult.Post(cmd, sql);
+                    if (reader.SqlResult == null)
+                    {
+                        return new Response
+                        {
+                            Message = "Fail",
+                            Result = null
+
+                        };
+                    }
+                    return new Response
+                    {
+                        Message = "Ok",
+                        Result = userInfo
+                    };
                 }
             }
         }
@@ -116,7 +130,7 @@
             }
         }
 
-        public SqlResponse DeleteUser(UserKey userKey)
+        public Response DeleteUser(UserKey userKey)
         {
             using (SqlConnection sql = new SqlConnection(_connectionString))
             {
@@ -124,7 +138,21 @@
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.Add("@User", SqlDbType.Int).Value = userKey.Id;
-                    return _sqlResult.Post(cmd, sql);
+                    var reader = _sqlResult.Post(cmd, sql);
+                    if (reader.SqlResult == null)
+                    {
+                        return new Response
+                        {
+                            Message = "Fail",
+                            Result = null
+
+                        };
+                    }
+                    return new Response
+                    {
+                        Message = "Ok",
+                        Result = userKey
+                    };
                 }
             }
         }

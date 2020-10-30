@@ -17,21 +17,21 @@
         }
 
         [HttpPost("nuevo")]
-        public ActionResult CreateUser([FromBody] UserInfo userInfo)
+        public ActionResult<Response> CreateUser([FromBody] UserInfo userInfo)
         {
             if (ModelState.IsValid)
             {
                 var get = _db.NewUser(userInfo);
-                if (get.SqlResult == null)
+                if (get.Result == null)
                     return BadRequest();
                 else
-                    return StatusCode(201, get);
+                    return Ok(get);
             }
             return BadRequest(ModelState);
         }
 
         [HttpPost("consulta")]
-        public ActionResult GetUserInfo([FromBody] UserKey userKey)
+        public ActionResult<Response> GetUserInfo([FromBody] UserKey userKey)
         {
             if (ModelState.IsValid)
             {
@@ -39,13 +39,13 @@
                 if (get.Result == null)
                     return BadRequest();
                 else
-                    return StatusCode(201, get);
+                    return Ok(get);
             }
             return BadRequest(ModelState);
         }
 
         [HttpPut("update")]
-        public ActionResult Put([FromBody] UserUpdate userUpdate)
+        public ActionResult<Response> Put([FromBody] UserUpdate userUpdate)
         {
             var put = _db.PutUser(userUpdate);
             if (put.Result == null)
@@ -55,7 +55,7 @@
         }
 
         [HttpPut("newPassword")]
-        public ActionResult PutPassword([FromBody] UserPassword userPassword)
+        public ActionResult<Response> PutPassword([FromBody] UserPassword userPassword)
         {
             var put = _db.PutPassword(userPassword);
             if (put.Result == null)
@@ -65,12 +65,12 @@
         }
 
         [HttpPut("delete")]
-        public ActionResult Delete([FromBody] UserKey userKey)
+        public ActionResult<Response> Delete([FromBody] UserKey userKey)
         {
             if (ModelState.IsValid)
             {
                 var delete = _db.DeleteUser(userKey);
-                if (delete.SqlResult == null)
+                if (delete.Result == null)
                     return NotFound(delete);
                 else
                     return Ok(delete);

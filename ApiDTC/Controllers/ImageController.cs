@@ -57,6 +57,23 @@ namespace ApiDTC.Controllers
                 return NotFound("Insert another image");
         }
 
+        [HttpGet("DeleteDtcImages/{plaza}/{referenceNumber}/")]
+        public ActionResult<DtcImage> Download(string plaza, string referenceNumber)
+        {
+            try
+            {
+                string route = $@"{_environment.WebRootPath}DtcImages\{plaza}\{referenceNumber}";
+                if(!System.IO.Directory.Exists(route))
+                    return NotFound(route);
+                System.IO.Directory.Delete(route, true);
+                return Ok(route);
+            }
+            catch (IOException ex)
+            {
+                return NotFound(ex.ToString());
+            }
+        }
+
         [HttpGet("Download/{plaza}/{referenceNumber}/{fileName}")]
         public ActionResult<DtcImage> Download(string plaza, string referenceNumber, string fileName)
         {
@@ -71,16 +88,6 @@ namespace ApiDTC.Controllers
                     FileName = fileName,
                     Image = Convert.ToBase64String(bitMap)
                 };
-                /*List<DtcImage> dtcImages = new List<DtcImage>();
-                foreach (var item in Directory.GetFiles(directoy))
-                {
-                    byte[] bitMap = System.IO.File.ReadAllBytes(item);
-                    dtcImages.Add(new DtcImage
-                    {
-                        FileName = item.Substring(item.LastIndexOf('\\') + 1),
-                        Image = Convert.ToBase64String(bitMap)
-                    });
-                }*/
                 return Ok(dtcImage);
             }
             catch (IOException ex)
@@ -98,11 +105,30 @@ namespace ApiDTC.Controllers
                 if (!System.IO.File.Exists(route))
                     return null;
                 Byte[] bitMap = System.IO.File.ReadAllBytes(route);
+
                 return File(bitMap, "Image/jpg");
             }
             catch (IOException ex)
             {
                 return null;
+            }
+        }
+
+        [HttpGet("DownloadBase/{plaza}/{referenceNumber}/{fileName}")]
+        public ActionResult DownloadBase(string plaza, string referenceNumber, string fileName)
+        {
+            try
+            {
+                string route = $@"{_environment.WebRootPath}DtcImages\{plaza}\{referenceNumber}\{fileName}";
+                if (!System.IO.File.Exists(route))
+                    return null;
+                Byte[] bitMap = System.IO.File.ReadAllBytes(route);
+
+                return Ok(bitMap);
+            }
+            catch (IOException ex)
+            {
+                return NotFound(ex);
             }
         }
 

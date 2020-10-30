@@ -23,7 +23,7 @@
               
         // GET: api/Component
         [HttpGet("{convenio}/{plaza}/{Id}/{marca}")]
-        public IActionResult GetComponents(string convenio, string plaza, string Id, string marca)
+        public ActionResult<Response> GetComponents(string convenio, string plaza, string Id, string marca)
         {
             var get = _db.GetComponentData(convenio, plaza, Id, marca);
             if(get.Result == null)
