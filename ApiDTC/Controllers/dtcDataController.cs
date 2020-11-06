@@ -104,7 +104,7 @@
         //TODO Ajustar petición POST nuevo DTC
         // POST: api/dtcData/NuevoDtc
         [HttpPost]
-        public ActionResult Post([FromBody] DtcData dtcData)
+        public ActionResult<Response> Post([FromBody] DtcData dtcData)
         {
             if(ModelState.IsValid)
             {
@@ -119,7 +119,7 @@
         }
 
         [HttpDelete("Delete/{referenceNumber}")]
-        public ActionResult Delete(string referenceNumber)
+        public ActionResult<Response> Delete(string referenceNumber)
         {
             if (ModelState.IsValid)
             {

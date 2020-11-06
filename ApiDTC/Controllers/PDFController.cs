@@ -48,9 +48,5 @@
                 return File(new FileStream(pdfResult.Result.ToString(), FileMode.Open, FileAccess.Read), "application/pdf");
             }
         }
-
-
     }
-
-
 }

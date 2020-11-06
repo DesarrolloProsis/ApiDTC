@@ -24,6 +24,7 @@
     ".NETCoreApp,Version=v2.1": {
       "ApiDTC/1.0.0": {
         "dependencies": {
+          "FastMember": "1.5.0",
           "Microsoft.AspNetCore.App": "2.1.1",
           "Microsoft.AspNetCore.Razor.Design": "2.1.2",
           "Microsoft.EntityFrameworkCore": "2.1.1",
@@ -38,6 +39,17 @@
         },
         "compile": {
           "ApiDTC.dll": {}
+        }
+      },
+      "FastMember/1.5.0": {
+        "runtime": {
+          "lib/netcoreapp2.0/FastMember.dll": {
+            "assemblyVersion": "1.5.0.0",
+            "fileVersion": "1.5.0.0"
+          }
+        },
+        "compile": {
+          "lib/netcoreapp2.0/FastMember.dll": {}
         }
       },
       "iTextSharp.LGPLv2.Core/1.6.3": {
@@ -3576,6 +3588,13 @@
       "type": "project",
       "serviceable": false,
       "sha512": ""
+    },
+    "FastMember/1.5.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-Db80coUbys8VgmcrR9mxUR+EInTpweoLM0GFJXIBuj8+PTgqV+ygq+EOM3HME83tob1+RR9XlBcEkpfFyypdHg==",
+      "path": "fastmember/1.5.0",
+      "hashPath": "fastmember.1.5.0.nupkg.sha512"
     },
     "iTextSharp.LGPLv2.Core/1.6.3": {
       "type": "package",
