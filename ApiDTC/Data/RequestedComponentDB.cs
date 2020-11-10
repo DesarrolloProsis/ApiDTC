@@ -24,12 +24,10 @@
         }
         #endregion
 
-        public SqlResponse PostRequestedComponent(List<RequestedComponent> requestedComponent, bool flag)
+        public Response PostRequestedComponent(List<RequestedComponent> requestedComponent, bool flag)
         {
             using (SqlConnection sql = new SqlConnection(_connectionString))
             {
-                var result = new SqlResponse();
-
                 foreach (var item in requestedComponent)
                 {
                     SqlCommand cmd = new SqlCommand("dbo.sp_InsertComponents", sql);
@@ -62,13 +60,17 @@
                     else
                         cmd.Parameters.Add("@startFlag", SqlDbType.Bit).Value = 0;
                     
-                    result = _sqlResult.Post(cmd, sql);
+                    var result = _sqlResult.Post(cmd, sql);
                     if (result.SqlResult == null)
                     {
-                        result.SqlMessage = $"{result.SqlMessage}. No se pudo insertar la partida del modelo {item.Modelo} tipo 1.";
-                        return result;
+                        return new Response
+                        {
+                            Message = $"{result.SqlMessage}. No se pudo insertar la partida del modelo {item.Modelo} tipo 1.",
+                            Result = null
+                        };
                     }
                 }
+                
                 foreach (var item in requestedComponent)
                 {
                     SqlCommand cmd = new SqlCommand("dbo.sp_InsertComponents", sql);
@@ -103,24 +105,31 @@
                         cmd.Parameters.Add("@startFlag", SqlDbType.Bit).Value = 1;
                     else
                         cmd.Parameters.Add("@startFlag", SqlDbType.Bit).Value = 0;
-                    
-                    
-                    result = _sqlResult.Post(cmd, sql);
-                    if (result.SqlResult == null)
+
+
+                    var res = _sqlResult.Post(cmd, sql);
+                    if (res.SqlResult == null)
                     {
-                        result.SqlMessage = $"{result.SqlMessage}. No se pudo insertar la partida del modelo {item.Modelo} tipo 2.";
-                        return result;
+                        return new Response
+                        {
+                            Message = $"{res.SqlMessage}. No se pudo insertar la partida del modelo {item.Modelo} tipo 2.",
+                            Result = null
+                        };
                     }
                 }
-                return result;               
+                return new Response
+                {
+                    Message = "Ok",
+                    Result = requestedComponent,
+                    Rows = requestedComponent.Count
+                };
             }
         }
 
-        public SqlResponse PostRequestedComponentOpen(List<RequestedComponentOpen> requestedComponent, bool flag)
+        public Response PostRequestedComponentOpen(List<RequestedComponentOpen> requestedComponent, bool flag)
         {
             using (SqlConnection sql = new SqlConnection(_connectionString))
             {
-                var result = new SqlResponse();
 
                 foreach (var item in requestedComponent)
                 {
@@ -149,14 +158,17 @@
                     cmd.Parameters.Add("@strDollarUnitaryPrice", SqlDbType.NVarChar).Value = item.StrDollarUnitaryPrice;
                     cmd.Parameters.Add("@strTotalPrice", SqlDbType.NVarChar).Value = item.StrTotalPrice;
                     cmd.Parameters.Add("@strDollarTotalPrice", SqlDbType.NVarChar).Value = item.StrDollarTotalPrice;
-                    result = _sqlResult.Post(cmd, sql);
+                    var result = _sqlResult.Post(cmd, sql);
                     if (result.SqlResult == null)
                     {
-                        result.SqlMessage = $"{result.SqlMessage}. No se pudo insertar la partida del modelo {item.StrModel} tipo 1.";
-                        return result;
+                        return new Response
+                        {
+                            Message = $"{result.SqlMessage}. No se pudo insertar la partida del modelo {item.StrModel} tipo 1.",
+                            Result = null
+                        };
                     }
                 }
-                return result;
+                return new Response { Message = "Ok", Result = requestedComponent, Rows = requestedComponent.Count };
             }
         }
     }

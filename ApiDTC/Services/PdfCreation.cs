@@ -92,7 +92,6 @@ namespace ApiDTC.Services
             Document doc = new Document();
             try
             {
-                //using(FileStream file = new FileStream($@"{System.Environment.CurrentDirectory}\Reportes\{DateTime.Now.Year}\{MesActual()}\{DateTime.Now.Day}\ReporteDTC-{_refNum}.pdf", FileMode.Create))
                 using (MemoryStream myMemoryStream = new MemoryStream())
                 {
                     doc.SetPageSize(new Rectangle(793.701f, 609.4488f));                                     
@@ -157,8 +156,6 @@ namespace ApiDTC.Services
                 };
             }        
         }
-
-   
 
         private IElement tablaFinal()
         {

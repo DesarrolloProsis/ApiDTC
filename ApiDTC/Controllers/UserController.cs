@@ -17,15 +17,15 @@
         }
 
         [HttpPost("nuevo")]
-        public ActionResult CreateUser([FromBody] UserInfo userInfo)
+        public ActionResult<Response> CreateUser([FromBody] UserInfo userInfo)
         {
             if (ModelState.IsValid)
             {
                 var get = _db.NewUser(userInfo);
-                if (get.SqlResult == null)
-                    return BadRequest(get);
+                if (get.Result == null)
+                    return BadRequest();
                 else
-                    return StatusCode(201, get);
+                    return Ok(get);
             }
             return BadRequest(ModelState);
         }
@@ -39,7 +39,7 @@
                 if (get.Result == null)
                     return BadRequest(get);
                 else
-                    return StatusCode(201, get);
+                    return Ok(get);
             }
             return BadRequest(ModelState);
         }
@@ -65,12 +65,12 @@
         }
 
         [HttpPut("delete")]
-        public ActionResult Delete([FromBody] UserKey userKey)
+        public ActionResult<Response> Delete([FromBody] UserKey userKey)
         {
             if (ModelState.IsValid)
             {
                 var delete = _db.DeleteUser(userKey);
-                if (delete.SqlResult == null)
+                if (delete.Result == null)
                     return NotFound(delete);
                 else
                     return Ok(delete);

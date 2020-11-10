@@ -25,29 +25,29 @@
         //TODO POST RequestedComponents
         // POST: api/RequestedComponent
         [HttpPost("{flag}")]
-        public ActionResult Post([FromBody] List<RequestedComponent> requestedComponent, bool flag)
+        public ActionResult<Response> Post([FromBody] List<RequestedComponent> requestedComponent, bool flag)
         {
             if(ModelState.IsValid)
             {
                 var get = _db.PostRequestedComponent(requestedComponent, flag);
-                if(get.SqlResult == null)
+                if(get.Result == null)
                     return BadRequest(get);
                 else
-                    return StatusCode(201, get);
+                    return Ok(get);
             }
             return BadRequest(ModelState);
         }
 
         [HttpPost("Open/{flag}")]
-        public ActionResult PostOpen([FromBody] List<RequestedComponentOpen> requestedComponent, bool flag)
+        public ActionResult<Response> PostOpen([FromBody] List<RequestedComponentOpen> requestedComponent, bool flag)
         {
             if (ModelState.IsValid)
             {
                 var get = _db.PostRequestedComponentOpen(requestedComponent, flag);
-                if (get.SqlResult == null)
+                if (get.Result == null)
                     return BadRequest(get);
                 else
-                    return StatusCode(201, get);
+                    return Ok(get);
             }
             return BadRequest(ModelState);
         }
