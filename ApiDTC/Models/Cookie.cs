@@ -8,6 +8,9 @@ namespace ApiDTC.Models
         public string SquareCatalogId { get; set; }
         
         public int RollId { get; set; }
+
+        public string SquareName { get; set; }
+
         #endregion
     }
 }
