@@ -284,10 +284,10 @@ namespace ApiDTC.Services
         private IElement tablaDescripcion()
         {
 
-            PdfPTable table = new PdfPTable(new float[] { 12.5f, 12.5f, 12.5f, 12.5f, 12.5f, 12.5f, 12.5f, 12.5f }) { WidthPercentage = 100f };
+            PdfPTable table = new PdfPTable(new float[] { 20f, 15f, 15f, 15f, 15f, 20f}) { WidthPercentage = 100f };
             var celdaVacia = new PdfPCell() { Border = 0 };
             //ESPACIO
-            for (int i = 0; i < 16; i++)
+            for (int i = 0; i < 12; i++)
             {
                 table.AddCell(celdaVacia);
             }
@@ -301,19 +301,21 @@ namespace ApiDTC.Services
                 Padding = 3,
                 Colspan = 2
             };
-            var colDescripcionActividad = new PdfPCell(new Phrase("Actividad", letraoNegritaMediana))
+            var colDescripcionActividad = new PdfPCell(new Phrase("OK - N/A", letraoNegritaMediana))
             {
                 BorderWidth = 1,
                 HorizontalAlignment = Element.ALIGN_CENTER,
                 VerticalAlignment = Element.ALIGN_CENTER,
                 Padding = 3,
-                Colspan = 4
+                Colspan = 1
             };
 
             table.AddCell(celdaVacia);
             table.AddCell(colEquipoCarril);
             table.AddCell(colDescripcionActividad);
             table.AddCell(celdaVacia);
+            table.AddCell(celdaVacia);
+
             for (int i = 0; i < 32; i++)
             {
                 var colEquipo = new PdfPCell(new Phrase("Semáforo de techo modo de pago", letraNormalChica))
@@ -324,17 +326,18 @@ namespace ApiDTC.Services
                     Padding = 2,
                     Colspan = 2
                 };
-                var colDescripcion = new PdfPCell(new Phrase("Esta es una descripción de actividad con demasiados caracteres otro montón de caracteres", letraNormalChica))
+                var colDescripcion = new PdfPCell(new Phrase("Sí", letraNormalChica))
                 {
                     BorderWidth = 1,
-                    HorizontalAlignment = Element.ALIGN_JUSTIFIED,
+                    HorizontalAlignment = Element.ALIGN_CENTER,
                     VerticalAlignment = Element.ALIGN_MIDDLE,
                     Padding = 2,
-                    Colspan = 4
+                    Colspan = 1
                 };
                 table.AddCell(celdaVacia);
                 table.AddCell(colEquipo);
                 table.AddCell(colDescripcion);
+                table.AddCell(celdaVacia);
                 table.AddCell(celdaVacia);
             }
 

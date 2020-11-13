@@ -30,5 +30,15 @@
             else
                 return Ok(get);
         }
+
+        [HttpGet("Lanes/{square}")]
+        public ActionResult<Response> GetLanes(string square)
+        {
+            var get = _db.GetLanes(square);
+            if (get.Result == null)
+                return NotFound(get);
+            else
+                return Ok(get);
+        }
     }
 }

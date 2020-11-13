@@ -35,6 +35,30 @@
                 return _sqlResult.GetList<SquaresCatalog>(cmd, sql);
             }
         }
+
+        public Response GetLanes(string square)
+        {
+            using (SqlConnection sql = new SqlConnection(_connectionString))
+            {
+                using (SqlCommand cmd = new SqlCommand("dbo.spSquareLanes", sql))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.Add("@Square", SqlDbType.NVarChar).Value = square;
+
+
+                    var storedResult = _sqlResult.GetList<Lanes>(cmd, sql);
+                    if (storedResult.Result == null)
+                        return storedResult;
+
+
+                    return new Response
+                    {
+                        Message = "Ok",
+                        Result = storedResult.Result
+                    };
+                }
+            }
+        }
         #endregion
     }
 }
