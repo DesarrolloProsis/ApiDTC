@@ -30,6 +30,7 @@ namespace ApiDTC
             services.AddCors();
             services.AddScoped<ApiLogger>();
             services.AddScoped<BotDb>();
+            services.AddScoped<CalendarioDb>();
             services.AddScoped<UserDb>();
             services.AddScoped<SqlResult>();
             services.AddScoped<DtcDataDb>();

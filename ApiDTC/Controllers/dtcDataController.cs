@@ -17,9 +17,6 @@
             this._db = db ?? throw new ArgumentNullException(nameof(db));
         }
 
-
-     
-
         //Agregar imágenes
         //GET: api/dtcData
         [HttpGet("{IdUser}/{SquareCatalog}")]
@@ -133,6 +130,15 @@
                     return Ok(delete);
             }
             return BadRequest(ModelState);
+        }
+
+        [HttpPut("UpdateStatus/{referenceNumber}")]
+        public ActionResult<Response> Update(string referenceNumber)
+        {
+            var put = _db.UpdateDtcStatus(referenceNumber);
+            if(put.Result == null)
+                return NotFound(put);
+            return Ok(put);
         }
     }
 }

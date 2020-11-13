@@ -136,6 +136,24 @@
             }
         }
 
+        public Response UpdateDtcStatus(string referenceNumber)
+        {
+            using (SqlConnection sql = new SqlConnection(_connectionString))
+            {
+                using (SqlCommand cmd = new SqlCommand("dbo.spUpdateStatusDTC", sql))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.Add("@ReferenceNumber", SqlDbType.NVarChar).Value = referenceNumber;
+                    var response = _sqlResult.Put(cmd, sql);
+                    return new Response
+                    {
+                        Message = response.SqlMessage,
+                        Result = response.SqlResult
+                    };
+                }
+            }
+        }
+
         public Response GetComponentsInventoryList(string squareId)
         {
             using (SqlConnection sql = new SqlConnection(_connectionString))
