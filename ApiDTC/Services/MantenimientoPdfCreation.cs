@@ -23,6 +23,8 @@ namespace ApiDTC.Services
         private string _folio;
 
         private ApiLogger _apiLogger;
+
+        private int _tipo;
         #endregion
 
         #region Pdf Configuration
@@ -57,18 +59,20 @@ namespace ApiDTC.Services
         #endregion
 
         #region Constructors
-        public MantenimientoPdfCreation(ApiLogger apiLogger, string folio)
+        public MantenimientoPdfCreation(ApiLogger apiLogger, string folio, int tipo)
         {
             _apiLogger = apiLogger;
             _folio = folio;
+            _tipo = tipo;
         }
 
-        public MantenimientoPdfCreation(DataTable tableHeader, DataTable tableActivities, string folio, ApiLogger apiLogger)
+        public MantenimientoPdfCreation(DataTable tableHeader, DataTable tableActivities, string folio, ApiLogger apiLogger, int tipo)
         {
             _apiLogger = apiLogger;
             _tableHeader = tableHeader;
             _tableActivities = tableActivities;
             _folio = folio;
+            _tipo = tipo;
         }
 
         #endregion
@@ -114,7 +118,26 @@ namespace ApiDTC.Services
                     doc.SetPageSize(new Rectangle(609.4488f, 793.701f));
                     doc.SetMargins(35, 35, 60.8661f, 60.8661f);
                     doc.AddAuthor("PROSIS");
-                    doc.AddTitle("Mantenimiento preventivo");
+                    switch (_tipo)
+                    {
+                        case 1: 
+                            doc.AddTitle("Mantenimiento semanal preventivo");  
+                            break;
+                        case 2:
+                            doc.AddTitle("Mantenimiento mensual preventivo");
+                            break;
+                        case 3:
+                            doc.AddTitle("Mantenimiento bimestral preventivo");
+                            break;
+                        case 4:
+                            doc.AddTitle("Mantenimiento semestral preventivo");
+                            break;
+                        case 5:
+                            doc.AddTitle("Mantenimiento anual preventivo");
+                            break;
+                        default: break;
+                    }
+                    
 
                     PdfWriter writer = PdfWriter.GetInstance(doc, myMemoryStream);
                     writer.PageEvent = new PageEventHelper();
@@ -180,8 +203,27 @@ namespace ApiDTC.Services
 
             var celdaSalto = new PdfPCell() { Colspan = 5, Border = 0 };
             table.AddCell(celdaSalto);
-
-            var colTitulo = new PdfPCell(new Phrase("MANTENIMIENTO PREVENTIVO", letraNormalMediana)) { Border = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, Padding = 5, PaddingRight = 20, PaddingLeft = 20, Colspan = 2 };
+            string textoTitulo = "";
+            switch (_tipo)
+            {
+                case 1:
+                    textoTitulo = "Mantenimiento semanal preventivo";
+                    break;
+                case 2:
+                    textoTitulo = "Mantenimiento mensual preventivo";
+                    break;
+                case 3:
+                    textoTitulo = "Mantenimiento bimestral preventivo";
+                    break;
+                case 4:
+                    textoTitulo = "Mantenimiento semestral preventivo";
+                    break;
+                case 5:
+                    textoTitulo = "Mantenimiento anual preventivo";
+                    break;
+                default: break;
+            }
+            var colTitulo = new PdfPCell(new Phrase(textoTitulo, letraNormalMediana)) { Border = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, Padding = 5, PaddingRight = 20, PaddingLeft = 20, Colspan = 2 };
             table.AddCell(celdaVacia);
             table.AddCell(colTitulo);
             table.AddCell(celdaVacia);
@@ -389,10 +431,6 @@ namespace ApiDTC.Services
             table.AddCell(colBoolOtros);
             table.AddCell(celdaVacia);
 
-            for (int i = 0; i < 16; i++)
-            {
-                table.AddCell(celdaVacia);
-            }
 
             var colTextoObservaciones = new PdfPCell(new Phrase("Observaciones: ", letraoNegritaChica)) { Border = 0, HorizontalAlignment = Element.ALIGN_LEFT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 1 };
 
@@ -405,7 +443,7 @@ namespace ApiDTC.Services
             table.AddCell(celdaVacia);
             table.AddCell(celdaVacia);
 
-            var celdaObservaciones = new PdfPCell(new Phrase("MANTENIMIENTO CORRESPONDIENTE AL MES DE JULIO DEL 2020 CON DEMASIADO TEXTO PARA PROBAR LA MAYOR CANTIDAD DE LETRAS POSIBLES EN ESTE PDF TODAVÍA MÁS LETRAS PARA SABER SI EL DOCUMENTO AGUANTA MUUUUUCHAS LETRAS DE OBSERVACIONES", letraNormalChica)) { BorderWidth = 0, VerticalAlignment = Element.ALIGN_TOP, HorizontalAlignment = Element.ALIGN_JUSTIFIED, Colspan = 6 };
+            var celdaObservaciones = new PdfPCell(new Phrase("What is Lorem Ipsum ? Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.", letraNormalChica)) { BorderWidth = 0, VerticalAlignment = Element.ALIGN_TOP, HorizontalAlignment = Element.ALIGN_JUSTIFIED, Colspan = 6 };
 
             table.AddCell(celdaVacia);
             table.AddCell(celdaObservaciones);
