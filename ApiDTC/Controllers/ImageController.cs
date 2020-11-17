@@ -160,6 +160,8 @@ namespace ApiDTC.Controllers
                 if (!System.IO.File.Exists(file))
                     return NotFound(file);
                 System.IO.File.Delete(file);
+                if (System.IO.Directory.GetFiles($@"{_environment.WebRootPath}DtcImages\{plaza}\{referenceNumber}\").Length == 0)
+                    System.IO.Directory.Delete($@"{_environment.WebRootPath}DtcImages\{plaza}\{referenceNumber}\");
                 return Ok(file);
             }
             catch (IOException ex)

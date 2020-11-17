@@ -6,9 +6,9 @@ namespace ApiDTC.Models
 
     public class ActividadCalendario
     {
-        public List<string> CapufeLaneNums { get; set; }
+        public string[] CapufeLaneNums { get; set; }
 
-        public List<string> IdGares { get; set; }
+        public string[] IdGares { get; set; }
 
         public string SquareId { get; set; }
 
