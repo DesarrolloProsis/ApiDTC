@@ -31,7 +31,7 @@
                 return Ok(get);
         }
 
-        [HttpGet("{square}")]
+        [HttpGet("Lanes/{square}")]
         public ActionResult<Response> GetLanes(string square)
         {
             var get = _db.GetLanes(square);

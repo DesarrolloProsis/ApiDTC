@@ -9,8 +9,8 @@ namespace ApiDTC.Models
     {
         public string Lane { get; set; }
 
-        public int IdGare { get; set; }
+        public string IdGare { get; set; }
 
-        public int CapufeLaneNum { get; set; }
+        public string CapufeLaneNum { get; set; }
     }
 }
