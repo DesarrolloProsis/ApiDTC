@@ -26,4 +26,7 @@ namespace ApiDTC.Models
 
         public string Comment { get; set; }
     }
+
+ 
+
 }
