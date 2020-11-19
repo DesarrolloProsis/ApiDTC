@@ -39,6 +39,10 @@
         public bool Flag { get; set; }
 
         public bool OpenFlag { get; set; }
+
+        public string SquareId { get; set; }
+
+
         #endregion
     }
 

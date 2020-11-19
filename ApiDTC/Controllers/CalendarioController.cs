@@ -49,5 +49,18 @@
             }
             return BadRequest(ModelState);
         }
+        [HttpPost("ActividadMesYear")]
+        public ActionResult<Response> GetActividad([FromBody] ActividadMesYear infoActividad)
+        {
+            if (ModelState.IsValid)
+            {
+                var get = _db.GetActivity(infoActividad);
+                if (get.Result == null)
+                    return BadRequest(get);
+                else
+                    return Ok(get);
+            }
+            return BadRequest(ModelState);
+        }
     }
 }

@@ -64,6 +64,8 @@
                     cmd.Parameters.Add("@status", SqlDbType.Int).Value = dtcData.DTCStatus;
                     cmd.Parameters.Add("@flag", SqlDbType.Bit).Value = dtcData.Flag;
                     cmd.Parameters.Add("@openFlag", SqlDbType.Bit).Value = dtcData.OpenFlag;
+                    cmd.Parameters.Add("@SquareId", SqlDbType.Bit).Value = dtcData.SquareId;
+
                     return _sqlResult.Post(cmd, sql);
                 }
             }
@@ -176,6 +178,8 @@
                 return _sqlResult.GetList<InvalidReferenceNumbers>(cmd, sql);
             }
         }
+
+
         public Response GetDTC(int idUser, string squareCatalog)
         {
             using (SqlConnection sql = new SqlConnection(_connectionString))
