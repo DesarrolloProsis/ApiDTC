@@ -32,17 +32,17 @@
         {
             using(SqlConnection sql = new SqlConnection(_connectionString))
             {
-                SqlCommand cmd = new SqlCommand($"SELECT * FROM [ProsisDTC].[dbo].[DTCData] WHERE ReferenceNumber = '{referenceNumber}'", sql);
+                SqlCommand cmd = new SqlCommand($"SELECT * FROM [DTCData] WHERE ReferenceNumber = '{referenceNumber}'", sql);
                 return _sqlResult.DataExists(cmd, sql);
             }
         }
         
         //TODO Check procedure
-        public DataSet GetStorePDF(string numeroReferencia)
+        public DataSet GetStorePDF(string numeroReferencia, string inicialRef)
         {
             using (SqlConnection sql = new SqlConnection(_connectionString))
             {
-                using (SqlCommand cmd = new SqlCommand("sp_DTCtoPDF", sql))
+                using (SqlCommand cmd = new SqlCommand("sp_DTCtoPDFPrueba", sql))
                 {
 
                     try
@@ -53,6 +53,7 @@
 
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.Add("@ReferenceNumber", SqlDbType.NVarChar).Value = numeroReferencia;
+                        cmd.Parameters.Add("@SquareId", SqlDbType.NVarChar).Value = inicialRef;
 
                         sql.Open();
                         sqlDataAdapter = new SqlDataAdapter(cmd);

@@ -17,8 +17,8 @@
         }
         
         // GET: api/PDF
-        [HttpGet("{refNum}")]
-        public IActionResult GetPDF(string refNum)
+        [HttpGet("{refNum}/{inicialRef}")]
+        public IActionResult GetPDF(string refNum, string inicialRef)
         {
             //TODO If getstore is null on
             var get = _db.SearchReference(refNum);
@@ -26,7 +26,7 @@
                 return NotFound(get);
             else
             {
-                var dataSet = _db.GetStorePDF(refNum);
+                var dataSet = _db.GetStorePDF(refNum, inicialRef);
                 PdfCreation pdf = new PdfCreation(dataSet.Tables[0], dataSet.Tables[1], dataSet.Tables[2], dataSet.Tables[3], refNum, new ApiLogger());
                 var pdfResult = pdf.NewPdf();
                 return File(new FileStream(pdfResult.Result.ToString(), FileMode.Open, FileAccess.Read), "application/pdf");
