@@ -145,18 +145,42 @@ namespace ApiDTC.Services
 
                     doc.Open();
 
-                    doc.Add(tablaEncabezado());
+                    doc.Add(TablaEncabezado());
                     doc.Add(new Phrase(" "));
-                    doc.Add(tablaInformacion());
-                    doc.Add(tablaDescripcion());
-                    doc.Add(tablaObservaciones());
+                    doc.Add(TablaInformacion());
+                    doc.Add(TablaDescripcion());
+                    doc.Add(TablaObservaciones());
                     doc.Add(new Phrase(" "));
                     doc.Add(new Phrase(" "));
                     doc.Add(new Phrase(" "));
-                    doc.Add(tablaFirmas());
+                    doc.Add(TablaFirmas());
 
+                    //Pdf fotografías evidencia
+                    var fotos = Directory.GetFiles($@"{System.Environment.CurrentDirectory}\Reportes\2020\septiembre\24\Prueba\");
+                    if(fotos.Length != 0)
+                    {
+                        doc.NewPage();
 
+                        int paginasNecesarias = fotos.Length / 6 + (fotos.Length % 6 != 0 ? 1 : 0);
 
+                        for (int i = 0; i < paginasNecesarias; i++)
+                        {
+                            if (i == 0)
+                            {
+                                doc.Add(TablaEncabezadoEvidencias(i + 1));
+                                doc.Add(TablaFotografias(fotos, i + 1, paginasNecesarias));
+                                continue;
+                            }
+                            else
+                                doc.NewPage();
+                            doc.Add(TablaEncabezadoEvidencias(i + 1));
+                            doc.Add(TablaFotografias(fotos, i + 1, paginasNecesarias));
+
+                           // if (i == paginasNecesarias - 1)
+                                
+                        }
+                    }
+                    doc.Add(TablaFirmas());
                     doc.Close();
                     writer.Close();
                     byte[] content = myMemoryStream.ToArray();
@@ -186,7 +210,7 @@ namespace ApiDTC.Services
             };
         }
 
-        private IElement tablaEncabezado()
+        private IElement TablaEncabezado()
         {
             iTextSharp.text.Image logo = iTextSharp.text.Image.GetInstance($@"{System.Environment.CurrentDirectory}\Media\prosis-logo.jpg");
             logo.ScalePercent(10f);
@@ -231,7 +255,108 @@ namespace ApiDTC.Services
             return table;
         }
 
-        private IElement tablaInformacion()
+        private IElement TablaEncabezadoEvidencias(int pagina)
+        {
+            iTextSharp.text.Image logo = iTextSharp.text.Image.GetInstance($@"{System.Environment.CurrentDirectory}\Media\prosis-logo.jpg");
+            logo.ScalePercent(10f);
+
+            //Encabezado
+            PdfPTable table = new PdfPTable(new float[] { 25f, 25f, 25f, 25f }) { WidthPercentage = 100f };
+
+            var celdaVacia = new PdfPCell() { Border = 0 };
+            PdfPCell colLogo = new PdfPCell(logo) { Border = 0, HorizontalAlignment = Element.ALIGN_LEFT, VerticalAlignment = Element.ALIGN_MIDDLE };
+            table.AddCell(colLogo);
+            table.AddCell(celdaVacia);
+            table.AddCell(celdaVacia);
+            table.AddCell(celdaVacia);
+
+            
+            var celdaSalto = new PdfPCell() { Colspan = 4, Border = 0 };
+            table.AddCell(celdaSalto);
+           
+            var colTitulo = new PdfPCell(new Phrase("MANTENIMIENTO PREVENTIVO", letraoNegritaMediana)) { Border = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, Padding = 5, PaddingRight = 20, PaddingLeft = 20, Colspan = 2 };
+            table.AddCell(celdaVacia);
+            table.AddCell(colTitulo);;
+            table.AddCell(celdaVacia);
+
+            table.AddCell(celdaSalto);
+            
+            var colPlaza = new PdfPCell(new Phrase("PLAZA (PONER PALMILLAS)", letraoNegritaMediana)) { Border = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, Padding = 5, PaddingRight = 20, PaddingLeft = 20, Colspan = 2 };
+            table.AddCell(celdaVacia);
+            table.AddCell(colPlaza); ;
+            table.AddCell(celdaVacia);
+
+            table.AddCell(celdaSalto);
+
+            var colReporte = new PdfPCell(new Phrase($"REPORTE: (pág. {pagina})", letraoNegritaMediana)) { Border = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, Padding = 5, PaddingRight = 20, PaddingLeft = 20, Colspan = 2 };
+            table.AddCell(celdaVacia);
+            table.AddCell(colReporte);
+            table.AddCell(celdaVacia);
+
+            table.AddCell(celdaSalto);
+
+            return table;
+        }
+
+        private IElement TablaFotografias(string[] rutas, int indice, int ultimo)
+        {
+
+            PdfPTable table = new PdfPTable(new float[] { 33.33f, 33.33f, 33.33f }) { WidthPercentage = 80 };
+            var celdaVacia = new PdfPCell() { Border = 0, FixedHeight = 15 };
+            List<Image> fotos = new List<Image>();
+            
+            int inicio, hasta;
+
+            //Inicio del recorrido
+            if(indice == 1)
+                inicio = 0;
+            else
+                inicio = ((indice - 1) * 6);
+            
+            //Hasta donde
+            if(rutas.Length % 6 == 0)
+                hasta = (indice * 6);
+            else if(rutas.Length < 6)
+            {
+                hasta = rutas.Length % 6;
+            }
+            else if(inicio == 0 && rutas.Length > 6)
+            {
+                hasta = 6;
+            }
+            else if (indice == ultimo)
+            {
+                hasta = inicio + (rutas.Length % 6);
+            }
+            else
+            {
+                hasta = inicio + 6;
+            }
+
+
+            for (int i = inicio; i < hasta; i++)
+            {
+                Image img = Image.GetInstance(rutas[i]);
+                img.ScalePercent(50);
+                fotos.Add(img);
+            }
+            
+            foreach (var foto in fotos)
+            {
+                PdfPCell colFoto= new PdfPCell(foto, true) { Border = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_MIDDLE, Padding = 3 };
+                table.AddCell(colFoto);
+            }
+
+            for (int i = 0; i < (9 - fotos.Count) + 3; i++)
+            {
+                table.AddCell(celdaVacia);
+            }
+            
+
+            return table;
+        }
+
+        private IElement TablaInformacion()
         {
             
             PdfPTable table = new PdfPTable(new float[] { 12.5f, 12.5f, 12.5f, 12.5f, 12.5f, 12.5f, 12.5f, 12.5f }) { WidthPercentage = 100f };
@@ -323,7 +448,7 @@ namespace ApiDTC.Services
             return table;
         }
 
-        private IElement tablaDescripcion()
+        private IElement TablaDescripcion()
         {
 
             PdfPTable table = new PdfPTable(new float[] { 20f, 15f, 15f, 15f, 15f, 20f}) { WidthPercentage = 100f };
@@ -386,7 +511,7 @@ namespace ApiDTC.Services
             return table;
         }
 
-        private IElement tablaObservaciones()
+        private IElement TablaObservaciones()
         {
 
             PdfPTable table = new PdfPTable(new float[] { 12.5f, 12.5f, 12.5f, 12.5f, 12.5f, 12.5f, 12.5f, 12.5f }) { WidthPercentage = 100f };
@@ -452,7 +577,7 @@ namespace ApiDTC.Services
             return table;
         }
 
-        private IElement tablaFirmas()
+        private IElement TablaFirmas()
         {
 
             PdfPTable table = new PdfPTable(new float[] { 40f, 20f, 40f }) { WidthPercentage = 100f };

@@ -6,8 +6,8 @@ namespace ApiDTC.Services
     using iTextSharp.text;
     using iTextSharp.text.pdf;
     using System;
-    using System.Collections.Generic;
     using System.Data;
+    using System.Collections.Generic;
     using System.IO;
     using System.Linq;
     using System.Threading.Tasks;
@@ -23,6 +23,10 @@ namespace ApiDTC.Services
         private string _folio;
 
         private ApiLogger _apiLogger;
+
+        private int _month;
+
+        private int _year;
         #endregion
 
         #region Pdf Configuration
@@ -57,18 +61,22 @@ namespace ApiDTC.Services
         #endregion
 
         #region Constructors
-        public CalendarioPdfCreation(ApiLogger apiLogger, string folio)
+        public CalendarioPdfCreation(ApiLogger apiLogger, string folio, int month, int year)
         {
             _apiLogger = apiLogger;
             _folio = folio;
+            _month = month;
+            _year = year;
         }
 
-        public CalendarioPdfCreation(DataTable tableHeader, DataTable tableActivities, string folio, ApiLogger apiLogger)
+        public CalendarioPdfCreation(DataTable tableHeader, DataTable tableActivities, string folio, ApiLogger apiLogger, int month, int year)
         {
             _apiLogger = apiLogger;
             _tableHeader = tableHeader;
             _tableActivities = tableActivities;
             _folio = folio;
+            _month = month;
+            _year = year; ;
         }
 
         #endregion
@@ -122,15 +130,15 @@ namespace ApiDTC.Services
 
                     doc.Open();
 
-                    doc.Add(tablaEncabezado());
+                    doc.Add(TablaEncabezado());
                     doc.Add(new Phrase(" "));
-                    doc.Add(tablaFechas());
+                    doc.Add(TablaFechas());
                     doc.Add(new Phrase(" "));
-                    doc.Add(tablaObservaciones());
+                    doc.Add(TablaObservaciones());
                     doc.Add(new Phrase(" "));
                     doc.Add(new Phrase(" "));
                     doc.Add(new Phrase(" "));
-                    doc.Add(tablaFirmas());
+                    doc.Add(TablaFirmas());
 
 
 
@@ -163,7 +171,7 @@ namespace ApiDTC.Services
             };
         }
 
-        private IElement tablaEncabezado()
+        private IElement TablaEncabezado()
         {
             iTextSharp.text.Image logo = iTextSharp.text.Image.GetInstance($@"{System.Environment.CurrentDirectory}\Media\prosis-logo.jpg");
             logo.ScalePercent(10f);
@@ -185,12 +193,11 @@ namespace ApiDTC.Services
             table.AddCell(colTitulo);
             table.AddCell(celdaVacia);
 
-            var mesCalendarioPreventivo = new Chunk("CORRESPONDIENTE AL MES DE: JULIO DEL 2020", letraoNegritaMediana);
+            var mesCalendarioPreventivo = new Chunk($"CORRESPONDIENTE AL MES DE: {MesActual(_month).ToUpper()} DEL {_year}", letraoNegritaMediana);
             var phraseMes = new Phrase(mesCalendarioPreventivo);
-            var colMes = new PdfPCell(phraseMes) { BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, BorderWidthBottom = 1, HorizontalAlignment = Element.ALIGN_LEFT, VerticalAlignment = Element.ALIGN_MIDDLE, Padding = 2};
+            var colMes = new PdfPCell(phraseMes) { BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, BorderWidthBottom = 1, HorizontalAlignment = Element.ALIGN_LEFT, VerticalAlignment = Element.ALIGN_MIDDLE, Padding = 2, Colspan = 2};
             table.AddCell(celdaVacia);
             table.AddCell(colMes);
-            table.AddCell(celdaVacia);
             table.AddCell(celdaVacia);
             table.AddCell(celdaVacia);
 
@@ -206,71 +213,93 @@ namespace ApiDTC.Services
             return table;
         }
 
-        private IElement tablaFechas()
+        private IElement TablaFechas()
         {
             
-            PdfPTable table = new PdfPTable(new float[] { 20, 20f, 20f, 20f, 20f }) { WidthPercentage = 100f };
+            PdfPTable table = new PdfPTable(new float[] { 14.3f, 14.30f, 14.3f, 14.3f, 14.3f, 14.3f, 14.3f }) { WidthPercentage = 100f };
             var celdaVacia = new PdfPCell() { Border = 0 };
-            var colTitulo = new PdfPCell(new Phrase("FECHAS PROPUESTAS", letraoNegritaGrande)) { Border = 0,  HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, Padding = 5, PaddingRight = 20, PaddingLeft = 20, Colspan = 3 };
+            var colTitulo = new PdfPCell(new Phrase("FECHAS PROPUESTAS", letraoNegritaGrande)) { Border = 0,  HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, Padding = 5, PaddingRight = 20, PaddingLeft = 20, Colspan = 5 };
             table.AddCell(celdaVacia);
             table.AddCell(colTitulo);
             table.AddCell(celdaVacia);
 
-            var celdaFecha = new PdfPCell(new Phrase("LUNES 29 JUNIO", letraNormalChica)) { BackgroundColor = BaseColor.LightGray, BorderWidth = 1, FixedHeight = 15, VerticalAlignment = Element.ALIGN_MIDDLE, HorizontalAlignment = Element.ALIGN_CENTER, Rowspan = 2};
-            var celdaContenido = new PdfPCell(new Phrase("PLAZA", letraNormalChica)) { BorderWidth = 1, FixedHeight = 15, VerticalAlignment = Element.ALIGN_MIDDLE, HorizontalAlignment = Element.ALIGN_CENTER, Rowspan = 2 };
+            int days = DateTime.DaysInMonth(_year, _month);
+            int totalCeldas = 35;
+            int dias = 0, carriles = 0;
 
-            table.AddCell(celdaFecha);
-            table.AddCell(celdaFecha);
-            table.AddCell(celdaFecha);
-            table.AddCell(celdaFecha);
-            table.AddCell(celdaFecha);
+            int recorridoCalendario = RecorridoCeldasCalendario(DiaActual(new DateTime(_year, _month, 1)));
 
-            table.AddCell(celdaContenido);
-            table.AddCell(celdaContenido);
-            table.AddCell(celdaContenido);
-            table.AddCell(celdaContenido);
-            table.AddCell(celdaContenido);
+            for (int i = 0; i < recorridoCalendario; i++)
+            {
+                table.AddCell(new PdfPCell(new Phrase(" ", letraNormalChica)) { BackgroundColor = BaseColor.LightGray, BorderWidth = 1, FixedHeight = 15, VerticalAlignment = Element.ALIGN_MIDDLE, HorizontalAlignment = Element.ALIGN_CENTER });
+            }
+            //totalCeldas -= recorridoCalendario;
+            List<ActivitiesSql> lanes = new List<ActivitiesSql>();
+            foreach (DataRow row in _tableActivities.Rows)
+            {
+                lanes.Add(new ActivitiesSql
+                {
+                    CapufeLaneNum = row["CapufeLaneNum"].ToString(),
+                    Lane = row["Lane"].ToString(),
+                    IdGare = row["IdGare"].ToString(),
+                    Day = Convert.ToInt32(row["Day"])
+                });
+            }
 
-            table.AddCell(celdaFecha);
-            table.AddCell(celdaFecha);
-            table.AddCell(celdaFecha);
-            table.AddCell(celdaFecha);
-            table.AddCell(celdaFecha);
+            int contador = 0;
+            bool primerRecorrido = false;
 
-            table.AddCell(celdaContenido);
-            table.AddCell(celdaContenido);
-            table.AddCell(celdaContenido);
-            table.AddCell(celdaContenido);
-            table.AddCell(celdaContenido);
+            for (int i = 0; i < totalCeldas; i++)
+            {
+                PdfPCell celdaFecha;
 
-            table.AddCell(celdaFecha);
-            table.AddCell(celdaFecha);
-            table.AddCell(celdaFecha);
-            table.AddCell(celdaFecha);
-            table.AddCell(celdaFecha);
+                if((i + 1) > days)
+                {
+                    celdaFecha = new PdfPCell(new Phrase(" ", letraNormalChica)) { BackgroundColor = BaseColor.LightGray, BorderWidth = 1, FixedHeight = 15, VerticalAlignment = Element.ALIGN_MIDDLE, HorizontalAlignment = Element.ALIGN_CENTER };
+                }
+                else
+                {
+                    string fecha = $"{DiaActual(new DateTime(_year, _month, i + 1))} {i + 1} {MesActual(_month)}";
+                    celdaFecha = new PdfPCell(new Phrase(fecha, letraNormalChica)) { BackgroundColor = BaseColor.LightGray, BorderWidth = 1, FixedHeight = 15, VerticalAlignment = Element.ALIGN_MIDDLE, HorizontalAlignment = Element.ALIGN_CENTER };
+                }
+                
+                table.AddCell(celdaFecha);
 
-            table.AddCell(celdaContenido);
-            table.AddCell(celdaContenido);
-            table.AddCell(celdaContenido);
-            table.AddCell(celdaContenido);
-            table.AddCell(celdaContenido);
+                if ((i + 1 + recorridoCalendario) % 7 == 0)
+                {
+                    int numeroCeldasActividades = primerRecorrido ? 7 : 7 - recorridoCalendario;
 
-            table.AddCell(celdaFecha);
-            table.AddCell(celdaFecha);
-            table.AddCell(celdaFecha);
-            table.AddCell(celdaFecha);
-            table.AddCell(celdaFecha);
+                    if (!primerRecorrido)
+                    {
+                        for (int j = 0; j < recorridoCalendario; j++)
+                        {
+                            var celdaContenido = new PdfPCell(new Phrase("", letraNormalChica)) { BorderWidth = 1, FixedHeight = 15, VerticalAlignment = Element.ALIGN_MIDDLE, HorizontalAlignment = Element.ALIGN_CENTER };
+                            table.AddCell(celdaContenido);
+                        }
+                        primerRecorrido = true;
+                    }
+                    
 
-            table.AddCell(celdaContenido);
-            table.AddCell(celdaContenido);
-            table.AddCell(celdaContenido);
-            table.AddCell(celdaContenido);
-            table.AddCell(celdaContenido);
+                    for (int j = 0; j < numeroCeldasActividades; j++)
+                    {
+                        carriles++;
+                        string descripcion = "";
+                        var items = lanes.Where(x => x.Day == carriles);
+                        foreach (var item in items)
+                        {
+                            descripcion += item.Lane + " ";
+                        }
+                        var celdaContenido = new PdfPCell(new Phrase(descripcion, letraNormalChica)) { BorderWidth = 1, FixedHeight = 15, VerticalAlignment = Element.ALIGN_MIDDLE, HorizontalAlignment = Element.ALIGN_CENTER };
+                        table.AddCell(celdaContenido);
+                    }
+                }
+                
+            };
 
             return table;
         }
 
-        private IElement tablaObservaciones()
+        private IElement TablaObservaciones()
         {
 
             PdfPTable table = new PdfPTable(new float[] { 100f }) { WidthPercentage = 100f };
@@ -283,7 +312,7 @@ namespace ApiDTC.Services
                 Padding = 5
             };
 
-            var celdaObservaciones = new PdfPCell(new Phrase(" What is Lorem Ipsum ? Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.", new iTextSharp.text.Font(NormalChica, 8f, iTextSharp.text.Font.NORMAL, BaseColor.Black))) 
+            var celdaObservaciones = new PdfPCell(new Phrase(_tableHeader.Rows[0]["Comment"].ToString(), new iTextSharp.text.Font(NormalChica, 8f, iTextSharp.text.Font.NORMAL, BaseColor.Black))) 
             { 
                 VerticalAlignment = Element.ALIGN_MIDDLE, 
                 HorizontalAlignment = Element.ALIGN_JUSTIFIED, 
@@ -297,7 +326,7 @@ namespace ApiDTC.Services
             return table;
         }
 
-        private IElement tablaFirmas()
+        private IElement TablaFirmas()
         {
 
             PdfPTable table = new PdfPTable(new float[] { 40f, 20f, 40f }) { WidthPercentage = 100f };
@@ -360,8 +389,35 @@ namespace ApiDTC.Services
             }
             return fileInUse;
         }
-
+        
         private string MesActual() { return new System.Globalization.CultureInfo("es-ES", false).DateTimeFormat.GetMonthName(DateTime.Now.Month); }
+
+        private string DiaActual(DateTime day) { return new System.Globalization.CultureInfo("es-ES", false).DateTimeFormat.GetDayName(day.DayOfWeek); }
+
+        private string MesActual(int month) { return new System.Globalization.CultureInfo("es-ES", false).DateTimeFormat.GetMonthName(month); }
+
+        private int RecorridoCeldasCalendario(string diaInicial)
+        {
+            switch (diaInicial.ToLower())
+            {
+                case "domingo":
+                    return 0;
+                case "lunes":
+                    return 1;
+                case "martes":
+                    return 2;
+                case "miércoles":
+                    return 3;
+                case "jueves":
+                    return 4;
+                case "viernes":
+                    return 5;
+                case "sábado":
+                    return 6;
+                default:
+                    return 0;
+            }
+        }
         #endregion
     }
 }

@@ -27,8 +27,9 @@ namespace ApiDTC.Data
         {
             _sqlResult = sqlResult;
             _apiLogger = apiLogger;
-            _connectionString = configuration.GetConnectionString("preventivoConnection");
+            _connectionString = configuration.GetConnectionString("defaultConnection");
         }
+        #endregion
 
         public Response InsertActivity(ActividadCalendario actividad)
         {
@@ -83,6 +84,42 @@ namespace ApiDTC.Data
             }
             
         }
-        #endregion
+
+        public DataSet GetStorePdf(int month, int year)
+        {
+            using (SqlConnection sql = new SqlConnection(_connectionString))
+            {
+                using (SqlCommand cmd = new SqlCommand("spCalendarQuery", sql))
+                {
+
+                    try
+                    {
+                        SqlDataAdapter sqlDataAdapter = new SqlDataAdapter();
+                        DataSet dataSet = new DataSet();
+
+
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.Add("@UserId", SqlDbType.Int).Value = 26;
+                        cmd.Parameters.Add("@SuqareId", SqlDbType.NVarChar).Value = "004";
+                        cmd.Parameters.Add("@Month", SqlDbType.Int).Value = month;
+                        cmd.Parameters.Add("@Year", SqlDbType.Int).Value = year;
+
+                        sql.Open();
+                        sqlDataAdapter = new SqlDataAdapter(cmd);
+                        sqlDataAdapter.Fill(dataSet);
+
+                        sql.Close();
+
+                        return dataSet;
+                    }
+                    catch (Exception ex)
+                    {
+                        _apiLogger.WriteLog(ex, "GetStorePDF");
+                        return null;
+                    }
+                }
+            }
+        }
+
     }
 }
