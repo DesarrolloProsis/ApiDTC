@@ -28,11 +28,11 @@
         }
         #endregion
 
-        [HttpGet("Mantenimiento/{month}/{year}")]
-        public IActionResult GetCalendarioMantenimiento(int month, int year)
+        [HttpGet("Mantenimiento/{plaza}/{month}/{year}")]
+        public IActionResult GetCalendarioMantenimiento(int month, int year, string plaza)
         {
             var dataSet = _db.GetStorePdf(month, year);
-            CalendarioPdfCreation pdf = new CalendarioPdfCreation(dataSet.Tables[1], dataSet.Tables[0], "1234", new ApiLogger(), month, year);
+            CalendarioPdfCreation pdf = new CalendarioPdfCreation(dataSet.Tables[1], dataSet.Tables[0], plaza, new ApiLogger(), month, year);
             var pdfResult = pdf.NewPdf();
             return File(new FileStream(pdfResult.Result.ToString(), FileMode.Open, FileAccess.Read), "application/pdf");
         }

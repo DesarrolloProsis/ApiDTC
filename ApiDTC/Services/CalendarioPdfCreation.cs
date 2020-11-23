@@ -20,7 +20,7 @@ namespace ApiDTC.Services
 
         private DataTable _tableActivities;
 
-        private string _folio;
+        private string _plaza;
 
         private ApiLogger _apiLogger;
 
@@ -61,20 +61,20 @@ namespace ApiDTC.Services
         #endregion
 
         #region Constructors
-        public CalendarioPdfCreation(ApiLogger apiLogger, string folio, int month, int year)
+        public CalendarioPdfCreation(ApiLogger apiLogger, string plaza, int month, int year)
         {
             _apiLogger = apiLogger;
-            _folio = folio;
+            _plaza = plaza;
             _month = month;
             _year = year;
         }
 
-        public CalendarioPdfCreation(DataTable tableHeader, DataTable tableActivities, string folio, ApiLogger apiLogger, int month, int year)
+        public CalendarioPdfCreation(DataTable tableHeader, DataTable tableActivities, string plaza, ApiLogger apiLogger, int month, int year)
         {
             _apiLogger = apiLogger;
             _tableHeader = tableHeader;
             _tableActivities = tableActivities;
-            _folio = folio;
+            _plaza = plaza;
             _month = month;
             _year = year; ;
         }
@@ -85,8 +85,9 @@ namespace ApiDTC.Services
         public Response NewPdf()
         {
             string directory, file;
-            directory = $@"{System.Environment.CurrentDirectory}\CalendariosMantenimiento\{DateTime.Now.Year}\{MesActual()}\{DateTime.Now.Day}\";
-            file = $@"{System.Environment.CurrentDirectory}\CalendariosMantenimiento\{DateTime.Now.Year}\{MesActual()}\{DateTime.Now.Day}\CalendarioMantenimiento-{_folio}.pdf";
+            DateTime now = DateTime.Now;
+            directory = $@"{System.Environment.CurrentDirectory}\CalendariosMantenimiento\{_plaza}\{now.Year}\{MesActual()}\{now.Day}";
+            file = $@"{directory}\{_plaza}{now.Year}{MesContrato(now)}C.pdf";
             //If file exists
             try
             {   
@@ -98,7 +99,7 @@ namespace ApiDTC.Services
                     {
                         return new Response
                         {
-                            Message = $"Error: Archivo CalendarioMantenimiento-{_folio} en uso o inaccesible",
+                            Message = $@"Error: Archivo {directory}\{_plaza}{now.Year}{MesContrato(now)}C.pdf en uso o inaccesible",
                             Result = null
                         };
                     }
@@ -155,8 +156,8 @@ namespace ApiDTC.Services
             }
             catch (IOException ex)
             {
-                if (System.IO.File.Exists($@"{System.Environment.CurrentDirectory}\CalendariosMantenimiento\{DateTime.Now.Year}\{MesActual()}\{DateTime.Now.Day}\CalendarioMantenimiento-{_folio}.pdf"))
-                    System.IO.File.Delete($@"{System.Environment.CurrentDirectory}\CalendariosMantenimiento\{DateTime.Now.Year}\{MesActual()}\{DateTime.Now.Day}\CalendarioMantenimiento-{_folio}.pdf");
+                if (System.IO.File.Exists($@"{System.Environment.CurrentDirectory}\CalendariosMantenimiento\{DateTime.Now.Year}\{MesActual()}\{DateTime.Now.Day}\{_plaza}{DateTime.Now.Year}01C.pdf"))
+                    System.IO.File.Delete($@"{System.Environment.CurrentDirectory}\CalendariosMantenimiento\{DateTime.Now.Year}\{MesActual()}\{DateTime.Now.Day}\{_plaza}{DateTime.Now.Year}01C.pdf");
                 _apiLogger.WriteLog(ex, "CalendarioPdfCreation");
                 return new Response
                 {
@@ -171,6 +172,13 @@ namespace ApiDTC.Services
             };
         }
 
+
+        private string MesContrato(DateTime fechaSolicitud)
+        {
+            DateTime contratoInicial = new DateTime(2020, 11, 1);
+            int mesesTranscurridos = (contratoInicial.Month - fechaSolicitud.Month) + (12 * (contratoInicial.Year - fechaSolicitud.Year)) + 1;
+            return mesesTranscurridos.ToString("00");
+        }
         private IElement TablaEncabezado()
         {
             iTextSharp.text.Image logo = iTextSharp.text.Image.GetInstance($@"{System.Environment.CurrentDirectory}\Media\prosis-logo.jpg");
@@ -201,7 +209,7 @@ namespace ApiDTC.Services
             table.AddCell(celdaVacia);
             table.AddCell(celdaVacia);
 
-            var plazaDeCobro = new Chunk("   PLAZA DE COBRO:  PALMILLAS" , letraoNegritaMediana);
+            var plazaDeCobro = new Chunk($"   PLAZA DE COBRO:  {_tableHeader.Rows[0]["SquareName"].ToString()}", letraoNegritaMediana);
             var phraseCobro = new Phrase(plazaDeCobro);
             var colCobro = new PdfPCell(phraseCobro) { BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, BorderWidthBottom = 1, HorizontalAlignment = Element.ALIGN_LEFT, VerticalAlignment = Element.ALIGN_MIDDLE, Padding = 2 };
             table.AddCell(celdaVacia);

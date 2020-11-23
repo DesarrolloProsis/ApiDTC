@@ -13,42 +13,42 @@
     [ApiController]
     public class MantenimientoPdfController : ControllerBase
     {
-        [HttpGet("Semanal")]
-        public IActionResult GetMantenimientoSemanal()
+        [HttpGet("Semanal/{plaza}/{carril}")]
+        public IActionResult GetMantenimientoSemanal(string plaza, string carril)
         {
-            MantenimientoPdfCreation pdf = new MantenimientoPdfCreation(new ApiLogger(), "1234", 1);
+            MantenimientoPdfCreation pdf = new MantenimientoPdfCreation(new ApiLogger(), plaza, 1, carril);
             var pdfResult = pdf.NewPdf();
             return File(new FileStream(pdfResult.Result.ToString(), FileMode.Open, FileAccess.Read), "application/pdf");
         }
 
-        [HttpGet("Mensual")]
-        public IActionResult GetMantenimientoMensual()
+        [HttpGet("Mensual/{plaza}/{carril}")]
+        public IActionResult GetMantenimientoMensual(string plaza, string carril)
         {
-            MantenimientoPdfCreation pdf = new MantenimientoPdfCreation(new ApiLogger(), "1234", 2);
+            MantenimientoPdfCreation pdf = new MantenimientoPdfCreation(new ApiLogger(), plaza, 2, carril);
             var pdfResult = pdf.NewPdf();
             return File(new FileStream(pdfResult.Result.ToString(), FileMode.Open, FileAccess.Read), "application/pdf");
         }
 
-        [HttpGet("Bimestral")]
-        public IActionResult GetMantenimientoBimestral()
+        [HttpGet("Trimestral/{plaza}/{carril}")]
+        public IActionResult GetMantenimientoTrimestral(string plaza, string carril)
         {
-            MantenimientoPdfCreation pdf = new MantenimientoPdfCreation(new ApiLogger(), "1234", 3);
+            MantenimientoPdfCreation pdf = new MantenimientoPdfCreation(new ApiLogger(), plaza, 3, carril);
             var pdfResult = pdf.NewPdf();
             return File(new FileStream(pdfResult.Result.ToString(), FileMode.Open, FileAccess.Read), "application/pdf");
         }
 
-        [HttpGet("Semestral")]
-        public IActionResult GetMantenimientoSemestral()
+        [HttpGet("Semestral/{plaza}/{carril}")]
+        public IActionResult GetMantenimientoSemestral(string plaza, string carril)
         {
-            MantenimientoPdfCreation pdf = new MantenimientoPdfCreation(new ApiLogger(), "1234", 4);
+            MantenimientoPdfCreation pdf = new MantenimientoPdfCreation(new ApiLogger(), plaza, 4, carril);
             var pdfResult = pdf.NewPdf();
             return File(new FileStream(pdfResult.Result.ToString(), FileMode.Open, FileAccess.Read), "application/pdf");
         }
 
-        [HttpGet("Anual")]
-        public IActionResult GetMantenimientoAnual()
+        [HttpGet("Anual/{plaza}/{carril}")]
+        public IActionResult GetMantenimientoAnual(string plaza, string carril)
         {
-            MantenimientoPdfCreation pdf = new MantenimientoPdfCreation(new ApiLogger(), "1234", 5);
+            MantenimientoPdfCreation pdf = new MantenimientoPdfCreation(new ApiLogger(), plaza, 5, carril);
             var pdfResult = pdf.NewPdf();
             return File(new FileStream(pdfResult.Result.ToString(), FileMode.Open, FileAccess.Read), "application/pdf");
         }

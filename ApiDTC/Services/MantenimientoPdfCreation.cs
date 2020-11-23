@@ -20,11 +20,15 @@ namespace ApiDTC.Services
 
         private DataTable _tableActivities;
 
-        private string _folio;
+        private string _plaza;
 
         private ApiLogger _apiLogger;
 
         private int _tipo;
+
+        private string[] _temporal;
+
+        private string _carril;
         #endregion
 
         #region Pdf Configuration
@@ -59,20 +63,24 @@ namespace ApiDTC.Services
         #endregion
 
         #region Constructors
-        public MantenimientoPdfCreation(ApiLogger apiLogger, string folio, int tipo)
+        public MantenimientoPdfCreation(ApiLogger apiLogger, string plaza, int tipo, string carril)
         {
             _apiLogger = apiLogger;
-            _folio = folio;
+            _plaza = plaza;
             _tipo = tipo;
+            _temporal = TipoDeReporte(_tipo);
+            _carril = carril;
         }
 
-        public MantenimientoPdfCreation(DataTable tableHeader, DataTable tableActivities, string folio, ApiLogger apiLogger, int tipo)
+        public MantenimientoPdfCreation(DataTable tableHeader, DataTable tableActivities, string plaza, ApiLogger apiLogger, int tipo, string carril)
         {
             _apiLogger = apiLogger;
             _tableHeader = tableHeader;
             _tableActivities = tableActivities;
-            _folio = folio;
+            _plaza = plaza;
             _tipo = tipo;
+            _temporal = TipoDeReporte(_tipo);
+            _carril = carril;
         }
 
         #endregion
@@ -81,8 +89,10 @@ namespace ApiDTC.Services
         public Response NewPdf()
         {
             string directory, file;
-            directory = $@"{System.Environment.CurrentDirectory}\Mantenimiento\{DateTime.Now.Year}\{MesActual()}\{DateTime.Now.Day}\";
-            file = $@"{System.Environment.CurrentDirectory}\Mantenimiento\{DateTime.Now.Year}\{MesActual()}\{DateTime.Now.Day}\Mantenimiento-{_folio}.pdf";
+            //Mantenimiento/La plaza/El tipo de reporte en plural para acumularlos/El mes en que se saca el reporte/El día que se crea
+            DateTime now = DateTime.Now;
+            directory = $@"{System.Environment.CurrentDirectory}\Mantenimiento\{_plaza.ToUpper()}\\{_temporal[2].ToUpper()}\{now.Year}\{MesActual()}\{now.Day}";
+            file = $@"{directory}\{_plaza.ToUpper()}{DateTime.Now.Year}{MesContrato(now)}{_carril}{_temporal[0]}.pdf";
             //If file exists
             try
             {   
@@ -94,7 +104,7 @@ namespace ApiDTC.Services
                     {
                         return new Response
                         {
-                            Message = $"Error: Archivo Mantenimiento-{_folio} en uso o inaccesible",
+                            Message = $"Error: Archivo {_plaza.ToUpper()}{DateTime.Now.Year}{MesContrato(new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Year))}{_carril}{_temporal[1]}.pdf en uso o inaccesible",
                             Result = null
                         };
                     }
@@ -127,7 +137,7 @@ namespace ApiDTC.Services
                             doc.AddTitle("Mantenimiento mensual preventivo");
                             break;
                         case 3:
-                            doc.AddTitle("Mantenimiento bimestral preventivo");
+                            doc.AddTitle("Mantenimiento trimestral preventivo");
                             break;
                         case 4:
                             doc.AddTitle("Mantenimiento semestral preventivo");
@@ -194,8 +204,8 @@ namespace ApiDTC.Services
             }
             catch (IOException ex)
             {
-                if (System.IO.File.Exists($@"{System.Environment.CurrentDirectory}\CalendariosMantenimiento\{DateTime.Now.Year}\{MesActual()}\{DateTime.Now.Day}\CalendarioMantenimiento-{_folio}.pdf"))
-                    System.IO.File.Delete($@"{System.Environment.CurrentDirectory}\CalendariosMantenimiento\{DateTime.Now.Year}\{MesActual()}\{DateTime.Now.Day}\CalendarioMantenimiento-{_folio}.pdf");
+                if (System.IO.File.Exists($@"{directory}\{_plaza.ToUpper()}{DateTime.Now.Year}{MesContrato(new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Year))}{_carril}{_temporal[1]}.pdf"))
+                    System.IO.File.Delete($@"{directory}\{_plaza.ToUpper()}{DateTime.Now.Year}{MesContrato(new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Year))}{_carril}{_temporal[1]}.pdf");
                 _apiLogger.WriteLog(ex, "CalendarioPdfCreation");
                 return new Response
                 {
@@ -208,6 +218,13 @@ namespace ApiDTC.Services
                 Message = "Ok",
                 Result = file
             };
+        }
+
+        private string MesContrato(DateTime fechaSolicitud)
+        {
+            DateTime contratoInicial = new DateTime(2020, 11, 1);
+            int mesesTranscurridos = (contratoInicial.Month - fechaSolicitud.Month) + (12 * (contratoInicial.Year - fechaSolicitud.Year)) + 1;
+            return mesesTranscurridos.ToString("00");
         }
 
         private IElement TablaEncabezado()
@@ -642,6 +659,26 @@ namespace ApiDTC.Services
         }
 
         private string MesActual() { return new System.Globalization.CultureInfo("es-ES", false).DateTimeFormat.GetMonthName(DateTime.Now.Month); }
+
+        private string[] TipoDeReporte(int tipo)
+        {
+            
+            switch (tipo)
+            {
+                case 1:
+                    return new string[] { "S", "semanal", "semanales" };
+                case 2:
+                    return new string[] { "M", "mensual", "mensuales" };
+                case 3:
+                    return new string[] { "T", "trimestral", "trimestrales" };
+                case 4:
+                    return new string[] { "SM", "semestral", "semestrales" };
+                case 5:
+                    return new string[] { "A", "anual", "anuales" };
+                default: 
+                    return null;
+            }
+        }
         #endregion
     }
 }
