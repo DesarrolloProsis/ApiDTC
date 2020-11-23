@@ -31,46 +31,75 @@ namespace ApiDTC.Data
         }
         #endregion
 
+        public Response InsertComent(ActividadCalendario actividad)
+        {
+             try
+            {
+                using (SqlConnection sql = new SqlConnection(_connectionString)) 
+                { 
+                    
+                    
+                        using (SqlCommand cmd = new SqlCommand("dbo.spCalendarComent", sql))
+                        { 
+                            cmd.CommandType = CommandType.StoredProcedure;                                                        
+                            cmd.Parameters.Add("@SquareId", SqlDbType.NVarChar).Value = actividad.SquareId;
+                            cmd.Parameters.Add("@UserId", SqlDbType.Int).Value = actividad.UserId;                            
+                            cmd.Parameters.Add("@Month", SqlDbType.Int).Value = actividad.Month;
+                            cmd.Parameters.Add("@Year", SqlDbType.Int).Value = actividad.Year;
+                            cmd.Parameters.Add("@Comment", SqlDbType.NVarChar).Value = actividad.Comment;
+
+                        var storedResult = _sqlResult.Post(cmd, sql);
+                            if (storedResult.SqlResult == null)
+                                return new Response { Message = "No se pudo insertar comentario", Result = null };
+                        }
+                       
+                }
+                return new Response
+                {
+                    Message = "Ok",
+                    Result = actividad
+                };
+            }
+            catch(SqlException ex)
+
+            {
+                _apiLogger.WriteLog(ex, "InsertActivity");
+                return new Response { Message = ex.Message, Result = null };
+            }
+
+        }
+
         public Response InsertActivity(ActividadCalendario actividad)
         {
             try
             {
-                using (SqlConnection sql = new SqlConnection(_connectionString)) { 
-                
+                using (SqlConnection sql = new SqlConnection(_connectionString)) 
+                { 
                     //Cambios Emi
-                    int numero_carriles = actividad.CapufeLaneNums.Length == actividad.IdGares.Length
-                    ? actividad.CapufeLaneNums.Length : 0;
+                    int numero_carriles = actividad.CapufeLaneNums.Length == actividad.IdGares.Length ? actividad.CapufeLaneNums.Length : 0;
 
-                for (int i = 0; i < numero_carriles; i++)
-                {
-                    using (SqlCommand cmd = new SqlCommand("dbo.spAddCalenadarDay", sql))
+                    for (int i = 0; i < numero_carriles; i++)
                     {
-                        cmd.CommandType = CommandType.StoredProcedure;
-                        cmd.Parameters.Add("@CapufeLaneNum", SqlDbType.NVarChar).Value = actividad.CapufeLaneNums[i];
-                        cmd.Parameters.Add("@IdGare", SqlDbType.NVarChar).Value = actividad.IdGares[i];
-                        cmd.Parameters.Add("@SquareId", SqlDbType.NVarChar).Value = actividad.SquareId;
-                        cmd.Parameters.Add("@UserId", SqlDbType.Int).Value = actividad.UserId;
-                        cmd.Parameters.Add("@Day", SqlDbType.Int).Value = actividad.Day;
-                        cmd.Parameters.Add("@Month", SqlDbType.Int).Value = actividad.Month;
-                        cmd.Parameters.Add("@Year", SqlDbType.Int).Value = actividad.Year;
-                        cmd.Parameters.Add("@FrequencyId", SqlDbType.Int).Value = actividad.FrequencyId;
-                        if (i == numero_carriles - 1)
-                        {
-                            cmd.Parameters.Add("@FinalFlag", SqlDbType.Bit).Value = true;
-                            cmd.Parameters.Add("@Comment", SqlDbType.NVarChar).Value = actividad.Comment;
-                        }
-                        else
-                        {
+                        using (SqlCommand cmd = new SqlCommand("dbo.spAddCalenadarDay", sql))
+                        { 
+                            cmd.CommandType = CommandType.StoredProcedure;
+                            cmd.Parameters.Add("@CapufeLaneNum", SqlDbType.NVarChar).Value = actividad.CapufeLaneNums[i];
+                            cmd.Parameters.Add("@IdGare", SqlDbType.NVarChar).Value = actividad.IdGares[i];
+                            cmd.Parameters.Add("@SquareId", SqlDbType.NVarChar).Value = actividad.SquareId;
+                            cmd.Parameters.Add("@UserId", SqlDbType.Int).Value = actividad.UserId;
+                            cmd.Parameters.Add("@Day", SqlDbType.Int).Value = actividad.Day;
+                            cmd.Parameters.Add("@Month", SqlDbType.Int).Value = actividad.Month;
+                            cmd.Parameters.Add("@Year", SqlDbType.Int).Value = actividad.Year;
+                            cmd.Parameters.Add("@FrequencyId", SqlDbType.Int).Value = actividad.FrequencyId;                     
                             cmd.Parameters.Add("@FinalFlag", SqlDbType.Bit).Value = false;
                             cmd.Parameters.Add("@Comment", SqlDbType.NVarChar).Value = ".";
+                            
+                            cmd.Parameters.Add("@UpdateFlag", SqlDbType.Bit).Value = false;
+                            var storedResult = _sqlResult.Post(cmd, sql);
+                            if (storedResult.SqlResult == null)
+                                return new Response { Message = "No se pudo insertar Actividad en carril" + actividad.CapufeLaneNums[i] + "con idGare" + actividad.IdGares[i], Result = null };
                         }
-                        cmd.Parameters.Add("@UpdateFlag", SqlDbType.Bit).Value = false;
-                        var storedResult = _sqlResult.Post(cmd, sql);
-                        if (storedResult.SqlResult == null)
-                            return new Response { Message = "No se pudo insertar Actividad en carril" + actividad.CapufeLaneNums[i] + "con idGare" + actividad.IdGares[i], Result = null };
-                    }
-                  }
-                    
+                    }    
                 }
                 return new Response
                 {
@@ -109,17 +138,9 @@ namespace ApiDTC.Data
                             cmd.Parameters.Add("@Day", SqlDbType.Int).Value = actividad.Day;
                             cmd.Parameters.Add("@Month", SqlDbType.Int).Value = actividad.Month;
                             cmd.Parameters.Add("@Year", SqlDbType.Int).Value = actividad.Year;
-                            cmd.Parameters.Add("@FrequencyId", SqlDbType.Int).Value = actividad.FrequencyId;
-                            if (i == numero_carriles - 1)
-                            {
-                                cmd.Parameters.Add("@FinalFlag", SqlDbType.Bit).Value = true;
-                                cmd.Parameters.Add("@Comment", SqlDbType.NVarChar).Value = actividad.Comment;
-                            }
-                            else
-                            {
-                                cmd.Parameters.Add("@FinalFlag", SqlDbType.Bit).Value = false;
-                                cmd.Parameters.Add("@Comment", SqlDbType.NVarChar).Value = ".";
-                            }
+                            cmd.Parameters.Add("@FrequencyId", SqlDbType.Int).Value = actividad.FrequencyId;                           
+                            cmd.Parameters.Add("@FinalFlag", SqlDbType.Bit).Value = false;
+                            cmd.Parameters.Add("@Comment", SqlDbType.NVarChar).Value = ".";                                                     
                             cmd.Parameters.Add("@UpdateFlag", SqlDbType.Bit).Value = true;
                             var storedResult = _sqlResult.Post(cmd, sql);
                             if (storedResult.SqlResult == null)
@@ -142,7 +163,7 @@ namespace ApiDTC.Data
 
         }
 
-        public DataSet GetStorePdf(int month, int year)
+        public DataSet GetStorePdf(int month, int year, int userId, string squareId)
         {
             using (SqlConnection sql = new SqlConnection(_connectionString))
             {
@@ -156,8 +177,8 @@ namespace ApiDTC.Data
 
 
                         cmd.CommandType = CommandType.StoredProcedure;
-                        cmd.Parameters.Add("@UserId", SqlDbType.Int).Value = 26;
-                        cmd.Parameters.Add("@SuqareId", SqlDbType.NVarChar).Value = "004";
+                        cmd.Parameters.Add("@UserId", SqlDbType.Int).Value = userId;
+                        cmd.Parameters.Add("@SuqareId", SqlDbType.NVarChar).Value = squareId;
                         cmd.Parameters.Add("@Month", SqlDbType.Int).Value = month;
                         cmd.Parameters.Add("@Year", SqlDbType.Int).Value = year;
 
@@ -177,6 +198,103 @@ namespace ApiDTC.Data
                 }
             }
         }
+
+
+
+        public Response GetStoreFrontLane(ActividadMesYear actividad)
+        {
+            using (SqlConnection sql = new SqlConnection(_connectionString))
+            {
+                using (SqlCommand cmd = new SqlCommand("spCalendarQueryFrontLanes", sql))
+                {
+
+                    try
+                    {
+                        SqlDataAdapter sqlDataAdapter = new SqlDataAdapter();
+                        DataSet dataSet = new DataSet();
+
+
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.Add("@UserId", SqlDbType.Int).Value = actividad.UserId;
+                        cmd.Parameters.Add("@SuqareId", SqlDbType.NVarChar).Value = actividad.SquareId;
+                        cmd.Parameters.Add("@Month", SqlDbType.Int).Value = actividad.Month;
+                        cmd.Parameters.Add("@Year", SqlDbType.Int).Value = actividad.Year;
+
+                        sql.Open();
+                        sqlDataAdapter = new SqlDataAdapter(cmd);
+                        sqlDataAdapter.Fill(dataSet);
+
+                        sql.Close();
+
+                        
+                        return new Response
+                        {
+                            Message = "Ok",
+                            Result = dataSet
+                        };
+                    }
+                    catch (Exception ex)
+                    {
+                        _apiLogger.WriteLog(ex, "GetStorePDF");
+                        return new Response
+                        {
+                            Message = "Ok",
+                            Result = null
+                        };
+                    }
+                }
+            }
+        }
+
+
+
+
+
+        public Response GetStoreFrontComment(ActividadMesYear actividad)
+        {
+            using (SqlConnection sql = new SqlConnection(_connectionString))
+            {
+                using (SqlCommand cmd = new SqlCommand("spCalendarQueryFrontComment", sql))
+                {
+
+                    try
+                    {
+                        SqlDataAdapter sqlDataAdapter = new SqlDataAdapter();
+                        DataSet dataSet = new DataSet();
+
+
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.Add("@UserId", SqlDbType.Int).Value = actividad.UserId;
+                        cmd.Parameters.Add("@SuqareId", SqlDbType.NVarChar).Value = actividad.SquareId;
+                        cmd.Parameters.Add("@Month", SqlDbType.Int).Value = actividad.Month;
+                        cmd.Parameters.Add("@Year", SqlDbType.Int).Value = actividad.Year;
+
+                        sql.Open();
+                        sqlDataAdapter = new SqlDataAdapter(cmd);
+                        sqlDataAdapter.Fill(dataSet);
+
+                        sql.Close();
+
+                        return new Response
+                        {
+                            Message = "Ok",
+                            Result = dataSet
+                        };
+                    }
+                    catch (Exception ex)
+                    {
+                        _apiLogger.WriteLog(ex, "GetStorePDF");
+                        return new Response
+                        {
+                            Message = "Ok",
+                            Result = null
+                        };
+                    }
+                }
+            }
+        }
+
+
 
         public Response GetActivity(ActividadMesYear actividad)
         {

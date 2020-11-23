@@ -37,7 +37,7 @@ namespace ApiDTC.Data
                 {
                     sql.Open();
                     SqlCommand countCommand = new SqlCommand("SELECT COUNT (*) " +
-                        $"FROM [ProsisDTC].[dbo].[KeysInUse] WHERE [Key] = '{Key}'", sql);
+                        $"FROM [KeysInUse] WHERE [Key] = '{Key}'", sql);
                     Int32 count = (Int32)countCommand.ExecuteScalar();
                     if (count == 0)
                     {
@@ -46,9 +46,9 @@ namespace ApiDTC.Data
                     }
                     else if (count == 1)
                     {
-                        SqlCommand deleteCommand = new SqlCommand($"DELETE FROM [ProsisDTC].[dbo].[KeysInUse] WHERE [Key] = '{Key}'", sql);
+                        SqlCommand deleteCommand = new SqlCommand($"DELETE FROM [KeysInUse] WHERE [Key] = '{Key}'", sql);
                         deleteCommand.ExecuteNonQuery();
-                        SqlCommand cmd = new SqlCommand("UPDATE [ProsisDTC].[dbo].[DTCUsers] " +
+                        SqlCommand cmd = new SqlCommand("UPDATE [DTCUsers] " +
                             "SET [StatusUser] = 1 " +
                             $"WHERE UserId = {UserId}", sql);
                         cmd.ExecuteNonQuery();
@@ -57,7 +57,7 @@ namespace ApiDTC.Data
                     }
                     else
                     {
-                        SqlCommand deleteCommand = new SqlCommand($"DELETE FROM FROM [ProsisDTC].[dbo].[KeysInUse] WHERE [Key] = '{Key}'", sql);
+                        SqlCommand deleteCommand = new SqlCommand($"DELETE FROM FROM [KeysInUse] WHERE [Key] = '{Key}'", sql);
                         deleteCommand.ExecuteNonQuery();
                         sql.Close();
                         return false;
@@ -80,7 +80,7 @@ namespace ApiDTC.Data
                 {
                     sql.Open();
                     SqlCommand countCommand = new SqlCommand($"SELECT COUNT (*)" +
-                        $"FROM [ProsisDTC].[dbo].[KeysInUse] WHERE [Key] = '{key}'", sql);
+                        $"FROM [KeysInUse] WHERE [Key] = '{key}'", sql);
                     Int32 count = (Int32)countCommand.ExecuteScalar();
                     if (count == 0)
                     {
@@ -89,9 +89,9 @@ namespace ApiDTC.Data
                     }
                     else if (count == 1)
                     {
-                        SqlCommand deleteCommand = new SqlCommand($"DELETE FROM [ProsisDTC].[dbo].[KeysInUse] WHERE [Key] = '{key}'", sql);
+                        SqlCommand deleteCommand = new SqlCommand($"DELETE FROM [KeysInUse] WHERE [Key] = '{key}'", sql);
                         deleteCommand.ExecuteNonQuery();
-                        SqlCommand cmd = new SqlCommand("DELETE FROM [ProsisDTC].[dbo].[DTCUsers] " +
+                        SqlCommand cmd = new SqlCommand("DELETE FROM [DTCUsers] " +
                             $"WHERE UserId = {idUser}", sql);
                         cmd.ExecuteNonQuery();
                         sql.Close();
@@ -99,7 +99,7 @@ namespace ApiDTC.Data
                     }
                     else
                     {
-                        SqlCommand deleteCommand = new SqlCommand($"DELETE FROM [ProsisDTC].[dbo].[KeysInUse] WHERE [Key] = '{key}'" +
+                        SqlCommand deleteCommand = new SqlCommand($"DELETE FROM [KeysInUse] WHERE [Key] = '{key}'" +
                             $"DELETE FROM", sql);
                         deleteCommand.ExecuteNonQuery();
                         sql.Close();

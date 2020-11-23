@@ -64,7 +64,7 @@
                     cmd.Parameters.Add("@status", SqlDbType.Int).Value = dtcData.DTCStatus;
                     cmd.Parameters.Add("@flag", SqlDbType.Bit).Value = dtcData.Flag;
                     cmd.Parameters.Add("@openFlag", SqlDbType.Bit).Value = dtcData.OpenFlag;
-                    cmd.Parameters.Add("@SquareId", SqlDbType.Bit).Value = dtcData.SquareId;
+                    cmd.Parameters.Add("@SquareId", SqlDbType.NVarChar).Value = dtcData.SquareId;
 
                     return _sqlResult.Post(cmd, sql);
                 }
@@ -87,7 +87,7 @@
                         };
                     }
 
-                    SqlCommand countCommand = new SqlCommand($"SELECT Count(*) FROM [ProsisDTC].[dbo].[DTCData] WHERE ReferenceNumber LIKE '{referenceNumber}%'", sql);
+                    SqlCommand countCommand = new SqlCommand($"SELECT Count(*) FROM [DTCData] WHERE ReferenceNumber LIKE '{referenceNumber}%'", sql);
                     Int32 count = (Int32) countCommand.ExecuteScalar();
                     if(count == 0)
                     {
@@ -107,7 +107,7 @@
                     }
                     else
                     {
-                        SqlCommand lastReferenceCommand = new SqlCommand($"SELECT TOP 1 ReferenceNumber FROM [ProsisDTC].[dbo].[DTCData] WHERE ReferenceNumber LIKE '{referenceNumber}%' ORDER BY ReferenceNumber DESC", sql);
+                        SqlCommand lastReferenceCommand = new SqlCommand($"SELECT TOP 1 ReferenceNumber FROM [DTCData] WHERE ReferenceNumber LIKE '{referenceNumber}%' ORDER BY ReferenceNumber DESC", sql);
                         var reader = lastReferenceCommand.ExecuteReader();
                         if(reader.Read())
                         {
@@ -168,17 +168,14 @@
             }
         }
 
-
-
         public Response GetInvalidNumbers()
         {
             using(SqlConnection sql = new SqlConnection(_connectionString))
             {
-                SqlCommand cmd = new SqlCommand($"SELECT SinisterNumber, ReportNumber FROM [ProsisDTC].[dbo].[DTCData]", sql);
+                SqlCommand cmd = new SqlCommand($"SELECT SinisterNumber, ReportNumber FROM [DTCData]", sql);
                 return _sqlResult.GetList<InvalidReferenceNumbers>(cmd, sql);
             }
         }
-
 
         public Response GetDTC(int idUser, string squareCatalog)
         {
@@ -226,6 +223,7 @@
                 } 
             }
         }
+        
         public Response GetTableForm(string refNum)
         {
             using (SqlConnection sql = new SqlConnection(_connectionString))

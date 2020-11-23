@@ -28,15 +28,15 @@
         }
         #endregion
 
-        [HttpGet("Mantenimiento/{plaza}/{month}/{year}")]
-        public IActionResult GetCalendarioMantenimiento(int month, int year, string plaza)
+        [HttpGet("Mantenimiento/{plaza}/{month}/{year}/{userId}/{squareId}")]
+        public IActionResult GetCalendarioMantenimiento(string plaza, int month, int year, int userId, string squareId)
         {
-            var dataSet = _db.GetStorePdf(month, year);
+            var dataSet = _db.GetStorePdf(month, year, userId, squareId);
             CalendarioPdfCreation pdf = new CalendarioPdfCreation(dataSet.Tables[1], dataSet.Tables[0], plaza, new ApiLogger(), month, year);
             var pdfResult = pdf.NewPdf();
             return File(new FileStream(pdfResult.Result.ToString(), FileMode.Open, FileAccess.Read), "application/pdf");
         }
-
+        
         [HttpPost("Actividad")]
         public ActionResult<Response> Post([FromBody] ActividadCalendario actividad)
         {
@@ -57,6 +57,34 @@
             if (ModelState.IsValid)
             {
                 var get = _db.UpdateActivity(actividad);
+                if (get.Result == null)
+                    return BadRequest(get);
+                else
+                    return Ok(get);
+            }
+            return BadRequest(ModelState);
+        }
+
+        [HttpPost("ObservacionesInsert")]
+        public ActionResult<Response> ObservacionesInsert([FromBody] ActividadCalendario actividad)
+        {
+            if (ModelState.IsValid)
+            {
+                var get = _db.InsertComent(actividad);
+                if (get.Result == null)
+                    return BadRequest(get);
+                else
+                    return Ok(get);
+            }
+            return BadRequest(ModelState);
+        }
+
+        [HttpPost("getComentario")]
+        public ActionResult<Response> GetComenterio([FromBody] ActividadMesYear infoActividad)
+        {
+            if (ModelState.IsValid)
+            {
+                var get = _db.GetStoreFrontComment(infoActividad);
                 if (get.Result == null)
                     return BadRequest(get);
                 else

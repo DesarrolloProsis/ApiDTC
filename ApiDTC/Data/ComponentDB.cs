@@ -67,7 +67,6 @@
                 }
             }
         }
-   
 
         public Response PutComponentInventary(UpdateInventory updateInventory)
         {
@@ -108,8 +107,6 @@
             }
         }
 
-
-
         public Response InventoryListUpdate(List<ComponentsInventoryList> componentsInventoryList)
         {
             using (SqlConnection sql = new SqlConnection(_connectionString))
@@ -144,9 +141,6 @@
             }
         }
 
-
-
-
         //Revisar
         public Response GetComponentsData(string plaza, string numConvenio)
         {
@@ -168,8 +162,6 @@
                 return _sqlResult.GetList<ComponentsInventory>(cmd, sql);
             }
         }
-
-
 
         public Response GetComponentsInventoryUbication()
         {
@@ -215,7 +207,6 @@
                 return _sqlResult.GetList<ComponentsInventoryDescription>(cmd, sql);
             }
         }
-
 
         #endregion
     }
