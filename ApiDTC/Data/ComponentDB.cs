@@ -142,12 +142,63 @@
         }
 
         //Revisar
-        public Response GetComponentsData(string plaza, string numConvenio)
+        public Response GetComponentsData(int AgreementId )
         {
             using (SqlConnection sql = new SqlConnection(_connectionString))
             {
-                SqlCommand cmd = new SqlCommand($"select a.Component as Description, a.Brand as Brand from SquareInventory a join LanesCatalog b on (a.CapufeLaneNum = b.CapufeLaneNum and a.IdGare = b.IdGare) join ComponentsStock c on a.Component = c.Description join AgreementInfo d on c.AgremmentInfoId = d.AgremmentInfoId where a.Brand != 'NO APLICA' and b.SquareCatalogid = '{plaza}' and d.Agrement = '{numConvenio}' group by a.Component, a.Brand", sql);
-                return _sqlResult.GetList<ComponentsDescription>(cmd, sql);
+                using (SqlCommand cmd = new SqlCommand("dbo.spComponentsDTCBox", sql))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.Add("@AgreementId", SqlDbType.Int).Value = AgreementId;
+
+                    var select = _sqlResult.GetList<ComponentsDTCBox>(cmd, sql);
+
+                    List<ComponentsDTCBox> componentsDTCBoxes = (List<ComponentsDTCBox>)select.Result;
+                    select.Result = null;
+
+                    List<DtcBox> dtcBoxes = new List<DtcBox>();
+                    var principales = componentsDTCBoxes.Where(x => x.VitalComponent == true).ToList();
+                    var secundarios = componentsDTCBoxes.Where(x => x.VitalComponent == false).ToList();
+
+                    foreach (var principal in principales)
+                    {
+
+                        var dtcBox = new DtcBox
+                        {
+                            ComponentePrincipal = principal.Description
+                        };
+
+                        dtcBox.Secundarios = new List<string>();
+                        dtcBox.NumberOfComponents = 1;
+                        var component = principal.Description;
+                        dtcBox.Secundarios.Add(component);
+
+                        List<ComponentsDTCBox> componentesProcesados = new List<ComponentsDTCBox>();
+
+                        foreach (var secundario in secundarios)
+                        {
+                            int divisor = principal.ComponentsRelationship / 100;
+                            decimal calculo = (secundario.ComponentsRelationship / 100);
+                            if (Math.Floor(calculo) == divisor)
+                            {
+                                string componenteSecundario = secundario.Description;
+                                dtcBox.Secundarios.Add(componenteSecundario);
+                                componentesProcesados.Add(secundario);
+                                dtcBox.NumberOfComponents += 1;
+                            }
+                            else
+                                break;
+                        }
+                        foreach (var item in componentesProcesados)
+                            secundarios.Remove(item);
+                        dtcBox.ComponentsRelationship = principal.ComponentsRelationship;
+                        dtcBoxes.Add(dtcBox);
+                    }
+                    select.Result = dtcBoxes;
+                    return select;
+                }
+
+                
             }
         }
 
