@@ -89,9 +89,8 @@ namespace ApiDTC.Services
         public Response NewPdf()
         {
             string directory, file;
-            //Mantenimiento/La plaza/El tipo de reporte en plural para acumularlos/El mes en que se saca el reporte/El día que se crea
             DateTime now = DateTime.Now;
-            directory = $@"{System.Environment.CurrentDirectory}\Mantenimiento\{_plaza.ToUpper()}\\{_temporal[2].ToUpper()}\{now.Year}\{MesActual()}\{now.Day}";
+            directory = $@"{System.Environment.CurrentDirectory}\Bitacora\ReporteMantenimiento\{_plaza.ToUpper()}\{_carril}\{_temporal[2].ToUpper()}\{now.Year}\{MesActual()}\{now.Day}";
             file = $@"{directory}\{_plaza.ToUpper()}{DateTime.Now.Year}{MesContrato(now)}{_carril}{_temporal[0]}.pdf";
             //If file exists
             try

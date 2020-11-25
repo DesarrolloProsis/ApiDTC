@@ -86,7 +86,7 @@ namespace ApiDTC.Services
         {
             string directory, file;
             DateTime now = DateTime.Now;
-            directory = $@"{System.Environment.CurrentDirectory}\CalendariosMantenimiento\{_plaza}\{now.Year}\{MesActual()}\{now.Day}";
+            directory = $@"{System.Environment.CurrentDirectory}\Bitacora\CalendariosMantenimiento\{_plaza}\{now.Year}\{MesActual()}\{now.Day}";
             file = $@"{directory}\{_plaza}{now.Year}{MesContrato(now)}C.pdf";
             //If file exists
             try
