@@ -160,6 +160,7 @@
                     var principales = componentsDTCBoxes.Where(x => x.VitalComponent == true).ToList();
                     var secundarios = componentsDTCBoxes.Where(x => x.VitalComponent == false).ToList();
 
+                    //PRUEBA GIT
                     foreach (var principal in principales)
                     {
 
