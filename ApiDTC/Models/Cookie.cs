@@ -11,6 +11,8 @@ namespace ApiDTC.Models
 
         public string SquareName { get; set; }
 
+        public string ReferenceSquare { get; set; }
+
         #endregion
     }
 }

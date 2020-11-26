@@ -32,11 +32,20 @@
         }
 
         //GET: api/Component/5
-        [HttpGet("{plaza}/{numConvenio}")]
-        public ActionResult<Response> Get(string plaza, string numConvenio)
+        [HttpGet("{idAgreement}")]
+        public ActionResult<Response> Get(int idAgreement)
         {
-            var get = _db.GetComponentsData(plaza, numConvenio);
+            var get = _db.GetComponentsData(idAgreement);
             if(get.Result == null)
+                return NotFound(get);
+            return Ok(get);
+        }
+        //GET: api/Component/5
+        [HttpGet("versionProduccion/{plaza}/{convenio}")]
+        public ActionResult<Response> Get(string plaza, string convenio)
+        {
+            var get = _db.VersionPruebaComponet(plaza, convenio);
+            if (get.Result == null)
                 return NotFound(get);
             return Ok(get);
         }
