@@ -54,7 +54,7 @@ namespace ApiDTC.Services
         public static iTextSharp.text.Font letraNormalChica = new iTextSharp.text.Font(NormalChica, 5f, iTextSharp.text.Font.NORMAL, BaseColor.Black);
         public static iTextSharp.text.Font letraSubAzulChica = new iTextSharp.text.Font(NormalChicaSubAzul, 5f, iTextSharp.text.Font.UNDERLINE, BaseColor.Blue);
         public static iTextSharp.text.Font letritasMiniMini = new iTextSharp.text.Font(fuenteLetrita, 1f, iTextSharp.text.Font.NORMAL, BaseColor.Black);
-        public static iTextSharp.text.Font letritasMini = new iTextSharp.text.Font(fuenteMini, 6f, iTextSharp.text.Font.NORMAL, BaseColor.Black);
+        public static iTextSharp.text.Font letritasMini = new iTextSharp.text.Font(fuenteMini, 4f, iTextSharp.text.Font.NORMAL, BaseColor.Black);
         #endregion
         #region Logo
         #endregion
@@ -239,7 +239,7 @@ namespace ApiDTC.Services
 
             for (int i = 0; i < recorridoCalendario; i++)
             {
-                table.AddCell(new PdfPCell(new Phrase(" ", letritasMini)) { BackgroundColor = BaseColor.LightGray, BorderWidth = 1, FixedHeight = 25, VerticalAlignment = Element.ALIGN_MIDDLE, HorizontalAlignment = Element.ALIGN_CENTER });
+                table.AddCell(new PdfPCell(new Phrase(" ", letraNormalChica)) { BackgroundColor = BaseColor.LightGray, BorderWidth = 1, FixedHeight = 15, VerticalAlignment = Element.ALIGN_MIDDLE, HorizontalAlignment = Element.ALIGN_CENTER });
             }
             //totalCeldas -= recorridoCalendario;
             List<ActivitiesSql> lanes = new List<ActivitiesSql>();
@@ -281,7 +281,7 @@ namespace ApiDTC.Services
                     {
                         for (int j = 0; j < recorridoCalendario; j++)
                         {
-                            var celdaContenido = new PdfPCell(new Phrase("", letraNormalChica)) { BorderWidth = 1, FixedHeight = 15, VerticalAlignment = Element.ALIGN_MIDDLE, HorizontalAlignment = Element.ALIGN_CENTER };
+                            var celdaContenido = new PdfPCell(new Phrase("", letraNormalChica)) { BorderWidth = 1, FixedHeight = 25, VerticalAlignment = Element.ALIGN_MIDDLE, HorizontalAlignment = Element.ALIGN_CENTER };
                             table.AddCell(celdaContenido);
                         }
                         primerRecorrido = true;
@@ -297,7 +297,8 @@ namespace ApiDTC.Services
                         {
                             descripcion += item.Lane + " ";
                         }
-                        var celdaContenido = new PdfPCell(new Phrase(descripcion, letraNormalChica)) { BorderWidth = 1, FixedHeight = 15, VerticalAlignment = Element.ALIGN_MIDDLE, HorizontalAlignment = Element.ALIGN_CENTER };
+                        var stringCarriles = descripcion.Split(' ').OrderBy(x => x);
+                        var celdaContenido = new PdfPCell(new Phrase(string.Join(' ', stringCarriles), letritasMini)) { BorderWidth = 1, FixedHeight = 25, VerticalAlignment = Element.ALIGN_MIDDLE, HorizontalAlignment = Element.ALIGN_CENTER };
                         table.AddCell(celdaContenido);
                     }
                 }
@@ -341,7 +342,7 @@ namespace ApiDTC.Services
 
 
             var celdaVacia = new PdfPCell() { Border = 0 };
-            var colNombreTecnico = new PdfPCell(new Phrase("NOÉ FERNANDO ORTEGA VAZQUEZ", new iTextSharp.text.Font(NormalChica, 8f, iTextSharp.text.Font.NORMAL, BaseColor.Black)))
+            var colNombreTecnico = new PdfPCell(new Phrase(_tableHeader.Rows[0]["UserName"].ToString(), new iTextSharp.text.Font(NormalChica, 8f, iTextSharp.text.Font.NORMAL, BaseColor.Black)))
             {
                 BorderWidth = 0,
                 BorderWidthBottom = 1,
@@ -349,7 +350,7 @@ namespace ApiDTC.Services
                 VerticalAlignment = Element.ALIGN_CENTER,
                 Padding = 5
             };
-            var colNombreEncargado = new PdfPCell(new Phrase("C.P. GUSTAVO GASPAR RODRIGUEZ", new iTextSharp.text.Font(NormalChica, 8f, iTextSharp.text.Font.NORMAL, BaseColor.Black)))
+            var colNombreEncargado = new PdfPCell(new Phrase(_tableHeader.Rows[0]["AdminName"].ToString(), new iTextSharp.text.Font(NormalChica, 8f, iTextSharp.text.Font.NORMAL, BaseColor.Black)))
             {
                 BorderWidth = 0,
                 BorderWidthBottom = 1,

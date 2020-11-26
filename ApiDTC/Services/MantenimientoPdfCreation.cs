@@ -173,7 +173,7 @@ namespace ApiDTC.Services
                     {
                         doc.NewPage();
 
-                        int paginasNecesarias = fotos.Length / 4 + (fotos.Length % 4 != 0 ? 1 : 0);
+                        int paginasNecesarias = fotos.Length / 6 + (fotos.Length % 6 != 0 ? 1 : 0);
 
                         for (int i = 0; i < paginasNecesarias; i++)
                         {
@@ -320,7 +320,7 @@ namespace ApiDTC.Services
         private IElement TablaFotografias(string[] rutas, int indice, int ultimo)
         {
 
-            PdfPTable table = new PdfPTable(new float[] { 50f, 50f }) { WidthPercentage = 60 };
+            PdfPTable table = new PdfPTable(new float[] { 70f, 70f, 70f }) { WidthPercentage = 70f };
             var celdaVacia = new PdfPCell() { Border = 0, FixedHeight = 20 };
             List<Image> fotos = new List<Image>();
             
@@ -330,26 +330,26 @@ namespace ApiDTC.Services
             if(indice == 1)
                 inicio = 0;
             else
-                inicio = ((indice - 1) * 4);
+                inicio = ((indice - 1) * 6);
             
             //Hasta donde
-            if(rutas.Length % 4 == 0)
-                hasta = (indice * 4);
-            else if(rutas.Length < 4)
+            if(rutas.Length % 6 == 0)
+                hasta = (indice * 6);
+            else if(rutas.Length < 6)
             {
-                hasta = rutas.Length % 4;
+                hasta = rutas.Length % 6;
             }
-            else if(inicio == 0 && rutas.Length > 4)
+            else if(inicio == 0 && rutas.Length > 6)
             {
-                hasta = 4;
+                hasta = 6;
             }
             else if (indice == ultimo)
             {
-                hasta = inicio + (rutas.Length % 4);
+                hasta = inicio + (rutas.Length % 6);
             }
             else
             {
-                hasta = inicio + 4;
+                hasta = inicio + 6;
             }
 
 
@@ -366,7 +366,7 @@ namespace ApiDTC.Services
                 table.AddCell(colFoto);
             }
 
-            for (int i = 0; i < (4 - fotos.Count) + 2; i++)
+            for (int i = 0; i < (9 - fotos.Count) + 3; i++)
             {
                 table.AddCell(celdaVacia);
             }

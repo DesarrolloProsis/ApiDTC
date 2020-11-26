@@ -90,10 +90,16 @@ namespace ApiDTC.Data
                             cmd.Parameters.Add("@Day", SqlDbType.Int).Value = actividad.Day;
                             cmd.Parameters.Add("@Month", SqlDbType.Int).Value = actividad.Month;
                             cmd.Parameters.Add("@Year", SqlDbType.Int).Value = actividad.Year;
-                            cmd.Parameters.Add("@FrequencyId", SqlDbType.Int).Value = actividad.FrequencyId;                     
-                            cmd.Parameters.Add("@FinalFlag", SqlDbType.Bit).Value = false;
+                            cmd.Parameters.Add("@FrequencyId", SqlDbType.Int).Value = actividad.FrequencyId;  
+                            
+                            if (i == numero_carriles - 1)                            
+                                cmd.Parameters.Add("@FinalFlag", SqlDbType.Bit).Value = true;
+                            else
+                                cmd.Parameters.Add("@FinalFlag", SqlDbType.Bit).Value = false;
+
                             cmd.Parameters.Add("@Comment", SqlDbType.NVarChar).Value = ".";
                             
+
                             cmd.Parameters.Add("@UpdateFlag", SqlDbType.Bit).Value = false;
                             var storedResult = _sqlResult.Post(cmd, sql);
                             if (storedResult.SqlResult == null)
@@ -138,9 +144,15 @@ namespace ApiDTC.Data
                             cmd.Parameters.Add("@Day", SqlDbType.Int).Value = actividad.Day;
                             cmd.Parameters.Add("@Month", SqlDbType.Int).Value = actividad.Month;
                             cmd.Parameters.Add("@Year", SqlDbType.Int).Value = actividad.Year;
-                            cmd.Parameters.Add("@FrequencyId", SqlDbType.Int).Value = actividad.FrequencyId;                           
-                            cmd.Parameters.Add("@FinalFlag", SqlDbType.Bit).Value = false;
-                            cmd.Parameters.Add("@Comment", SqlDbType.NVarChar).Value = ".";                                                     
+                            cmd.Parameters.Add("@FrequencyId", SqlDbType.Int).Value = actividad.FrequencyId;
+
+                            if (i == numero_carriles - 1)
+                                cmd.Parameters.Add("@FinalFlag", SqlDbType.Bit).Value = true;
+                            else
+                                cmd.Parameters.Add("@FinalFlag", SqlDbType.Bit).Value = false;
+
+                            cmd.Parameters.Add("@Comment", SqlDbType.NVarChar).Value = ".";
+                            
                             cmd.Parameters.Add("@UpdateFlag", SqlDbType.Bit).Value = true;
                             var storedResult = _sqlResult.Post(cmd, sql);
                             if (storedResult.SqlResult == null)
