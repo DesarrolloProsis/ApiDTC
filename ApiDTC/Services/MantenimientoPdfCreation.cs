@@ -89,9 +89,12 @@ namespace ApiDTC.Services
         public Response NewPdf()
         {
             string directory, file;
-            DateTime now = DateTime.Now;
+            DateTime now = DateTime.Now; 
+
             directory = $@"{System.Environment.CurrentDirectory}\Bitacora\ReporteMantenimiento\{_plaza.ToUpper()}\{_carril}\{_temporal[2].ToUpper()}\{now.Year}\{MesActual()}\{now.Day}";
+
             file = $@"{directory}\{_plaza.ToUpper()}{DateTime.Now.Year}{MesContrato(now)}{_carril}{_temporal[0]}.pdf";
+
             //If file exists
             try
             {   
@@ -170,7 +173,7 @@ namespace ApiDTC.Services
                     {
                         doc.NewPage();
 
-                        int paginasNecesarias = fotos.Length / 6 + (fotos.Length % 6 != 0 ? 1 : 0);
+                        int paginasNecesarias = fotos.Length / 4 + (fotos.Length % 4 != 0 ? 1 : 0);
 
                         for (int i = 0; i < paginasNecesarias; i++)
                         {
@@ -317,8 +320,8 @@ namespace ApiDTC.Services
         private IElement TablaFotografias(string[] rutas, int indice, int ultimo)
         {
 
-            PdfPTable table = new PdfPTable(new float[] { 33.33f, 33.33f, 33.33f }) { WidthPercentage = 80 };
-            var celdaVacia = new PdfPCell() { Border = 0, FixedHeight = 15 };
+            PdfPTable table = new PdfPTable(new float[] { 50f, 50f }) { WidthPercentage = 60 };
+            var celdaVacia = new PdfPCell() { Border = 0, FixedHeight = 20 };
             List<Image> fotos = new List<Image>();
             
             int inicio, hasta;
@@ -327,26 +330,26 @@ namespace ApiDTC.Services
             if(indice == 1)
                 inicio = 0;
             else
-                inicio = ((indice - 1) * 6);
+                inicio = ((indice - 1) * 4);
             
             //Hasta donde
-            if(rutas.Length % 6 == 0)
-                hasta = (indice * 6);
-            else if(rutas.Length < 6)
+            if(rutas.Length % 4 == 0)
+                hasta = (indice * 4);
+            else if(rutas.Length < 4)
             {
-                hasta = rutas.Length % 6;
+                hasta = rutas.Length % 4;
             }
-            else if(inicio == 0 && rutas.Length > 6)
+            else if(inicio == 0 && rutas.Length > 4)
             {
-                hasta = 6;
+                hasta = 4;
             }
             else if (indice == ultimo)
             {
-                hasta = inicio + (rutas.Length % 6);
+                hasta = inicio + (rutas.Length % 4);
             }
             else
             {
-                hasta = inicio + 6;
+                hasta = inicio + 4;
             }
 
 
@@ -363,7 +366,7 @@ namespace ApiDTC.Services
                 table.AddCell(colFoto);
             }
 
-            for (int i = 0; i < (9 - fotos.Count) + 3; i++)
+            for (int i = 0; i < (4 - fotos.Count) + 2; i++)
             {
                 table.AddCell(celdaVacia);
             }

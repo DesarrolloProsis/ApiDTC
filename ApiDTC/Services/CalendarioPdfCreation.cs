@@ -239,7 +239,7 @@ namespace ApiDTC.Services
 
             for (int i = 0; i < recorridoCalendario; i++)
             {
-                table.AddCell(new PdfPCell(new Phrase(" ", letraNormalChica)) { BackgroundColor = BaseColor.LightGray, BorderWidth = 1, FixedHeight = 15, VerticalAlignment = Element.ALIGN_MIDDLE, HorizontalAlignment = Element.ALIGN_CENTER });
+                table.AddCell(new PdfPCell(new Phrase(" ", letritasMini)) { BackgroundColor = BaseColor.LightGray, BorderWidth = 1, FixedHeight = 25, VerticalAlignment = Element.ALIGN_MIDDLE, HorizontalAlignment = Element.ALIGN_CENTER });
             }
             //totalCeldas -= recorridoCalendario;
             List<ActivitiesSql> lanes = new List<ActivitiesSql>();
