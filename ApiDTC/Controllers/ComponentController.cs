@@ -40,6 +40,15 @@
                 return NotFound(get);
             return Ok(get);
         }
+        //GET: api/Component/5
+        [HttpGet("versionProduccion/{plaza}/{convenio}")]
+        public ActionResult<Response> Get(string plaza, string convenio)
+        {
+            var get = _db.VersionPruebaComponet(plaza, convenio);
+            if (get.Result == null)
+                return NotFound(get);
+            return Ok(get);
+        }
 
         [HttpGet("Inventario/{plaza}")]
         public ActionResult<Response> GetComponentsInventory(string plaza)

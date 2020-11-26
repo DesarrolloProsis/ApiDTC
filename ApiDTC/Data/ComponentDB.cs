@@ -67,7 +67,14 @@
                 }
             }
         }
-
+        public Response VersionPruebaComponet(string plaza, string numConvenio)
+        {
+            using (SqlConnection sql  = new SqlConnection(_connectionString))
+            {
+                SqlCommand cmd = new SqlCommand($"select a.Component as Description, a.Brand as Brand from SquareInventory a join LanesCatalog b on (a.CapufeLaneNum = b.CapufeLaneNum and a.IdGare = b.IdGare) join ComponentsStock c on a.Component = c.Description join AgreementInfo d on c.AgremmentInfoId = d.AgremmentInfoId where a.Brand != 'NO APLICA' and b.SquareCatalogid = '{plaza}' and d.Agrement = '{numConvenio}' group by a.Component, a.Brand", sql);
+                return _sqlResult.GetList<ComponentsDescription>(cmd, sql);
+            }
+        }
         public Response PutComponentInventary(UpdateInventory updateInventory)
         {
             using (SqlConnection sql = new SqlConnection(_connectionString))
@@ -169,10 +176,16 @@
                             ComponentePrincipal = principal.Description
                         };
 
-                        dtcBox.Secundarios = new List<string>();
-                        dtcBox.NumberOfComponents = 1;
-                        var component = principal.Description;
-                        dtcBox.Secundarios.Add(component);
+                        dtcBox.Secundarios = new List<ComponentsDTCBox>();
+                        //dtcBox.NumberOfComponents = 1;
+                        //var component = principal.Description;
+                        dtcBox.Secundarios.Add(new ComponentsDTCBox
+                        {
+                            Description = principal.Description,
+                            AttachedId = principal.AttachedId,
+                            ComponentsRelationship = principal.ComponentsRelationship,
+                            VitalComponent = principal.VitalComponent
+                        });
 
                         List<ComponentsDTCBox> componentesProcesados = new List<ComponentsDTCBox>();
 
@@ -183,16 +196,23 @@
                             if (Math.Floor(calculo) == divisor)
                             {
                                 string componenteSecundario = secundario.Description;
-                                dtcBox.Secundarios.Add(componenteSecundario);
+                                //dtcBox.Secundarios.Add(componenteSecundario);
+                                dtcBox.Secundarios.Add(new ComponentsDTCBox
+                                {
+                                    Description = secundario.Description,
+                                    AttachedId = secundario.AttachedId,
+                                    ComponentsRelationship = secundario.ComponentsRelationship,
+                                    VitalComponent = secundario.VitalComponent
+                                });
                                 componentesProcesados.Add(secundario);
-                                dtcBox.NumberOfComponents += 1;
+                                //dtcBox.NumberOfComponents += 1;
                             }
                             else
                                 break;
                         }
                         foreach (var item in componentesProcesados)
                             secundarios.Remove(item);
-                        dtcBox.ComponentsRelationship = principal.ComponentsRelationship;
+                        //dtcBox.ComponentsRelationship = principal.ComponentsRelationship;
                         dtcBoxes.Add(dtcBox);
                     }
                     select.Result = dtcBoxes;
