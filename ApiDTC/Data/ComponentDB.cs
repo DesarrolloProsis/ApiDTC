@@ -176,15 +176,14 @@
                             ComponentePrincipal = principal.Description
                         };
 
-                        dtcBox.Secundarios = new List<ComponentsDTCBox>();
-                        //dtcBox.NumberOfComponents = 1;
-                        //var component = principal.Description;
-                        dtcBox.Secundarios.Add(new ComponentsDTCBox
+                        dtcBox.Secundarios = new List<ComponentDtcBoxPrincipal>();
+                        dtcBox.Secundarios.Add(new ComponentDtcBoxPrincipal
                         {
                             Description = principal.Description,
                             AttachedId = principal.AttachedId,
                             ComponentsRelationship = principal.ComponentsRelationship,
-                            VitalComponent = principal.VitalComponent
+                            VitalComponent = principal.VitalComponent,
+                            ComponentsRelationshipId = principal.ComponentsRelationship
                         });
 
                         List<ComponentsDTCBox> componentesProcesados = new List<ComponentsDTCBox>();
@@ -196,23 +195,21 @@
                             if (Math.Floor(calculo) == divisor)
                             {
                                 string componenteSecundario = secundario.Description;
-                                //dtcBox.Secundarios.Add(componenteSecundario);
-                                dtcBox.Secundarios.Add(new ComponentsDTCBox
+                                dtcBox.Secundarios.Add(new ComponentDtcBoxPrincipal
                                 {
                                     Description = secundario.Description,
                                     AttachedId = secundario.AttachedId,
                                     ComponentsRelationship = secundario.ComponentsRelationship,
-                                    VitalComponent = secundario.VitalComponent
+                                    VitalComponent = secundario.VitalComponent,
+                                    ComponentsRelationshipId = principal.ComponentsRelationship
                                 });
                                 componentesProcesados.Add(secundario);
-                                //dtcBox.NumberOfComponents += 1;
                             }
                             else
                                 break;
                         }
                         foreach (var item in componentesProcesados)
                             secundarios.Remove(item);
-                        //dtcBox.ComponentsRelationship = principal.ComponentsRelationship;
                         dtcBoxes.Add(dtcBox);
                     }
                     select.Result = dtcBoxes;

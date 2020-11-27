@@ -124,6 +124,7 @@ C:\Users\MACHINE 1\Desktop\CLONE APIDTC\ApiDTC\ApiDTC\bin\Debug\netcoreapp2.1\Ap
 C:\Users\MACHINE 1\Desktop\CLONE APIDTC\ApiDTC\ApiDTC\bin\Debug\netcoreapp2.1\ApiDTC.runtimeconfig.dev.json
 C:\Users\MACHINE 1\Desktop\CLONE APIDTC\ApiDTC\ApiDTC\bin\Debug\netcoreapp2.1\ApiDTC.dll
 C:\Users\MACHINE 1\Desktop\CLONE APIDTC\ApiDTC\ApiDTC\bin\Debug\netcoreapp2.1\ApiDTC.pdb
+C:\Users\MACHINE 1\Desktop\CLONE APIDTC\ApiDTC\ApiDTC\obj\Debug\netcoreapp2.1\ApiDTC.csprojAssemblyReference.cache
 C:\Users\MACHINE 1\Desktop\CLONE APIDTC\ApiDTC\ApiDTC\obj\Debug\netcoreapp2.1\ApiDTC.Properties.Resources.resources
 C:\Users\MACHINE 1\Desktop\CLONE APIDTC\ApiDTC\ApiDTC\obj\Debug\netcoreapp2.1\ApiDTC.csproj.GenerateResource.cache
 C:\Users\MACHINE 1\Desktop\CLONE APIDTC\ApiDTC\ApiDTC\obj\Debug\netcoreapp2.1\ApiDTC.RazorAssemblyInfo.cache
@@ -133,4 +134,3 @@ C:\Users\MACHINE 1\Desktop\CLONE APIDTC\ApiDTC\ApiDTC\obj\Debug\netcoreapp2.1\Ap
 C:\Users\MACHINE 1\Desktop\CLONE APIDTC\ApiDTC\ApiDTC\obj\Debug\netcoreapp2.1\ApiDTC.RazorTargetAssemblyInfo.cache
 C:\Users\MACHINE 1\Desktop\CLONE APIDTC\ApiDTC\ApiDTC\obj\Debug\netcoreapp2.1\ApiDTC.dll
 C:\Users\MACHINE 1\Desktop\CLONE APIDTC\ApiDTC\ApiDTC\obj\Debug\netcoreapp2.1\ApiDTC.pdb
-C:\Users\MACHINE 1\Desktop\CLONE APIDTC\ApiDTC\ApiDTC\obj\Debug\netcoreapp2.1\ApiDTC.csprojAssemblyReference.cache

@@ -36,6 +36,16 @@
             var pdfResult = pdf.NewPdf();
             return File(new FileStream(pdfResult.Result.ToString(), FileMode.Open, FileAccess.Read), "application/pdf");
         }
+
+        [HttpDelete("DeleteCalendar/{month}/{year}/{userId}/{squareId}")]
+        public ActionResult<Response> DeleteCalendar(int month, int year, int userId, string squareId)
+        {
+            var get = _db.DeleteCalendar(month, year, userId, squareId);
+            if (get.Result == null)
+                return BadRequest(get);
+            else
+                return Ok(get);
+        }
         
         [HttpPost("Actividad")]
         public ActionResult<Response> Post([FromBody] ActividadCalendario actividad)
@@ -51,19 +61,6 @@
             return BadRequest(ModelState);
         }
 
-        [HttpPost("Actualizar")]
-        public ActionResult<Response> Update([FromBody] ActividadCalendario actividad)
-        {
-            if (ModelState.IsValid)
-            {
-                var get = _db.UpdateActivity(actividad);
-                if (get.Result == null)
-                    return BadRequest(get);
-                else
-                    return Ok(get);
-            }
-            return BadRequest(ModelState);
-        }
 
         [HttpPost("ObservacionesInsert")]
         public ActionResult<Response> ObservacionesInsert([FromBody] ActividadCalendario actividad)

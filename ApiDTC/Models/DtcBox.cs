@@ -9,14 +9,6 @@ namespace ApiDTC.Models
     {
         public string ComponentePrincipal { get; set; }
 
-        public List<ComponentsDTCBox> Secundarios { get; set; }
-
-        //public int ComponentsRelationship { get; set; }
-
-        //public int NumberOfComponents { get; set; }
-
+        public List<ComponentDtcBoxPrincipal> Secundarios { get; set; }
     }
-    
-
-    
 }
