@@ -121,7 +121,7 @@ namespace ApiDTC.Services
                 using(MemoryStream myMemoryStream = new MemoryStream())
                 {
                     doc.SetPageSize(new Rectangle(793.701f, 609.4488f));
-                    doc.SetMargins(70.8661f, 70.8661f, 40f, 28.3465f);
+                    doc.SetMargins(30.8661f, 30.8661f, 20f, 28.3465f);
                     doc.AddAuthor("PROSIS");
                     doc.AddTitle("Calendario de mantenimiento preventivo");
 
@@ -136,7 +136,6 @@ namespace ApiDTC.Services
                     doc.Add(TablaFechas());
                     doc.Add(new Phrase(" "));
                     doc.Add(TablaObservaciones());
-                    doc.Add(new Phrase(" "));
                     doc.Add(new Phrase(" "));
                     doc.Add(new Phrase(" "));
                     doc.Add(TablaFirmas());
@@ -296,7 +295,7 @@ namespace ApiDTC.Services
                     {
                         for (int j = 0; j < recorridoCalendario; j++)
                         {
-                            var celdaContenido = new PdfPCell(new Phrase("", letraNormalChica)) { BorderWidth = 1, FixedHeight = 25, VerticalAlignment = Element.ALIGN_MIDDLE, HorizontalAlignment = Element.ALIGN_CENTER };
+                            var celdaContenido = new PdfPCell(new Phrase("", letraNormalChica)) { BorderWidth = 1, FixedHeight = 35, VerticalAlignment = Element.ALIGN_MIDDLE, HorizontalAlignment = Element.ALIGN_CENTER };
                             table.AddCell(celdaContenido);
                         }
                         primerRecorrido = true;
@@ -313,7 +312,7 @@ namespace ApiDTC.Services
                             descripcion += item.Lane + " ";
                         }
                         var stringCarriles = descripcion.Split(' ').OrderBy(x => x);
-                        var celdaContenido = new PdfPCell(new Phrase(string.Join(' ', stringCarriles), letritasMini)) { BorderWidth = 1, FixedHeight = 25, VerticalAlignment = Element.ALIGN_MIDDLE, HorizontalAlignment = Element.ALIGN_CENTER };
+                        var celdaContenido = new PdfPCell(new Phrase(string.Join(' ', stringCarriles), letraNormalChica)) { BorderWidth = 1, FixedHeight = 35, VerticalAlignment = Element.ALIGN_MIDDLE, HorizontalAlignment = Element.ALIGN_CENTER };
                         table.AddCell(celdaContenido);
                     }
                 }
@@ -336,7 +335,8 @@ namespace ApiDTC.Services
                 Padding = 5
             };
 
-            var celdaObservaciones = new PdfPCell(new Phrase(_tableHeader.Rows[0]["Comment"].ToString(), new iTextSharp.text.Font(NormalChica, 8f, iTextSharp.text.Font.NORMAL, BaseColor.Black))) 
+            //var celdaObservaciones = new PdfPCell(new Phrase(_tableHeader.Rows[0]["Comment"].ToString(), new iTextSharp.text.Font(NormalChica, 8f, iTextSharp.text.Font.NORMAL, BaseColor.Black))) 
+            var celdaObservaciones = new PdfPCell(new Phrase("What is Lorem Ipsum ?Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.", new iTextSharp.text.Font(NormalChica, 7f, iTextSharp.text.Font.NORMAL, BaseColor.Black)))
             { 
                 VerticalAlignment = Element.ALIGN_MIDDLE, 
                 HorizontalAlignment = Element.ALIGN_JUSTIFIED, 
