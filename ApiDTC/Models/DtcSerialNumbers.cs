@@ -2,8 +2,8 @@
 {
     public class DtcSerialNumbers
     {
-        public int item { get; set; }
-
-        public string Lane_SerialNumber { get; set; }
+        public int item { get; set; }        
+        public int TableFolio { get; set; }
+        public string Lane { get; set; }
     }
 }

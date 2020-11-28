@@ -61,7 +61,7 @@ namespace ApiDTC.Data
             catch(SqlException ex)
 
             {
-                _apiLogger.WriteLog(ex, "InsertActivity");
+                _apiLogger.WriteLog(ex, "InsertComment");
                 return new Response { Message = ex.Message, Result = null };
             }
 
@@ -119,37 +119,47 @@ namespace ApiDTC.Data
 
         public Response DeleteCalendar(int month, int year, int userId, string squareId)
         {
-            using (SqlConnection sql = new SqlConnection(_connectionString))
+            try
             {
-                using (SqlCommand cmd = new SqlCommand("dbo.spDeleteCalendarData", sql))
+                using (SqlConnection sql = new SqlConnection(_connectionString))
                 {
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.Add("@UserId", SqlDbType.Int).Value = userId;
-                    cmd.Parameters.Add("@SquareId", SqlDbType.NVarChar).Value = squareId;
-                    cmd.Parameters.Add("@Month", SqlDbType.Int).Value = month;
-                    cmd.Parameters.Add("@Year", SqlDbType.Int).Value = year;
-                    var result = _sqlResult.Post(cmd, sql);
-                    return new Response
+                    using (SqlCommand cmd = new SqlCommand("dbo.spDeleteCalendarData", sql))
                     {
-                        Message = result.SqlMessage,
-                        Result = result.SqlResult
-                    };
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.Add("@UserId", SqlDbType.Int).Value = userId;
+                        cmd.Parameters.Add("@SquareId", SqlDbType.NVarChar).Value = squareId;
+                        cmd.Parameters.Add("@Month", SqlDbType.Int).Value = month;
+                        cmd.Parameters.Add("@Year", SqlDbType.Int).Value = year;
+                        var result = _sqlResult.Post(cmd, sql);
+                        return new Response
+                        {
+                            Message = result.SqlMessage,
+                            Result = result.SqlResult
+                        };
+                    }
                 }
+            }
+            catch(SqlException ex)
+            {
+                _apiLogger.WriteLog(ex, "UpdateUserStatus");
+                return new Response
+                {
+                    Message = $"{ex.Message}",
+                    Result = null
+                };
             }
         }
 
         public DataSet GetStorePdf(int month, int year, int userId, string squareId)
         {
-            using (SqlConnection sql = new SqlConnection(_connectionString))
+            try
             {
-                using (SqlCommand cmd = new SqlCommand("spCalendarQuery", sql))
+                using (SqlConnection sql = new SqlConnection(_connectionString))
                 {
-
-                    try
+                    using (SqlCommand cmd = new SqlCommand("spCalendarQuery", sql))
                     {
                         SqlDataAdapter sqlDataAdapter = new SqlDataAdapter();
                         DataSet dataSet = new DataSet();
-
 
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.Add("@UserId", SqlDbType.Int).Value = userId;
@@ -165,29 +175,25 @@ namespace ApiDTC.Data
 
                         return dataSet;
                     }
-                    catch (Exception ex)
-                    {
-                        _apiLogger.WriteLog(ex, "GetStorePDF");
-                        return null;
-                    }
                 }
             }
+            catch (SqlException ex)
+            {
+                _apiLogger.WriteLog(ex, "GetStorePDF");
+                return null;
+            }
         }
-
-
 
         public Response GetStoreFrontLane(ActividadMesYear actividad)
         {
-            using (SqlConnection sql = new SqlConnection(_connectionString))
+            try
             {
-                using (SqlCommand cmd = new SqlCommand("spCalendarQueryFrontLanes", sql))
+                using (SqlConnection sql = new SqlConnection(_connectionString))
                 {
-
-                    try
+                    using (SqlCommand cmd = new SqlCommand("spCalendarQueryFrontLanes", sql))
                     {
                         SqlDataAdapter sqlDataAdapter = new SqlDataAdapter();
                         DataSet dataSet = new DataSet();
-
 
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.Add("@UserId", SqlDbType.Int).Value = actividad.UserId;
@@ -201,43 +207,36 @@ namespace ApiDTC.Data
 
                         sql.Close();
 
-                        
+
                         return new Response
                         {
                             Message = "Ok",
                             Result = dataSet
                         };
                     }
-                    catch (Exception ex)
-                    {
-                        _apiLogger.WriteLog(ex, "GetStorePDF");
-                        return new Response
-                        {
-                            Message = "Ok",
-                            Result = null
-                        };
-                    }
                 }
             }
+            catch (Exception ex)
+            {
+                _apiLogger.WriteLog(ex, "GetStoreFrontLane");
+                return new Response
+                {
+                    Message = $"Error: {ex.Message}",
+                    Result = null
+                };
+            }
         }
-
-
-
-
 
         public Response GetStoreFrontComment(ActividadMesYear actividad)
         {
-            using (SqlConnection sql = new SqlConnection(_connectionString))
+            try
             {
-                using (SqlCommand cmd = new SqlCommand("spCalendarQueryFrontComment", sql))
+                using (SqlConnection sql = new SqlConnection(_connectionString))
                 {
-
-                    try
-                    {
+                using (SqlCommand cmd = new SqlCommand("spCalendarQueryFrontComment", sql))
+                { 
                         SqlDataAdapter sqlDataAdapter = new SqlDataAdapter();
                         DataSet dataSet = new DataSet();
-
-
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.Add("@UserId", SqlDbType.Int).Value = actividad.UserId;
                         cmd.Parameters.Add("@SuqareId", SqlDbType.NVarChar).Value = actividad.SquareId;
@@ -256,20 +255,19 @@ namespace ApiDTC.Data
                             Result = dataSet
                         };
                     }
-                    catch (Exception ex)
-                    {
-                        _apiLogger.WriteLog(ex, "GetStorePDF");
-                        return new Response
-                        {
-                            Message = "Ok",
-                            Result = null
-                        };
-                    }
+                    
                 }
             }
+            catch (SqlException ex)
+            {
+                _apiLogger.WriteLog(ex, "GetStoreFrontComment");
+                return new Response
+                {
+                    Message = $"Error: {ex.Message}",
+                    Result = null
+                };
+            }
         }
-
-
 
         public Response GetActivity(ActividadMesYear actividad)
         {
@@ -277,7 +275,6 @@ namespace ApiDTC.Data
             {
                 using (SqlConnection sql = new SqlConnection(_connectionString))
                 {
-
                     using (SqlCommand cmd = new SqlCommand("dbo.spCalendarQuery", sql))
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
@@ -286,8 +283,6 @@ namespace ApiDTC.Data
                         cmd.Parameters.Add("@Month", SqlDbType.Int).Value = actividad.Month;
                         cmd.Parameters.Add("@Year", SqlDbType.Int).Value = actividad.Year;
                         sql.Open();
-
-                        //return _sqlResult.GetList<CalendarQuery>(cmd, sql);
 
                         List<CalendarQuery> lista = new List<CalendarQuery>();
                         var str = cmd.ExecuteReader();
@@ -304,7 +299,6 @@ namespace ApiDTC.Data
                                 DateStamp = str[5].ToString()
                             });
                         }
-
 
                         return new Response
                         {

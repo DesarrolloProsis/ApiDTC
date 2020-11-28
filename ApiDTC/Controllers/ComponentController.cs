@@ -20,7 +20,16 @@
             this._db = db ?? throw new ArgumentNullException(nameof(db));
         }
         #endregion
-              
+        
+
+        // GET: api/Component
+        [HttpGet("GetComponetV2/{squareId}/{agreementId}/{attachedId}/{relationShip}/{relationShipPrincipal}")]
+        public ActionResult<Response> GetComponents(string squareId, int agreementId, int attachedId, int relationShip, int relationShipPrincipal)
+        {
+            var get = _db.GetComponentDataModificaciones(squareId, agreementId, attachedId, relationShip, relationShipPrincipal);                            
+            return Ok(get);
+        }
+
         // GET: api/Component
         [HttpGet("{convenio}/{plaza}/{Id}/{marca}")]
         public ActionResult<Response> GetComponents(string convenio, string plaza, string Id, string marca)

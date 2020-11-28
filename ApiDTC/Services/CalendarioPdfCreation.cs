@@ -51,7 +51,7 @@ namespace ApiDTC.Services
         public static iTextSharp.text.Font letraNormalGrande = new iTextSharp.text.Font(NormalGrande, 15f, iTextSharp.text.Font.NORMAL, BaseColor.Black);
         public static iTextSharp.text.Font letraNormalMediana = new iTextSharp.text.Font(NormalMediana, 11f, iTextSharp.text.Font.NORMAL, BaseColor.Black);
         public static iTextSharp.text.Font letraNormalMedianaSub = new iTextSharp.text.Font(NormalMediana, 7f, iTextSharp.text.Font.UNDERLINE, BaseColor.Black);
-        public static iTextSharp.text.Font letraNormalChica = new iTextSharp.text.Font(NormalChica, 5f, iTextSharp.text.Font.NORMAL, BaseColor.Black);
+        public static iTextSharp.text.Font letraNormalChica = new iTextSharp.text.Font(NormalChica, 6f, iTextSharp.text.Font.NORMAL, BaseColor.Black);
         public static iTextSharp.text.Font letraSubAzulChica = new iTextSharp.text.Font(NormalChicaSubAzul, 5f, iTextSharp.text.Font.UNDERLINE, BaseColor.Blue);
         public static iTextSharp.text.Font letritasMiniMini = new iTextSharp.text.Font(fuenteLetrita, 1f, iTextSharp.text.Font.NORMAL, BaseColor.Black);
         public static iTextSharp.text.Font letritasMini = new iTextSharp.text.Font(fuenteMini, 4f, iTextSharp.text.Font.NORMAL, BaseColor.Black);
@@ -179,48 +179,64 @@ namespace ApiDTC.Services
             int mesesTranscurridos = (contratoInicial.Month - fechaSolicitud.Month) + (12 * (contratoInicial.Year - fechaSolicitud.Year)) + 1;
             return mesesTranscurridos.ToString("00");
         }
+        
         private IElement TablaEncabezado()
         {
-            iTextSharp.text.Image logo = iTextSharp.text.Image.GetInstance($@"{System.Environment.CurrentDirectory}\Media\prosis-logo.jpg");
-            logo.ScalePercent(10f);
+            try
+            {
+                iTextSharp.text.Image logo = iTextSharp.text.Image.GetInstance($@"{System.Environment.CurrentDirectory}\Media\prosis-logo.jpg");
+                logo.ScalePercent(10f);
 
-            //Encabezado
-            PdfPTable table = new PdfPTable(new float[] { 10, 30f, 20f, 30f, 10f }) { WidthPercentage = 100f };
+                //Encabezado
+                PdfPTable table = new PdfPTable(new float[] { 10, 30f, 20f, 30f, 10f }) { WidthPercentage = 100f };
 
-            var celdaVacia = new PdfPCell() { Border = 0 };
-            PdfPCell colLogo = new PdfPCell(logo) { Border = 0, HorizontalAlignment = Element.ALIGN_LEFT, VerticalAlignment = Element.ALIGN_MIDDLE, Colspan = 3 };
-            table.AddCell(celdaVacia);
-            table.AddCell(colLogo);
-            table.AddCell(celdaVacia);
+                var celdaVacia = new PdfPCell() { Border = 0 };
+                PdfPCell colLogo = new PdfPCell(logo) { Border = 0, HorizontalAlignment = Element.ALIGN_LEFT, VerticalAlignment = Element.ALIGN_MIDDLE, Colspan = 3 };
+                table.AddCell(celdaVacia);
+                table.AddCell(colLogo);
+                table.AddCell(celdaVacia);
 
-            var celdaSalto = new PdfPCell() { Colspan = 5, Border = 0 };
-            table.AddCell(celdaSalto);
+                var celdaSalto = new PdfPCell() { Colspan = 5, Border = 0 };
+                table.AddCell(celdaSalto);
 
-            var colTitulo = new PdfPCell(new Phrase("CALENDARIO DE MANTENIMIENTO PREVENTIVO", letraNormalMediana)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, Padding = 5, PaddingRight = 20, PaddingLeft = 20, Colspan = 3 };
-            table.AddCell(celdaVacia);
-            table.AddCell(colTitulo);
-            table.AddCell(celdaVacia);
+                var colTitulo = new PdfPCell(new Phrase("CALENDARIO DE MANTENIMIENTO PREVENTIVO", letraNormalMediana)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, Padding = 5, PaddingRight = 20, PaddingLeft = 20, Colspan = 3 };
+                table.AddCell(celdaVacia);
+                table.AddCell(colTitulo);
+                table.AddCell(celdaVacia);
 
-            var mesCalendarioPreventivo = new Chunk($"CORRESPONDIENTE AL MES DE: {MesActual(_month).ToUpper()} DEL {_year}", letraoNegritaMediana);
-            var phraseMes = new Phrase(mesCalendarioPreventivo);
-            var colMes = new PdfPCell(phraseMes) { BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, BorderWidthBottom = 1, HorizontalAlignment = Element.ALIGN_LEFT, VerticalAlignment = Element.ALIGN_MIDDLE, Padding = 2, Colspan = 2};
-            table.AddCell(celdaVacia);
-            table.AddCell(colMes);
-            table.AddCell(celdaVacia);
-            table.AddCell(celdaVacia);
+                var mesCalendarioPreventivo = new Chunk($"CORRESPONDIENTE AL MES DE: {MesActual(_month).ToUpper()} DEL {_year}", letraoNegritaMediana);
+                var phraseMes = new Phrase(mesCalendarioPreventivo);
+                var colMes = new PdfPCell(phraseMes) { BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, BorderWidthBottom = 1, HorizontalAlignment = Element.ALIGN_LEFT, VerticalAlignment = Element.ALIGN_MIDDLE, Padding = 2, Colspan = 2 };
+                table.AddCell(celdaVacia);
+                table.AddCell(colMes);
+                table.AddCell(celdaVacia);
+                table.AddCell(celdaVacia);
 
-            var plazaDeCobro = new Chunk($"   PLAZA DE COBRO:  {_tableHeader.Rows[0]["SquareName"].ToString()}", letraoNegritaMediana);
-            var phraseCobro = new Phrase(plazaDeCobro);
-            var colCobro = new PdfPCell(phraseCobro) { BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, BorderWidthBottom = 1, HorizontalAlignment = Element.ALIGN_LEFT, VerticalAlignment = Element.ALIGN_MIDDLE, Padding = 2 };
-            table.AddCell(celdaVacia);
-            table.AddCell(colCobro);
-            table.AddCell(celdaVacia);
-            table.AddCell(celdaVacia);
-            table.AddCell(celdaVacia);
+                var plazaDeCobro = new Chunk($"   PLAZA DE COBRO:  {_tableHeader.Rows[0]["SquareName"].ToString()}", letraoNegritaMediana);
+                var phraseCobro = new Phrase(plazaDeCobro);
+                var colCobro = new PdfPCell(phraseCobro) { BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, BorderWidthBottom = 1, HorizontalAlignment = Element.ALIGN_LEFT, VerticalAlignment = Element.ALIGN_MIDDLE, Padding = 2 };
+                table.AddCell(celdaVacia);
+                table.AddCell(colCobro);
+                table.AddCell(celdaVacia);
+                table.AddCell(celdaVacia);
+                table.AddCell(celdaVacia);
 
-            return table;
+                return table;
+            }
+            catch (PdfException ex)
+            {
+                _apiLogger.WriteLog(ex, $"TablaEncabezado error: {ex.Message}");
+                return null;
+            }
+            catch (IOException ex)
+            {
+                _apiLogger.WriteLog(ex, $"TablaEncabezado error: {ex.Message}");
+                return null;
+            }
+            
         }
 
+        
         private IElement TablaFechas()
         {
             
@@ -254,7 +270,6 @@ namespace ApiDTC.Services
                 });
             }
 
-            int contador = 0;
             bool primerRecorrido = false;
 
             for (int i = 0; i < totalCeldas; i++)

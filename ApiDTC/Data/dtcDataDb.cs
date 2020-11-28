@@ -265,7 +265,7 @@
         {
             using (SqlConnection sql = new SqlConnection(_connectionString))
             {
-                using (SqlCommand cmd = new SqlCommand("dbo.sp_EditReference", sql))
+                using (SqlCommand cmd = new SqlCommand("dbo.sp_EditReferencePrueba", sql))
                 {
                     SqlDataAdapter sqlDataAdapter = new SqlDataAdapter();
                     DataSet dataSet = new DataSet();

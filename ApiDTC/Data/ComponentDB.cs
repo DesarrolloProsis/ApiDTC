@@ -28,6 +28,46 @@
 
         #region Methods
 
+        public Response GetComponentDataModificaciones(string squareId, int agreementId, int attachedId, int relationShip, int relationShipPrincipal)
+        {
+            using (SqlConnection sql = new SqlConnection(_connectionString))
+            {
+                using (SqlCommand cmd = new SqlCommand("dbo.sp_ComponentInfoDTCVer2", sql))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.Add("@SquareId", SqlDbType.NVarChar).Value = squareId;
+                    cmd.Parameters.Add("@AgreementInt", SqlDbType.Int).Value = agreementId;
+                    cmd.Parameters.Add("@AttachedId", SqlDbType.Int).Value = attachedId;
+                    cmd.Parameters.Add("@ComponentsRelationship", SqlDbType.Int).Value = relationShip;
+                    cmd.Parameters.Add("@MainComponentsRelationship", SqlDbType.Int).Value = relationShipPrincipal;
+
+                    var storedResult = _sqlResult.GetList<Components>(cmd, sql);
+                    if (storedResult.Result == null)
+                        return storedResult;
+                    var list = (List<Components>)storedResult.Result;
+                    string[] listLane = new string[list.Count];
+                    int i = 0;
+
+                    List<Components> listaFiltro = new List<Components>();
+
+                    foreach (var item in list)
+                    {
+                        
+                        
+                          listLane[i++] = item.Lane;
+                          listaFiltro.Add(item);
+                        
+
+                    }
+                    storedResult.Result = new { listaFiltro, listLane };
+                    return new Response
+                    {
+                        Message = "Ok",
+                        Result = storedResult.Result
+                    };
+                }
+            }
+        }
         //TODO Mapper foreach var lane
         public Response GetComponentData(string convenio, string plaza, string Id, string marca)
         {
