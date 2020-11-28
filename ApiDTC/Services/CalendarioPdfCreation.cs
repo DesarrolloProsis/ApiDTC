@@ -296,7 +296,7 @@ namespace ApiDTC.Services
                     {
                         for (int j = 0; j < recorridoCalendario; j++)
                         {
-                            var celdaContenido = new PdfPCell(new Phrase("", letraNormalChica)) { BorderWidth = 1, FixedHeight = 25, VerticalAlignment = Element.ALIGN_MIDDLE, HorizontalAlignment = Element.ALIGN_CENTER };
+                            var celdaContenido = new PdfPCell(new Phrase("", letraNormalChica)) { BorderWidth = 1, FixedHeight = 30, VerticalAlignment = Element.ALIGN_MIDDLE, HorizontalAlignment = Element.ALIGN_CENTER };
                             table.AddCell(celdaContenido);
                         }
                         primerRecorrido = true;
@@ -313,7 +313,7 @@ namespace ApiDTC.Services
                             descripcion += item.Lane + " ";
                         }
                         var stringCarriles = descripcion.Split(' ').OrderBy(x => x);
-                        var celdaContenido = new PdfPCell(new Phrase(string.Join(' ', stringCarriles), letritasMini)) { BorderWidth = 1, FixedHeight = 25, VerticalAlignment = Element.ALIGN_MIDDLE, HorizontalAlignment = Element.ALIGN_CENTER };
+                        var celdaContenido = new PdfPCell(new Phrase(string.Join(' ', stringCarriles), letritasMini)) { BorderWidth = 1, FixedHeight = 30, VerticalAlignment = Element.ALIGN_MIDDLE, HorizontalAlignment = Element.ALIGN_CENTER };
                         table.AddCell(celdaContenido);
                     }
                 }
