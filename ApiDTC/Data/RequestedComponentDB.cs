@@ -30,7 +30,7 @@
             {
                 foreach (var item in requestedComponent)
                 {
-                    SqlCommand cmd = new SqlCommand("dbo.sp_InsertComponents", sql);
+                    SqlCommand cmd = new SqlCommand("dbo.sp_InsertComponentsPrueba", sql);
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.Add("@intType", SqlDbType.Int).Value = 1;
                     cmd.Parameters.Add("@flag", SqlDbType.Int).Value = flag;
@@ -49,8 +49,10 @@
                     cmd.Parameters.Add("@strLifeTimeReal", SqlDbType.NVarChar).Value = item.strLifeTimeReal;
                     cmd.Parameters.Add("@intPartida", SqlDbType.Int).Value = item.IntPartida;
                     cmd.Parameters.Add("@strMaintenanceFolio", SqlDbType.NVarChar).Value = item.MaintenanceFolio;
-                    
-                    if(item == requestedComponent[requestedComponent.Count - 1])
+                    cmd.Parameters.Add("@MainRelationShip", SqlDbType.Int).Value = item.MainRelationship;
+                    cmd.Parameters.Add("@TableFolio", SqlDbType.Int).Value = item.TableFolio;
+
+                    if (item == requestedComponent[requestedComponent.Count - 1])
                         cmd.Parameters.Add("@validationFlag", SqlDbType.Bit).Value = 1;
                     else
                         cmd.Parameters.Add("@validationFlag", SqlDbType.Bit).Value = 0;
@@ -73,7 +75,7 @@
                 
                 foreach (var item in requestedComponent)
                 {
-                    SqlCommand cmd = new SqlCommand("dbo.sp_InsertComponents", sql);
+                    SqlCommand cmd = new SqlCommand("dbo.sp_InsertComponentsPrueba", sql);
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.Add("@intType", SqlDbType.Int).Value = 2;
                     cmd.Parameters.Add("@flag", SqlDbType.Int).Value = flag;
@@ -92,6 +94,8 @@
                     cmd.Parameters.Add("@strLifeTimeReal", SqlDbType.NVarChar).Value = item.strLifeTimeReal;
                     cmd.Parameters.Add("@intPartida", SqlDbType.Int).Value = item.IntPartida;
                     cmd.Parameters.Add("@strMaintenanceFolio", SqlDbType.NVarChar).Value = item.MaintenanceFolio;
+                    cmd.Parameters.Add("@MainRelationShip", SqlDbType.Int).Value = item.MainRelationship;
+                    cmd.Parameters.Add("@TableFolio", SqlDbType.Int).Value = item.TableFolio;
 
                     //TODO test components insert
 

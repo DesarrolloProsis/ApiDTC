@@ -31,6 +31,10 @@
         public string strLifeTimeReal { get; set; }
         
         public int IntPartida { get; set; }
+
+        public int MainRelationship { get; set; }
+
+        public int TableFolio { get; set; }
         #endregion
     }
 }
