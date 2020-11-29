@@ -45,13 +45,13 @@ namespace ApiDTC.Services
         public static BaseFont NormalMedianaInline = BaseFont.CreateFont(BaseFont.HELVETICA, BaseFont.WINANSI, true);
         #endregion
         #region iText.Font
-        public static iTextSharp.text.Font letraoNegritaGrande = new iTextSharp.text.Font(NegritaGrande, 13f, iTextSharp.text.Font.BOLD, BaseColor.Black);
+        public static iTextSharp.text.Font letraoNegritaGrande = new iTextSharp.text.Font(NegritaGrande, 11f, iTextSharp.text.Font.BOLD, BaseColor.Black);
         public static iTextSharp.text.Font letraoNegritaMediana = new iTextSharp.text.Font(NegritaMediana, 8f, iTextSharp.text.Font.BOLD, BaseColor.Black);
         public static iTextSharp.text.Font letraoNegritaChica = new iTextSharp.text.Font(NegritaChica, 5f, iTextSharp.text.Font.BOLD, BaseColor.Black);
-        public static iTextSharp.text.Font letraNormalGrande = new iTextSharp.text.Font(NormalGrande, 15f, iTextSharp.text.Font.NORMAL, BaseColor.Black);
-        public static iTextSharp.text.Font letraNormalMediana = new iTextSharp.text.Font(NormalMediana, 11f, iTextSharp.text.Font.NORMAL, BaseColor.Black);
+        public static iTextSharp.text.Font letraNormalGrande = new iTextSharp.text.Font(NormalGrande, 13f, iTextSharp.text.Font.NORMAL, BaseColor.Black);
+        public static iTextSharp.text.Font letraNormalMediana = new iTextSharp.text.Font(NormalMediana, 10f, iTextSharp.text.Font.NORMAL, BaseColor.Black);
         public static iTextSharp.text.Font letraNormalMedianaSub = new iTextSharp.text.Font(NormalMediana, 7f, iTextSharp.text.Font.UNDERLINE, BaseColor.Black);
-        public static iTextSharp.text.Font letraNormalChica = new iTextSharp.text.Font(NormalChica, 6f, iTextSharp.text.Font.NORMAL, BaseColor.Black);
+        public static iTextSharp.text.Font letraNormalChica = new iTextSharp.text.Font(NormalChica, 5f, iTextSharp.text.Font.NORMAL, BaseColor.Black);
         public static iTextSharp.text.Font letraSubAzulChica = new iTextSharp.text.Font(NormalChicaSubAzul, 5f, iTextSharp.text.Font.UNDERLINE, BaseColor.Blue);
         public static iTextSharp.text.Font letritasMiniMini = new iTextSharp.text.Font(fuenteLetrita, 1f, iTextSharp.text.Font.NORMAL, BaseColor.Black);
         public static iTextSharp.text.Font letritasMini = new iTextSharp.text.Font(fuenteMini, 4f, iTextSharp.text.Font.NORMAL, BaseColor.Black);
@@ -121,7 +121,7 @@ namespace ApiDTC.Services
                 using(MemoryStream myMemoryStream = new MemoryStream())
                 {
                     doc.SetPageSize(new Rectangle(793.701f, 609.4488f));
-                    doc.SetMargins(70.8661f, 70.8661f, 40f, 28.3465f);
+                    doc.SetMargins(30.8661f, 30.8661f, 30f, 28.3465f);
                     doc.AddAuthor("PROSIS");
                     doc.AddTitle("Calendario de mantenimiento preventivo");
 
@@ -132,12 +132,9 @@ namespace ApiDTC.Services
                     doc.Open();
 
                     doc.Add(TablaEncabezado());
-                    doc.Add(new Phrase(" "));
                     doc.Add(TablaFechas());
                     doc.Add(new Phrase(" "));
                     doc.Add(TablaObservaciones());
-                    doc.Add(new Phrase(" "));
-                    doc.Add(new Phrase(" "));
                     doc.Add(new Phrase(" "));
                     doc.Add(TablaFirmas());
 
@@ -171,8 +168,7 @@ namespace ApiDTC.Services
                 Result = file
             };
         }
-
-
+        
         private string MesContrato(DateTime fechaSolicitud)
         {
             DateTime contratoInicial = new DateTime(2020, 11, 1);
@@ -191,9 +187,9 @@ namespace ApiDTC.Services
                 PdfPTable table = new PdfPTable(new float[] { 10, 30f, 20f, 30f, 10f }) { WidthPercentage = 100f };
 
                 var celdaVacia = new PdfPCell() { Border = 0 };
-                PdfPCell colLogo = new PdfPCell(logo) { Border = 0, HorizontalAlignment = Element.ALIGN_LEFT, VerticalAlignment = Element.ALIGN_MIDDLE, Colspan = 3 };
-                table.AddCell(celdaVacia);
+                PdfPCell colLogo = new PdfPCell(logo) { Border = 0, HorizontalAlignment = Element.ALIGN_LEFT, VerticalAlignment = Element.ALIGN_MIDDLE, Colspan = 3 };           
                 table.AddCell(colLogo);
+                table.AddCell(celdaVacia);
                 table.AddCell(celdaVacia);
 
                 var celdaSalto = new PdfPCell() { Colspan = 5, Border = 0 };
@@ -242,20 +238,20 @@ namespace ApiDTC.Services
             
             PdfPTable table = new PdfPTable(new float[] { 14.3f, 14.30f, 14.3f, 14.3f, 14.3f, 14.3f, 14.3f }) { WidthPercentage = 100f };
             var celdaVacia = new PdfPCell() { Border = 0 };
-            var colTitulo = new PdfPCell(new Phrase("FECHAS PROPUESTAS", letraoNegritaGrande)) { Border = 0,  HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, Padding = 5, PaddingRight = 20, PaddingLeft = 20, Colspan = 5 };
+            var colTitulo = new PdfPCell(new Phrase("FECHAS PROPUESTAS", letraoNegritaGrande)) { Border = 0,  HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, Padding = 3, PaddingRight = 20, PaddingLeft = 20, Colspan = 5 };
             table.AddCell(celdaVacia);
             table.AddCell(colTitulo);
             table.AddCell(celdaVacia);
 
             int days = DateTime.DaysInMonth(_year, _month);
             int totalCeldas = 35;
-            int dias = 0, carriles = 0;
+            int carriles = 0;
 
             int recorridoCalendario = RecorridoCeldasCalendario(DiaActual(new DateTime(_year, _month, 1)));
 
             for (int i = 0; i < recorridoCalendario; i++)
             {
-                table.AddCell(new PdfPCell(new Phrase(" ", letraNormalChica)) { BackgroundColor = BaseColor.LightGray, BorderWidth = 1, FixedHeight = 15, VerticalAlignment = Element.ALIGN_MIDDLE, HorizontalAlignment = Element.ALIGN_CENTER });
+                table.AddCell(new PdfPCell(new Phrase(" ", letraNormalChica)) { BackgroundColor = BaseColor.LightGray, BorderWidth = 1, FixedHeight = 10, VerticalAlignment = Element.ALIGN_MIDDLE, HorizontalAlignment = Element.ALIGN_CENTER });
             }
             //totalCeldas -= recorridoCalendario;
             List<ActivitiesSql> lanes = new List<ActivitiesSql>();
@@ -278,12 +274,12 @@ namespace ApiDTC.Services
 
                 if((i + 1) > days)
                 {
-                    celdaFecha = new PdfPCell(new Phrase(" ", letraNormalChica)) { BackgroundColor = BaseColor.LightGray, BorderWidth = 1, FixedHeight = 15, VerticalAlignment = Element.ALIGN_MIDDLE, HorizontalAlignment = Element.ALIGN_CENTER };
+                    celdaFecha = new PdfPCell(new Phrase(" ", letraNormalChica)) { BackgroundColor = BaseColor.LightGray, BorderWidth = 1, FixedHeight = 10, VerticalAlignment = Element.ALIGN_MIDDLE, HorizontalAlignment = Element.ALIGN_CENTER };
                 }
                 else
                 {
                     string fecha = $"{DiaActual(new DateTime(_year, _month, i + 1))} {i + 1} {MesActual(_month)}";
-                    celdaFecha = new PdfPCell(new Phrase(fecha, letraNormalChica)) { BackgroundColor = BaseColor.LightGray, BorderWidth = 1, FixedHeight = 15, VerticalAlignment = Element.ALIGN_MIDDLE, HorizontalAlignment = Element.ALIGN_CENTER };
+                    celdaFecha = new PdfPCell(new Phrase(fecha, letraNormalChica)) { BackgroundColor = BaseColor.LightGray, BorderWidth = 1, FixedHeight = 10, VerticalAlignment = Element.ALIGN_MIDDLE, HorizontalAlignment = Element.ALIGN_CENTER };
                 }
                 
                 table.AddCell(celdaFecha);
@@ -296,7 +292,7 @@ namespace ApiDTC.Services
                     {
                         for (int j = 0; j < recorridoCalendario; j++)
                         {
-                            var celdaContenido = new PdfPCell(new Phrase("", letraNormalChica)) { BorderWidth = 1, FixedHeight = 30, VerticalAlignment = Element.ALIGN_MIDDLE, HorizontalAlignment = Element.ALIGN_CENTER };
+                            var celdaContenido = new PdfPCell(new Phrase("", letraNormalChica)) { BorderWidth = 1, FixedHeight = 35, VerticalAlignment = Element.ALIGN_MIDDLE, HorizontalAlignment = Element.ALIGN_CENTER };
                             table.AddCell(celdaContenido);
                         }
                         primerRecorrido = true;
@@ -313,7 +309,7 @@ namespace ApiDTC.Services
                             descripcion += item.Lane + " ";
                         }
                         var stringCarriles = descripcion.Split(' ').OrderBy(x => x);
-                        var celdaContenido = new PdfPCell(new Phrase(string.Join(' ', stringCarriles), letritasMini)) { BorderWidth = 1, FixedHeight = 30, VerticalAlignment = Element.ALIGN_MIDDLE, HorizontalAlignment = Element.ALIGN_CENTER };
+                        var celdaContenido = new PdfPCell(new Phrase(string.Join(' ', stringCarriles), letraNormalChica)) { BorderWidth = 1, FixedHeight = 35, VerticalAlignment = Element.ALIGN_MIDDLE, HorizontalAlignment = Element.ALIGN_CENTER };
                         table.AddCell(celdaContenido);
                     }
                 }
@@ -336,7 +332,8 @@ namespace ApiDTC.Services
                 Padding = 5
             };
 
-            var celdaObservaciones = new PdfPCell(new Phrase(_tableHeader.Rows[0]["Comment"].ToString(), new iTextSharp.text.Font(NormalChica, 8f, iTextSharp.text.Font.NORMAL, BaseColor.Black))) 
+            //var celdaObservaciones = new PdfPCell(new Phrase(_tableHeader.Rows[0]["Comment"].ToString(), new iTextSharp.text.Font(NormalChica, 8f, iTextSharp.text.Font.NORMAL, BaseColor.Black))) 
+            var celdaObservaciones = new PdfPCell(new Phrase("What is Lorem Ipsum ?Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.", new iTextSharp.text.Font(NormalChica, 7f, iTextSharp.text.Font.NORMAL, BaseColor.Black)))
             { 
                 VerticalAlignment = Element.ALIGN_MIDDLE, 
                 HorizontalAlignment = Element.ALIGN_JUSTIFIED, 
