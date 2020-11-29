@@ -133,9 +133,8 @@ namespace ApiDTC.Services
 
                     doc.Add(TablaEncabezado());
                     doc.Add(TablaFechas());
-                    doc.Add(new Phrase(" "));
                     doc.Add(TablaObservaciones());
-                    doc.Add(new Phrase(" "));
+                    doc.Add(new Paragraph(" "));
                     doc.Add(TablaFirmas());
 
 
@@ -208,7 +207,18 @@ namespace ApiDTC.Services
                 table.AddCell(celdaVacia);
                 table.AddCell(celdaVacia);
 
-                var plazaDeCobro = new Chunk($"   PLAZA DE COBRO:  {_tableHeader.Rows[0]["SquareName"].ToString()}", letraoNegritaMediana);
+                string plaza;
+                if (_tableHeader != null)
+                {
+                    if (_tableHeader.Rows.Count > 0)
+                        plaza = _tableHeader.Rows[0]["SquareName"].ToString();
+                    else
+                        plaza = "";
+                }
+                else
+                    plaza = "";
+
+                var plazaDeCobro = new Chunk($"   PLAZA DE COBRO:  {plaza}", letraoNegritaMediana);
                 var phraseCobro = new Phrase(plazaDeCobro);
                 var colCobro = new PdfPCell(phraseCobro) { BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, BorderWidthBottom = 1, HorizontalAlignment = Element.ALIGN_LEFT, VerticalAlignment = Element.ALIGN_MIDDLE, Padding = 2 };
                 table.AddCell(celdaVacia);
@@ -244,8 +254,18 @@ namespace ApiDTC.Services
             table.AddCell(celdaVacia);
 
             int days = DateTime.DaysInMonth(_year, _month);
+            
+
             int totalCeldas = 35;
             int carriles = 0;
+
+            //Revisión seis semanas
+            DateTime diaInicial = new DateTime(_year, _month, 1);
+            bool mesSeisSemanas = false;
+            if (string.Equals(DiaActual(diaInicial).ToLower(), "sábado") && (days == 30 || days == 31))
+                totalCeldas += 7;
+            else if (string.Equals(DiaActual(diaInicial).ToLower(), "viernes") && days == 31)
+                totalCeldas += 7;
 
             int recorridoCalendario = RecorridoCeldasCalendario(DiaActual(new DateTime(_year, _month, 1)));
 
@@ -298,7 +318,6 @@ namespace ApiDTC.Services
                         primerRecorrido = true;
                     }
                     
-
                     for (int j = 0; j < numeroCeldasActividades; j++)
                     {
                         carriles++;
@@ -323,6 +342,10 @@ namespace ApiDTC.Services
         {
 
             PdfPTable table = new PdfPTable(new float[] { 100f }) { WidthPercentage = 100f };
+            
+            var celdaVacia = new PdfPCell() { Border = 0 };
+            table.AddCell(celdaVacia);
+            table.AddCell(celdaVacia);
 
             var colTitulo = new PdfPCell(new Phrase("OBSERVACIONES", new iTextSharp.text.Font(NormalChica, 8f, iTextSharp.text.Font.NORMAL, BaseColor.Black))) 
             { 
@@ -332,7 +355,19 @@ namespace ApiDTC.Services
                 Padding = 5
             };
 
-            var celdaObservaciones = new PdfPCell(new Phrase(_tableHeader.Rows[0]["Comment"].ToString(), new iTextSharp.text.Font(NormalChica, 8f, iTextSharp.text.Font.NORMAL, BaseColor.Black))) 
+            string comentario;
+            if (_tableHeader != null)
+            {
+                if (_tableHeader.Rows.Count > 0)
+                    comentario = _tableHeader.Rows[0]["Comment"].ToString();
+                else
+                    comentario = "";
+            }
+            else
+                comentario = "";
+
+            var celdaObservaciones = new PdfPCell(new Phrase(comentario, new iTextSharp.text.Font(NormalChica, 8f, iTextSharp.text.Font.NORMAL, BaseColor.Black))) 
+
             //var celdaObservaciones = new PdfPCell(new Phrase("What is Lorem Ipsum ?Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.", new iTextSharp.text.Font(NormalChica, 7f, iTextSharp.text.Font.NORMAL, BaseColor.Black)))
             { 
                 VerticalAlignment = Element.ALIGN_MIDDLE, 
@@ -354,7 +389,19 @@ namespace ApiDTC.Services
 
 
             var celdaVacia = new PdfPCell() { Border = 0 };
-            var colNombreTecnico = new PdfPCell(new Phrase(_tableHeader.Rows[0]["UserName"].ToString(), new iTextSharp.text.Font(NormalChica, 8f, iTextSharp.text.Font.NORMAL, BaseColor.Black)))
+            string userName, adminName;
+
+            if (_tableHeader != null)
+            {
+                if (_tableHeader.Rows.Count > 0)
+                    userName = _tableHeader.Rows[0]["UserName"].ToString();
+                else
+                    userName = "";
+            }
+            else
+                userName = "";
+
+            var colNombreTecnico = new PdfPCell(new Phrase(userName, new iTextSharp.text.Font(NormalChica, 8f, iTextSharp.text.Font.NORMAL, BaseColor.Black)))
             {
                 BorderWidth = 0,
                 BorderWidthBottom = 1,
@@ -362,7 +409,18 @@ namespace ApiDTC.Services
                 VerticalAlignment = Element.ALIGN_CENTER,
                 Padding = 5
             };
-            var colNombreEncargado = new PdfPCell(new Phrase(_tableHeader.Rows[0]["AdminName"].ToString(), new iTextSharp.text.Font(NormalChica, 8f, iTextSharp.text.Font.NORMAL, BaseColor.Black)))
+
+            if (_tableHeader != null)
+            {
+                if (_tableHeader.Rows.Count > 0)
+                    adminName = _tableHeader.Rows[0]["AdminName"].ToString();
+                else
+                    adminName = "";
+            }
+            else
+                adminName = "";
+
+            var colNombreEncargado = new PdfPCell(new Phrase(adminName, new iTextSharp.text.Font(NormalChica, 8f, iTextSharp.text.Font.NORMAL, BaseColor.Black)))
             {
                 BorderWidth = 0,
                 BorderWidthBottom = 1,
