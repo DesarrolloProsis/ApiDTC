@@ -124,7 +124,7 @@ namespace ApiDTC.Services
             cb.BeginText();
             cb.SetFontAndSize(bf, 8);
             cb.ShowTextAligned(PdfContentByte.ALIGN_LEFT,
-                "PROYECTOS Y SISTEMAS INFORMATICOS, S.A DE C.V AV.DOCTOR JOSE MARIA VERTIZ No.1238 INT.1 LETRAN VALLE C.P 03650 BENITO JUAREZ D.F TEL. 44442306",
+                "PROYECTOS Y SISTEMAS INFORMATICOS, S.A DE C.V AV.DOCTOR JOSE MARIA VERTIZ No.1238 INT.1 LETRAN VALLE C.P 03650 BENITO JUAREZ D.F TEL. 5552838256",
                 pageSize.GetRight(700),
                 pageSize.GetBottom(30), 0);
             cb.EndText();
