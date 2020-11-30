@@ -27,6 +27,8 @@ namespace ApiDTC.Services
         private int _month;
 
         private int _year;
+
+        private string _square;
         #endregion
 
         #region Pdf Configuration
