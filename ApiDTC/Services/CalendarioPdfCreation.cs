@@ -63,22 +63,24 @@ namespace ApiDTC.Services
         #endregion
 
         #region Constructors
-        public CalendarioPdfCreation(ApiLogger apiLogger, string plaza, int month, int year)
+        public CalendarioPdfCreation(ApiLogger apiLogger, string plaza, int month, int year, string square)
         {
             _apiLogger = apiLogger;
             _plaza = plaza;
             _month = month;
             _year = year;
+            _square = square;
         }
 
-        public CalendarioPdfCreation(DataTable tableHeader, DataTable tableActivities, string plaza, ApiLogger apiLogger, int month, int year)
+        public CalendarioPdfCreation(DataTable tableHeader, DataTable tableActivities, string plaza, ApiLogger apiLogger, int month, int year, string square)
         {
             _apiLogger = apiLogger;
             _tableHeader = tableHeader;
             _tableActivities = tableActivities;
             _plaza = plaza;
             _month = month;
-            _year = year; ;
+            _year = year;
+            _square = square;
         }
 
         #endregion
@@ -220,7 +222,7 @@ namespace ApiDTC.Services
                 else
                     plaza = "";
 
-                var plazaDeCobro = new Chunk($"   PLAZA DE COBRO:  {plaza}", letraoNegritaMediana);
+                var plazaDeCobro = new Chunk($"   PLAZA DE COBRO: {_square} {plaza}", letraoNegritaMediana);
                 var phraseCobro = new Phrase(plazaDeCobro);
                 var colCobro = new PdfPCell(phraseCobro) { BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, BorderWidthBottom = 1, HorizontalAlignment = Element.ALIGN_LEFT, VerticalAlignment = Element.ALIGN_MIDDLE, Padding = 2 };
                 table.AddCell(celdaVacia);
