@@ -548,7 +548,7 @@ namespace ApiDTC.Services
             var col14 = new PdfPCell(new Phrase(Convert.ToString(_tableDTCData.Rows[0]["ReportNumber"]), letraoNegritaChica)) { Border = 0 };
 
             var col15 = new PdfPCell(new Phrase("Lugar de Fecha de Envio:", letraNormalChica)) { Border = 0 };
-            var col16 = new PdfPCell(new Phrase("CDMX a " + Convert.ToDateTime(_tableDTCData.Rows[0]["ElaborationDate"]).ToString("dd/MM/yyyy"), letraoNegritaChica)) { HorizontalAlignment = Element.ALIGN_RIGHT, Border = 0 };
+            var col16 = new PdfPCell(new Phrase("Ciudad de México a " + Convert.ToDateTime(_tableDTCData.Rows[0]["ElaborationDate"]).ToString("dd/MM/yyyy"), letraoNegritaChica)) { HorizontalAlignment = Element.ALIGN_RIGHT, Border = 0 };
 
 
             var col17 = new PdfPCell(new Phrase("Correo:", letraNormalChica)) { Border = 0 };
@@ -573,7 +573,7 @@ namespace ApiDTC.Services
             var col29 = new PdfPCell(new Phrase("", letraNormalChica)) { Border = 0 };
             var col30 = new PdfPCell(new Phrase("", letraNormalChica)) { Border = 0 };
 
-            var col31 = new PdfPCell(new Phrase("Cordinacion Regional:", letraNormalChica)) { Border = 0 };
+            var col31 = new PdfPCell(new Phrase("Cordinacion Regional: Ciudad de México", letraNormalChica)) { Border = 0 };
             var col32 = new PdfPCell(new Phrase(Convert.ToString(_tableHeader.Rows[0]["RegionalCoordination"]), letraoNegritaChica)) { HorizontalAlignment = Element.ALIGN_RIGHT, Border = 0 };
 
             var col33 = new PdfPCell(new Phrase("", letraNormalChica)) { Border = 0 };

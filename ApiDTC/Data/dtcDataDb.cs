@@ -111,8 +111,16 @@
                         var reader = lastReferenceCommand.ExecuteReader();
                         if(reader.Read())
                         {
+                            int lastReference = 0; ;
                             string result = reader["ReferenceNumber"].ToString();
-                            int lastReference = Convert.ToInt32(result.Substring(result.Length - 1)) + 1;
+                            var _array_ref = result.Split('-');
+                            if (_array_ref.Length > 2)
+                            {
+
+                                lastReference = Convert.ToInt32(_array_ref[2]) + 1;
+                            }
+                            //string result = reader["ReferenceNumber"].ToString();
+                            //int lastReference = Convert.ToInt32(result.Substring(result.Length - 1)) + 1;
                             return new Response
                             {
                                 Message = "Ok",
