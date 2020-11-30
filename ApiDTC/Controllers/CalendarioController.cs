@@ -32,7 +32,7 @@
         public IActionResult GetCalendarioMantenimiento(string plaza, int month, int year, int userId, string squareId)
         {
             var dataSet = _db.GetStorePdf(month, year, userId, squareId);
-            CalendarioPdfCreation pdf = new CalendarioPdfCreation(dataSet.Tables[1], dataSet.Tables[0], plaza, new ApiLogger(), month, year);
+            CalendarioPdfCreation pdf = new CalendarioPdfCreation(dataSet.Tables[1], dataSet.Tables[0], plaza, new ApiLogger(), month, year, squareId);
             var pdfResult = pdf.NewPdf();
             return File(new FileStream(pdfResult.Result.ToString(), FileMode.Open, FileAccess.Read), "application/pdf");
         }
