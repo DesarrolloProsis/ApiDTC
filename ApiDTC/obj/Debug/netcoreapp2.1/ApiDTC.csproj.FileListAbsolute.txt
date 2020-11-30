@@ -100,7 +100,6 @@ D:\Proyectos\ApiDTC\ApiDTC\obj\Debug\netcoreapp2.1\ApiDTC.dll
 D:\Proyectos\ApiDTC\ApiDTC\obj\Debug\netcoreapp2.1\ApiDTC.pdb
 D:\Proyectos\PROSIS\ApiDTC\ApiDTC\bin\Debug\netcoreapp2.1\appsettings.Development.json
 D:\Proyectos\PROSIS\ApiDTC\ApiDTC\bin\Debug\netcoreapp2.1\appsettings.json
-D:\Proyectos\PROSIS\ApiDTC\ApiDTC\bin\Debug\netcoreapp2.1\Properties\launchSettings.json
 D:\Proyectos\PROSIS\ApiDTC\ApiDTC\bin\Debug\netcoreapp2.1\ApiDTC.deps.json
 D:\Proyectos\PROSIS\ApiDTC\ApiDTC\bin\Debug\netcoreapp2.1\ApiDTC.runtimeconfig.json
 D:\Proyectos\PROSIS\ApiDTC\ApiDTC\bin\Debug\netcoreapp2.1\ApiDTC.runtimeconfig.dev.json
@@ -152,3 +151,5 @@ C:\Users\axelf\Desktop\ApiDTC\ApiDTC\obj\Debug\netcoreapp2.1\ApiDTC.AssemblyInfo
 C:\Users\axelf\Desktop\ApiDTC\ApiDTC\obj\Debug\netcoreapp2.1\ApiDTC.RazorTargetAssemblyInfo.cache
 C:\Users\axelf\Desktop\ApiDTC\ApiDTC\obj\Debug\netcoreapp2.1\ApiDTC.dll
 C:\Users\axelf\Desktop\ApiDTC\ApiDTC\obj\Debug\netcoreapp2.1\ApiDTC.pdb
+D:\Proyectos\PROSIS\ApiDTC\ApiDTC\obj\Debug\netcoreapp2.1\ApiDTC.csproj.CoreCompileInputs.cache
+D:\Proyectos\PROSIS\ApiDTC\ApiDTC\obj\Debug\netcoreapp2.1\ApiDTC.genruntimeconfig.cache
