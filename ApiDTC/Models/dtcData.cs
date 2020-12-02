@@ -24,8 +24,10 @@
         
         public DateTime ElaborationDate { get; set; }
         
+        [StringLength(300)]
         public string Observation { get; set; }
-        
+
+        [StringLength(300)]
         public string Diagnosis { get; set; }
         
         public int UserId { get; set; }
