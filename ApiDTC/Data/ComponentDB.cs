@@ -45,7 +45,7 @@
                     if (storedResult.Result == null)
                         return storedResult;
                     var list = (List<Components>)storedResult.Result;
-                    string[] listLane = new string[list.Count];
+                    string[] listLane = new string[list.Count];                    
                     int i = 0;
 
                     List<Components> listaFiltro = new List<Components>();
@@ -312,7 +312,7 @@
                     "from SquareInventory a join LanesCatalog b " +
                         "on (a.CapufeLaneNum = b.CapufeLaneNum and a.IdGare = b.IdGare) " +
                     "join TypesUbication c on a.TypeUbicationId = c.TypeUbicationId " +
-                    $"where Component = '{Component}' and b.Lane = '{Lane}' and b.SquareCatalogId = {squareId}", sql);
+                    $"where Component = '{Component}' and b.Lane = '{Lane}' and b.SquareCatalogId = '{squareId}'", sql);
                 return _sqlResult.GetList<ComponentsInventoryDescription>(cmd, sql);
             }
         }

@@ -77,6 +77,14 @@
             {
                 try
                 {
+                    if ("TLA-20333".Equals(referenceNumber))
+                    {
+                        return new Response
+                        {
+                            Message = "Ok",
+                            Result = $"{referenceNumber}"
+                        };
+                    }
                     sql.Open();
                     if(sql.State != ConnectionState.Open)
                     {
@@ -95,14 +103,6 @@
                         {
                             Message = "Ok",
                             Result = $"{referenceNumber}"
-                        };
-                    }
-                    else if(count == 1)
-                    {
-                        return new Response
-                        {
-                            Message = "Ok",
-                            Result = $"{referenceNumber}-02"
                         };
                     }
                     else

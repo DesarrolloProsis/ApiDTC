@@ -86,10 +86,10 @@
             return Ok(get);
         }
 
-        [HttpGet("Inventario/{componente}/{linea}/{plaza}")]
-        public ActionResult<Response> GetComponentsInventoryDescription(string componente, string linea, string plaza)
+        [HttpGet("Inventario/{componente}/{linea}/{squareId}")]
+        public ActionResult<Response> GetComponentsInventoryDescription(string componente, string linea, string squareId)
         { 
-            var get = _db.GetComponentsInventoryDescription(componente, linea, plaza);
+            var get = _db.GetComponentsInventoryDescription(componente, linea, squareId);
             if (get.Result == null)
                 return NotFound(get);
             return Ok(get);

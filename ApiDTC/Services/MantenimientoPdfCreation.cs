@@ -152,7 +152,7 @@ namespace ApiDTC.Services
                     
 
                     PdfWriter writer = PdfWriter.GetInstance(doc, myMemoryStream);
-                    writer.PageEvent = new PageEventHelper();
+                    writer.PageEvent = new PageEventHelperVertical();
                     writer.Open();
 
                     doc.Open();
