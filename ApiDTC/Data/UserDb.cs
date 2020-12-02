@@ -31,7 +31,7 @@
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.Add("@Id", SqlDbType.Int).Value = userKey.Id;
                     cmd.Parameters.Add("@Square", SqlDbType.NVarChar).Value = userKey.Square;
-                    return _sqlResult.GetList<UserView>(cmd, sql);
+                    return _sqlResult.GetList<UserView>(cmd, sql, "GetInfo");
                 }
             }
         }

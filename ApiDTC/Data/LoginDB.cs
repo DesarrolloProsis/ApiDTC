@@ -39,7 +39,7 @@
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.Add("@PlazaId", SqlDbType.NVarChar).Value = numPlaza;
 
-                    return _sqlResult.GetList<TecnicosPlaza>(cmd, sql);                    
+                    return _sqlResult.GetList<TecnicosPlaza>(cmd, sql, "GetTec");                    
                 }
             }
         }
@@ -53,7 +53,7 @@
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.Add("@user", SqlDbType.Int).Value = idTec;
                     
-                    return _sqlResult.GetList<Login>(cmd, sql);
+                    return _sqlResult.GetList<Login>(cmd, sql, "GetHeadTec");
                 }
             }
         }
@@ -69,7 +69,7 @@
                     cmd.Parameters.Add("@Contraseña", SqlDbType.NVarChar).Value = passWord;
                     cmd.Parameters.Add("@Flag", SqlDbType.Bit).Value = flag;
                     
-                    return _sqlResult.GetList<Login>(cmd, sql);
+                    return _sqlResult.GetList<Login>(cmd, sql, "GetStoreLogin");
                 }
             }
         }
@@ -85,37 +85,9 @@
                     cmd.Parameters.Add("@Contraseña", SqlDbType.NVarChar).Value = passWord;
                     cmd.Parameters.Add("@Flag", SqlDbType.Bit).Value = flag;
 
-                    return _sqlResult.GetList<Cookie>(cmd, sql);
+                    return _sqlResult.GetList<Cookie>(cmd, sql, "GetStoreLoginCookie");
                 }
             }
-        }
-
-        private Login MapToLogin(SqlDataReader reader)
-        {
-            return new Login()
-            {
-                UserId = (int)reader["UserId"],
-                AgremmentInfoId = (int)reader["AgremmentInfoId"],
-                Nombre = reader["Nombre"].ToString(),
-                Plaza = reader["Plaza"].ToString(),
-                Agrement = reader["Agrement"].ToString(),
-                ManagerName = reader["ManagerName"].ToString(),
-                Position = reader["Position"].ToString(),
-                Mail = reader["Mail"].ToString(),
-                AgremmentDate = Convert.ToDateTime(reader["AgremmentDate"].ToString()),
-                DelegationName = reader["DelegationName"].ToString(),
-                RegionalCoordination = reader["RegionalCoordination"].ToString(),
-            };
-        }
-
-        private Cookie MapToCookie(SqlDataReader reader)
-        {
-            return new Cookie()
-            {
-                UserId =  (int)reader["UserId"],
-                SquareCatalogId = Convert.ToString(reader["SquareCatalogId"]),
-                RollId = (int)reader["RollId"]
-            };
         }
         #endregion
     }

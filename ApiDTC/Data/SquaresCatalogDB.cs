@@ -32,7 +32,7 @@
             using (SqlConnection sql = new SqlConnection(_connectionString))
             {
                 SqlCommand cmd = new SqlCommand("Select * From SquaresCatalog", sql);
-                return _sqlResult.GetList<SquaresCatalog>(cmd, sql);
+                return _sqlResult.GetList<SquaresCatalog>(cmd, sql, "GetSquaresCatalog");
             }
         }
 
@@ -46,7 +46,7 @@
                     cmd.Parameters.Add("@Square", SqlDbType.NVarChar).Value = square;
 
 
-                    var storedResult = _sqlResult.GetList<Lanes>(cmd, sql);
+                    var storedResult = _sqlResult.GetList<Lanes>(cmd, sql, "GetLanes");
                     if (storedResult.Result == null)
                         return storedResult;
 

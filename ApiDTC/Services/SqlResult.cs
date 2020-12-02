@@ -136,7 +136,7 @@ namespace ApiDTC.Services
                 };
             }
         }
-        public Response GetList<T>(SqlCommand command, SqlConnection con)
+        public Response GetList<T>(SqlCommand command, SqlConnection con, string origen)
         {
             try
             {
@@ -158,7 +158,7 @@ namespace ApiDTC.Services
                         Result = null
                     };
                 }
-                var result = GetMapper<T>(reader);
+                var result = GetMapper<T>(reader, origen);
                 con.Close();
                 return result;
             }
@@ -237,7 +237,7 @@ namespace ApiDTC.Services
                 };
             }
         }
-        private Response GetMapper<T>(SqlDataReader rdr)
+        private Response GetMapper<T>(SqlDataReader rdr, string origen)
         {
             try
             {
@@ -270,7 +270,7 @@ namespace ApiDTC.Services
             }
             catch (Exception ex)
             {
-                _apiLogger.WriteLog(ex, $"Mapper. La clase {_classMapped} no pudo ser mapeada en propiedad {_propertyMapped}");
+                _apiLogger.WriteLog(ex, $"Mapper. Método: {origen}. La clase {_classMapped} no pudo ser mapeada en propiedad {_propertyMapped}");
                 _propertyMapped = null;
                 _classMapped = null;
                 return new Response

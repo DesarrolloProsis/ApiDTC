@@ -172,7 +172,7 @@
                     "from SquareInventory a join LanesCatalog b on (a.CapufeLaneNum = b.CapufeLaneNum and a.IdGare = b.IdGare) " +
                     "join SquaresCatalog c on b.SquareCatalogId = c.SquareCatalogId " +
                     $"where c.SquareCatalogId = '{squareId}'", sql);
-                return _sqlResult.GetList<ComponentsInventoryList>(cmd, sql);
+                return _sqlResult.GetList<ComponentsInventoryList>(cmd, sql, "GetComponentsInventoryList");
             }
         }
 
@@ -181,7 +181,7 @@
             using(SqlConnection sql = new SqlConnection(_connectionString))
             {
                 SqlCommand cmd = new SqlCommand($"SELECT SinisterNumber, ReportNumber FROM [DTCData]", sql);
-                return _sqlResult.GetList<InvalidReferenceNumbers>(cmd, sql);
+                return _sqlResult.GetList<InvalidReferenceNumbers>(cmd, sql, "GetInvalidNumbers");
             }
         }
 
@@ -216,7 +216,7 @@
                                       "join DTCStatusCatalog s on d.StatusId = s.StatusId "+
                                       "where d.UserId = '" + idUser + "' and u.SquareCatalogId = '" + squareCatalog + "' and d.StatusId != 0 order by DateStamp desc ";
 
-                    var info_dtc = _sqlResult.GetList<DtcDataStr>(cmd, sql);                    
+                    var info_dtc = _sqlResult.GetList<DtcDataStr>(cmd, sql, "GetDtc");                    
                     return info_dtc;
 //
                 }
@@ -242,7 +242,7 @@
                     cmd.Parameters.Add("@ReferenceNumber", SqlDbType.NVarChar).Value = refNum;
 
 
-                    var storedResult = _sqlResult.GetList<ComponentTableForm>(cmd, sql);
+                    var storedResult = _sqlResult.GetList<ComponentTableForm>(cmd, sql, "GetTableForm");
                     if (storedResult.Result == null)
                         return storedResult;
 

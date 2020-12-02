@@ -41,7 +41,7 @@
                     cmd.Parameters.Add("@ComponentsRelationship", SqlDbType.Int).Value = relationShip;
                     cmd.Parameters.Add("@MainComponentsRelationship", SqlDbType.Int).Value = relationShipPrincipal;
 
-                    var storedResult = _sqlResult.GetList<Components>(cmd, sql);
+                    var storedResult = _sqlResult.GetList<Components>(cmd, sql, "GetComponentDataModificaciones");
                     if (storedResult.Result == null)
                         return storedResult;
                     var list = (List<Components>)storedResult.Result;
@@ -80,7 +80,7 @@
                     cmd.Parameters.Add("@SquareId", SqlDbType.NVarChar).Value = plaza;
                     cmd.Parameters.Add("@Component", SqlDbType.NVarChar).Value = Id;
 
-                    var storedResult = _sqlResult.GetList<Components>(cmd, sql);
+                    var storedResult = _sqlResult.GetList<Components>(cmd, sql, "GetComponentData");
                     if (storedResult.Result == null)
                         return storedResult;
                     var list = (List<Components>)storedResult.Result;
@@ -112,9 +112,10 @@
             using (SqlConnection sql  = new SqlConnection(_connectionString))
             {
                 SqlCommand cmd = new SqlCommand($"select a.Component as Description, a.Brand as Brand from SquareInventory a join LanesCatalog b on (a.CapufeLaneNum = b.CapufeLaneNum and a.IdGare = b.IdGare) join ComponentsStock c on a.Component = c.Description join AgreementInfo d on c.AgremmentInfoId = d.AgremmentInfoId where a.Brand != 'NO APLICA' and b.SquareCatalogid = '{plaza}' and d.Agrement = '{numConvenio}' group by a.Component, a.Brand", sql);
-                return _sqlResult.GetList<ComponentsDescription>(cmd, sql);
+                return _sqlResult.GetList<ComponentsDescription>(cmd, sql, "VersionPruebaComponent");
             }
         }
+
         public Response PutComponentInventary(UpdateInventory updateInventory)
         {
             using (SqlConnection sql = new SqlConnection(_connectionString))
@@ -198,7 +199,7 @@
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.Add("@AgreementId", SqlDbType.Int).Value = AgreementId;
 
-                    var select = _sqlResult.GetList<ComponentsDTCBox>(cmd, sql);
+                    var select = _sqlResult.GetList<ComponentsDTCBox>(cmd, sql, "GetComponentsData");
 
                     List<ComponentsDTCBox> componentsDTCBoxes = (List<ComponentsDTCBox>)select.Result;
                     select.Result = null;
@@ -268,7 +269,7 @@
     " from SquareInventory a join LanesCatalog b on (a.CapufeLaneNum = b.CapufeLaneNum and a.IdGare = b.IdGare)"+
     $" where b.SquareCatalogId = {squareId}"+
     " group by Component", sql);
-                return _sqlResult.GetList<ComponentsInventory>(cmd, sql);
+                return _sqlResult.GetList<ComponentsInventory>(cmd, sql, "GetComponentsInventory");
             }
         }
 
@@ -277,7 +278,7 @@
             using (SqlConnection sql = new SqlConnection(_connectionString))
             {
                 SqlCommand cmd = new SqlCommand($"select TypeUbicationId,Name Ubicacion from TypesUbication", sql);
-                return _sqlResult.GetList<ComponentsInventoryUbication>(cmd, sql);
+                return _sqlResult.GetList<ComponentsInventoryUbication>(cmd, sql, "GetComponentsInventoryUbication");
             }
         }
 
@@ -291,7 +292,7 @@
                     "on (a.CapufeLaneNum = b.CapufeLaneNum and a.IdGare = b.IdGare) "+
                     $"where a.Component = '{Component}' and b.SquareCatalogId = '{squareId}' " +
                     "group by b.Lane", sql);
-                return _sqlResult.GetList<ComponentsInventoryLane>(cmd, sql);
+                return _sqlResult.GetList<ComponentsInventoryLane>(cmd, sql, "GetComponentsInventoryLane");
             }
         }
 
@@ -313,7 +314,7 @@
                         "on (a.CapufeLaneNum = b.CapufeLaneNum and a.IdGare = b.IdGare) " +
                     "join TypesUbication c on a.TypeUbicationId = c.TypeUbicationId " +
                     $"where Component = '{Component}' and b.Lane = '{Lane}' and b.SquareCatalogId = '{squareId}'", sql);
-                return _sqlResult.GetList<ComponentsInventoryDescription>(cmd, sql);
+                return _sqlResult.GetList<ComponentsInventoryDescription>(cmd, sql, "GetComponentsInventoryDescription");
             }
         }
 
