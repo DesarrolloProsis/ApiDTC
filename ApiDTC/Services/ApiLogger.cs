@@ -5,6 +5,7 @@ namespace ApiDTC.Services
 
     public class ApiLogger
     {
+        //TODO -> Por plaza, con código y petición origen
         public void WriteLog(Exception info, string metodo)
         {
             if (File.Exists(@"C:\temporal\Log.txt"))
