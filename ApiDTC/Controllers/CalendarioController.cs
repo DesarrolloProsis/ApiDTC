@@ -28,31 +28,37 @@
         }
         #endregion
 
-        [HttpGet("Mantenimiento/{plaza}/{month}/{year}/{userId}/{squareId}")]
-        public IActionResult GetCalendarioMantenimiento(string plaza, int month, int year, int userId, string squareId)
+        #region Methods
+        [HttpGet("Mantenimiento/{clavePlaza}/{month}/{year}/{userId}/{squareId}")]
+        public IActionResult GetCalendarioMantenimiento(string clavePlaza, int month, int year, int userId, string squareId)
         {
-            var dataSet = _db.GetStorePdf(month, year, userId, squareId);
-            CalendarioPdfCreation pdf = new CalendarioPdfCreation(dataSet.Tables[1], dataSet.Tables[0], plaza, new ApiLogger(), month, year, squareId);
+            var dataSet = _db.GetStorePdf(clavePlaza, month, year, userId, squareId);
+            if (dataSet.Tables[1].Rows.Count == 0)
+                return NotFound();
+            CalendarioPdfCreation pdf = new CalendarioPdfCreation(dataSet.Tables[1], dataSet.Tables[0], clavePlaza, new ApiLogger(), month, year, squareId);
             var pdfResult = pdf.NewPdf();
             return File(new FileStream(pdfResult.Result.ToString(), FileMode.Open, FileAccess.Read), "application/pdf");
         }
 
-        [HttpDelete("DeleteCalendar/{month}/{year}/{userId}/{squareId}")]
-        public ActionResult<Response> DeleteCalendar(int month, int year, int userId, string squareId)
+
+        //[HttpDelete("DeleteCalendar/{month}/{year}/{userId}/{squareId}")]
+        [HttpDelete("DeleteCalendar/{clavePlaza}/{month}/{year}/{userId}/{squareId}")]
+        public ActionResult<Response> DeleteCalendar(string clavePlaza, int month, int year, int userId, string squareId)
         {
-            var get = _db.DeleteCalendar(month, year, userId, squareId);
+            var get = _db.DeleteCalendar(clavePlaza, month, year, userId, squareId);
             if (get.Result == null)
                 return BadRequest(get);
             else
                 return Ok(get);
         }
         
-        [HttpPost("Actividad")]
-        public ActionResult<Response> Post([FromBody] ActividadCalendario actividad)
+        //[HttpPost("Actividad")]
+        [HttpPost("Actividad/{clavePlaza}")]
+        public ActionResult<Response> Post(string clavePlaza, [FromBody] ActividadCalendario actividad)
         {
             if (ModelState.IsValid)
             {
-                var get = _db.InsertActivity(actividad);
+                var get = _db.InsertActivity(clavePlaza, actividad);
                 if (get.Result == null)
                     return BadRequest(get);
                 else
@@ -62,12 +68,13 @@
         }
 
 
-        [HttpPost("ObservacionesInsert")]
-        public ActionResult<Response> ObservacionesInsert([FromBody] ActividadCalendario actividad)
+        //[HttpPost("ObservacionesInsert")]
+        [HttpPost("ObservacionesInsert/{clavePlaza}")]
+        public ActionResult<Response> ObservacionesInsert(string clavePlaza, [FromBody] ActividadCalendario actividad)
         {
             if (ModelState.IsValid)
             {
-                var get = _db.InsertComent(actividad);
+                var get = _db.InsertComent(clavePlaza, actividad);
                 if (get.Result == null)
                     return BadRequest(get);
                 else
@@ -76,12 +83,12 @@
             return BadRequest(ModelState);
         }
 
-        [HttpPost("getComentario")]
-        public ActionResult<Response> GetComenterio([FromBody] ActividadMesYear infoActividad)
+        [HttpPost("getComentario/{clavePlaza}")]
+        public ActionResult<Response> GetComentario(string clavePlaza, [FromBody] ActividadMesYear infoActividad)
         {
             if (ModelState.IsValid)
             {
-                var get = _db.GetStoreFrontComment(infoActividad);
+                var get = _db.GetStoreFrontComment(clavePlaza, infoActividad);
                 if (get.Result == null)
                     return BadRequest(get);
                 else
@@ -90,12 +97,12 @@
             return BadRequest(ModelState);
         }
 
-        [HttpPost("ActividadMesYear")]
-        public ActionResult<Response> GetActividad([FromBody] ActividadMesYear infoActividad)
+        [HttpPost("ActividadMesYear/{clavePlaza}")]
+        public ActionResult<Response> GetActividad(string clavePlaza, [FromBody] ActividadMesYear infoActividad)
         {
             if (ModelState.IsValid)
             {
-                var get = _db.GetActivity(infoActividad);
+                var get = _db.GetActivity(clavePlaza, infoActividad);
                 if (get.Result == null)
                     return BadRequest(get);
                 else
@@ -103,5 +110,6 @@
             }
             return BadRequest(ModelState);
         }
+        #endregion
     }
 }

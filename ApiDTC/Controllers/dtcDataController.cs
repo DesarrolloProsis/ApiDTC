@@ -1,8 +1,6 @@
 ﻿namespace ApiDTC.Controllers
 {
     using System;
-    using System.Collections.Generic;
-    using System.Threading.Tasks;
     using ApiDTC.Data;
     using ApiDTC.Models;
     using Microsoft.AspNetCore.Mvc;
@@ -11,66 +9,75 @@
     [ApiController]
     public class DtcDataController : ControllerBase
     {
+        #region Attributes
         private readonly DtcDataDb _db;
+        #endregion
+
+        #region Constructor
         public DtcDataController(DtcDataDb db)
         {
             this._db = db ?? throw new ArgumentNullException(nameof(db));
         }
+        #endregion
 
-        //Agregar imágenes
-        //GET: api/dtcData
-        [HttpGet("{IdUser}/{SquareCatalog}")]
-        public ActionResult<Response> Get(int IdUser, string SquareCatalog)
+        #region Methods
+        
+        //[HttpGet("{IdUser}/{SquareCatalog}")]
+        [HttpGet("{clavePlaza}/{IdUser}/{SquareCatalog}")]
+        public ActionResult<Response> Get(string clavePlaza, int IdUser, string SquareCatalog)
         {   
-            var get = _db.GetDTC(IdUser, SquareCatalog);
+            var get = _db.GetDTC(clavePlaza, IdUser, SquareCatalog);
             if(get.Result == null)
                 return NotFound(get);
             else
                 return Ok(get);
         }
 
-        [HttpGet("Open/{IdUser}/{SquareCatalog}")]
-        public ActionResult<Response> GetOpen(int IdUser, string SquareCatalog)
+        //[HttpGet("Open/{IdUser}/{SquareCatalog}")]
+        [HttpGet("Open/{clavePlaza}/{IdUser}/{SquareCatalog}")]
+        public ActionResult<Response> GetOpen(string clavePlaza, int IdUser, string SquareCatalog)
         {
-            var get = _db.GetDTC(IdUser, SquareCatalog);
+            var get = _db.GetDTC(clavePlaza, IdUser, SquareCatalog);
             if (get.Result == null)
                 return NotFound(get);
             else
                 return Ok(get);
         }
 
-        [HttpGet("TableForm/{refNum}")]
-        public ActionResult<Response> Ge(string refNum)
+        //[HttpGet("TableForm/{refNum}")]
+        [HttpGet("TableForm/{clavePlaza}/{refNum}")]
+        public ActionResult<Response> Ge(string clavePlaza, string refNum)
         {
-            var get = _db.GetTableForm(refNum);
+            var get = _db.GetTableForm(clavePlaza, refNum);
             if (get.Result == null)
                 return NotFound(get);
             else
                 return Ok(get);
         }
 
-        [HttpGet("EditInfo/{refNum}")]
-        public ActionResult<Response> GetEditInfo(string refNum)
+        //[HttpGet("EditInfo/{refNum}")]
+        [HttpGet("EditInfo/{clavePlaza}/{refNum}")]
+        public ActionResult<Response> GetEditInfo(string clavePlaza, string refNum)
         {
-            var get = _db.EditReferece(refNum);
+            var get = _db.EditReferece(clavePlaza, refNum);
             if (get.Result == null)
                 return NotFound(get);
             else
                 return Ok(get);
         }
 
-        [HttpGet("EditInfo/Open/{refNum}")]
-        public ActionResult<Response> GetEditInfoOpen(string refNum)
+        [HttpGet("EditInfo/Open/{clavePlaza}/{refNum}")]
+        public ActionResult<Response> GetEditInfoOpen(string clavePlaza, string refNum)
         {
-            var get = _db.EditRefereceOpen(refNum);
+            var get = _db.EditRefereceOpen(clavePlaza, refNum);
             if (get.Result == null)
                 return NotFound(get);
             else
                 return Ok(get);
         }
 
-        [HttpGet("{refNum}")]
-        public ActionResult<Response> GetDtcData(string refNum)
+        [HttpGet("{clavePlaza}/{refNum}")]
+        public ActionResult<Response> GetDtcData(string clavePlaza, string refNum)
         {
             var get = _db.GetReferenceNumber(FormatUtil.ReferenceFormat(refNum));
             if(get.Result == null)
@@ -78,52 +85,51 @@
             else
                 return Ok(get);
         }
-        [HttpGet("InvalidReferenceNumbers")]
-        public ActionResult<Response> GetInvalidReferenceNumbers()
+
+        //[HttpGet("InvalidReferenceNumbers")]
+        [HttpGet("InvalidReferenceNumbers/{clavePlaza}")]
+        public ActionResult<Response> GetInvalidReferenceNumbers(string clavePlaza)
         {
-            var get = _db.GetInvalidNumbers();
+            var get = _db.GetInvalidNumbers(clavePlaza);
             if(get.Result == null)
                 return NotFound(get);
             else
                 return Ok(get);
         }
 
-
-        [HttpGet("InventoryComponentsList/{squareCatalog}")]
-        public ActionResult<Response> GetComponentsInventoryList(string squareCatalog)
+        //[HttpGet("InventoryComponentsList/{squareCatalog}")]
+        [HttpGet("InventoryComponentsList/{clavePlaza}/{squareCatalog}")]
+        public ActionResult<Response> GetComponentsInventoryList(string clavePlaza, string squareCatalog)
         {
-            var get = _db.GetComponentsInventoryList(squareCatalog);
+            var get = _db.GetComponentsInventoryList(clavePlaza, squareCatalog);
             if (get.Result == null)
                 return NotFound(get);
             else
                 return Ok(get);
         }
 
-
-
-        //TODO Ajustar petición POST nuevo DTC
-        // POST: api/dtcData/NuevoDtc
-        [HttpPost]
-        public ActionResult<Response> Post([FromBody] DtcData dtcData)
+        //[HttpPost]
+        [HttpPost("{clavePlaza}")]
+        public ActionResult<Response> Post(string clavePlaza, [FromBody] DtcData dtcData)
         {
             if(ModelState.IsValid)
             {
-                var get = _db.GetStoredDtcData(dtcData);
+                var get = _db.GetStoredDtcData(clavePlaza, dtcData);
                 if(get.SqlResult == null)
                     return BadRequest(get);
                 else
                     return StatusCode(201, get);    
-                    //return Created($"api/dtcdata/{dtcData.ReferenceNumber}", dtcData);
             }
             return BadRequest(ModelState);
         }
 
-        [HttpDelete("Delete/{referenceNumber}")]
-        public ActionResult<Response> Delete(string referenceNumber)
+        //[HttpDelete("Delete/{referenceNumber}")]
+        [HttpDelete("Delete/{clavePlaza}/{referenceNumber}")]
+        public ActionResult<Response> Delete(string clavePlaza, string referenceNumber)
         {
             if (ModelState.IsValid)
             {
-                var delete = _db.DeleteDtcData(referenceNumber);
+                var delete = _db.DeleteDtcData(clavePlaza, referenceNumber);
                 if (delete.SqlResult == null)
                     return NotFound(delete);
                 else
@@ -132,13 +138,15 @@
             return BadRequest(ModelState);
         }
 
-        [HttpPut("UpdateStatus/{referenceNumber}")]
-        public ActionResult<Response> Update(string referenceNumber)
+        //[HttpPut("UpdateStatus/{referenceNumber}")]
+        [HttpPut("UpdateStatus/{clavePlaza}/{referenceNumber}")]
+        public ActionResult<Response> Update(string clavePlaza, string referenceNumber)
         {
-            var put = _db.UpdateDtcStatus(referenceNumber);
+            var put = _db.UpdateDtcStatus(clavePlaza, referenceNumber);
             if(put.Result == null)
                 return NotFound(put);
             return Ok(put);
         }
+        #endregion
     }
 }

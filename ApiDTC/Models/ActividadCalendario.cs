@@ -2,7 +2,7 @@
 
 namespace ApiDTC.Models
 {
-    using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
 
     public class ActividadCalendario
     {
@@ -24,6 +24,7 @@ namespace ApiDTC.Models
 
         public bool FinalFlag { get; set; }
 
+        [StringLength(300)]
         public string Comment { get; set; }
     }
 

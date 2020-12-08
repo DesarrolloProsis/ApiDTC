@@ -5,28 +5,40 @@ namespace ApiDTC.Services
 
     public class ApiLogger
     {
+        readonly string DirectorioLogsBitacora = @"C:\Bitacora";
         //TODO -> Por plaza, con código y petición origen
-        public void WriteLog(Exception info, string metodo)
+        /*
+         1 = SQL Error
+         2 = IO Error
+         3 = Genérico
+         4 = Eventos 
+         5 = iTextSharp
+         */
+        public void WriteLog(string plaza, Exception info, string metodo, int tipo)
         {
-            if (File.Exists(@"C:\temporal\Log.txt"))
-            {
-                string[] lineas = File.ReadAllLines(@"C:\temporal\Log.txt");
-                lineas[0] = $"{metodo}. {DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss")}. {Convert.ToInt32(info.StackTrace.Substring(info.StackTrace.LastIndexOf(" ") + 1))}. {info.Message}.\n{lineas[0]}";
-                File.Delete(@"C:\temporal\Log.txt");
-                File.WriteAllLines(@"C:\temporal\Log.txt", lineas);
-            }
-            else File.WriteAllText(@"C:\temporal\Log.txt", $"{metodo}. {DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss")}. {Convert.ToInt32(info.StackTrace.Substring(info.StackTrace.LastIndexOf(" ") + 1))}. {info.Message}.");
+            string logFile = $@"{DirectorioLogsBitacora}\{plaza}_log.txt";
+
+            if (!Directory.Exists(DirectorioLogsBitacora))
+                Directory.CreateDirectory(DirectorioLogsBitacora);
+
+            //
+            string error = $"{metodo} [{tipo}] {DateTime.Now:dd/MM/yyyy hh:mm:ss}: Line: {Convert.ToInt32(info.StackTrace.Substring(info.StackTrace.LastIndexOf(" ") + 1))} {info.Message}";
+            if (File.Exists(logFile))                
+                File.AppendText(error);
+            else File.WriteAllText(logFile, error);
         }
-        public void WriteLog(string info)
+
+        public void WriteLog(string plaza, string metodo, int tipo, string info)
         {
-            if (File.Exists(@"C:\temporal\Log.txt"))
-            {
-                string[] lineas = File.ReadAllLines(@"C:\temporal\Log.txt");
-                lineas[0] = $"{DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss")}. {info}.\n{lineas[0]}";
-                File.Delete(@"C:\temporal\Log.txt");
-                File.WriteAllLines(@"C:\temporal\Log.txt", lineas);
-            }
-            else File.WriteAllText(@"C:\temporal\Log.txt", $"{DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss")}. {info}.");
+            string logFile = $@"{DirectorioLogsBitacora}\{plaza}_log.txt";
+
+            if (!Directory.Exists(DirectorioLogsBitacora))
+                Directory.CreateDirectory(DirectorioLogsBitacora);
+
+            string evento = $"{metodo} [4] {DateTime.Now:dd/MM/yyyy hh:mm:ss}: {info}";
+            if (File.Exists(logFile))
+                File.AppendText(evento);
+            else File.WriteAllText(logFile, evento);
         }
     }
 }

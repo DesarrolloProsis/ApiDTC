@@ -17,9 +17,9 @@ namespace ApiDTC.Data
         #region Attributes
         private readonly string _connectionString;
 
-        private SqlResult _sqlResult;
+        private readonly SqlResult _sqlResult;
 
-        private ApiLogger _apiLogger;
+        private readonly ApiLogger _apiLogger;
         #endregion
 
         #region Constructor
@@ -31,10 +31,11 @@ namespace ApiDTC.Data
         }
         #endregion
 
-        public Response InsertComent(ActividadCalendario actividad)
+        #region Methods
+        public Response InsertComent(string clavePlaza, ActividadCalendario actividad)
         {
              try
-            {
+             {
                 using (SqlConnection sql = new SqlConnection(_connectionString)) 
                 {                                         
                         using (SqlCommand cmd = new SqlCommand("dbo.spCalendarComent", sql))
@@ -62,14 +63,13 @@ namespace ApiDTC.Data
             catch(SqlException ex)
 
             {
-                _apiLogger.WriteLog(ex, "InsertComment");
+                _apiLogger.WriteLog(clavePlaza, ex, "CalendarioDb: InsertComment", 1);
                 return new Response { Message = ex.Message, Result = null };
             }
 
         }
 
-
-        public Response InsertActivity(ActividadCalendario actividad)
+        public Response InsertActivity(string clavePlaza, ActividadCalendario actividad)
         {
             try
             {
@@ -112,13 +112,13 @@ namespace ApiDTC.Data
             }
             catch(SqlException ex)
             {
-                _apiLogger.WriteLog(ex, "InsertActivity");
+                _apiLogger.WriteLog(clavePlaza, ex, "CalendarioDb: InsertActivity", 1);
                 return new Response { Message = ex.Message, Result = null };
             }
             
         }
 
-        public Response DeleteCalendar(int month, int year, int userId, string squareId)
+        public Response DeleteCalendar(string clavePlaza, int month, int year, int userId, string squareId)
         {
             try
             {
@@ -142,7 +142,7 @@ namespace ApiDTC.Data
             }
             catch(SqlException ex)
             {
-                _apiLogger.WriteLog(ex, "UpdateUserStatus");
+                _apiLogger.WriteLog(clavePlaza, ex, "CalendarioDb: DeleteCalendar", 1);
                 return new Response
                 {
                     Message = $"{ex.Message}",
@@ -151,7 +151,7 @@ namespace ApiDTC.Data
             }
         }
 
-        public DataSet GetStorePdf(int month, int year, int userId, string squareId)
+        public DataSet GetStorePdf(string clavePlaza, int month, int year, int userId, string squareId)
         {
             try
             {
@@ -180,12 +180,12 @@ namespace ApiDTC.Data
             }
             catch (SqlException ex)
             {
-                _apiLogger.WriteLog(ex, "GetStorePDF");
+                _apiLogger.WriteLog(clavePlaza, ex, "CalendarioDb: GetStorePdf", 1);
                 return null;
             }
         }
 
-        public Response GetStoreFrontLane(ActividadMesYear actividad)
+        public Response GetStoreFrontLane(string clavePlaza, ActividadMesYear actividad)
         {
             try
             {
@@ -217,9 +217,9 @@ namespace ApiDTC.Data
                     }
                 }
             }
-            catch (Exception ex)
+            catch (SqlException ex)
             {
-                _apiLogger.WriteLog(ex, "GetStoreFrontLane");
+                _apiLogger.WriteLog(clavePlaza, ex, "CalendarioDb: GetStoreFrontLane", 1);
                 return new Response
                 {
                     Message = $"Error: {ex.Message}",
@@ -228,7 +228,7 @@ namespace ApiDTC.Data
             }
         }
 
-        public Response GetStoreFrontComment(ActividadMesYear actividad)
+        public Response GetStoreFrontComment(string clavePlaza, ActividadMesYear actividad)
         {
             try
             {
@@ -261,7 +261,7 @@ namespace ApiDTC.Data
             }
             catch (SqlException ex)
             {
-                _apiLogger.WriteLog(ex, "GetStoreFrontComment");
+                _apiLogger.WriteLog(clavePlaza, ex, "CalendarioDb: GetStoreFrontComment", 1);
                 return new Response
                 {
                     Message = $"Error: {ex.Message}",
@@ -270,7 +270,7 @@ namespace ApiDTC.Data
             }
         }
 
-        public Response GetActivity(ActividadMesYear actividad)
+        public Response GetActivity(string clavePlaza, ActividadMesYear actividad)
         {
             try
             {
@@ -313,10 +313,11 @@ namespace ApiDTC.Data
             }
             catch (SqlException ex)
             {
-                _apiLogger.WriteLog(ex, "InsertActivity");
+                _apiLogger.WriteLog(clavePlaza, ex, "CalendarioDb: GetActivity", 1);
                 return new Response { Message = ex.Message, Result = null };
             }
 
         }
+        #endregion
     }
 }
