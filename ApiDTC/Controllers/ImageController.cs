@@ -1,64 +1,72 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using Microsoft.AspNetCore.Hosting;
-using ApiDTC.Models;
-using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
-using System.Drawing;
-using Microsoft.AspNetCore.Http;
-
-namespace ApiDTC.Controllers
+﻿namespace ApiDTC.Controllers
 {
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using Microsoft.AspNetCore.Hosting;
+    using ApiDTC.Models;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.AspNetCore.Http;
+    using ApiDTC.Services;
+
     [Route("api/[controller]")]
     [ApiController]
     public class ImageController : ControllerBase
     {
-        private IHostingEnvironment _environment;
 
+        #region Attributes
+        private readonly IHostingEnvironment _environment;
+
+        private readonly ApiLogger _apiLogger;
+        #endregion
+
+        #region Constructor
         public ImageController(IHostingEnvironment environment)
         {
             _environment = environment;
+            _apiLogger = new ApiLogger();
         }
+        #endregion
 
-        //SquareCatalogId, ReferenceNumber, Imagen
-        [HttpPost("InsertImage")]
-        public ActionResult<Response> Prueba([FromForm(Name = "image")] IFormFile image, [FromForm(Name = "id")] string referenceNumber, [FromForm(Name = "plaza")] string plaza)
+        #region Methods
+        //[HttpPost("InsertImage")]
+        [HttpPost("InsertImage/{clavePlaza}")]
+        public ActionResult<Response> InsertImage(string clavePlaza, [FromForm(Name = "image")] IFormFile image, [FromForm(Name = "id")] string referenceNumber, [FromForm(Name = "plaza")] string plaza)
         {
-            if (image.Length > 0 || image == null)
+            if (image.Length > 0 || image != null)
             {
+                
+                int numberOfImages;
+                string directoy = $@"{_environment.WebRootPath}DtcImages\{plaza}\{referenceNumber}", fileName;
                 try
                 {
-                    int numberOfImages;
-                    string directoy = $@"{_environment.WebRootPath}DtcImages\{plaza}\{referenceNumber}";
-
-                    if(!Directory.Exists(directoy))
+                    if (!Directory.Exists(directoy))
                         Directory.CreateDirectory(directoy);
                     numberOfImages = Directory.GetFiles(directoy).Length + 1;
-                    string fileName = $"{referenceNumber}_Image_{numberOfImages}{image.FileName.Substring(image.FileName.LastIndexOf('.'))}";
+                    fileName = $"{referenceNumber}_Image_{numberOfImages}{image.FileName.Substring(image.FileName.LastIndexOf('.'))}";
                     while (System.IO.File.Exists(Path.Combine(directoy, fileName)))
                     {
                         numberOfImages += 1;
                         fileName = $"{referenceNumber}_Image_{numberOfImages}{image.FileName.Substring(image.FileName.LastIndexOf('.'))}";
                     }
                     var fs = new FileStream(Path.Combine(directoy, fileName), FileMode.Create);
-                    //image.CopyTo(new FileStream(Path.Combine(directoy, fileName), FileMode.Create));
                     image.CopyTo(fs);
                     fs.Close();
-
-                    return Ok(directoy);
                 }
                 catch (IOException ex)
                 {
+                    _apiLogger.WriteLog(clavePlaza, ex, "ImageController: InsertImage", 2);
                     return NotFound(ex.ToString());
                 }
+                return Ok(directoy);
             }
             else
-                return NotFound("Insert another image");
+                return NotFound("Insert another image");   
         }
 
-        [HttpGet("DeleteDtcImages/{plaza}/{referenceNumber}/")]
-        public ActionResult<DtcImage> Download(string plaza, string referenceNumber)
+        //[HttpGet("DeleteDtcImages/{plaza}/{referenceNumber}/")]
+        [HttpGet("DeleteDtcImages/{clavePlaza}/{plaza}/{referenceNumber}/")]
+        public ActionResult<DtcImage> DeleteImage(string clavePlaza, string plaza, string referenceNumber)
         {
             try
             {
@@ -70,12 +78,14 @@ namespace ApiDTC.Controllers
             }
             catch (IOException ex)
             {
+                _apiLogger.WriteLog(clavePlaza, ex, "ImageController: DeleteImage", 2);
                 return NotFound(ex.ToString());
             }
         }
 
-        [HttpGet("Download/{plaza}/{referenceNumber}/{fileName}")]
-        public ActionResult<DtcImage> Download(string plaza, string referenceNumber, string fileName)
+        //[HttpGet("Download/{plaza}/{referenceNumber}/{fileName}")]
+        [HttpGet("Download/{clavePlaza}/{plaza}/{referenceNumber}/{fileName}")]
+        public ActionResult<DtcImage> Download(string clavePlaza, string plaza, string referenceNumber, string fileName)
         {
             try
             {
@@ -92,30 +102,34 @@ namespace ApiDTC.Controllers
             }
             catch (IOException ex)
             {
+                _apiLogger.WriteLog(clavePlaza, ex, "ImageController: Download", 2);
                 return NotFound(ex.ToString());
             }
         }
-        
-        [HttpGet("DownloadFile/{plaza}/{referenceNumber}/{fileName}")]
-        public IActionResult DownloadFile(string plaza, string referenceNumber, string fileName)
+
+        //[HttpGet("DownloadFile/{plaza}/{referenceNumber}/{fileName}")]
+        [HttpGet("DownloadFile/{clavePlaza}/{plaza}/{referenceNumber}/{fileName}")]
+        public IActionResult DownloadFile(string clavePlaza, string plaza, string referenceNumber, string fileName)
         {
             try
             {
                 string route = $@"{_environment.WebRootPath}DtcImages\{plaza}\{referenceNumber}\{fileName}";
                 if (!System.IO.File.Exists(route))
-                    return null;
+                    return NotFound("No existe el archivo");
                 Byte[] bitMap = System.IO.File.ReadAllBytes(route);
 
                 return File(bitMap, "Image/jpg");
             }
             catch (IOException ex)
             {
-                return null;
+                _apiLogger.WriteLog(clavePlaza, ex, "ImageController: DownloadFile", 2);
+                return NotFound(ex.ToString());
             }
         }
 
-        [HttpGet("DownloadBase/{plaza}/{referenceNumber}/{fileName}")]
-        public ActionResult DownloadBase(string plaza, string referenceNumber, string fileName)
+        //[HttpGet("DownloadBase/{plaza}/{referenceNumber}/{fileName}")]
+        [HttpGet("DownloadBase/{clavePlaza}/{plaza}/{referenceNumber}/{fileName}")]
+        public ActionResult DownloadBase(string clavePlaza, string plaza, string referenceNumber, string fileName)
         {
             try
             {
@@ -128,12 +142,14 @@ namespace ApiDTC.Controllers
             }
             catch (IOException ex)
             {
-                return NotFound(ex);
+                _apiLogger.WriteLog(clavePlaza, ex, "ImageController: DownloadBase", 2);
+                return NotFound(ex.ToString());
             }
         }
 
-        [HttpGet("GetImages/{plaza}/{referenceNumber}")]
-        public ActionResult<List<string>> GetImages(string plaza, string referenceNumber)
+        //[HttpGet("GetImages/{plaza}/{referenceNumber}")]
+        [HttpGet("GetImages/{clavePlaza}{plaza}/{referenceNumber}")]
+        public ActionResult<List<string>> GetImages(string clavePlaza, string plaza, string referenceNumber)
         {
             try
             {
@@ -147,12 +163,15 @@ namespace ApiDTC.Controllers
             }
             catch (IOException ex)
             {
+                _apiLogger.WriteLog(clavePlaza, ex, "ImageController: DownloadBase", 2);
                 return NotFound(ex.ToString());
             }
         }
+        
         //https://localhost:44358/api/image/Tlalpan/TLA-20002/TLA-20002_Image_1.jpg
-        [HttpGet("Delete/{plaza}/{referenceNumber}/{fileName}")]
-        public ActionResult<string> Delete(string plaza, string referenceNumber, string fileName)
+        //[HttpGet("Delete/{plaza}/{referenceNumber}/{fileName}")]
+        [HttpGet("Delete/{clavePlaza}/{plaza}/{referenceNumber}/{fileName}")]
+        public ActionResult<string> Delete(string clavePlaza, string plaza, string referenceNumber, string fileName)
         {
             try
             {
@@ -166,10 +185,10 @@ namespace ApiDTC.Controllers
             }
             catch (IOException ex)
             {
+                _apiLogger.WriteLog(clavePlaza, ex, "ImageController: Delete", 2);
                 return NotFound(ex.ToString());
             }
         }
+        #endregion
     }
-
-
 }

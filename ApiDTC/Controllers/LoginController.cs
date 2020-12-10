@@ -25,7 +25,7 @@ namespace ApiDTC.Controllers
         }
         #endregion
 
-        // GET: api/Login
+        #region Methods
         [HttpGet("{userName}/{passWord}/{flag}")]
         public ActionResult<Response> GetLogin(string userName, string passWord, bool flag)
         {        
@@ -35,9 +35,10 @@ namespace ApiDTC.Controllers
             else
                 return Ok(get);
         }
+
         // GET: api/Login
         [HttpGet("ValidUser/{userName}/{passWord}/{flag}")]
-        public ActionResult<Response> GetCookie(string userName, string passWord, bool flag)
+        public ActionResult<Response> ValidUser(string userName, string passWord, bool flag)
         {
             var get = _db.GetStoreLoginCookie(userName, passWord, flag);
             if(get.Result == null)
@@ -48,7 +49,7 @@ namespace ApiDTC.Controllers
         // GET: api/Login
         //Regresa técnicos de plaza
         [HttpGet("buscarTec/{numPlaza}")]
-        public ActionResult<Response> GetCookie(string numPlaza)
+        public ActionResult<Response> BuscarTec(string numPlaza)
         {
             var get = _db.GetTec(numPlaza);
             if(get.Result == null)
@@ -58,7 +59,7 @@ namespace ApiDTC.Controllers
         }
         // GET: api/Login
         [HttpGet("buscarHeaderTec/{idTec}")]
-        public ActionResult<Response> GetCookie(int idTec)
+        public ActionResult<Response> BuscarHeaderTec(int idTec)
         {
             var get = _db.GetHeadTec(idTec);
             if(get.Result == null)
@@ -66,6 +67,6 @@ namespace ApiDTC.Controllers
             else   
                 return Ok(get);
         }
-       
+        #endregion
     }
 }

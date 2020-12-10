@@ -72,7 +72,7 @@
             catch (SqlException ex)
             {
                 _apiLogger.WriteLog(clavePlaza, ex, "ComponentDb: GetComponentDataModificaciones", 1);
-                return new Response { Message = ex.Message, Result = null };
+                return new Response { Message = $"Error: {ex.Message}", Result = null };
             }
         }
         
@@ -120,7 +120,7 @@
             {
 
                 _apiLogger.WriteLog(clavePlaza, ex, "ComponentDb: GetComponentData", 1);
-                return new Response { Message = ex.Message, Result = null };
+                return new Response { Message = $"Error: {ex.Message}", Result = null };
             }
         }
         
@@ -137,7 +137,7 @@
             catch (SqlException ex)
             {
                 _apiLogger.WriteLog(clavePlaza, ex, "ComponentDb: VersionPruebaComponet", 1);
-                return new Response { Message = ex.Message, Result = null };
+                return new Response { Message = $"Error: {ex.Message}", Result = null };
             }
         }
 
@@ -184,7 +184,7 @@
             catch (SqlException ex)
             {
                 _apiLogger.WriteLog(clavePlaza, ex, "ComponentDb: PutComponentInventary", 1);
-                return new Response { Message = ex.Message, Result = null };
+                return new Response { Message = $"Error: {ex.Message}", Result = null };
             }
         }
 
@@ -226,7 +226,7 @@
             catch (SqlException ex)
             {
                 _apiLogger.WriteLog(clavePlaza, ex, "ComponentDb: InventoryListUpdate", 1);
-                return new Response { Message = ex.Message, Result = null };
+                return new Response { Message = $"Error: {ex.Message}", Result = null };
             }
         }
     
@@ -305,7 +305,7 @@
             catch (SqlException ex)
             {
                 _apiLogger.WriteLog(clavePlaza, ex, "ComponentDb: GetComponentsData", 1);
-                return new Response { Message = ex.Message, Result = null };
+                return new Response { Message = $"Error: {ex.Message}", Result = null };
             }
             
         }
@@ -326,7 +326,7 @@
             catch (SqlException ex)
             {
                 _apiLogger.WriteLog(clavePlaza, ex, "ComponentDb: GetComponentsInventory", 1);
-                return new Response { Message = ex.Message, Result = null };
+                return new Response { Message = $"Error: {ex.Message}", Result = null };
             }
         }
 
@@ -343,7 +343,7 @@
             catch (SqlException ex)
             {
                 _apiLogger.WriteLog(clavePlaza, ex, "ComponentDb: GetComponentsInventoryUbication", 1);
-                return new Response { Message = ex.Message, Result = null };
+                return new Response { Message = $"Error: {ex.Message}", Result = null };
             }
         }
 
@@ -365,7 +365,7 @@
             catch (SqlException ex)
             {
                 _apiLogger.WriteLog(clavePlaza, ex, "ComponentDb: GetComponentsInventoryLane", 1);
-                return new Response { Message = ex.Message, Result = null };
+                return new Response { Message = $"Error: {ex.Message}", Result = null };
             }
             
         }
@@ -396,7 +396,7 @@
             catch (SqlException ex)
             {
                 _apiLogger.WriteLog(clavePlaza, ex, "CalendarioDb: InsertComment", 1);
-                return new Response { Message = ex.Message, Result = null };
+                return new Response { Message = $"Error: {ex.Message}", Result = null };
             }
             
         }

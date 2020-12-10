@@ -142,7 +142,7 @@
                 catch (SqlException ex)
                 {
                     _apiLogger.WriteLog(clavePlaza, ex, "DtcDataDb: GetReferenceNumber", 1);
-                    return new Response { Message = ex.Message, Result = null };
+                    return new Response { Message = $"Error: {ex.Message}", Result = null };
                 }
             }
         }
@@ -169,7 +169,7 @@
             catch (SqlException ex)
             {
                 _apiLogger.WriteLog(clavePlaza, ex, "DtcDataDb: UpdateDtcStatus", 1);
-                return new Response { Message = ex.Message, Result = null };
+                return new Response { Message = $"Error: {ex.Message}", Result = null };
             }
         }
 
@@ -189,7 +189,7 @@
             catch (SqlException ex)
             {
                 _apiLogger.WriteLog(clavePlaza, ex, "DtcDataDb: GetComponentsInventoryList", 1);
-                return new Response { Message = ex.Message, Result = null };
+                return new Response { Message = $"Error: {ex.Message}", Result = null };
             }
         }
 
@@ -206,7 +206,7 @@
             catch (SqlException ex)
             {
                 _apiLogger.WriteLog(clavePlaza, ex, "DtcDataDb: GetInvalidNumbers", 1);
-                return new Response { Message = ex.Message, Result = null };
+                return new Response { Message = $"Error: {ex.Message}", Result = null };
             }
         }
 
@@ -249,7 +249,7 @@
                 catch(SqlException ex)
                 {
                     _apiLogger.WriteLog(clavePlaza, ex, "DtcDataDb: GetDTC", 1);
-                    return new Response { Message = ex.Message, Result = null };
+                    return new Response { Message = $"Error: {ex.Message}", Result = null };
                 } 
             }
         }
@@ -282,7 +282,7 @@
             catch (SqlException ex)
             {
                 _apiLogger.WriteLog(clavePlaza, ex, "DtcDataDb: GetTableForm", 1);
-                return new Response { Message = ex.Message, Result = null };
+                return new Response { Message = $"Error: {ex.Message}", Result = null };
             }
         }
 
@@ -370,7 +370,7 @@
             catch (SqlException ex)
             {
                 _apiLogger.WriteLog(clavePlaza, ex, "DtcDataDb: EditReferece", 1);
-                return new Response { Message = ex.Message, Result = null };
+                return new Response { Message = $"Error: {ex.Message}", Result = null };
             }
         }
 
@@ -442,7 +442,7 @@
             catch (SqlException ex)
             {
                 _apiLogger.WriteLog(clavePlaza, ex, "DtcDataDb: EditRefereceOpen", 1);
-                return new Response { Message = ex.Message, Result = null };
+                return new Response { Message = $"Error: {ex.Message}", Result = null };
             }
         }
 

@@ -12,7 +12,8 @@ namespace ApiDTC.Services
          2 = IO Error
          3 = Genérico
          4 = Eventos 
-         5 = iTextSharp
+         5 = PdfException
+         6 = ArgumentOutOfRange
          */
         public void WriteLog(string plaza, Exception info, string metodo, int tipo)
         {

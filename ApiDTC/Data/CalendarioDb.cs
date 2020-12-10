@@ -64,7 +64,7 @@ namespace ApiDTC.Data
 
             {
                 _apiLogger.WriteLog(clavePlaza, ex, "CalendarioDb: InsertComment", 1);
-                return new Response { Message = ex.Message, Result = null };
+                return new Response { Message = $"Error: {ex.Message}", Result = null };
             }
 
         }
@@ -113,7 +113,7 @@ namespace ApiDTC.Data
             catch(SqlException ex)
             {
                 _apiLogger.WriteLog(clavePlaza, ex, "CalendarioDb: InsertActivity", 1);
-                return new Response { Message = ex.Message, Result = null };
+                return new Response { Message = $"Error: {ex.Message}", Result = null };
             }
             
         }
@@ -143,11 +143,7 @@ namespace ApiDTC.Data
             catch(SqlException ex)
             {
                 _apiLogger.WriteLog(clavePlaza, ex, "CalendarioDb: DeleteCalendar", 1);
-                return new Response
-                {
-                    Message = $"{ex.Message}",
-                    Result = null
-                };
+                return new Response { Message = $"Error: {ex.Message}", Result = null };
             }
         }
 
@@ -220,11 +216,7 @@ namespace ApiDTC.Data
             catch (SqlException ex)
             {
                 _apiLogger.WriteLog(clavePlaza, ex, "CalendarioDb: GetStoreFrontLane", 1);
-                return new Response
-                {
-                    Message = $"Error: {ex.Message}",
-                    Result = null
-                };
+                return new Response { Message = $"Error: {ex.Message}", Result = null };
             }
         }
 
@@ -262,11 +254,7 @@ namespace ApiDTC.Data
             catch (SqlException ex)
             {
                 _apiLogger.WriteLog(clavePlaza, ex, "CalendarioDb: GetStoreFrontComment", 1);
-                return new Response
-                {
-                    Message = $"Error: {ex.Message}",
-                    Result = null
-                };
+                return new Response { Message = $"Error: {ex.Message}", Result = null };
             }
         }
 
@@ -314,7 +302,7 @@ namespace ApiDTC.Data
             catch (SqlException ex)
             {
                 _apiLogger.WriteLog(clavePlaza, ex, "CalendarioDb: GetActivity", 1);
-                return new Response { Message = ex.Message, Result = null };
+                return new Response { Message = $"Error: {ex.Message}", Result = null };
             }
 
         }

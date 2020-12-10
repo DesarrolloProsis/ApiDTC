@@ -27,29 +27,34 @@
         #endregion
 
         #region Methods
-        
-        public Response SearchReference(string referenceNumber)
+        public Response SearchReference(string clavePlaza, string referenceNumber)
         {
-            using(SqlConnection sql = new SqlConnection(_connectionString))
+            try
             {
-                SqlCommand cmd = new SqlCommand($"SELECT * FROM [DTCData] WHERE ReferenceNumber = '{referenceNumber}'", sql);
-                return _sqlResult.DataExists(cmd, sql);
+                using (SqlConnection sql = new SqlConnection(_connectionString))
+                {
+                    SqlCommand cmd = new SqlCommand($"SELECT * FROM [DTCData] WHERE ReferenceNumber = '{referenceNumber}'", sql);
+                    return _sqlResult.DataExists(cmd, sql);
+                }
+            }
+            catch (SqlException ex)
+            {
+                _apiLogger.WriteLog(clavePlaza, ex, "PdfConsultasDb: SearchReference", 1);
+                return new Response { Message = $"Error: {ex.Message}", Result = null };
             }
         }
-        
-        //TODO Check procedure
-        public DataSet GetStorePDF(string numeroReferencia, string inicialRef)
+       
+        public DataSet GetStorePDF(string clavePlaza, string numeroReferencia, string inicialRef)
         {
-            using (SqlConnection sql = new SqlConnection(_connectionString))
+            try
             {
-                using (SqlCommand cmd = new SqlCommand("sp_DTCtoPDFPrueba", sql))
+                using (SqlConnection sql = new SqlConnection(_connectionString))
                 {
-
-                    try
+                    using (SqlCommand cmd = new SqlCommand("sp_DTCtoPDFPrueba", sql))
                     {
                         SqlDataAdapter sqlDataAdapter = new SqlDataAdapter();
                         DataSet dataSet = new DataSet();
-                        
+
 
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.Add("@ReferenceNumber", SqlDbType.NVarChar).Value = numeroReferencia;
@@ -57,29 +62,28 @@
 
                         sql.Open();
                         sqlDataAdapter = new SqlDataAdapter(cmd);
-                        sqlDataAdapter.Fill(dataSet);               
+                        sqlDataAdapter.Fill(dataSet);
 
                         sql.Close();
 
                         return dataSet;
                     }
-                    catch (Exception ex)
-                    {
-                        _apiLogger.WriteLog(ex, "GetStorePDF");
-                        return null;   
-                    }
                 }
+            }
+            catch (SqlException ex)
+            {
+                _apiLogger.WriteLog(clavePlaza, ex, "PdfConsultasDb: GetStorePDF", 1);
+                return null;
             }
         }
 
-        public DataSet GetStorePDFOpen(string numeroReferencia)
+        public DataSet GetStorePDFOpen(string clavePlaza, string numeroReferencia)
         {
-            using (SqlConnection sql = new SqlConnection(_connectionString))
+            try
             {
-                using (SqlCommand cmd = new SqlCommand("spDTCtoPDFOpen", sql))
+                using (SqlConnection sql = new SqlConnection(_connectionString))
                 {
-
-                    try
+                    using (SqlCommand cmd = new SqlCommand("spDTCtoPDFOpen", sql))
                     {
                         SqlDataAdapter sqlDataAdapter = new SqlDataAdapter();
                         DataSet dataSet = new DataSet();
@@ -96,16 +100,14 @@
 
                         return dataSet;
                     }
-                    catch (Exception ex)
-                    {
-                        _apiLogger.WriteLog(ex, "GetStorePDF");
-                        return null;
-                    }
                 }
             }
+            catch (SqlException ex)
+            {
+                _apiLogger.WriteLog(clavePlaza, ex, "PdfConsultasDb: GetStorePDFOpen", 1);
+                return new Response { Message = $"Error: {ex.Message}", Result = null };
+            }
         }
-
-
         #endregion
     }
 }
