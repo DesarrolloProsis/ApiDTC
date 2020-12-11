@@ -11,5 +11,6 @@ namespace ApiDTC.Controllers
     [ApiController]
     public class PreventivoPdfController : ControllerBase
     {
+
     }
 }
