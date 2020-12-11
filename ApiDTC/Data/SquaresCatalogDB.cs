@@ -2,10 +2,7 @@
 {
     using ApiDTC.Models;
     using ApiDTC.Services;
-    using Microsoft.AspNetCore.Mvc.Rendering;
     using Microsoft.Extensions.Configuration;
-    using System;
-    using System.Collections.Generic;
     using System.Data;
     using System.Data.SqlClient;
 
@@ -14,49 +11,65 @@
         #region Attributes
         private readonly string _connectionString;
 
-        private SqlResult _sqlResult;
+        private readonly SqlResult _sqlResult;
+
+        private readonly ApiLogger _apiLogger;
         #endregion
         
         #region Constructor
-        public SquaresCatalogDb(IConfiguration configuration, SqlResult sqlResult)
+        public SquaresCatalogDb(IConfiguration configuration, SqlResult sqlResult, ApiLogger apiLogger)
         {
+            _apiLogger = apiLogger;
             _sqlResult = sqlResult;
             _connectionString = configuration.GetConnectionString("defaultConnection");
         }
         #endregion
 
         #region Methods
-        //Test SquaresCatalog
-        public Response GetSquaresCatalog()
+        public Response GetSquaresCatalog(string clavePlaza)
         {
-            using (SqlConnection sql = new SqlConnection(_connectionString))
+            try
             {
-                SqlCommand cmd = new SqlCommand("Select * From SquaresCatalog", sql);
-                return _sqlResult.GetList<SquaresCatalog>(cmd, sql, "GetSquaresCatalog");
+                using (SqlConnection sql = new SqlConnection(_connectionString))
+                {
+                    SqlCommand cmd = new SqlCommand("Select * From SquaresCatalog", sql);
+                    return _sqlResult.GetList<SquaresCatalog>(cmd, sql, "GetSquaresCatalog");
+                }
+            }
+            catch (SqlException ex)
+            {
+                _apiLogger.WriteLog(clavePlaza, ex, "SquaresCatalogDb: GetSquaresCatalog", 1);
+                return new Response { Message = $"Error: {ex.Message}", Result = null };
             }
         }
 
-        public Response GetLanes(string square)
+        public Response GetLanes(string clavePlaza, string square)
         {
-            using (SqlConnection sql = new SqlConnection(_connectionString))
+            try
             {
-                using (SqlCommand cmd = new SqlCommand("dbo.spSquareLanes", sql))
+                using (SqlConnection sql = new SqlConnection(_connectionString))
                 {
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.Add("@Square", SqlDbType.NVarChar).Value = square;
-
-
-                    var storedResult = _sqlResult.GetList<Lanes>(cmd, sql, "GetLanes");
-                    if (storedResult.Result == null)
-                        return storedResult;
-
-
-                    return new Response
+                    using (SqlCommand cmd = new SqlCommand("dbo.spSquareLanes", sql))
                     {
-                        Message = "Ok",
-                        Result = storedResult.Result
-                    };
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.Add("@Square", SqlDbType.NVarChar).Value = square;
+
+                        var storedResult = _sqlResult.GetList<Lanes>(cmd, sql, "GetLanes");
+                        if (storedResult.Result == null)
+                            return storedResult;
+
+                        return new Response
+                        {
+                            Message = "Ok",
+                            Result = storedResult.Result
+                        };
+                    }
                 }
+            }
+            catch (SqlException ex)
+            {
+                _apiLogger.WriteLog(clavePlaza, ex, "SquaresCatalog: GetLanes", 1);
+                return new Response { Message = $"Error: {ex.Message}", Result = null };
             }
         }
         #endregion

@@ -80,70 +80,22 @@
         
         public Response GetReferenceNumber(string clavePlaza, string referenceNumber)
         {
-            using(SqlConnection sql = new SqlConnection(_connectionString))
+            try
             {
-                try
+                using(SqlConnection sql = new SqlConnection(_connectionString))
                 {
-                    sql.Open();
-                    if(sql.State != ConnectionState.Open)
+                    using (SqlCommand cmd = new SqlCommand("dbo.spGetReferenceNumber", sql))
                     {
-                        return new Response
-                        {
-                            Message = "Sql connection is closed",
-                            Result = null
-                        };
-                    }
-
-                    SqlCommand countCommand = new SqlCommand($"SELECT Count(*) FROM [DTCData] WHERE ReferenceNumber LIKE '{referenceNumber}%'", sql);
-                    Int32 count = (Int32) countCommand.ExecuteScalar();
-                    if(count == 0)
-                    {
-                        return new Response
-                        {
-                            Message = "Ok",
-                            Result = $"{referenceNumber}"
-                        };
-                    }
-                    else if(count == 1)
-                    {
-                        return new Response
-                        {
-                            Message = "Ok",
-                            Result = $"{referenceNumber}-02"
-                        };
-                    }
-                    else
-                    {
-                        SqlCommand lastReferenceCommand = new SqlCommand($"SELECT TOP 1 ReferenceNumber FROM [DTCData] WHERE ReferenceNumber LIKE '{referenceNumber}%' ORDER BY ReferenceNumber DESC", sql);
-                        var reader = lastReferenceCommand.ExecuteReader();
-                        if(reader.Read())
-                        {
-                            int lastReference = 0; ;
-                            string result = reader["ReferenceNumber"].ToString();
-                            var _array_ref = result.Split('-');
-                            if (_array_ref.Length > 2)
-                            {
-
-                                lastReference = Convert.ToInt32(_array_ref[2]) + 1;
-                            }
-                            return new Response
-                            {
-                                Message = "Ok",
-                                Result = $"{referenceNumber}-{lastReference.ToString("00")}"
-                            };
-                        }
-                        return new Response
-                        {
-                            Message = "Empty result",
-                            Result = null
-                        };
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.Add("@strReference", SqlDbType.NVarChar).Value = referenceNumber;
+                        return _sqlResult.GetList<Reference>(cmd, sql, "GetReferenceNumber");
                     }
                 }
-                catch (SqlException ex)
-                {
-                    _apiLogger.WriteLog(clavePlaza, ex, "DtcDataDb: GetReferenceNumber", 1);
-                    return new Response { Message = $"Error: {ex.Message}", Result = null };
-                }
+            }
+            catch (SqlException ex)
+            {
+                _apiLogger.WriteLog(clavePlaza, ex, "DtcDataDb: GetReferenceNumber", 1);
+                return new Response { Message = $"Error: {ex.Message}", Result = null };
             }
         }
 

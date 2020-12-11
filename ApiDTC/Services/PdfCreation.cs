@@ -12,24 +12,27 @@ namespace ApiDTC.Services
     public class PdfCreation
     {
         #region Attributes
-        private DataTable _tableHeader;
+        private readonly DataTable _tableHeader;
 
-        private DataTable _tableDTCData;
+        private readonly DataTable _tableDTCData;
 
-        private DataTable _tableEquipoMalo;
+        private readonly DataTable _tableEquipoMalo;
 
-        private DataTable _tableEquipoPropuesto;
+        private readonly DataTable _tableEquipoPropuesto;
 
-        private string _refNum;
+        private readonly string _refNum;
 
-        private ApiLogger _apiLogger;
+        private readonly ApiLogger _apiLogger;
 
         private double precioTotalMoneda;
+
+        private readonly string _clavePlaza;
         #endregion
 
         #region Constructor
-        public PdfCreation(DataTable tableHeader, DataTable tableDTDData, DataTable tableEquipoMalo, DataTable TableEquipoPropuesto, string refNum, ApiLogger apiLogger)
+        public PdfCreation(string clavePlaza, DataTable tableHeader, DataTable tableDTDData, DataTable tableEquipoMalo, DataTable TableEquipoPropuesto, string refNum, ApiLogger apiLogger)
         {
+            _clavePlaza = clavePlaza;
             _apiLogger = apiLogger;
             _tableHeader = tableHeader;
             _tableDTCData = tableDTDData;
@@ -148,7 +151,7 @@ namespace ApiDTC.Services
                 doc.Close();
                 if(System.IO.File.Exists($@"{System.Environment.CurrentDirectory}\Reportes\{DateTime.Now.Year}\{MesActual()}\{DateTime.Now.Day}\ReporteDTC-{_refNum}.pdf"))
                     System.IO.File.Delete($@"{System.Environment.CurrentDirectory}\Reportes\{DateTime.Now.Year}\{MesActual()}\{DateTime.Now.Day}\ReporteDTC-{_refNum}.pdf");
-                _apiLogger.WriteLog(ex, "NewPdf");
+                _apiLogger.WriteLog(_clavePlaza, ex, $"PdfCreation: NewPdf", 2);
                 return new Response
                 {
                     Message = $"Error: {ex.Message}. Archivo temporal eliminado",
@@ -726,7 +729,7 @@ namespace ApiDTC.Services
             }
             catch(IOException ex)
             {
-                _apiLogger.WriteLog(ex, "FileInUse");
+                _apiLogger.WriteLog(_clavePlaza, ex, $"PdfCreation: FileInUse", 2);
                 fileInUse = true;
             }
             return fileInUse;

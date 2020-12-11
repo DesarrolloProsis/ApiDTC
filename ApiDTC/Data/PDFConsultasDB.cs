@@ -105,7 +105,7 @@
             catch (SqlException ex)
             {
                 _apiLogger.WriteLog(clavePlaza, ex, "PdfConsultasDb: GetStorePDFOpen", 1);
-                return new Response { Message = $"Error: {ex.Message}", Result = null };
+                return null;
             }
         }
         #endregion

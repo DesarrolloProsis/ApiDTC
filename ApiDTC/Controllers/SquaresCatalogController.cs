@@ -21,20 +21,22 @@
         #endregion
 
         // GET: api/SquaresCatalog
-        [HttpGet]
-        public ActionResult<Response> Get()
+        //[HttpGet]
+        [HttpGet("{clavePlaza}")]
+        public ActionResult<Response> Get(string clavePlaza)
         {
-            var get = _db.GetSquaresCatalog();
+            var get = _db.GetSquaresCatalog(clavePlaza);
             if(get.Result == null)
                 return NotFound(get);
             else
                 return Ok(get);
         }
 
-        [HttpGet("Lanes/{square}")]
-        public ActionResult<Response> GetLanes(string square)
+        //[HttpGet("Lanes/{square}")]
+        [HttpGet("Lanes/{clavePlaza}/{square}")]
+        public ActionResult<Response> GetLanes(string clavePlaza, string square)
         {
-            var get = _db.GetLanes(square);
+            var get = _db.GetLanes(clavePlaza, square);
             if (get.Result == null)
                 return NotFound(get);
             else

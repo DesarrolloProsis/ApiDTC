@@ -29,6 +29,7 @@ namespace ApiDTC.Data
         }
         #endregion
 
+        #region Methods
         public bool UpdateUserStatus(string Key, int UserId)
         {
             using(SqlConnection sql = new SqlConnection(_connectionString))
@@ -66,7 +67,7 @@ namespace ApiDTC.Data
                 catch(SqlException ex)
                 {
                     sql.Close();
-                    _apiLogger.WriteLog(ex, "UpdateUserStatus");
+                    _apiLogger.WriteLog("BOT", ex, $"BotDb: UpdateUserStatus", 1);
                     return false;
                 }
             }
@@ -109,10 +110,11 @@ namespace ApiDTC.Data
                 catch (SqlException ex)
                 {
                     sql.Close();
-                    _apiLogger.WriteLog(ex, "DeleteUser");
+                    _apiLogger.WriteLog("BOT", ex, $"BotDb: DeleteUser", 1);
                     return false;
                 }
             }
         }
+        #endregion
     }
 }

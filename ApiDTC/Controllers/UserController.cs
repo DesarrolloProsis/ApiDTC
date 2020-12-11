@@ -9,12 +9,16 @@
     [ApiController]
     public class UserController : ControllerBase
     {
+        #region Attributes
         private readonly UserDb _db;
+        #endregion
 
+        #region Constructor
         public UserController(UserDb db)
         {
             this._db = db ?? throw new ArgumentNullException(nameof(db));
         }
+        #endregion
 
         [HttpPost("nuevo")]
         public ActionResult<Response> CreateUser([FromBody] UserInfo userInfo)

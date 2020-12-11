@@ -22,14 +22,13 @@
         }
         #endregion
 
-        //TODO POST RequestedComponents
-        // POST: api/RequestedComponent
-        [HttpPost("{flag}")]
-        public ActionResult<Response> Post([FromBody] List<RequestedComponent> requestedComponent, bool flag)
+        //[HttpPost("{flag}")]
+        [HttpPost("{clavePlaza}/{flag}")]
+        public ActionResult<Response> Post(string clavePlaza, [FromBody] List<RequestedComponent> requestedComponent, bool flag)
         {
             if(ModelState.IsValid)
             {
-                var get = _db.PostRequestedComponent(requestedComponent, flag);
+                var get = _db.PostRequestedComponent(clavePlaza, requestedComponent, flag);
                 if(get.Result == null)
                     return BadRequest(get);
                 else
@@ -38,12 +37,13 @@
             return BadRequest(ModelState);
         }
 
-        [HttpPost("Open/{flag}")]
-        public ActionResult<Response> PostOpen([FromBody] List<RequestedComponentOpen> requestedComponent, bool flag)
+        //[HttpPost("Open/{flag}")]
+        [HttpPost("Open/{clavePlaza}/{flag}")]
+        public ActionResult<Response> PostOpen(string clavePlaza, [FromBody] List<RequestedComponentOpen> requestedComponent, bool flag)
         {
             if (ModelState.IsValid)
             {
-                var get = _db.PostRequestedComponentOpen(requestedComponent, flag);
+                var get = _db.PostRequestedComponentOpen(clavePlaza, requestedComponent, flag);
                 if (get.Result == null)
                     return BadRequest(get);
                 else

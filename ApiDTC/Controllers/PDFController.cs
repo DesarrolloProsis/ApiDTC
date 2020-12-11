@@ -35,7 +35,7 @@
                 var dataSet = _db.GetStorePDF(clavePlaza, refNum, inicialRef);
                 if (dataSet.Tables[0].Rows.Count == 0 || dataSet.Tables[1].Rows.Count == 0 || dataSet.Tables[2].Rows.Count == 0 || dataSet.Tables[3].Rows.Count == 0)
                     return NotFound("GetStorePdf retorna tabla vacía");
-                PdfCreation pdf = new PdfCreation(dataSet.Tables[0], dataSet.Tables[1], dataSet.Tables[2], dataSet.Tables[3], refNum, new ApiLogger());
+                PdfCreation pdf = new PdfCreation(clavePlaza, dataSet.Tables[0], dataSet.Tables[1], dataSet.Tables[2], dataSet.Tables[3], refNum, new ApiLogger());
                 var pdfResult = pdf.NewPdf();
                 return File(new FileStream(pdfResult.Result.ToString(), FileMode.Open, FileAccess.Read), "application/pdf");
             }
@@ -54,7 +54,7 @@
                 var dataSet = _db.GetStorePDFOpen(clavePlaza, refNum);
                 if (dataSet.Tables[0].Rows.Count == 0 || dataSet.Tables[1].Rows.Count == 0 || dataSet.Tables[2].Rows.Count == 0 || dataSet.Tables[3].Rows.Count == 0)
                     return NotFound("GetStorePdfOpen retorna tabla vacía");
-                PdfCreation pdf = new PdfCreation(dataSet.Tables[0], dataSet.Tables[1], dataSet.Tables[2], dataSet.Tables[3], refNum, new ApiLogger());
+                PdfCreation pdf = new PdfCreation(clavePlaza, dataSet.Tables[0], dataSet.Tables[1], dataSet.Tables[2], dataSet.Tables[3], refNum, new ApiLogger());
                 var pdfResult = pdf.NewPdf();
                 return File(new FileStream(pdfResult.Result.ToString(), FileMode.Open, FileAccess.Read), "application/pdf");
             }

@@ -35,7 +35,7 @@
             var dataSet = _db.GetStorePdf(clavePlaza, month, year, userId, squareId);
             if (dataSet.Tables[1].Rows.Count == 0)
                 return NotFound();
-            CalendarioPdfCreation pdf = new CalendarioPdfCreation(dataSet.Tables[1], dataSet.Tables[0], clavePlaza, new ApiLogger(), month, year, squareId);
+            CalendarioPdfCreation pdf = new CalendarioPdfCreation(clavePlaza, dataSet.Tables[1], dataSet.Tables[0], clavePlaza, new ApiLogger(), month, year, squareId);
             var pdfResult = pdf.NewPdf();
             return File(new FileStream(pdfResult.Result.ToString(), FileMode.Open, FileAccess.Read), "application/pdf");
         }

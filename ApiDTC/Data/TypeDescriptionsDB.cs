@@ -15,12 +15,15 @@
         #region Attributes
         private readonly string _connectionString;
 
-        private SqlResult _sqlResult;
+        private readonly SqlResult _sqlResult;
+
+        private readonly ApiLogger _apiLogger;
         #endregion
 
         #region Constructor
-        public TypeDescriptionsDb(IConfiguration configuration, SqlResult sqlResult)
+        public TypeDescriptionsDb(IConfiguration configuration, SqlResult sqlResult, ApiLogger apiLogger)
         {
+            _apiLogger = apiLogger;
             _sqlResult = sqlResult;
             _connectionString = configuration.GetConnectionString("defaultConnection");
         }
@@ -29,12 +32,20 @@
         #region Methods
 
         //TODO Test TypeDescriptions
-        public Response GetTypeDescriptionsData()
+        public Response GetTypeDescriptionsData(string clavePlaza)
         {
-            using (SqlConnection sql = new SqlConnection(_connectionString))
+            try
             {
-                SqlCommand descriptionsCommand = new SqlCommand("Select * From TypeDescriptions", sql);
-                return _sqlResult.GetList<TypeDescriptions>(descriptionsCommand, sql, "GetTypeDescriptionsData");
+                using (SqlConnection sql = new SqlConnection(_connectionString))
+                {
+                    SqlCommand descriptionsCommand = new SqlCommand("Select * From TypeDescriptions", sql);
+                    return _sqlResult.GetList<TypeDescriptions>(descriptionsCommand, sql, "GetTypeDescriptionsData");
+                }
+            }
+            catch (SqlException ex)
+            {
+                _apiLogger.WriteLog(clavePlaza, ex, "TypeDescriptionsDb: GetTypeDescriptionsData", 1);
+                return new Response { Message = $"Error: {ex.Message}", Result = null };
             }
         }
         #endregion

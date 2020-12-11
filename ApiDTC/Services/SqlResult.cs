@@ -14,12 +14,15 @@ namespace ApiDTC.Services
 
         private string _classMapped, _propertyMapped;
         #endregion
-        
+
+        #region Constructor
         public SqlResult(ApiLogger apiLogger)
         {
             _apiLogger = apiLogger;
         }
+        #endregion
 
+        #region Methods
         public SqlResponse Post(SqlCommand cmd, SqlConnection con)
         {
             try
@@ -48,7 +51,7 @@ namespace ApiDTC.Services
             }
             catch (SqlException ex)
             {
-                _apiLogger.WriteLog(ex, "Post");
+                _apiLogger.WriteLog("MAP", ex, $"SqlResult: Post", 1);
                 return new SqlResponse
                 {
                     SqlMessage = $"Error: {ex.Message}",
@@ -88,7 +91,7 @@ namespace ApiDTC.Services
             }
             catch (SqlException ex)
             {
-                _apiLogger.WriteLog(ex, "Post");
+                _apiLogger.WriteLog("MAP", ex, $"SqlResult: Put", 1);
                 return new SqlResponse
                 {
                     SqlMessage = $"Error: {ex.Message}",
@@ -97,6 +100,7 @@ namespace ApiDTC.Services
                 };
             }
         }
+        
         public Response DataExists(SqlCommand command, SqlConnection con)
         {
             try
@@ -127,7 +131,7 @@ namespace ApiDTC.Services
             }
             catch (SqlException ex)
             {
-                _apiLogger.WriteLog(ex, "GetList<T>");
+                _apiLogger.WriteLog("MAP", ex, $"SqlResult: DataExists", 1);
                 return new Response
                 {
                     Message = $"Error: {ex.Message}",
@@ -136,6 +140,7 @@ namespace ApiDTC.Services
                 };
             }
         }
+        
         public Response GetList<T>(SqlCommand command, SqlConnection con, string origen)
         {
             try
@@ -164,7 +169,7 @@ namespace ApiDTC.Services
             }
             catch (SqlException ex)
             {
-                _apiLogger.WriteLog(ex, "GetList<T>");
+                _apiLogger.WriteLog("MAP", ex, $"SqlResult: GetList<T>", 1);
                 return new Response
                 {
                     Message = $"Error: {ex.Message}",
@@ -200,13 +205,12 @@ namespace ApiDTC.Services
             }
             catch (Exception ex)
             {
-                _apiLogger.WriteLog(ex, $"DataSetMapper. La clase {_classMapped} no pudo ser mapeada en propiedad {_propertyMapped}");
+                _apiLogger.WriteLog("MAP", ex, $"SqlResult: DataSetMapper<T>", 3);
                 _propertyMapped = null;
                 _classMapped = null;
                 return null;
             }
         }
-    
 
         private SqlResponse PostMapper(SqlDataReader rdr)
         {
@@ -221,14 +225,12 @@ namespace ApiDTC.Services
                         obj.SqlResult = rdr[0];
 
                     obj.SqlMessage = rdr["SqlMessage"].ToString();
-                    _propertyMapped = obj.GetType().Name;
                 }
-                _propertyMapped = null;
                 return obj;
             }
             catch (Exception ex)
             {
-                _apiLogger.WriteLog(ex, $"PostMapper. La clase InsertResponse no pudo ser mapeada en propiedad {_propertyMapped}");
+                _apiLogger.WriteLog("MAP", ex, $"SqlResult: PostMapper", 3);
                 _propertyMapped = null;
                 return new SqlResponse
                 {
@@ -237,6 +239,7 @@ namespace ApiDTC.Services
                 };
             }
         }
+        
         private Response GetMapper<T>(SqlDataReader rdr, string origen)
         {
             try
@@ -270,7 +273,7 @@ namespace ApiDTC.Services
             }
             catch (Exception ex)
             {
-                _apiLogger.WriteLog(ex, $"Mapper. Método: {origen}. La clase {_classMapped} no pudo ser mapeada en propiedad {_propertyMapped}");
+                _apiLogger.WriteLog("MAP", ex, $"SqlResult: GetMapper<T>", 3);
                 _propertyMapped = null;
                 _classMapped = null;
                 return new Response
@@ -280,5 +283,6 @@ namespace ApiDTC.Services
                 };
             }
         }
+        #endregion
     }
 }

@@ -26,9 +26,11 @@ namespace ApiDTC.Services
 
         private int _month;
 
-        private int _year;
+        private readonly int _year;
 
-        private string _square;
+        private readonly string _square;
+
+        private readonly string _clavePlaza;
         #endregion
 
         #region Pdf Configuration
@@ -63,17 +65,10 @@ namespace ApiDTC.Services
         #endregion
 
         #region Constructors
-        public CalendarioPdfCreation(ApiLogger apiLogger, string plaza, int month, int year, string square)
-        {
-            _apiLogger = apiLogger;
-            _plaza = plaza;
-            _month = month;
-            _year = year;
-            _square = square;
-        }
 
-        public CalendarioPdfCreation(DataTable tableHeader, DataTable tableActivities, string plaza, ApiLogger apiLogger, int month, int year, string square)
+        public CalendarioPdfCreation(string clavePlaza, DataTable tableHeader, DataTable tableActivities, string plaza, ApiLogger apiLogger, int month, int year, string square)
         {
+            _clavePlaza = clavePlaza;
             _apiLogger = apiLogger;
             _tableHeader = tableHeader;
             _tableActivities = tableActivities;
@@ -111,7 +106,7 @@ namespace ApiDTC.Services
             }
             catch (IOException ex)
             {
-                _apiLogger.WriteLog(ex, "CalendarioPdfCreation");
+                _apiLogger.WriteLog(_clavePlaza, ex, "CalendarioPdfCreation: NewPdf", 2);
                 return new Response
                 {
                     Message = $"Error: {ex.Message}.",
@@ -158,7 +153,7 @@ namespace ApiDTC.Services
             {
                 if (System.IO.File.Exists($@"{System.Environment.CurrentDirectory}\CalendariosMantenimiento\{DateTime.Now.Year}\{MesActual()}\{DateTime.Now.Day}\{_plaza}{DateTime.Now.Year}01C.pdf"))
                     System.IO.File.Delete($@"{System.Environment.CurrentDirectory}\CalendariosMantenimiento\{DateTime.Now.Year}\{MesActual()}\{DateTime.Now.Day}\{_plaza}{DateTime.Now.Year}01C.pdf");
-                _apiLogger.WriteLog(ex, "CalendarioPdfCreation");
+                _apiLogger.WriteLog(_clavePlaza, ex, "CalendarioPdfCreation: NewPdf ", 2);
                 return new Response
                 {
                     Message = $"Error: {ex.Message}.",
@@ -235,12 +230,12 @@ namespace ApiDTC.Services
             }
             catch (PdfException ex)
             {
-                _apiLogger.WriteLog(ex, $"TablaEncabezado error: {ex.Message}");
+                _apiLogger.WriteLog(_clavePlaza, ex, $"CalendarioPDfCreation: TablaEncabezado", 5);
                 return null;
             }
             catch (IOException ex)
             {
-                _apiLogger.WriteLog(ex, $"TablaEncabezado error: {ex.Message}");
+                _apiLogger.WriteLog(_clavePlaza, ex, $"CalendarioPDfCreation: TablaEncabezado", 2);
                 return null;
             }
             
@@ -467,7 +462,7 @@ namespace ApiDTC.Services
             }
             catch (IOException ex)
             {
-                _apiLogger.WriteLog(ex, "FileInUse");
+                _apiLogger.WriteLog(_clavePlaza, ex, $"CalendarioPDfCreation: FileInUse", 2);
                 fileInUse = true;
             }
             return fileInUse;

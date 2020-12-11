@@ -20,24 +20,17 @@
         }
         #endregion
 
-        // GET: api/TypeDescriptions
-        [HttpGet]
-        public ActionResult<Response> Get()
+        #region Methods
+        //[HttpGet]
+        [HttpGet("{clavePlaza}")]
+        public ActionResult<Response> Get(string clavePlaza)
         {
-            var get = _db.GetTypeDescriptionsData();
+            var get = _db.GetTypeDescriptionsData(clavePlaza);
             if(get.Result == null)
                 return NotFound(get);
             else
                 return Ok(get);
         }
-
-        // GET: api/TypeDescriptions/5
-        [HttpGet("{id}", Name = "Get")]
-        public string Get(int id)
-        {
-            return "value";
-        }
-
-  
+        #endregion
     }
 }
