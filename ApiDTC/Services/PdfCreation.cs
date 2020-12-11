@@ -706,7 +706,7 @@ namespace ApiDTC.Services
             //Encabezado
             var tablaEncabezado = new PdfPTable(new float[] { 30f, 40f, 30f }) { WidthPercentage = 100f };
             var col1 = new PdfPCell(logo) { Border = 0 };
-            var col2 = new PdfPCell(new Phrase("DICTAMEN TÉCNICO Y COTIZACION", letraoNegritaMediana)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, Padding = 10, PaddingRight = 20, PaddingLeft = 20 };
+            var col2 = new PdfPCell(new Phrase("DICTAMEN TÉCNICO Y COTIZACIÓN", letraoNegritaMediana)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, Padding = 10, PaddingRight = 20, PaddingLeft = 20 };
             //Creamos Chunk Para dosTipo deLetra en un Parrafo
             var referencia = new Chunk("Referencia:    ", letraNormalMediana);
             var numreferencia = new Chunk(_refNum, letraoNegritaMediana);
