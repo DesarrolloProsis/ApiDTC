@@ -46,7 +46,7 @@
                         cmd.Parameters.Add("@ComponentsRelationship", SqlDbType.Int).Value = relationShip;
                         cmd.Parameters.Add("@MainComponentsRelationship", SqlDbType.Int).Value = relationShipPrincipal;
 
-                        var storedResult = _sqlResult.GetList<Components>(cmd, sql, "GetComponentDataModificaciones");
+                        var storedResult = _sqlResult.GetList<Components>(clavePlaza, cmd, sql, "GetComponentDataModificaciones");
                         if (storedResult.Result == null)
                             return storedResult;
                         var list = (List<Components>)storedResult.Result;
@@ -89,7 +89,7 @@
                         cmd.Parameters.Add("@SquareId", SqlDbType.NVarChar).Value = plaza;
                         cmd.Parameters.Add("@Component", SqlDbType.NVarChar).Value = Id;
 
-                        var storedResult = _sqlResult.GetList<Components>(cmd, sql, "GetComponentData");
+                        var storedResult = _sqlResult.GetList<Components>(clavePlaza, cmd, sql, "GetComponentData");
                         if (storedResult.Result == null)
                             return storedResult;
                         var list = (List<Components>)storedResult.Result;
@@ -131,7 +131,7 @@
                 using (SqlConnection sql = new SqlConnection(_connectionString))
                 {
                     SqlCommand cmd = new SqlCommand($"select a.Component as Description, a.Brand as Brand from SquareInventory a join LanesCatalog b on (a.CapufeLaneNum = b.CapufeLaneNum and a.IdGare = b.IdGare) join ComponentsStock c on a.Component = c.Description join AgreementInfo d on c.AgremmentInfoId = d.AgremmentInfoId where a.Brand != 'NO APLICA' and b.SquareCatalogid = '{plaza}' and d.Agrement = '{numConvenio}' group by a.Component, a.Brand", sql);
-                    return _sqlResult.GetList<ComponentsDescription>(cmd, sql, "VersionPruebaComponent");
+                    return _sqlResult.GetList<ComponentsDescription>(clavePlaza, cmd, sql, "VersionPruebaComponent");
                 }
             }
             catch (SqlException ex)
@@ -163,7 +163,7 @@
                         cmd.Parameters.Add("@strMaintenanceFolio", SqlDbType.NVarChar).Value = updateInventory.strMaintenanceFolio;
 
 
-                        var reader = _sqlResult.Put(cmd, sql);
+                        var reader = _sqlResult.Put(clavePlaza, cmd, sql, "PutComponentInventary");
                         if (reader.SqlResult == null)
                         {
                             return new Response
@@ -205,7 +205,7 @@
                             cmd.Parameters.Add("@strSerialNumber", SqlDbType.NVarChar).Value = register.SerialNumber;
                             cmd.Parameters.Add("@strInstallationDate", SqlDbType.NVarChar).Value = register.InstallationDate;
 
-                            var reader = _sqlResult.Put(cmd, sql);
+                            var reader = _sqlResult.Put(clavePlaza, cmd, sql, "InventoryListUpdate");
                             if (reader.SqlResult == null)
                             {
                                 return new Response
@@ -241,7 +241,7 @@
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.Add("@AgreementId", SqlDbType.Int).Value = AgreementId;
 
-                        var select = _sqlResult.GetList<ComponentsDTCBox>(cmd, sql, "GetComponentsData");
+                        var select = _sqlResult.GetList<ComponentsDTCBox>(clavePlaza, cmd, sql, "GetComponentsData");
 
                         List<ComponentsDTCBox> componentsDTCBoxes = (List<ComponentsDTCBox>)select.Result;
                         select.Result = null;
@@ -259,15 +259,17 @@
                                 ComponentePrincipal = principal.Description
                             };
 
-                            dtcBox.Secundarios = new List<ComponentDtcBoxPrincipal>();
-                            dtcBox.Secundarios.Add(new ComponentDtcBoxPrincipal
+                            dtcBox.Secundarios = new List<ComponentDtcBoxPrincipal>
                             {
-                                Description = principal.Description,
-                                AttachedId = principal.AttachedId,
-                                ComponentsRelationship = principal.ComponentsRelationship,
-                                VitalComponent = principal.VitalComponent,
-                                ComponentsRelationshipId = principal.ComponentsRelationship
-                            });
+                                new ComponentDtcBoxPrincipal
+                                {
+                                    Description = principal.Description,
+                                    AttachedId = principal.AttachedId,
+                                    ComponentsRelationship = principal.ComponentsRelationship,
+                                    VitalComponent = principal.VitalComponent,
+                                    ComponentsRelationshipId = principal.ComponentsRelationship
+                                }
+                            };
 
                             List<ComponentsDTCBox> componentesProcesados = new List<ComponentsDTCBox>();
 
@@ -320,7 +322,7 @@
         " from SquareInventory a join LanesCatalog b on (a.CapufeLaneNum = b.CapufeLaneNum and a.IdGare = b.IdGare)" +
         $" where b.SquareCatalogId = {squareId}" +
         " group by Component", sql);
-                    return _sqlResult.GetList<ComponentsInventory>(cmd, sql, "GetComponentsInventory");
+                    return _sqlResult.GetList<ComponentsInventory>(clavePlaza, cmd, sql, "GetComponentsInventory");
                 }
             }
             catch (SqlException ex)
@@ -337,7 +339,7 @@
                 using (SqlConnection sql = new SqlConnection(_connectionString))
                 {
                     SqlCommand cmd = new SqlCommand($"select TypeUbicationId,Name Ubicacion from TypesUbication", sql);
-                    return _sqlResult.GetList<ComponentsInventoryUbication>(cmd, sql, "GetComponentsInventoryUbication");
+                    return _sqlResult.GetList<ComponentsInventoryUbication>(clavePlaza, cmd, sql, "GetComponentsInventoryUbication");
                 }
             }
             catch (SqlException ex)
@@ -359,7 +361,7 @@
                         "on (a.CapufeLaneNum = b.CapufeLaneNum and a.IdGare = b.IdGare) " +
                         $"where a.Component = '{Component}' and b.SquareCatalogId = '{squareId}' " +
                         "group by b.Lane", sql);
-                    return _sqlResult.GetList<ComponentsInventoryLane>(cmd, sql, "GetComponentsInventoryLane");
+                    return _sqlResult.GetList<ComponentsInventoryLane>(clavePlaza, cmd, sql, "GetComponentsInventoryLane");
                 }
             }
             catch (SqlException ex)
@@ -390,7 +392,7 @@
                             "on (a.CapufeLaneNum = b.CapufeLaneNum and a.IdGare = b.IdGare) " +
                         "join TypesUbication c on a.TypeUbicationId = c.TypeUbicationId " +
                         $"where Component = '{Component}' and b.Lane = '{Lane}' and b.SquareCatalogId = '{squareId}'", sql);
-                    return _sqlResult.GetList<ComponentsInventoryDescription>(cmd, sql, "GetComponentsInventoryDescription");
+                    return _sqlResult.GetList<ComponentsInventoryDescription>(clavePlaza, cmd, sql, "GetComponentsInventoryDescription");
                 }
             }
             catch (SqlException ex)

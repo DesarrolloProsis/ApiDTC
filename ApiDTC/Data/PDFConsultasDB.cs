@@ -12,9 +12,9 @@
         #region Attributes
         private readonly string _connectionString;
 
-        private ApiLogger _apiLogger;
+        private readonly ApiLogger _apiLogger;
 
-        private SqlResult _sqlResult;
+        private readonly SqlResult _sqlResult;
         #endregion
 
         #region Constructor
@@ -34,7 +34,7 @@
                 using (SqlConnection sql = new SqlConnection(_connectionString))
                 {
                     SqlCommand cmd = new SqlCommand($"SELECT * FROM [DTCData] WHERE ReferenceNumber = '{referenceNumber}'", sql);
-                    return _sqlResult.DataExists(cmd, sql);
+                    return _sqlResult.DataExists(clavePlaza, cmd, sql, "SearchReference");
                 }
             }
             catch (SqlException ex)

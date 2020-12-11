@@ -67,7 +67,7 @@
                         cmd.Parameters.Add("@openFlag", SqlDbType.Bit).Value = dtcData.OpenFlag;
                         cmd.Parameters.Add("@SquareId", SqlDbType.NVarChar).Value = dtcData.SquareId;
 
-                        return _sqlResult.Post(cmd, sql);
+                        return _sqlResult.Post(clavePlaza, cmd, sql, "GetStoredDtcData");
                     }
                 }
             }
@@ -88,7 +88,7 @@
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.Add("@strReference", SqlDbType.NVarChar).Value = referenceNumber;
-                        return _sqlResult.GetList<Reference>(cmd, sql, "GetReferenceNumber");
+                        return _sqlResult.GetList<Reference>(clavePlaza, cmd, sql, "GetReferenceNumber");
                     }
                 }
             }
@@ -109,7 +109,7 @@
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.Add("@ReferenceNumber", SqlDbType.NVarChar).Value = referenceNumber;
-                        var response = _sqlResult.Put(cmd, sql);
+                        var response = _sqlResult.Put(clavePlaza, cmd, sql, "UpdateDtcStatus");
                         return new Response
                         {
                             Message = response.SqlMessage,
@@ -135,7 +135,7 @@
                         "from SquareInventory a join LanesCatalog b on (a.CapufeLaneNum = b.CapufeLaneNum and a.IdGare = b.IdGare) " +
                         "join SquaresCatalog c on b.SquareCatalogId = c.SquareCatalogId " +
                         $"where c.SquareCatalogId = '{squareId}'", sql);
-                    return _sqlResult.GetList<ComponentsInventoryList>(cmd, sql, "GetComponentsInventoryList");
+                    return _sqlResult.GetList<ComponentsInventoryList>(clavePlaza, cmd, sql, "GetComponentsInventoryList");
                 }
             }
             catch (SqlException ex)
@@ -152,7 +152,7 @@
                 using (SqlConnection sql = new SqlConnection(_connectionString))
                 {
                     SqlCommand cmd = new SqlCommand($"SELECT SinisterNumber, ReportNumber FROM [DTCData]", sql);
-                    return _sqlResult.GetList<InvalidReferenceNumbers>(cmd, sql, "GetInvalidNumbers");
+                    return _sqlResult.GetList<InvalidReferenceNumbers>(clavePlaza, cmd, sql, "GetInvalidNumbers");
                 }
             }
             catch (SqlException ex)
@@ -195,7 +195,7 @@
                                       "where d.UserId = '" + idUser + "' and u.SquareCatalogId = '" + squareCatalog + "' and d.StatusId != 0 order by DateStamp desc "
                     };
 
-                    var info_dtc = _sqlResult.GetList<DtcDataStr>(cmd, sql, "GetDtc");                    
+                    var info_dtc = _sqlResult.GetList<DtcDataStr>(clavePlaza, cmd, sql, "GetDtc");                    
                     return info_dtc;
                 }
                 catch(SqlException ex)
@@ -218,7 +218,7 @@
                         cmd.Parameters.Add("@ReferenceNumber", SqlDbType.NVarChar).Value = refNum;
 
 
-                        var storedResult = _sqlResult.GetList<ComponentTableForm>(cmd, sql, "GetTableForm");
+                        var storedResult = _sqlResult.GetList<ComponentTableForm>(clavePlaza, cmd, sql, "GetTableForm");
                         if (storedResult.Result == null)
                             return storedResult;
 
@@ -248,7 +248,7 @@
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.Add("@referenceNumber", SqlDbType.NVarChar).Value = referenceNumber;
-                        return _sqlResult.Post(cmd, sql);
+                        return _sqlResult.Post(clavePlaza, cmd, sql, "DeleteDtcData");
                     }
                 }
             }
@@ -289,7 +289,7 @@
                             };
                         }
 
-                        var serialNumbers = _sqlResult.DataSetMapper<DtcItems>(dataSet.Tables[0]);
+                        var serialNumbers = _sqlResult.DataSetMapper<DtcItems>(clavePlaza, dataSet.Tables[0], "EditReferece");
                         if (serialNumbers == null)
                         {
                             return new Response
@@ -298,7 +298,7 @@
                                 Result = null
                             };
                         }
-                        var items = _sqlResult.DataSetMapper<DtcSerialNumbers>(dataSet.Tables[1]);
+                        var items = _sqlResult.DataSetMapper<DtcSerialNumbers>(clavePlaza, dataSet.Tables[1], "EditReferece");
                         if (items == null)
                         {
                             return new Response
@@ -357,7 +357,7 @@
                             };
                         }
 
-                        var requestedComponent = _sqlResult.DataSetMapper<EditRequestedComponent>(dataSet.Tables[0]);
+                        var requestedComponent = _sqlResult.DataSetMapper<EditRequestedComponent>(clavePlaza, dataSet.Tables[0], "EditRefereceOpen");
                         if (requestedComponent == null)
                         {
                             return new Response
@@ -367,7 +367,7 @@
                             };
                         }
 
-                        var proposedComponent = _sqlResult.DataSetMapper<ProposedComponentsOpen>(dataSet.Tables[1]);
+                        var proposedComponent = _sqlResult.DataSetMapper<ProposedComponentsOpen>(clavePlaza, dataSet.Tables[1], "EditRefereceOpen");
                         if (proposedComponent == null)
                         {
                             return new Response

@@ -10,9 +10,10 @@ namespace ApiDTC.Services
     public class SqlResult
     {
         #region Attributes
-        private ApiLogger _apiLogger;
+        private readonly ApiLogger _apiLogger;
 
-        private string _classMapped, _propertyMapped;
+
+        private string _propertyMapped, _classMapped;
         #endregion
 
         #region Constructor
@@ -23,7 +24,7 @@ namespace ApiDTC.Services
         #endregion
 
         #region Methods
-        public SqlResponse Post(SqlCommand cmd, SqlConnection con)
+        public SqlResponse Post(string clavePlaza, SqlCommand cmd, SqlConnection con, string origen)
         {
             try
             {
@@ -45,13 +46,13 @@ namespace ApiDTC.Services
                         SqlResult = null
                     };
                 }
-                var result = PostMapper(reader);
+                var result = PostMapper(clavePlaza, reader, origen);
                 con.Close();
                 return result;
             }
             catch (SqlException ex)
             {
-                _apiLogger.WriteLog("MAP", ex, $"SqlResult: Post", 1);
+                _apiLogger.WriteLog(clavePlaza, ex, $"SqlResult: Post", 1);
                 return new SqlResponse
                 {
                     SqlMessage = $"Error: {ex.Message}",
@@ -62,7 +63,7 @@ namespace ApiDTC.Services
         }
         
        
-        public SqlResponse Put(SqlCommand cmd, SqlConnection con)
+        public SqlResponse Put(string clavePlaza, SqlCommand cmd, SqlConnection con, string origen)
         {
             try
             {
@@ -85,13 +86,13 @@ namespace ApiDTC.Services
                         SqlResult = null
                     };
                 }
-                var result = PostMapper(reader);
+                var result = PostMapper(clavePlaza, reader, origen);
                 con.Close();
                 return result;
             }
             catch (SqlException ex)
             {
-                _apiLogger.WriteLog("MAP", ex, $"SqlResult: Put", 1);
+                _apiLogger.WriteLog(clavePlaza, ex, $"{origen}: Put", 1);
                 return new SqlResponse
                 {
                     SqlMessage = $"Error: {ex.Message}",
@@ -101,7 +102,7 @@ namespace ApiDTC.Services
             }
         }
         
-        public Response DataExists(SqlCommand command, SqlConnection con)
+        public Response DataExists(string clavePlaza, SqlCommand command, SqlConnection con, string origen)
         {
             try
             {
@@ -131,7 +132,7 @@ namespace ApiDTC.Services
             }
             catch (SqlException ex)
             {
-                _apiLogger.WriteLog("MAP", ex, $"SqlResult: DataExists", 1);
+                _apiLogger.WriteLog(clavePlaza, ex, $"{origen}: DataExists", 1);
                 return new Response
                 {
                     Message = $"Error: {ex.Message}",
@@ -141,7 +142,7 @@ namespace ApiDTC.Services
             }
         }
         
-        public Response GetList<T>(SqlCommand command, SqlConnection con, string origen)
+        public Response GetList<T>(string clavePlaza, SqlCommand command, SqlConnection con, string origen)
         {
             try
             {
@@ -163,13 +164,13 @@ namespace ApiDTC.Services
                         Result = null
                     };
                 }
-                var result = GetMapper<T>(reader, origen);
+                var result = GetMapper<T>(clavePlaza, reader, origen);
                 con.Close();
                 return result;
             }
             catch (SqlException ex)
             {
-                _apiLogger.WriteLog("MAP", ex, $"SqlResult: GetList<T>", 1);
+                _apiLogger.WriteLog(clavePlaza, ex, $"{origen}: GetList<T>", 1);
                 return new Response
                 {
                     Message = $"Error: {ex.Message}",
@@ -179,7 +180,7 @@ namespace ApiDTC.Services
             }
         }
 
-        public List<T> DataSetMapper<T>(DataTable dataSet)
+        public List<T> DataSetMapper<T>(string clavePlaza, DataTable dataSet, string origen)
         {
             try
             {
@@ -205,14 +206,14 @@ namespace ApiDTC.Services
             }
             catch (Exception ex)
             {
-                _apiLogger.WriteLog("MAP", ex, $"SqlResult: DataSetMapper<T>", 3);
+                _apiLogger.WriteLog(clavePlaza, ex, $"{origen}: DataSetMapper<T>", 3);
                 _propertyMapped = null;
                 _classMapped = null;
                 return null;
             }
         }
 
-        private SqlResponse PostMapper(SqlDataReader rdr)
+        private SqlResponse PostMapper(string clavePlaza, SqlDataReader rdr, string origen)
         {
             try
             {
@@ -230,7 +231,7 @@ namespace ApiDTC.Services
             }
             catch (Exception ex)
             {
-                _apiLogger.WriteLog("MAP", ex, $"SqlResult: PostMapper", 3);
+                _apiLogger.WriteLog(clavePlaza, ex, $"{origen}: PostMapper", 3);
                 _propertyMapped = null;
                 return new SqlResponse
                 {
@@ -240,12 +241,12 @@ namespace ApiDTC.Services
             }
         }
         
-        private Response GetMapper<T>(SqlDataReader rdr, string origen)
+        private Response GetMapper<T>(string clavePLaza, SqlDataReader rdr, string origen)
         {
             try
             {
                 var list = new List<T>();
-                T obj = default(T);
+                T obj = default;
                 int rows = 0;
                 while (rdr.Read())
                 {
@@ -273,7 +274,7 @@ namespace ApiDTC.Services
             }
             catch (Exception ex)
             {
-                _apiLogger.WriteLog("MAP", ex, $"SqlResult: GetMapper<T>", 3);
+                _apiLogger.WriteLog(clavePLaza, ex, $"{origen}: GetMapper<T>", 3);
                 _propertyMapped = null;
                 _classMapped = null;
                 return new Response

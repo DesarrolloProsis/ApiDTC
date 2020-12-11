@@ -39,7 +39,7 @@
                 using (SqlConnection sql = new SqlConnection(_connectionString))
                 {
                     SqlCommand descriptionsCommand = new SqlCommand("Select * From TypeDescriptions", sql);
-                    return _sqlResult.GetList<TypeDescriptions>(descriptionsCommand, sql, "GetTypeDescriptionsData");
+                    return _sqlResult.GetList<TypeDescriptions>(clavePlaza, descriptionsCommand, sql, "GetTypeDescriptionsData");
                 }
             }
             catch (SqlException ex)

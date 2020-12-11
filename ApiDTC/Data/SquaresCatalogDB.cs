@@ -33,7 +33,7 @@
                 using (SqlConnection sql = new SqlConnection(_connectionString))
                 {
                     SqlCommand cmd = new SqlCommand("Select * From SquaresCatalog", sql);
-                    return _sqlResult.GetList<SquaresCatalog>(cmd, sql, "GetSquaresCatalog");
+                    return _sqlResult.GetList<SquaresCatalog>(clavePlaza, cmd, sql, "GetSquaresCatalog");
                 }
             }
             catch (SqlException ex)
@@ -54,7 +54,7 @@
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.Add("@Square", SqlDbType.NVarChar).Value = square;
 
-                        var storedResult = _sqlResult.GetList<Lanes>(cmd, sql, "GetLanes");
+                        var storedResult = _sqlResult.GetList<Lanes>(clavePlaza, cmd, sql, "GetLanes");
                         if (storedResult.Result == null)
                             return storedResult;
 

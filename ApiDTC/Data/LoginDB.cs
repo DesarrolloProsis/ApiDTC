@@ -11,9 +11,9 @@
         #region Attributes
         private readonly string _connectionString;
 
-        private SqlResult _sqlResult;
+        private readonly SqlResult _sqlResult;
 
-        private ApiLogger _apiLogger;
+        private readonly ApiLogger _apiLogger;
         #endregion
 
         #region Constructor
@@ -37,7 +37,7 @@
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.Add("@PlazaId", SqlDbType.NVarChar).Value = numPlaza;
 
-                        return _sqlResult.GetList<TecnicosPlaza>(cmd, sql, "GetTec");
+                        return _sqlResult.GetList<TecnicosPlaza>("USR", cmd, sql, "GetTec");
                     }
                 }
             }
@@ -60,7 +60,7 @@
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.Add("@user", SqlDbType.Int).Value = idTec;
 
-                        return _sqlResult.GetList<Login>(cmd, sql, "GetHeadTec");
+                        return _sqlResult.GetList<Login>("USR", cmd, sql, "GetHeadTec");
                     }
                 }
             }
@@ -84,7 +84,7 @@
                         cmd.Parameters.Add("@Contraseña", SqlDbType.NVarChar).Value = passWord;
                         cmd.Parameters.Add("@Flag", SqlDbType.Bit).Value = flag;
 
-                        return _sqlResult.GetList<Login>(cmd, sql, "GetStoreLogin");
+                        return _sqlResult.GetList<Login>("USR", cmd, sql, "GetStoreLogin");
                     }
                 }
             }
@@ -109,7 +109,7 @@
                         cmd.Parameters.Add("@Contraseña", SqlDbType.NVarChar).Value = passWord;
                         cmd.Parameters.Add("@Flag", SqlDbType.Bit).Value = flag;
 
-                        return _sqlResult.GetList<Cookie>(cmd, sql, "GetStoreLoginCookie");
+                        return _sqlResult.GetList<Cookie>("USR", cmd, sql, "GetStoreLoginCookie");
                     }
                 }
             }

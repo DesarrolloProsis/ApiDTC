@@ -48,7 +48,7 @@ namespace ApiDTC.Data
                             
                             cmd.Parameters.Add("@Comment", SqlDbType.NVarChar).Value = actividad.Comment;
                             
-                            var storedResult = _sqlResult.Post(cmd, sql);
+                            var storedResult = _sqlResult.Post(clavePlaza, cmd, sql, "InsertComent");
                             if (storedResult.SqlResult == null)
                                 return new Response { Message = "No se pudo insertar comentario", Result = null };
                         }
@@ -98,7 +98,7 @@ namespace ApiDTC.Data
                             
 
                             cmd.Parameters.Add("@UpdateFlag", SqlDbType.Bit).Value = false;
-                            var storedResult = _sqlResult.Post(cmd, sql);
+                            var storedResult = _sqlResult.Post(clavePlaza, cmd, sql, "InsertActivity");
                             if (storedResult.SqlResult == null)
                                 return new Response { Message = "No se pudo insertar Actividad en carril" + actividad.CapufeLaneNums[i] + "con idGare" + actividad.IdGares[i], Result = null };
                         }
@@ -131,7 +131,7 @@ namespace ApiDTC.Data
                         cmd.Parameters.Add("@SquareId", SqlDbType.NVarChar).Value = squareId;
                         cmd.Parameters.Add("@Month", SqlDbType.Int).Value = month;
                         cmd.Parameters.Add("@Year", SqlDbType.Int).Value = year;
-                        var result = _sqlResult.Post(cmd, sql);
+                        var result = _sqlResult.Post(clavePlaza, cmd, sql, "DeleteCalendar");
                         return new Response
                         {
                             Message = result.SqlMessage,

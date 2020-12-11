@@ -15,9 +15,9 @@ namespace ApiDTC.Data
         #region Attributes
         private readonly string _connectionString;
 
-        private SqlResult _sqlResult;
+        private readonly SqlResult _sqlResult;
 
-        private ApiLogger _apiLogger;
+        private readonly ApiLogger _apiLogger;
         #endregion
 
         #region Constructor

@@ -19,8 +19,6 @@ namespace ApiDTC.Controllers
         {
             TypeInfo t = typeof(Components).GetTypeInfo();
             IEnumerable<PropertyInfo> pList = t.DeclaredProperties;
-
-            StringBuilder sb = new StringBuilder();
             var propiedades = new List<string>();
             foreach (PropertyInfo p in pList)
             {

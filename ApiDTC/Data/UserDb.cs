@@ -38,7 +38,7 @@
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.Add("@Id", SqlDbType.Int).Value = userKey.Id;
                         cmd.Parameters.Add("@Square", SqlDbType.NVarChar).Value = userKey.Square;
-                        return _sqlResult.GetList<UserView>(cmd, sql, "GetInfo");
+                        return _sqlResult.GetList<UserView>("USR", cmd, sql, "GetInfo");
                     }
                 }
             }
@@ -64,7 +64,7 @@
                         cmd.Parameters.Add("@LastName2", SqlDbType.NVarChar).Value = userInfo.LastName2;
                         cmd.Parameters.Add("@Password", SqlDbType.NVarChar).Value = userInfo.Password;
                         cmd.Parameters.Add("@Rol", SqlDbType.Int).Value = userInfo.Rol;
-                        var reader = _sqlResult.Post(cmd, sql);
+                        var reader = _sqlResult.Post("USR", cmd, sql, "NewUser");
                         if (reader.SqlResult == null)
                         {
                             return new Response
@@ -101,7 +101,7 @@
                         cmd.Parameters.Add("@IdUser", SqlDbType.Int).Value = userPassword.IdUser;
                         cmd.Parameters.Add("@Password", SqlDbType.NVarChar).Value = userPassword.Password;
 
-                        var reader = _sqlResult.Put(cmd, sql);
+                        var reader = _sqlResult.Put("USR", cmd, sql, "PutPassword");
                         if (reader.SqlResult == null)
                         {
                             return new Response
@@ -143,7 +143,7 @@
                         cmd.Parameters.Add("@Mail", SqlDbType.NVarChar).Value = userUpdate.Mail;
                         cmd.Parameters.Add("@Rol", SqlDbType.Int).Value = userUpdate.Rol;
 
-                        var reader = _sqlResult.Put(cmd, sql);
+                        var reader = _sqlResult.Put("USR", cmd, sql, "PutUser");
                         if (reader.SqlResult == null)
                         {
                             return new Response
@@ -179,7 +179,7 @@
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.Add("@User", SqlDbType.Int).Value = userKey.Id;
-                        var reader = _sqlResult.Post(cmd, sql);
+                        var reader = _sqlResult.Post("USR", cmd, sql, "DeleteUser");
                         if (reader.SqlResult == null)
                         {
                             return new Response

@@ -14,6 +14,7 @@ namespace ApiDTC.Services
          4 = Eventos 
          5 = PdfException
          6 = ArgumentOutOfRange
+         7 = DocumentException
          */
         public void WriteLog(string plaza, Exception info, string metodo, int tipo)
         {

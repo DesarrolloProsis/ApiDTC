@@ -36,8 +36,10 @@
                 {
                     foreach (var item in requestedComponent)
                     {
-                        SqlCommand cmd = new SqlCommand("dbo.sp_InsertComponentsPrueba", sql);
-                        cmd.CommandType = CommandType.StoredProcedure;
+                        SqlCommand cmd = new SqlCommand("dbo.sp_InsertComponentsPrueba", sql)
+                        {
+                            CommandType = CommandType.StoredProcedure
+                        };
                         cmd.Parameters.Add("@intType", SqlDbType.Int).Value = 1;
                         cmd.Parameters.Add("@flag", SqlDbType.Int).Value = flag;
                         cmd.Parameters.Add("@intComponentStockId", SqlDbType.Int).Value = item.ComponentsStockId;
@@ -68,7 +70,7 @@
                         else
                             cmd.Parameters.Add("@startFlag", SqlDbType.Bit).Value = 0;
 
-                        var result = _sqlResult.Post(cmd, sql);
+                        var result = _sqlResult.Post(clavePlaza, cmd, sql, "PostRequestedComponent");
                         if (result.SqlResult == null)
                         {
                             return new Response
@@ -81,8 +83,10 @@
 
                     foreach (var item in requestedComponent)
                     {
-                        SqlCommand cmd = new SqlCommand("dbo.sp_InsertComponentsPrueba", sql);
-                        cmd.CommandType = CommandType.StoredProcedure;
+                        SqlCommand cmd = new SqlCommand("dbo.sp_InsertComponentsPrueba", sql)
+                        {
+                            CommandType = CommandType.StoredProcedure
+                        };
                         cmd.Parameters.Add("@intType", SqlDbType.Int).Value = 2;
                         cmd.Parameters.Add("@flag", SqlDbType.Int).Value = flag;
                         cmd.Parameters.Add("@intComponentStockId", SqlDbType.Int).Value = item.ComponentsStockId;
@@ -115,7 +119,7 @@
                             cmd.Parameters.Add("@startFlag", SqlDbType.Bit).Value = 0;
 
 
-                        var res = _sqlResult.Post(cmd, sql);
+                        var res = _sqlResult.Post(clavePlaza, cmd, sql, "PostRequestedComponent");
                         if (res.SqlResult == null)
                         {
                             return new Response
@@ -149,8 +153,10 @@
 
                     foreach (var item in requestedComponent)
                     {
-                        SqlCommand cmd = new SqlCommand("dbo.spInsertComponentsOpen", sql);
-                        cmd.CommandType = CommandType.StoredProcedure;
+                        SqlCommand cmd = new SqlCommand("dbo.spInsertComponentsOpen", sql)
+                        {
+                            CommandType = CommandType.StoredProcedure
+                        };
 
                         cmd.Parameters.Add("@intType", SqlDbType.Int).Value = 1;
                         cmd.Parameters.Add("@bitflag", SqlDbType.Bit).Value = flag;
@@ -174,7 +180,7 @@
                         cmd.Parameters.Add("@strDollarUnitaryPrice", SqlDbType.NVarChar).Value = item.StrDollarUnitaryPrice;
                         cmd.Parameters.Add("@strTotalPrice", SqlDbType.NVarChar).Value = item.StrTotalPrice;
                         cmd.Parameters.Add("@strDollarTotalPrice", SqlDbType.NVarChar).Value = item.StrDollarTotalPrice;
-                        var result = _sqlResult.Post(cmd, sql);
+                        var result = _sqlResult.Post(clavePlaza, cmd, sql, "PostRequestedComponentOpen");
                         if (result.SqlResult == null)
                         {
                             return new Response

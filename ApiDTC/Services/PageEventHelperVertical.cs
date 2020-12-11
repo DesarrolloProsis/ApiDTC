@@ -62,11 +62,15 @@ namespace ApiDTC.Services
                 cb = writer.DirectContent;
                 template = cb.CreateTemplate(document.PageSize.Width, 50);
             }
-            catch (DocumentException de)
+            catch (DocumentException ex)
             {
+                var apiLogger = new ApiLogger();
+                apiLogger.WriteLog("PHV", ex, "PageEventHelperVertical: OnOpenDocument", 7);
             }
-            catch (System.IO.IOException ioe)
+            catch (System.IO.IOException ex)
             {
+                var apiLogger = new ApiLogger();
+                apiLogger.WriteLog("PHV", ex, "PageEventHelperVertical: OnOpenDocument", 2);
             }
         }
 
@@ -90,16 +94,20 @@ namespace ApiDTC.Services
                 HeaderTable.TotalWidth = pageSize.Width - 80;
                 HeaderTable.SetWidthPercentage(new float[] { 45, 45 }, pageSize);
 
-                PdfPCell HeaderLeftCell = new PdfPCell(new Phrase(8, HeaderLeft, HeaderFont));
-                HeaderLeftCell.Padding = 5;
-                HeaderLeftCell.PaddingBottom = 8;
-                HeaderLeftCell.BorderWidthRight = 0;
+                PdfPCell HeaderLeftCell = new PdfPCell(new Phrase(8, HeaderLeft, HeaderFont))
+                {
+                    Padding = 5,
+                    PaddingBottom = 8,
+                    BorderWidthRight = 0
+                };
                 HeaderTable.AddCell(HeaderLeftCell);
-                PdfPCell HeaderRightCell = new PdfPCell(new Phrase(8, HeaderRight, HeaderFont));
-                HeaderRightCell.HorizontalAlignment = PdfPCell.ALIGN_RIGHT;
-                HeaderRightCell.Padding = 5;
-                HeaderRightCell.PaddingBottom = 8;
-                HeaderRightCell.BorderWidthLeft = 0;
+                PdfPCell HeaderRightCell = new PdfPCell(new Phrase(8, HeaderRight, HeaderFont))
+                {
+                    HorizontalAlignment = PdfPCell.ALIGN_RIGHT,
+                    Padding = 5,
+                    PaddingBottom = 8,
+                    BorderWidthLeft = 0
+                };
                 HeaderTable.AddCell(HeaderRightCell);
                 cb.SetRgbColorFill(0, 0, 0);
                 HeaderTable.WriteSelectedRows(0, -1, pageSize.GetLeft(40), pageSize.GetTop(50), cb);

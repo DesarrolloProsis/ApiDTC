@@ -16,15 +16,15 @@ namespace ApiDTC.Services
     {
         #region Attributes
 
-        private DataTable _tableHeader;
+        private readonly DataTable _tableHeader;
 
-        private DataTable _tableActivities;
+        private readonly DataTable _tableActivities;
 
-        private string _plaza;
+        private readonly string _plaza;
 
-        private ApiLogger _apiLogger;
+        private readonly ApiLogger _apiLogger;
 
-        private int _month;
+        private readonly int _month;
 
         private readonly int _year;
 
@@ -260,7 +260,6 @@ namespace ApiDTC.Services
 
             //Revisión seis semanas
             DateTime diaInicial = new DateTime(_year, _month, 1);
-            bool mesSeisSemanas = false;
             if (string.Equals(DiaActual(diaInicial).ToLower(), "sábado") && (days == 30 || days == 31))
                 totalCeldas += 7;
             else if (string.Equals(DiaActual(diaInicial).ToLower(), "viernes") && days == 31)

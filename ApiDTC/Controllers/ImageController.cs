@@ -148,7 +148,7 @@
         }
 
         //[HttpGet("GetImages/{plaza}/{referenceNumber}")]
-        [HttpGet("GetImages/{clavePlaza}{plaza}/{referenceNumber}")]
+        [HttpGet("GetImages/{clavePlaza}/{plaza}/{referenceNumber}")]
         public ActionResult<List<string>> GetImages(string clavePlaza, string plaza, string referenceNumber)
         {
             try
