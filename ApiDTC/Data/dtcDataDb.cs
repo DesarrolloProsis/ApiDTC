@@ -162,41 +162,20 @@
             }
         }
 
+        //TEST
         public Response GetDTC(string clavePlaza, int idUser, string squareCatalog)
         {
             using (SqlConnection sql = new SqlConnection(_connectionString))
             {
                 try
                 {
-                    SqlCommand cmd = new SqlCommand("", sql)
+                    using (SqlCommand cmd = new SqlCommand("dbo.spGetDTCView", sql))
                     {
-                        CommandText = "select " +
-                                        "ReferenceNumber, " +
-                                        "SinisterNumber, " +
-                                        "ReportNumber, " +
-                                        "SinisterDate, " +
-                                        "d.StatusId, " +
-                                        "FailureDate, " +
-                                        "FailureNumber, " +
-                                        "ShippingDate, " +
-                                        "ElaborationDate, " +
-                                        "DateStamp, " +
-                                        "d.TypeDescriptionId, " +
-                                        "t.Description as TypeDescription, " +
-                                        "Observation, " +
-                                        "Diagnosis, " +
-                                        "s.StatusDescription, " +
-                                        "d.OpenMode " +
-                                      "from DTCData d " +
-                                      "inner join UserSquare u " +
-                                      "on d.UserId = u.UserId " +
-                                      "inner join TypeDescriptions t on d.TypeDescriptionId = t.TypeDescriptionId " +
-                                      "join DTCStatusCatalog s on d.StatusId = s.StatusId " +
-                                      "where d.UserId = '" + idUser + "' and u.SquareCatalogId = '" + squareCatalog + "' and d.StatusId != 0 order by DateStamp desc "
-                    };
-
-                    var info_dtc = _sqlResult.GetList<DtcDataStr>(clavePlaza, cmd, sql, "GetDtc");                    
-                    return info_dtc;
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.Add("@UserId", SqlDbType.Int).Value = idUser;
+                        cmd.Parameters.Add("@SquareId", SqlDbType.NVarChar).Value = squareCatalog;
+                        return _sqlResult.GetList<DtcView>(clavePlaza, cmd, sql, "GetDTC");
+                    }
                 }
                 catch(SqlException ex)
                 {
