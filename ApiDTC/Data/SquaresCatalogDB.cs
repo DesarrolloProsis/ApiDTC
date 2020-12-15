@@ -43,7 +43,7 @@
             }
         }
 
-        public Response GetLanes(string clavePlaza, string square)
+        public Response GetLanes(string square)
         {
             try
             {
@@ -68,7 +68,7 @@
             }
             catch (SqlException ex)
             {
-                _apiLogger.WriteLog(clavePlaza, ex, "SquaresCatalog: GetLanes", 1);
+                _apiLogger.WriteLog("USR", ex, "SquaresCatalog: GetLanes", 1);
                 return new Response { Message = $"Error: {ex.Message}", Result = null };
             }
         }
