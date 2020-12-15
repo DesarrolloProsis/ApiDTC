@@ -37,7 +37,7 @@
                     return NotFound("GetStorePdf retorna tabla vacía");
                 //0 = Nuevo, 1 = Firmado, 2 = Almacén
                 PdfCreation pdf = new PdfCreation(clavePlaza, dataSet.Tables[0], dataSet.Tables[1], dataSet.Tables[2], dataSet.Tables[3], refNum, new ApiLogger());
-                var pdfResult = pdf.NewPdf();
+                var pdfResult = pdf.NewPdf(0);
                 return File(new FileStream(pdfResult.Result.ToString(), FileMode.Open, FileAccess.Read), "application/pdf");
             }
         }
@@ -56,7 +56,7 @@
                     return NotFound("GetStorePdf retorna tabla vacía");
                 PdfCreation pdf = new PdfCreation(clavePlaza, dataSet.Tables[0], dataSet.Tables[1], dataSet.Tables[2], dataSet.Tables[3], refNum, new ApiLogger());
                 //0 = Nuevo, 1 = Firmado, 2 = Almacén
-                var pdfResult = pdf.NewPdf();
+                var pdfResult = pdf.NewPdf(1);
                 return File(new FileStream(pdfResult.Result.ToString(), FileMode.Open, FileAccess.Read), "application/pdf");
             }
         }
@@ -75,7 +75,7 @@
                     return NotFound("GetStorePdf retorna tabla vacía");
                 //0 = Nuevo, 1 = Firmado, 2 = Almacén
                 PdfCreation pdf = new PdfCreation(clavePlaza, dataSet.Tables[0], dataSet.Tables[1], dataSet.Tables[2], dataSet.Tables[3], refNum, new ApiLogger());
-                var pdfResult = pdf.NewPdf();
+                var pdfResult = pdf.NewPdf(2);
                 return File(new FileStream(pdfResult.Result.ToString(), FileMode.Open, FileAccess.Read), "application/pdf");
             }
         }
@@ -94,7 +94,7 @@
                 if (dataSet.Tables[0].Rows.Count == 0 || dataSet.Tables[1].Rows.Count == 0 || dataSet.Tables[2].Rows.Count == 0 || dataSet.Tables[3].Rows.Count == 0)
                     return NotFound("GetStorePdfOpen retorna tabla vacía");
                 PdfCreation pdf = new PdfCreation(clavePlaza, dataSet.Tables[0], dataSet.Tables[1], dataSet.Tables[2], dataSet.Tables[3], refNum, new ApiLogger());
-                var pdfResult = pdf.NewPdf();
+                var pdfResult = pdf.NewPdf(0);
                 return File(new FileStream(pdfResult.Result.ToString(), FileMode.Open, FileAccess.Read), "application/pdf");
             }
         }
