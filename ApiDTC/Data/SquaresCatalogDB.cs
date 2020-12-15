@@ -54,7 +54,7 @@
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.Add("@Square", SqlDbType.NVarChar).Value = square;
 
-                        var storedResult = _sqlResult.GetList<Lanes>(clavePlaza, cmd, sql, "GetLanes");
+                        var storedResult = _sqlResult.GetList<Lanes>("USR", cmd, sql, "GetLanes");
                         if (storedResult.Result == null)
                             return storedResult;
 

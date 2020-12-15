@@ -21,8 +21,7 @@
         #endregion
 
         // GET: api/SquaresCatalog
-        //[HttpGet]
-        [HttpGet("{clavePlaza}")]
+        [HttpGet]
         public ActionResult<Response> Get(string clavePlaza)
         {
             var get = _db.GetSquaresCatalog(clavePlaza);
