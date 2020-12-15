@@ -14,21 +14,21 @@ namespace ApiDTC.Services
     {
         #region Attributes
 
-        private DataTable _tableHeader;
+        private readonly DataTable _tableHeader;
 
-        private DataTable _tableActivities;
+        private readonly DataTable _tableActivities;
 
-        private string _plaza;
+        private readonly string _clavePlaza;
 
-        private ApiLogger _apiLogger;
+        private readonly ApiLogger _apiLogger;
 
-        private int _tipo;
+        private readonly int _tipo;
 
-        private string[] _temporal;
+        private readonly string[] _temporal;
 
-        private string _carril;
+        private readonly string _ubicacion;
 
-        private string _clavePlaza;
+        private readonly string _referenceNumber;
         #endregion
 
         #region Pdf Configuration
@@ -63,40 +63,42 @@ namespace ApiDTC.Services
         #endregion
 
         #region Constructors
-        public MantenimientoPdfCreation(string clavePlaza, ApiLogger apiLogger, string plaza, int tipo, string carril)
-        {
-            _clavePlaza = clavePlaza;
-            _apiLogger = apiLogger;
-            _plaza = plaza;
-            _tipo = tipo;
-            _temporal = TipoDeReporte(_tipo);
-            _carril = carril;
-        }
 
-        public MantenimientoPdfCreation(string clavePlaza, DataTable tableHeader, DataTable tableActivities, string plaza, ApiLogger apiLogger, int tipo, string carril)
+        public MantenimientoPdfCreation(string clavePlaza, DataTable tableHeader, DataTable tableActivities, ApiLogger apiLogger, int tipo, string ubicacion, string referenceNumber)
         {
             _clavePlaza = clavePlaza;
             _apiLogger = apiLogger;
             _tableHeader = tableHeader;
             _tableActivities = tableActivities;
-            _plaza = plaza;
             _tipo = tipo;
             _temporal = TipoDeReporte(_tipo);
-            _carril = carril;
+            _ubicacion = ubicacion;
+            _referenceNumber = referenceNumber;
+        }
+
+        public MantenimientoPdfCreation(string clavePlaza, ApiLogger apiLogger, int tipo, string ubicacion, string referenceNumber)
+        {
+            _clavePlaza = clavePlaza;
+            _apiLogger = apiLogger;
+            _tipo = tipo;
+            _temporal = TipoDeReporte(_tipo);
+            _ubicacion = ubicacion;
+            _referenceNumber = referenceNumber;
         }
 
         #endregion
-
+        //https://localhost:44358/api/MantenimientoPdf/Nuevo/Jor/jorobas/B01/TLA-20333
         #region Methods
         public Response NewPdf()
         {
             string directory, file;
             DateTime now = DateTime.Now; 
+            directory = $@"{System.Environment.CurrentDirectory}\Bitacora\ReporteMantenimiento\{_clavePlaza.ToUpper()}\{_ubicacion}\{_temporal[2].ToUpper()}\{now.Year}\{MesActual()}\{now.Day}";
 
-            directory = $@"{System.Environment.CurrentDirectory}\Bitacora\ReporteMantenimiento\{_plaza.ToUpper()}\{_carril}\{_temporal[2].ToUpper()}\{now.Year}\{MesActual()}\{now.Day}";
-
-            file = $@"{directory}\{_plaza.ToUpper()}{DateTime.Now.Year}{MesContrato(now)}{_carril}{_temporal[0]}.pdf";
-
+            file = $@"{directory}\{_clavePlaza.ToUpper()}{DateTime.Now.Year}{MesContrato(now)}{_ubicacion}{_temporal[0]}.pdf";
+            
+            
+            //File in use
             try
             {   
                 if (!Directory.Exists(directory))
@@ -107,7 +109,7 @@ namespace ApiDTC.Services
                     {
                         return new Response
                         {
-                            Message = $"Error: Archivo {_plaza.ToUpper()}{DateTime.Now.Year}{MesContrato(new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Year))}{_carril}{_temporal[1]}.pdf en uso o inaccesible",
+                            Message = $"Error: Archivo {_clavePlaza.ToUpper()}{DateTime.Now.Year}{MesContrato(new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Year))}{_ubicacion}{_temporal[1]}.pdf en uso o inaccesible",
                             Result = null
                         };
                     }
@@ -208,8 +210,8 @@ namespace ApiDTC.Services
             }
             catch (IOException ex)
             {
-                if (System.IO.File.Exists($@"{directory}\{_plaza.ToUpper()}{DateTime.Now.Year}{MesContrato(new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Year))}{_carril}{_temporal[1]}.pdf"))
-                    System.IO.File.Delete($@"{directory}\{_plaza.ToUpper()}{DateTime.Now.Year}{MesContrato(new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Year))}{_carril}{_temporal[1]}.pdf");
+                if (System.IO.File.Exists($@"{directory}\{_clavePlaza.ToUpper()}{DateTime.Now.Year}{MesContrato(new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Year))}{_ubicacion}{_temporal[1]}.pdf"))
+                    System.IO.File.Delete($@"{directory}\{_clavePlaza.ToUpper()}{DateTime.Now.Year}{MesContrato(new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Year))}{_ubicacion}{_temporal[1]}.pdf");
                 _apiLogger.WriteLog(_clavePlaza, ex, "MatenimientoPdfCreation: NewPdf", 2);
                 return new Response
                 {
