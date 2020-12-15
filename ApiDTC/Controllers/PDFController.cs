@@ -42,7 +42,7 @@
             }
         }
 
-        [HttpGet("TerminarReporte/{clavePlaza}/{refNum}")]
+        [HttpGet("TerminarReporte/{clavePlaza}/{refNum}/{inicialRef}")]
         public IActionResult TerminarReporte(string clavePlaza, string refNum, string inicialRef)
         {
             //TODO If getstore is null on
@@ -61,7 +61,7 @@
             }
         }
 
-        [HttpGet("ReporteAlmacen/{clavePlaza}/{refNum}")]
+        [HttpGet("ReporteAlmacen/{clavePlaza}/{refNum}/{inicialRef}")]
         public IActionResult ReporteAlmacen(string clavePlaza, string refNum, string inicialRef)
         {
             //TODO If getstore is null on
