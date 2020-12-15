@@ -74,7 +74,7 @@ namespace ApiDTC.Services
         #endregion
         
         #region Methods
-        public Response NewPdf()
+        public Response NewPdf(int operacion)
         {
             if(!Directory.Exists($@"{System.Environment.CurrentDirectory}\Reportes\{DateTime.Now.Year}\{MesActual()}\{DateTime.Now.Day}\"))
                 Directory.CreateDirectory($@"{System.Environment.CurrentDirectory}\Reportes\{DateTime.Now.Year}\{MesActual()}\{DateTime.Now.Day}\");
