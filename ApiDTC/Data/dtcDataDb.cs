@@ -184,7 +184,11 @@
                 } 
             }
         }
-        
+
+
+
+
+
         public Response GetTableForm(string clavePlaza, string refNum)
         {
             try
@@ -217,7 +221,7 @@
             }
         }
 
-        public SqlResponse DeleteDtcData(string clavePlaza, string referenceNumber)
+        public SqlResponse DeleteDtcData(string clavePlaza, string referenceNumber, int userId)
         {
             try
             {
@@ -227,6 +231,7 @@
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.Add("@referenceNumber", SqlDbType.NVarChar).Value = referenceNumber;
+                        cmd.Parameters.Add("@UserId", SqlDbType.Int).Value = userId;
                         return _sqlResult.Post(clavePlaza, cmd, sql, "DeleteDtcData");
                     }
                 }
@@ -373,6 +378,30 @@
             catch (SqlException ex)
             {
                 _apiLogger.WriteLog(clavePlaza, ex, "DtcDataDb: EditRefereceOpen", 1);
+                return new Response { Message = $"Error: {ex.Message}", Result = null };
+            }
+        }
+
+        public Response GetDTCHeaderEdit(string clavePlaza, string ReferenceNumber)
+        {
+            
+            try
+            {
+                using (SqlConnection sql = new SqlConnection(_connectionString))
+                {
+                    using (SqlCommand cmd = new SqlCommand("[dbo].[spGetHeaderEdit]", sql))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.Add("@ReferenceNumber", SqlDbType.NVarChar).Value = ReferenceNumber;
+                        return _sqlResult.GetList<HeaderEditDTC>(clavePlaza, cmd, sql, "GetDTCHeaderEdit");
+
+
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                _apiLogger.WriteLog(clavePlaza, ex, "DtcDataDb: GetDTCHeaderEdit", 1);
                 return new Response { Message = $"Error: {ex.Message}", Result = null };
             }
         }

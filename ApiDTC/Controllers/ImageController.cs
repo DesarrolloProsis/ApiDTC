@@ -154,9 +154,9 @@
             try
             {
                 string directoy = $@"{_environment.WebRootPath}DtcImages\{plaza}\{referenceNumber}\";
-                if (!Directory.Exists(directoy))
-                    return NotFound(directoy);
                 List<string> dtcImages = new List<string>();
+                if (!Directory.Exists(directoy))
+                    return Ok(dtcImages);
                 foreach (var item in Directory.GetFiles(directoy))
                     dtcImages.Add(item.Substring(item.LastIndexOf('\\') + 1));
                 return Ok(dtcImages);

@@ -124,12 +124,12 @@
         }
 
         //[HttpDelete("Delete/{referenceNumber}")]
-        [HttpDelete("Delete/{clavePlaza}/{referenceNumber}")]
-        public ActionResult<Response> Delete(string clavePlaza, string referenceNumber)
+        [HttpDelete("Delete/{clavePlaza}/{referenceNumber}/{userId}")]
+        public ActionResult<Response> Delete(string clavePlaza, string referenceNumber, int userId)
         {
             if (ModelState.IsValid)
             {
-                var delete = _db.DeleteDtcData(clavePlaza, referenceNumber);
+                var delete = _db.DeleteDtcData(clavePlaza, referenceNumber, userId);
                 if (delete.SqlResult == null)
                     return NotFound(delete);
                 else
@@ -147,6 +147,20 @@
                 return NotFound(put);
             return Ok(put);
         }
+
+        //NuevaAlex
+        [HttpGet("{clavePlaza}/{ReferenceNumber}")]
+        public ActionResult<Response> GetHeaderEdit (string clavePlaza, string ReferenceNumber)
+        {
+            var get = _db.GetDTCHeaderEdit(clavePlaza, ReferenceNumber);
+            if (get.Result == null)
+                return NotFound(get);
+            else
+                return Ok(get);
+        }
+
+
+
         #endregion
     }
 }

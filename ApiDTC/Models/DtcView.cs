@@ -35,5 +35,12 @@
         public string StatusDescription { get; set; }
 
         public bool OpenMode { get; set; }
+
+        public string SquareCatalogId { get; set; }
+
+        public string ReferenceSquare { get; set; }
+
+        public int UserId { get; set; }
+
     }
 }
