@@ -43,7 +43,30 @@
                 return new Response { Message = $"Error: {ex.Message}", Result = null };
             }
         }
-       
+
+        public SqlResponse TerminarReporte(string clavePlaza, string referenceNumber)
+        {
+            try
+            {
+                using(SqlConnection sql = new SqlConnection(_connectionString))
+                {
+                    using(SqlCommand cmd = new SqlCommand("spUpdateStatusDTC", sql))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.Add("@ReferenceNumber", SqlDbType.NVarChar).Value = referenceNumber;
+                        return _sqlResult.Put(clavePlaza, cmd, sql, "TerminarReporte");
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+
+                _apiLogger.WriteLog(clavePlaza, ex, "PdfConsultasDb: TerminarReporte", 1);
+                return new SqlResponse { SqlMessage = $"Error: {ex.Message}", SqlResult = null };
+            }
+        }
+
+
         public DataSet GetStorePDF(string clavePlaza, string numeroReferencia, string inicialRef)
         {
             try

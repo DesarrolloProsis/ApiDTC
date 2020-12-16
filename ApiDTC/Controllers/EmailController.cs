@@ -31,7 +31,7 @@ namespace ApiDTC.Controllers
         public IActionResult Index()
         {
             EmailService email = new EmailService(new ApiLogger());
-            if (email.Send("axel.frias257@gmail.com", "PRUEBA SERVICE", "AXEL"))
+            if (email.Send("a.mitra2311@gmail.com", "HOLA CARA DE BOLA", "EMI"))
                 return Ok();
             return NotFound();;
         }

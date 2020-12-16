@@ -32,6 +32,7 @@
                 return NotFound(get);
             else
             {
+                
                 var dataSet = _db.GetStorePDF(clavePlaza, refNum, inicialRef);
                 if (dataSet.Tables[0].Rows.Count == 0 || dataSet.Tables[1].Rows.Count == 0 || dataSet.Tables[2].Rows.Count == 0 || dataSet.Tables[3].Rows.Count == 0)
                     return NotFound("GetStorePdf retorna tabla vacía");
@@ -42,12 +43,12 @@
             }
         }
 
-        [HttpGet("TerminarReporte/{clavePlaza}/{refNum}")]
+        [HttpPut("TerminarReporte/{clavePlaza}/{refNum}/{inicialRef}")]
         public IActionResult TerminarReporte(string clavePlaza, string refNum, string inicialRef)
         {
             //TODO If getstore is null on
-            var get = _db.SearchReference(clavePlaza, refNum);
-            if (get.Result == null)
+            var get = _db.TerminarReporte(clavePlaza, refNum);
+            if (get.SqlResult == null)
                 return NotFound(get);
             else
             {
@@ -61,7 +62,7 @@
             }
         }
 
-        [HttpGet("ReporteAlmacen/{clavePlaza}/{refNum}")]
+        [HttpGet("ReporteAlmacen/{clavePlaza}/{refNum}/{inicialRef}")]
         public IActionResult ReporteAlmacen(string clavePlaza, string refNum, string inicialRef)
         {
             //TODO If getstore is null on
