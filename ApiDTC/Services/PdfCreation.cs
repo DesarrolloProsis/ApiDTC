@@ -79,13 +79,22 @@ namespace ApiDTC.Services
             if(!Directory.Exists($@"{System.Environment.CurrentDirectory}\Reportes\{DateTime.Now.Year}\{MesActual()}\{DateTime.Now.Day}\"))
                 Directory.CreateDirectory($@"{System.Environment.CurrentDirectory}\Reportes\{DateTime.Now.Year}\{MesActual()}\{DateTime.Now.Day}\");
 
-            if(File.Exists($@"{System.Environment.CurrentDirectory}\Reportes\{DateTime.Now.Year}\{MesActual()}\{DateTime.Now.Day}\ReporteDTC-{_refNum}.pdf"))
+            string fileName;
+            if (operacion == 0)
+                fileName = $@"{System.Environment.CurrentDirectory}\Reportes\{DateTime.Now.Year}\{MesActual()}\{DateTime.Now.Day}\ReporteDTC-{_refNum}.pdf";
+            else if(operacion == 1)
+                fileName = $@"{System.Environment.CurrentDirectory}\Reportes\{DateTime.Now.Year}\{MesActual()}\{DateTime.Now.Day}\ReporteDTC-{_refNum}-Finalizado.pdf";
+            else
+                fileName = $@"{System.Environment.CurrentDirectory}\Reportes\{DateTime.Now.Year}\{MesActual()}\{DateTime.Now.Day}\ReporteDTC-{_refNum}-Almacén.pdf";
+
+
+            if (File.Exists(fileName))
             {
-                if(FileInUse($@"{System.Environment.CurrentDirectory}\Reportes\{DateTime.Now.Year}\{MesActual()}\{DateTime.Now.Day}\ReporteDTC-{_refNum}.pdf"))
+                if(FileInUse(fileName))
                 {
                     return new Response
                     {
-                        Message = $"Error: Archivo ReporteDTC-{_refNum} en uso o inaccesible",
+                        Message = $"Error: Archivo {fileName} en uso o inaccesible",
                         Result = null
                     };
                 }  
@@ -108,6 +117,13 @@ namespace ApiDTC.Services
                     doc.Open();
 
 
+                    if(operacion == 2)
+                    {
+                        Image marcaDeAgua = Image.GetInstance($@"{System.Environment.CurrentDirectory}\Media\MarcaAlmacen.png");
+                        marcaDeAgua.SetAbsolutePosition(250, 300);
+                        doc.Add(marcaDeAgua);
+                    }
+                    
                     doc.Add(tablaEncabezado());
                     doc.Add(new Phrase(" "));
                     doc.Add(new Phrase(" "));
@@ -125,7 +141,7 @@ namespace ApiDTC.Services
                     doc.Add(new Phrase(".", letritasMiniMini));
                     doc.Add(tablaEstatica());
                     doc.Add(new Phrase(".", letritasMiniMini));
-                    doc.Add(tablaFinal());
+                    doc.Add(tablaFinal(operacion));
                     doc.Add(new Phrase("\n"));
                     doc.Add(new Phrase("\n"));                                        
                     doc.Close();
@@ -135,7 +151,7 @@ namespace ApiDTC.Services
                     byte[] content = myMemoryStream.ToArray();
 
 
-                    using (FileStream fs = File.Create($@"{System.Environment.CurrentDirectory}\Reportes\{DateTime.Now.Year}\{MesActual()}\{DateTime.Now.Day}\ReporteDTC-{_refNum}.pdf"))
+                    using (FileStream fs = File.Create(fileName))
                     {
                         fs.Write(content, 0, (int)content.Length);
                     }
@@ -143,14 +159,14 @@ namespace ApiDTC.Services
                 return new Response
                 {
                     Message = "Ok",
-                    Result = $@"{System.Environment.CurrentDirectory}\Reportes\{DateTime.Now.Year}\{MesActual()}\{DateTime.Now.Day}\ReporteDTC-{_refNum}.pdf"
+                    Result = fileName
                 };
             }
             catch(IOException ex)
             {
                 doc.Close();
-                if(System.IO.File.Exists($@"{System.Environment.CurrentDirectory}\Reportes\{DateTime.Now.Year}\{MesActual()}\{DateTime.Now.Day}\ReporteDTC-{_refNum}.pdf"))
-                    System.IO.File.Delete($@"{System.Environment.CurrentDirectory}\Reportes\{DateTime.Now.Year}\{MesActual()}\{DateTime.Now.Day}\ReporteDTC-{_refNum}.pdf");
+                if(System.IO.File.Exists(fileName))
+                    System.IO.File.Delete(fileName);
                 _apiLogger.WriteLog(_clavePlaza, ex, $"PdfCreation: NewPdf", 2);
                 return new Response
                 {
@@ -160,11 +176,26 @@ namespace ApiDTC.Services
             }        
         }
 
-        private IElement tablaFinal()
+        private IElement tablaFinal(int op)
         {
             var tablaFinal = new PdfPTable(new float[] { 40f, 7f, 34f, 7f, 26f }) { WidthPercentage = 100f };
 
-            var colAutorizacion = new PdfPCell(new Phrase("AUTORIZACION TECNICA Y COMERCIAL\n\n\n\n\n\nAutorizacion Comercial Director de Comercializacion\nC.P Hermilia Guzman", letraNormalChica)) { HorizontalAlignment = Element.ALIGN_CENTER, BorderWidthLeft = 1, BorderWidthRight = 1, BorderWidthTop = 1, BorderWidthBottom = 1, Padding = 2 };
+            
+            var innerTable = new PdfPTable(1);
+            var colAutorizacion = new PdfPCell(new Phrase("AUTORIZACIÓN TÉCNICA Y COMERCIAL", letraNormalChica)) { HorizontalAlignment = Element.ALIGN_CENTER, Border = 0, Padding = 2 };
+            PdfPCell colFirma;
+            if(op != 0)
+            {
+                iTextSharp.text.Image firma = iTextSharp.text.Image.GetInstance($@"{System.Environment.CurrentDirectory}\Media\firma.png");
+                firma.ScaleAbsolute(35f, 40f);
+                colFirma = new PdfPCell(firma) { HorizontalAlignment = Element.ALIGN_CENTER, Border = 0, Padding = 2 };
+            }
+            else
+                colFirma = new PdfPCell(new Phrase("", letraNormalChica)) { FixedHeight = 40f, HorizontalAlignment = Element.ALIGN_CENTER, Border = 0, Padding = 2 };
+            var colNombreDirector = new PdfPCell(new Phrase("Autorización Comercial Director de Comercialización\nC.P. Hermilia Guzman Añorve", letraNormalChica)) { HorizontalAlignment = Element.ALIGN_CENTER, Border = 0, Padding = 2 };
+            innerTable.AddCell(colAutorizacion);
+            innerTable.AddCell(colFirma);
+            innerTable.AddCell(colNombreDirector);
 
             var colEmpy4 = new PdfPCell(new Phrase("")) { HorizontalAlignment = Element.ALIGN_LEFT };
             colEmpy4.Border = 0;
@@ -197,7 +228,10 @@ namespace ApiDTC.Services
             var colAdministradorSinLinea = new PdfPCell(new Phrase(administrador)) { HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_BOTTOM };
             colAdministradorSinLinea.Border = 0;
 
-            tablaFinal.AddCell(colAutorizacion);
+            var tablaInterna = new PdfPCell();
+            tablaInterna.AddElement(innerTable);
+
+            tablaFinal.AddCell(tablaInterna);
             tablaFinal.AddCell(colEmpy4);
             tablaFinal.AddCell(colEmpy5);
             tablaFinal.AddCell(colEmpy6);
@@ -273,17 +307,17 @@ namespace ApiDTC.Services
             var tablaEquipoPropuesto = new PdfPTable(new float[] { 12f, 12f, 12f, 62f, 24f, 24f, 20f, 20f, 20f, 20.2f, 10f, 75f }) { WidthPercentage = 100f };
             tablaEquipoPropuesto.HorizontalAlignment = Element.ALIGN_LEFT;
 
-            var colPartidaPro = new PdfPCell(new Phrase("Partida", letraoNegritaChica)) { HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
-            var colUnidadPro = new PdfPCell(new Phrase("Unidad", letraoNegritaChica)) { HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
-            var colCantidadPro = new PdfPCell(new Phrase("Cantidad", letraoNegritaChica)) { HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
-            var colComponentePro = new PdfPCell(new Phrase("Componente", letraoNegritaChica)) { HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
-            var colMarcaPro = new PdfPCell(new Phrase("Marca", letraoNegritaChica)) { HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
-            var colModeloPro = new PdfPCell(new Phrase("Modelo", letraoNegritaChica)) { HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
-            var colPrecioPro = new PdfPCell(new Phrase("Precio\nUnitario Pesos M.N", letraoNegritaChica)) { HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
-            var colPrecioDolarPro = new PdfPCell(new Phrase("Precio\nUnitario Dolares", letraoNegritaChica)) { HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
-            var colPrecioTotalPro = new PdfPCell(new Phrase("Precio Total\nPesos M.N", letraoNegritaChica)) { HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
-            var colPrecioTotalDolarPro = new PdfPCell(new Phrase("Precio Total\nDolares", letraoNegritaChica)) { HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
-            var colVaciaPro = new PdfPCell(new Phrase(" ")) { HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
+            var colPartidaPro = new PdfPCell(new Phrase("Partida", letraoNegritaChica)) { VerticalAlignment = Element.ALIGN_MIDDLE, HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
+            var colUnidadPro = new PdfPCell(new Phrase("Unidad", letraoNegritaChica)) { VerticalAlignment = Element.ALIGN_MIDDLE, HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
+            var colCantidadPro = new PdfPCell(new Phrase("Cantidad", letraoNegritaChica)) { VerticalAlignment = Element.ALIGN_MIDDLE, HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
+            var colComponentePro = new PdfPCell(new Phrase("Componente", letraoNegritaChica)) { VerticalAlignment = Element.ALIGN_MIDDLE, HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
+            var colMarcaPro = new PdfPCell(new Phrase("Marca", letraoNegritaChica)) { VerticalAlignment = Element.ALIGN_MIDDLE, HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
+            var colModeloPro = new PdfPCell(new Phrase("Modelo", letraoNegritaChica)) { VerticalAlignment = Element.ALIGN_MIDDLE, HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
+            var colPrecioPro = new PdfPCell(new Phrase("Precio\nUnitario Pesos M.N", letraoNegritaChica)) { VerticalAlignment = Element.ALIGN_MIDDLE, HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
+            var colPrecioDolarPro = new PdfPCell(new Phrase("Precio\nUnitario Dolares", letraoNegritaChica)) { VerticalAlignment = Element.ALIGN_MIDDLE, HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
+            var colPrecioTotalPro = new PdfPCell(new Phrase("Precio Total\nPesos M.N", letraoNegritaChica)) { VerticalAlignment = Element.ALIGN_MIDDLE, HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
+            var colPrecioTotalDolarPro = new PdfPCell(new Phrase("Precio Total\nDólares", letraoNegritaChica)) { HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
+            var colVaciaPro = new PdfPCell(new Phrase(" ")) { VerticalAlignment = Element.ALIGN_MIDDLE, HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
             colVaciaPro.Border = 0;
 
 
@@ -314,17 +348,17 @@ namespace ApiDTC.Services
 
             foreach (DataRow item2 in _tableEquipoPropuesto.Rows)
             {
-                var colPartidaProList = new PdfPCell(new Phrase(item2["Partida"].ToString(), letritasMini)) { HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
-                var colUnidadProList = new PdfPCell(new Phrase(item2["Unidad"].ToString(), letritasMini)) { HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
-                var colCantidadProList = new PdfPCell(new Phrase(item2["Cantidad"].ToString(), letritasMini)) { HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
-                var colComponenteProList = new PdfPCell(new Phrase(item2["Componente"].ToString(), letritasMini)) { HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
-                var colMarcaProList = new PdfPCell(new Phrase(item2["Marca"].ToString(), letritasMini)) { HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
-                var colModeloProList = new PdfPCell(new Phrase(item2["Modelo"].ToString(), letritasMini)) { HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
-                var colPrecioProList = new PdfPCell(new Phrase(Convert.ToDouble(item2["PrecioUnitario"]).ToString("C", CultureInfo.CurrentCulture), letritasMini)) { HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
-                var colPrecioDolarProList = new PdfPCell(new Phrase("$" + item2["PrecioDollarUnitario"].ToString(), letritasMini)) { HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
-                var colPrecioTotalProList = new PdfPCell(new Phrase(Convert.ToDouble(item2["PrecioTotal"]).ToString("C", CultureInfo.CurrentCulture), letritasMini)) { HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
-                var colPrecioTotalDolarProList = new PdfPCell(new Phrase("", letritasMini)) { HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
-                var colVaciaProList = new PdfPCell(new Phrase(" ")) { HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
+                var colPartidaProList = new PdfPCell(new Phrase(item2["Partida"].ToString(), letritasMini)) { VerticalAlignment = Element.ALIGN_MIDDLE, HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
+                var colUnidadProList = new PdfPCell(new Phrase(item2["Unidad"].ToString(), letritasMini)) { VerticalAlignment = Element.ALIGN_MIDDLE, HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
+                var colCantidadProList = new PdfPCell(new Phrase(item2["Cantidad"].ToString(), letritasMini)) { VerticalAlignment = Element.ALIGN_MIDDLE, HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
+                var colComponenteProList = new PdfPCell(new Phrase(item2["Componente"].ToString(), letritasMini)) { VerticalAlignment = Element.ALIGN_MIDDLE, HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
+                var colMarcaProList = new PdfPCell(new Phrase(item2["Marca"].ToString(), letritasMini)) { VerticalAlignment = Element.ALIGN_MIDDLE, HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
+                var colModeloProList = new PdfPCell(new Phrase(item2["Modelo"].ToString(), letritasMini)) { VerticalAlignment = Element.ALIGN_MIDDLE, HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
+                var colPrecioProList = new PdfPCell(new Phrase(Convert.ToDouble(item2["PrecioUnitario"]).ToString("C", CultureInfo.CurrentCulture), letritasMini)) { VerticalAlignment = Element.ALIGN_MIDDLE, HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
+                var colPrecioDolarProList = new PdfPCell(new Phrase("$" + item2["PrecioDollarUnitario"].ToString(), letritasMini)) { VerticalAlignment = Element.ALIGN_MIDDLE, HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
+                var colPrecioTotalProList = new PdfPCell(new Phrase(Convert.ToDouble(item2["PrecioTotal"]).ToString("C", CultureInfo.CurrentCulture), letritasMini)) { VerticalAlignment = Element.ALIGN_MIDDLE, HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
+                var colPrecioTotalDolarProList = new PdfPCell(new Phrase("", letritasMini)) { VerticalAlignment = Element.ALIGN_MIDDLE, HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
+                var colVaciaProList = new PdfPCell(new Phrase(" ")) { VerticalAlignment = Element.ALIGN_MIDDLE, HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
 
                 colVaciaProList.Border = 0;
 
@@ -380,16 +414,16 @@ namespace ApiDTC.Services
 
         private IElement tablaEquipoDañado()
         {
-            var tablaEquipoDanado = new PdfPTable(new float[] { 10f, 10f, 10f, 50f, 20f, 20f, 20f, 20f, 25f, 35f, 35f }) { WidthPercentage = 100f };
-            var colPartida = new PdfPCell(new Phrase("Partida", letraoNegritaChica)) { HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
-            var colUnidad = new PdfPCell(new Phrase("Unidad", letraoNegritaChica)) { HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
-            var colCantidad = new PdfPCell(new Phrase("Cantidad", letraoNegritaChica)) { HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
-            var colComponente = new PdfPCell(new Phrase("Componente", letraoNegritaChica)) { HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
-            var colMarca = new PdfPCell(new Phrase("Marca", letraoNegritaChica)) { HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
-            var colModelo = new PdfPCell(new Phrase("Modelo", letraoNegritaChica)) { HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
-            var colNumSerie = new PdfPCell(new Phrase("Num. Serie", letraoNegritaChica)) { HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
-            var colUbicacion = new PdfPCell(new Phrase("Ubicacion\n(Carril)", letraoNegritaChica)) { HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
-            var colFechaInstalacion = new PdfPCell(new Phrase("Fecha Instalacion\n(dd-mm-aa)", letraoNegritaChica)) { HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
+            var tablaEquipoDanado = new PdfPTable(new float[] { 10f, 10f, 10f, 50f, 20f, 25f, 25f, 10f, 20f, 35f, 35f }) { WidthPercentage = 100f };
+            var colPartida = new PdfPCell(new Phrase("Partida", letraoNegritaChica)) { VerticalAlignment = Element.ALIGN_MIDDLE, HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
+            var colUnidad = new PdfPCell(new Phrase("Unidad", letraoNegritaChica)) { VerticalAlignment = Element.ALIGN_MIDDLE, HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
+            var colCantidad = new PdfPCell(new Phrase("Cantidad", letraoNegritaChica)) { VerticalAlignment = Element.ALIGN_MIDDLE, HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
+            var colComponente = new PdfPCell(new Phrase("Componente", letraoNegritaChica)) { VerticalAlignment = Element.ALIGN_MIDDLE, HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
+            var colMarca = new PdfPCell(new Phrase("Marca", letraoNegritaChica)) { VerticalAlignment = Element.ALIGN_MIDDLE, HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
+            var colModelo = new PdfPCell(new Phrase("Modelo", letraoNegritaChica)) { VerticalAlignment = Element.ALIGN_MIDDLE, HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
+            var colNumSerie = new PdfPCell(new Phrase("Num. Serie", letraoNegritaChica)) { VerticalAlignment = Element.ALIGN_MIDDLE, HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
+            var colUbicacion = new PdfPCell(new Phrase("Ubicación\n(Carril)", letraoNegritaChica)) { VerticalAlignment = Element.ALIGN_MIDDLE, HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
+            var colFechaInstalacion = new PdfPCell(new Phrase("Fecha Instalación\n(dd-mm-aa)", letraoNegritaChica)) { VerticalAlignment = Element.ALIGN_MIDDLE, HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
             //var colUltimoMantenimiento = new PdfPCell(new Phrase("Ultimo Mantenimiento", letritasMini)) {  };
             //var colFinVidaUtil = new PdfPCell(new Phrase("Fin de Vida Util", letritasMini)) { };
 
@@ -399,8 +433,9 @@ namespace ApiDTC.Services
             PdfPCell colAnidada = new PdfPCell();
             PdfPCell colAnidada2 = new PdfPCell();
             colAnidada.Colspan = 2;
-            colAnidada.Phrase = new Phrase("Ultimo Mantenimiento", letraoNegritaChica);
+            colAnidada.Phrase = new Phrase("Último mantenimiento", letraoNegritaChica);
             colAnidada.HorizontalAlignment = Element.ALIGN_CENTER;
+            colAnidada.VerticalAlignment = Element.ALIGN_MIDDLE;
             colAnidada.Border = 1;
             colAnidada.Border = 0;
             colAnidada.BorderWidthBottom = 1;
@@ -409,9 +444,13 @@ namespace ApiDTC.Services
             colAnidada2.Phrase = new Phrase("Fecha", letraoNegritaChica);
             colAnidada2.Border = 1;
             colAnidada2.BorderWidthRight = 1;
+            colAnidada2.VerticalAlignment = Element.ALIGN_MIDDLE;
+            colAnidada2.HorizontalAlignment = Element.ALIGN_CENTER;
             tablaEquipoDanadoAnidada.AddCell(colAnidada2);
             colAnidada2.Phrase = new Phrase("Folio", letraoNegritaChica);
             colAnidada2.Border = 0;
+            colAnidada2.VerticalAlignment = Element.ALIGN_MIDDLE;
+            colAnidada2.HorizontalAlignment = Element.ALIGN_CENTER;
             tablaEquipoDanadoAnidada.AddCell(colAnidada2);
 
             //Tabla Anidada de UltimoMantenimiento 'Remplazo de colFinVidaUtil'
@@ -421,18 +460,24 @@ namespace ApiDTC.Services
             PdfPCell colAnidada4 = new PdfPCell();
 
             colAnidada3.Colspan = 2;
-            colAnidada3.Phrase = new Phrase("Fin de Vida Util", letraoNegritaChica);
+            colAnidada3.Phrase = new Phrase("Fin de vida útil", letraoNegritaChica);
             colAnidada3.HorizontalAlignment = Element.ALIGN_CENTER;
             colAnidada3.Border = 0;
             colAnidada3.BorderWidthBottom = 1;
+            colAnidada3.VerticalAlignment = Element.ALIGN_MIDDLE;
+            colAnidada3.HorizontalAlignment = Element.ALIGN_CENTER;
             tablaEquipoDanadoAnidada2.AddCell(colAnidada3);
 
             colAnidada4.Phrase = new Phrase("Real", letraoNegritaChica);
             colAnidada4.Border = 0;
             colAnidada4.BorderWidthRight = 1;
+            colAnidada4.VerticalAlignment = Element.ALIGN_MIDDLE;
+            colAnidada4.HorizontalAlignment = Element.ALIGN_CENTER;
             tablaEquipoDanadoAnidada2.AddCell(colAnidada4);
             colAnidada4.Phrase = new Phrase("Fabricantes", letraoNegritaChica);
             colAnidada4.Border = 0;
+            colAnidada4.VerticalAlignment = Element.ALIGN_MIDDLE;
+            colAnidada4.HorizontalAlignment = Element.ALIGN_CENTER;
             tablaEquipoDanadoAnidada2.AddCell(colAnidada4);
 
 
@@ -460,16 +505,16 @@ namespace ApiDTC.Services
 
             foreach (DataRow item in _tableEquipoMalo.Rows)
             {
-                var colPartidaList = new PdfPCell(new Phrase(item["Partida"].ToString(), letritasMini)) { BorderWidth = 1, HorizontalAlignment = Element.ALIGN_CENTER };
+                var colPartidaList = new PdfPCell(new Phrase(item["Partida"].ToString(), letritasMini)) { BorderWidth = 1, VerticalAlignment = Element.ALIGN_MIDDLE, HorizontalAlignment = Element.ALIGN_CENTER };
 
-                var colUnidadList = new PdfPCell(new Phrase(item["Unidad"].ToString(), letritasMini)) { HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
-                var colCantidadList = new PdfPCell(new Phrase(item["Cantidad"].ToString(), letritasMini)) { HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
-                var colComponenteList = new PdfPCell(new Phrase(item["Componente"].ToString(), letritasMini)) { HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
-                var colMarcaList = new PdfPCell(new Phrase(item["Marca"].ToString(), letritasMini)) { HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
-                var colModeloList = new PdfPCell(new Phrase(item["Modelo"].ToString(), letritasMini)) { HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
-                var colNumSerieList = new PdfPCell(new Phrase(item["NumeroSerie"].ToString(), letritasMini)) { HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
-                var colUbicacionList = new PdfPCell(new Phrase(item["Ubicacion"].ToString(), letritasMini)) { HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
-                var colFechaInstalacionList = new PdfPCell(new Phrase(item["FechaInstalacion"].ToString(), letritasMini)) { HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
+                var colUnidadList = new PdfPCell(new Phrase(item["Unidad"].ToString(), letritasMini)) { VerticalAlignment = Element.ALIGN_MIDDLE, HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
+                var colCantidadList = new PdfPCell(new Phrase(item["Cantidad"].ToString(), letritasMini)) { VerticalAlignment = Element.ALIGN_MIDDLE, HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
+                var colComponenteList = new PdfPCell(new Phrase(item["Componente"].ToString(), letritasMini)) { VerticalAlignment = Element.ALIGN_MIDDLE, HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
+                var colMarcaList = new PdfPCell(new Phrase(item["Marca"].ToString(), letritasMini)) { VerticalAlignment = Element.ALIGN_MIDDLE, HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
+                var colModeloList = new PdfPCell(new Phrase(item["Modelo"].ToString(), letritasMini)) { VerticalAlignment = Element.ALIGN_MIDDLE, HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
+                var colNumSerieList = new PdfPCell(new Phrase(item["NumeroSerie"].ToString(), letritasMini)) { VerticalAlignment = Element.ALIGN_MIDDLE, HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
+                var colUbicacionList = new PdfPCell(new Phrase(item["Ubicacion"].ToString(), letritasMini)) { VerticalAlignment = Element.ALIGN_MIDDLE, HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
+                var colFechaInstalacionList = new PdfPCell(new Phrase(item["FechaInstalacion"].ToString(), letritasMini)) { VerticalAlignment = Element.ALIGN_MIDDLE, HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
 
                 //Tabla Anidada de UltimoMantenimiento 'Remplazo de colUltimoMantenimiento'
                 var tablaEquipoDanadoAnidadaList = new PdfPTable(new float[] { 35f, 35f }) { WidthPercentage = 100f };
@@ -529,7 +574,7 @@ namespace ApiDTC.Services
         {
             var tablaSiniestroMore = new PdfPTable(new float[] { 15f, 80f, 20f, 20f, 15f, 85f, 25f, 40f }) { WidthPercentage = 100f };
 
-            var col1 = new PdfPCell(new Phrase("Atencion:", letraNormalChica)) { Border = 0 };
+            var col1 = new PdfPCell(new Phrase("Atención:", letraNormalChica)) { Border = 0 };
             var col2 = new PdfPCell(new Phrase(Convert.ToString(_tableHeader.Rows[0]["ManagerName"]), letraNormalChica)) { Border = 0 };
 
             var col3 = new PdfPCell(new Phrase("", letraNormalChica)) { Border = 0 };
@@ -538,19 +583,19 @@ namespace ApiDTC.Services
             var col5 = new PdfPCell(new Phrase("", letraNormalChica)) { Border = 0 };
             var col6 = new PdfPCell(new Phrase("", letraNormalChica)) { Border = 0 };
 
-            var col7 = new PdfPCell(new Phrase("Descripcion:", letraNormalChica)) { Border = 0 };
+            var col7 = new PdfPCell(new Phrase("Descripción:", letraNormalChica)) { Border = 0 };
             var col8 = new PdfPCell(new Phrase(Convert.ToString(_tableDTCData.Rows[0]["TipoDescripicon"]), letraoNegritaChica)) { HorizontalAlignment = Element.ALIGN_RIGHT, Border = 0 };
 
             var col9 = new PdfPCell(new Phrase("Cargo:", letraNormalChica)) { Border = 0 };
             var col10 = new PdfPCell(new Phrase(Convert.ToString(_tableHeader.Rows[0]["Position"]), letraNormalChica)) { Border = 0 };
 
-            var col11 = new PdfPCell(new Phrase("No.Siniestro", letraNormalChica)) { Border = 0 };
+            var col11 = new PdfPCell(new Phrase("No. Siniestro", letraNormalChica)) { Border = 0 };
             var col12 = new PdfPCell(new Phrase(Convert.ToString(_tableDTCData.Rows[0]["SinisterNumber"]), letraoNegritaChica)) { Border = 0 };
 
-            var col13 = new PdfPCell(new Phrase("No.Reporte", letraNormalChica)) { Border = 0 };
+            var col13 = new PdfPCell(new Phrase("No. Reporte", letraNormalChica)) { Border = 0 };
             var col14 = new PdfPCell(new Phrase(Convert.ToString(_tableDTCData.Rows[0]["ReportNumber"]), letraoNegritaChica)) { Border = 0 };
 
-            var col15 = new PdfPCell(new Phrase("Lugar de Fecha de Envio:", letraNormalChica)) { Border = 0 };
+            var col15 = new PdfPCell(new Phrase("Lugar de fecha de envío:", letraNormalChica)) { Border = 0 };
             var col16 = new PdfPCell(new Phrase("Ciudad de México a " + Convert.ToDateTime(_tableDTCData.Rows[0]["ElaborationDate"]).ToString("dd/MM/yyyy"), letraoNegritaChica)) { HorizontalAlignment = Element.ALIGN_RIGHT, Border = 0 };
 
 
@@ -563,7 +608,7 @@ namespace ApiDTC.Services
             var col21 = new PdfPCell(new Phrase("", letraNormalChica)) { Border = 0 };
             var col22 = new PdfPCell(new Phrase("", letraNormalChica)) { Border = 0 };
 
-            var col23 = new PdfPCell(new Phrase("Tecnico Responsable:", letraNormalChica)) { Border = 0 };
+            var col23 = new PdfPCell(new Phrase("Técnico Responsable:", letraNormalChica)) { Border = 0 };
             var col24 = new PdfPCell(new Phrase(Convert.ToString(_tableDTCData.Rows[0]["TecnicoResponsable"]), letraoNegritaChica)) { HorizontalAlignment = Element.ALIGN_RIGHT, Border = 0 };
 
             var col25 = new PdfPCell(new Phrase("Plaza de Cobro:", letraNormalChica)) { Border = 0 };
@@ -576,7 +621,7 @@ namespace ApiDTC.Services
             var col29 = new PdfPCell(new Phrase("", letraNormalChica)) { Border = 0 };
             var col30 = new PdfPCell(new Phrase("", letraNormalChica)) { Border = 0 };
 
-            var col31 = new PdfPCell(new Phrase("Cordinacion Regional: Ciudad de México", letraNormalChica)) { Border = 0 };
+            var col31 = new PdfPCell(new Phrase("Coordinación Regional: Ciudad de México", letraNormalChica)) { Border = 0 };
             var col32 = new PdfPCell(new Phrase(Convert.ToString(_tableHeader.Rows[0]["RegionalCoordination"]), letraoNegritaChica)) { HorizontalAlignment = Element.ALIGN_RIGHT, Border = 0 };
 
             var col33 = new PdfPCell(new Phrase("", letraNormalChica)) { Border = 0 };
@@ -601,7 +646,7 @@ namespace ApiDTC.Services
             var col45 = new PdfPCell(new Phrase("", letraNormalChica)) { Border = 0 };
             var col46 = new PdfPCell(new Phrase("", letraNormalChica)) { Border = 0 };
 
-            var col47 = new PdfPCell(new Phrase("Fecha de Elaboracion:", letraNormalChica)) { Border = 0 };
+            var col47 = new PdfPCell(new Phrase("Fecha de Elaboración:", letraNormalChica)) { Border = 0 };
             var col48    = new PdfPCell(new Phrase(Convert.ToDateTime(_tableDTCData.Rows[0]["ElaborationDate"]).ToString("dd/MM/yyyy"), letraoNegritaChica)) { HorizontalAlignment = Element.ALIGN_RIGHT, Border = 0 };
 
             tablaSiniestroMore.AddCell(col1);
@@ -660,13 +705,13 @@ namespace ApiDTC.Services
         {
             var tablaSiniestro = new PdfPTable(new float[] { 30f, 40f, 30f }) { WidthPercentage = 100f };
             //Agregamos Chunk Para 2 letras
-            var contratoOferta = new Chunk("   Contrato/Oferta:                           ", letraNormalChica);
+            var contratoOferta = new Chunk("Contrato/Oferta:                           ", letraNormalChica);
             var numContratoOferta = new Chunk(Convert.ToString(Convert.ToString(_tableHeader.Rows[0]["Agrement"])), letraoNegritaChica);
             var ContratoOfertaCompleto = new Phrase(contratoOferta);
             ContratoOfertaCompleto.Add(numContratoOferta);
             var col4 = new PdfPCell(new Phrase(ContratoOfertaCompleto)) { Border = 0, HorizontalAlignment = Element.ALIGN_LEFT };
             //-----------------------------------------
-            var col5 = new PdfPCell(new Phrase("EN CASO DE SINIESTRO", letraoNegritaMediana)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_MIDDLE };
+            var col5 = new PdfPCell(new Phrase("EN CASO DE SINIESTRO", letraoNegritaMediana)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_MIDDLE, Padding = 3};
             //-----------------------------------------
             //Agregamos Chunk 2 letras
             var tipoDictamen = new Chunk("Tipo de Dictamen        ", letraNormalChica);

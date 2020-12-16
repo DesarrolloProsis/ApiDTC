@@ -147,6 +147,20 @@
                 return NotFound(put);
             return Ok(put);
         }
+
+        //NuevaAlex
+        [HttpGet("{clavePlaza}/{ReferenceNumber}")]
+        public ActionResult<Response> GetHeaderEdit (string clavePlaza, string ReferenceNumber)
+        {
+            var get = _db.GetDTCHeaderEdit(clavePlaza, ReferenceNumber);
+            if (get.Result == null)
+                return NotFound(get);
+            else
+                return Ok(get);
+        }
+
+
+
         #endregion
     }
 }
