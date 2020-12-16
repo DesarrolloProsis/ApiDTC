@@ -124,12 +124,12 @@
         }
 
         //[HttpDelete("Delete/{referenceNumber}")]
-        [HttpDelete("Delete/{clavePlaza}/{referenceNumber}")]
-        public ActionResult<Response> Delete(string clavePlaza, string referenceNumber)
+        [HttpDelete("Delete/{clavePlaza}/{referenceNumber}/{userId}")]
+        public ActionResult<Response> Delete(string clavePlaza, string referenceNumber, int userId)
         {
             if (ModelState.IsValid)
             {
-                var delete = _db.DeleteDtcData(clavePlaza, referenceNumber);
+                var delete = _db.DeleteDtcData(clavePlaza, referenceNumber, userId);
                 if (delete.SqlResult == null)
                     return NotFound(delete);
                 else
