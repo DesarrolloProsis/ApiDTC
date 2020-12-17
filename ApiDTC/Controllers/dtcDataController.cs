@@ -76,7 +76,7 @@
                 return Ok(get);
         }
 
-        [HttpGet("{clavePlaza}/{refNum}")]
+        [HttpGet("BuscarReferencia/{clavePlaza}/{refNum}")]
         public ActionResult<Response> GetDtcData(string clavePlaza, string refNum)
         {
             var get = _db.GetReferenceNumber(clavePlaza, refNum);

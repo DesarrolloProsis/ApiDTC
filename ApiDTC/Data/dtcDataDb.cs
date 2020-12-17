@@ -382,6 +382,9 @@
             }
         }
 
+
+
+
         public Response GetDTCHeaderEdit(string clavePlaza, string ReferenceNumber)
         {
             

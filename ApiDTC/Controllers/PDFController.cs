@@ -43,6 +43,7 @@
             }
         }
 
+
         [HttpPut("TerminarReporte/{clavePlaza}/{refNum}/{inicialRef}")]
         public IActionResult TerminarReporte(string clavePlaza, string refNum, string inicialRef)
         {
