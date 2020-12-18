@@ -29,7 +29,6 @@
         #endregion
 
         #region Methods
-        //[HttpPost("InsertImage")]
         [HttpPost("InsertImage/{clavePlaza}")]
         public ActionResult<Response> InsertImage(string clavePlaza, [FromForm(Name = "image")] IFormFile image, [FromForm(Name = "id")] string referenceNumber, [FromForm(Name = "plaza")] string plaza)
         {
@@ -64,7 +63,6 @@
                 return NotFound("Insert another image");   
         }
 
-        //[HttpGet("DeleteDtcImages/{plaza}/{referenceNumber}/")]
         [HttpGet("DeleteDtcImages/{clavePlaza}/{plaza}/{referenceNumber}/")]
         public ActionResult<DtcImage> DeleteImage(string clavePlaza, string plaza, string referenceNumber)
         {
@@ -83,7 +81,6 @@
             }
         }
 
-        //[HttpGet("Download/{plaza}/{referenceNumber}/{fileName}")]
         [HttpGet("Download/{clavePlaza}/{plaza}/{referenceNumber}/{fileName}")]
         public ActionResult<DtcImage> Download(string clavePlaza, string plaza, string referenceNumber, string fileName)
         {
@@ -107,7 +104,6 @@
             }
         }
 
-        //[HttpGet("DownloadFile/{plaza}/{referenceNumber}/{fileName}")]
         [HttpGet("DownloadFile/{clavePlaza}/{plaza}/{referenceNumber}/{fileName}")]
         public IActionResult DownloadFile(string clavePlaza, string plaza, string referenceNumber, string fileName)
         {
@@ -147,7 +143,6 @@
             }
         }
 
-        //[HttpGet("GetImages/{plaza}/{referenceNumber}")]
         [HttpGet("GetImages/{clavePlaza}/{plaza}/{referenceNumber}")]
         public ActionResult<List<string>> GetImages(string clavePlaza, string plaza, string referenceNumber)
         {
@@ -163,13 +158,11 @@
             }
             catch (IOException ex)
             {
-                _apiLogger.WriteLog(clavePlaza, ex, "ImageController: DownloadBase", 2);
+                _apiLogger.WriteLog(clavePlaza, ex, "ImageController: GetImages", 2);
                 return NotFound(ex.ToString());
             }
         }
         
-        //https://localhost:44358/api/image/Tlalpan/TLA-20002/TLA-20002_Image_1.jpg
-        //[HttpGet("Delete/{plaza}/{referenceNumber}/{fileName}")]
         [HttpGet("Delete/{clavePlaza}/{plaza}/{referenceNumber}/{fileName}")]
         public ActionResult<string> Delete(string clavePlaza, string plaza, string referenceNumber, string fileName)
         {

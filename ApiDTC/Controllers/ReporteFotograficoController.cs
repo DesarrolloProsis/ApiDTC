@@ -25,7 +25,7 @@
         #endregion
 
         #region Methods
-        [HttpGet("Reporte/{clavePlaza}/{ubicacion}/")]
+        [HttpGet("Reporte/{clavePlaza}/{ubicacion}")]
         public IActionResult GetReporteFotografico(string clavePlaza, string ubicacion)
         {
             try

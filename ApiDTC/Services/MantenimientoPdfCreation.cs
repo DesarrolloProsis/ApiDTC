@@ -28,7 +28,7 @@ namespace ApiDTC.Services
 
         private readonly string _ubicacion;
 
-        private readonly string _referenceNumber;
+        private readonly string _noReporte;
         #endregion
 
         #region Pdf Configuration
@@ -64,7 +64,7 @@ namespace ApiDTC.Services
 
         #region Constructors
 
-        public MantenimientoPdfCreation(string clavePlaza, DataTable tableHeader, DataTable tableActivities, ApiLogger apiLogger, int tipo, string ubicacion, string referenceNumber)
+        public MantenimientoPdfCreation(string clavePlaza, DataTable tableHeader, DataTable tableActivities, ApiLogger apiLogger, int tipo, string ubicacion, string noReporte)
         {
             _clavePlaza = clavePlaza;
             _apiLogger = apiLogger;
@@ -73,17 +73,17 @@ namespace ApiDTC.Services
             _tipo = tipo;
             _temporal = TipoDeReporte(_tipo);
             _ubicacion = ubicacion;
-            _referenceNumber = referenceNumber;
+            _noReporte = noReporte;
         }
 
-        public MantenimientoPdfCreation(string clavePlaza, ApiLogger apiLogger, int tipo, string ubicacion, string referenceNumber)
+        public MantenimientoPdfCreation(string clavePlaza, ApiLogger apiLogger, int tipo, string ubicacion, string noReporte)
         {
             _clavePlaza = clavePlaza;
             _apiLogger = apiLogger;
             _tipo = tipo;
             _temporal = TipoDeReporte(_tipo);
             _ubicacion = ubicacion;
-            _referenceNumber = referenceNumber;
+            _noReporte = noReporte;
         }
 
         #endregion
@@ -91,28 +91,28 @@ namespace ApiDTC.Services
         #region Methods
         public Response NewPdf()
         {
-            string directory, file;
-            DateTime now = DateTime.Now; 
-            directory = $@"{System.Environment.CurrentDirectory}\Bitacora\ReporteMantenimiento\{_clavePlaza.ToUpper()}\{_ubicacion}\{_temporal[2].ToUpper()}\{now.Year}\{MesActual()}\{now.Day}";
+            DateTime now = DateTime.Now;
+            string directory = $@"C:\Bitacora\{_clavePlaza}\Mantenimiento\{_noReporte}";
+            string filename = $"{_clavePlaza.ToUpper()}{DateTime.Now.Year}{MesContrato(now)}{_ubicacion}{_temporal[0]}.pdf";
+            
+            string path = Path.Combine(directory, filename);
 
-            file = $@"{directory}\{_clavePlaza.ToUpper()}{DateTime.Now.Year}{MesContrato(now)}{_ubicacion}{_temporal[0]}.pdf";
-            
-            
             //File in use
             try
             {   
                 if (!Directory.Exists(directory))
                     Directory.CreateDirectory(directory);
-                if (File.Exists(file))
+                if (File.Exists(path))
                 {
-                    if (FileInUse(file))
+                    if (FileInUse(path))
                     {
                         return new Response
                         {
-                            Message = $"Error: Archivo {_clavePlaza.ToUpper()}{DateTime.Now.Year}{MesContrato(new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Year))}{_ubicacion}{_temporal[1]}.pdf en uso o inaccesible",
+                            Message = $"Error: Archivo {filename} en uso o inaccesible",
                             Result = null
                         };
                     }
+                    File.Delete(path);
                 }
             }
             catch (IOException ex)
@@ -187,7 +187,8 @@ namespace ApiDTC.Services
                     doc.Add(TablaFirmas());
 
                     //Pdf fotografías evidencia
-                    var fotos = Directory.GetFiles($@"{System.Environment.CurrentDirectory}\Reportes\2020\septiembre\24\Prueba\");
+                    string directorioEvidencias = $@"C:\Bitacora\{_clavePlaza}\Mantenimiento\{_noReporte}\EvidenciasFotograficas";
+                    var fotos = Directory.GetFiles(directorioEvidencias);
                     if(fotos.Length != 0)
                     {
                         doc.NewPage();
@@ -217,7 +218,7 @@ namespace ApiDTC.Services
                     byte[] content = myMemoryStream.ToArray();
 
 
-                    using (FileStream fs = File.Create(file))
+                    using (FileStream fs = File.Create(path))
                     {
                         fs.Write(content, 0, (int)content.Length);
                     }
@@ -225,8 +226,8 @@ namespace ApiDTC.Services
             }
             catch (IOException ex)
             {
-                if (System.IO.File.Exists($@"{directory}\{_clavePlaza.ToUpper()}{DateTime.Now.Year}{MesContrato(new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Year))}{_ubicacion}{_temporal[1]}.pdf"))
-                    System.IO.File.Delete($@"{directory}\{_clavePlaza.ToUpper()}{DateTime.Now.Year}{MesContrato(new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Year))}{_ubicacion}{_temporal[1]}.pdf");
+                if (File.Exists(path))
+                    File.Delete(path);
                 _apiLogger.WriteLog(_clavePlaza, ex, "MatenimientoPdfCreation: NewPdf", 2);
                 return new Response
                 {
@@ -237,7 +238,7 @@ namespace ApiDTC.Services
             return new Response
             {
                 Message = "Ok",
-                Result = file
+                Result = path
             };
         }
 
@@ -641,70 +642,7 @@ namespace ApiDTC.Services
                             VerticalAlignment = Element.ALIGN_MIDDLE,
                             Padding = 1
                         });
-                        /*componentesInnerTable.AddCell(new PdfPCell
-                        {
-                            Phrase = new Phrase(componente.Nombre, letraNormalChica),
-                            BorderWidth = 1,
-                            HorizontalAlignment = Element.ALIGN_JUSTIFIED,
-                            VerticalAlignment = Element.ALIGN_MIDDLE,
-                            Padding = 1
-                        });
-                        actividadesInnerTable.AddCell(new PdfPCell
-                        {
-                            Phrase = new Phrase(componente.Actividad, letraNormalChica),
-                            BorderWidth = 1,
-                            HorizontalAlignment = Element.ALIGN_JUSTIFIED,
-                            VerticalAlignment = Element.ALIGN_MIDDLE,
-                            Padding = 1
-                        });
-                        frecuenciasInnerTable.AddCell(new PdfPCell
-                        {
-                            Phrase = new Phrase(Convert.ToString(componente.Frecuencia), letraNormalChica),
-                            BorderWidth = 1,
-                            HorizontalAlignment = Element.ALIGN_JUSTIFIED,
-                            VerticalAlignment = Element.ALIGN_MIDDLE,
-                            Padding = 1
-                        });
-                        ubicacionesInnerTable.AddCell(new PdfPCell
-                        {
-                            Phrase = new Phrase(componente.Ubicacion, letraNormalChica),
-                            BorderWidth = 1,
-                            HorizontalAlignment = Element.ALIGN_JUSTIFIED,
-                            VerticalAlignment = Element.ALIGN_MIDDLE,
-                            Padding = 1
-                        });
-                        estatusInnerTable.AddCell(new PdfPCell
-                        {
-                            Phrase = new Phrase(componente.Estatus ? "OK" : "NO", letraNormalChica),
-                            BorderWidth = 1,
-                            HorizontalAlignment = Element.ALIGN_JUSTIFIED,
-                            VerticalAlignment = Element.ALIGN_MIDDLE,
-                            Padding = 1
-                        });*/
                     }
-
-                    
-
-                    /*var celdaInternaComponentes = new PdfPCell();
-                    var celdaInternaActividades = new PdfPCell();
-                    var celdaInternaFrecuencias = new PdfPCell();
-                    var celdaInternaUbicaciones = new PdfPCell();
-                    var celdaInternaEstatus = new PdfPCell();
-
-                    celdaInternaComponentes.AddElement(componentesInnerTable);
-                    table.AddCell(celdaInternaComponentes);
-
-                    celdaInternaActividades.AddElement(actividadesInnerTable);
-                    table.AddCell(celdaInternaActividades);
-
-                    celdaInternaFrecuencias.AddElement(frecuenciasInnerTable);
-                    table.AddCell(celdaInternaFrecuencias);
-
-                    celdaInternaUbicaciones.AddElement(ubicacionesInnerTable);
-                    table.AddCell(celdaInternaUbicaciones);
-
-                    celdaInternaEstatus.AddElement(estatusInnerTable);
-                    table.AddCell(celdaInternaEstatus);*/
                 }
 
                 return table;
@@ -887,25 +825,25 @@ namespace ApiDTC.Services
             switch (tipo)
             {
                 case 1:
-                    return new string[] { "S", "semanal", "semanales" };
+                    return new string[] { "S", "semanal", "semanales", "plaza" };
                 case 2:
-                    return new string[] { "M", "mensual", "mensuales" };
+                    return new string[] { "M", "mensual", "mensuales", "plaza" };
                 case 3:
-                    return new string[] { "T", "trimestral", "trimestrales" };
+                    return new string[] { "T", "trimestral", "trimestrales", "plaza" };
                 case 4:
-                    return new string[] { "SM", "semestral", "semestrales" };
+                    return new string[] { "SM", "semestral", "semestrales", "plaza" };
                 case 5:
-                    return new string[] { "A", "anual", "anuales" };
+                    return new string[] { "A", "anual", "anuales", "plaza" };
                 case 6:
-                    return new string[] { "S", "semanal", "semanales" };
+                    return new string[] { "S", "semanal", "semanales", "carril" };
                 case 7:
-                    return new string[] { "M", "mensual", "mensuales" };
+                    return new string[] { "M", "mensual", "mensuales", "carril" };
                 case 8:
-                    return new string[] { "T", "trimestral", "trimestrales" };
+                    return new string[] { "T", "trimestral", "trimestrales", "carril" };
                 case 9:
-                    return new string[] { "SM", "semestral", "semestrales" };
+                    return new string[] { "SM", "semestral", "semestrales", "carril" };
                 case 10:
-                    return new string[] { "A", "anual", "anuales" };
+                    return new string[] { "A", "anual", "anuales", "carril" };
                 default: 
                     return null;
             }
