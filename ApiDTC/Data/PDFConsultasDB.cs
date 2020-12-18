@@ -100,6 +100,42 @@
             }
         }
 
+        //Para PDF
+        public DataSet GetStorePDFMetraje(string clavePlaza, string numeroReferencia, string inicialRef)
+        {
+            try
+            {
+                using (SqlConnection sql = new SqlConnection(_connectionString))
+                {
+                    using (SqlCommand cmd = new SqlCommand("[sp_DTCtoPDFPruebaMetraje]", sql))
+                    {
+                        SqlDataAdapter sqlDataAdapter = new SqlDataAdapter();
+                        DataSet dataSet = new DataSet();
+
+
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.Add("@ReferenceNumber", SqlDbType.NVarChar).Value = numeroReferencia;
+                        cmd.Parameters.Add("@SquareId", SqlDbType.NVarChar).Value = inicialRef;
+
+                        sql.Open();
+                        sqlDataAdapter = new SqlDataAdapter(cmd);
+                        sqlDataAdapter.Fill(dataSet);
+
+                        sql.Close();
+
+                        return dataSet;
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                _apiLogger.WriteLog(clavePlaza, ex, "PdfConsultasDb: GetStorePDF", 1);
+                return null;
+            }
+        }
+
+
+
         public DataSet GetStorePDFOpen(string clavePlaza, string numeroReferencia)
         {
             try
