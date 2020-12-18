@@ -101,11 +101,11 @@ namespace ApiDTC.Services
                 };
 
             if (_tipo == 1)
-                filename = $"ReporteFotografico-{_referenceNumber}";
+                filename = $"DTC-{_referenceNumber}";
             else if(_tipo == 2)
-                filename = $@"ReporteFotografico-{_referenceNumber}-EquipoNuevo.pdf";
+                filename = $@"DTC-{_referenceNumber}-EquipoNuevo.pdf";
             else
-                filename = $@"ReporteFotografico-{_referenceNumber}-EquipoDañado.pdf";
+                filename = $@"DTC-{_referenceNumber}-EquipoDañado.pdf";
 
             path = Path.Combine(directory, filename);
 

@@ -81,11 +81,11 @@ namespace ApiDTC.Services
                 Directory.CreateDirectory(directory);
 
             if (operacion == 0)
-                nameFile = $"ReporteDTC-{_refNum}.pdf";
+                nameFile = $"DTC-{_refNum}.pdf";
             else if(operacion == 1)
-                nameFile = $"ReporteDTC-{_refNum}-Finalizado.pdf";
+                nameFile = $"DTC-{_refNum}-Finalizado.pdf";
             else
-                nameFile = $"ReporteDTC-{_refNum}-Almacén.pdf";
+                nameFile = $"DTC-{_refNum}-Almacén.pdf";
 
             string path = Path.Combine(directory, nameFile);
             if (!Directory.Exists(directory))
