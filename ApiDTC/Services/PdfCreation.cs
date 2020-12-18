@@ -130,12 +130,10 @@ namespace ApiDTC.Services
                     doc.Add(tablaEncabezado());
                     doc.Add(new Phrase(" "));
                     doc.Add(new Phrase(" "));
-                    doc.Add(new Phrase(" "));
                     doc.Add(tablaSiniestro());
                     doc.Add(new Phrase(""));
                     doc.Add(new Phrase(""));
                     doc.Add(tablaSiniestroMore());
-                    doc.Add(new Phrase(" "));
                     doc.Add(new Phrase("EQUIPO DAÑADO", letraoNegritaMediana));
                     doc.Add(tablaEquipoDañado());
                     doc.Add(tablaTituloPropuesto());
@@ -194,7 +192,7 @@ namespace ApiDTC.Services
                 colFirma = new PdfPCell(firma) { HorizontalAlignment = Element.ALIGN_CENTER, Border = 0, Padding = 2 };
             }
             else
-                colFirma = new PdfPCell(new Phrase("", letraNormalChica)) { FixedHeight = 30f, HorizontalAlignment = Element.ALIGN_CENTER, Border = 0, Padding = 2 };
+                colFirma = new PdfPCell(new Phrase("", letraNormalChica)) { FixedHeight = 20f, HorizontalAlignment = Element.ALIGN_CENTER, Border = 0, Padding = 2 };
             var colNombreDirector = new PdfPCell(new Phrase("Autorización Comercial Director de Comercialización\nC.P. Hermilia Guzman Añorve", letraNormalChica)) { HorizontalAlignment = Element.ALIGN_CENTER, Border = 0, Padding = 2 };
             innerTable.AddCell(colAutorizacion);
             innerTable.AddCell(colFirma);
@@ -310,17 +308,17 @@ namespace ApiDTC.Services
             var tablaEquipoPropuesto = new PdfPTable(new float[] { 12f, 12f, 12f, 62f, 24f, 24f, 20f, 20f, 20f, 20.2f, 10f, 75f }) { WidthPercentage = 100f };
             tablaEquipoPropuesto.HorizontalAlignment = Element.ALIGN_LEFT;
 
-            var colPartidaPro = new PdfPCell(new Phrase("Partida", letraoNegritaChica)) { FixedHeight = 10, VerticalAlignment = Element.ALIGN_MIDDLE, HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
-            var colUnidadPro = new PdfPCell(new Phrase("Unidad", letraoNegritaChica)) { FixedHeight = 10, VerticalAlignment = Element.ALIGN_MIDDLE, HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
-            var colCantidadPro = new PdfPCell(new Phrase("Cantidad", letraoNegritaChica)) { FixedHeight = 10, VerticalAlignment = Element.ALIGN_MIDDLE, HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
-            var colComponentePro = new PdfPCell(new Phrase("Componente", letraoNegritaChica)) { FixedHeight = 10, VerticalAlignment = Element.ALIGN_MIDDLE, HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
-            var colMarcaPro = new PdfPCell(new Phrase("Marca", letraoNegritaChica)) { FixedHeight = 10, VerticalAlignment = Element.ALIGN_MIDDLE, HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
-            var colModeloPro = new PdfPCell(new Phrase("Modelo", letraoNegritaChica)) { FixedHeight = 10, VerticalAlignment = Element.ALIGN_MIDDLE, HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
-            var colPrecioPro = new PdfPCell(new Phrase("Precio\nUnitario Pesos M.N", letraoNegritaChica)) { FixedHeight = 10, VerticalAlignment = Element.ALIGN_MIDDLE, HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
-            var colPrecioDolarPro = new PdfPCell(new Phrase("Precio\nUnitario Dolares", letraoNegritaChica)) { FixedHeight = 10, VerticalAlignment = Element.ALIGN_MIDDLE, HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
-            var colPrecioTotalPro = new PdfPCell(new Phrase("Precio Total\nPesos M.N", letraoNegritaChica)) { FixedHeight = 10, VerticalAlignment = Element.ALIGN_MIDDLE, HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
-            var colPrecioTotalDolarPro = new PdfPCell(new Phrase("Precio Total\nDólares", letraoNegritaChica)) { FixedHeight = 10, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_MIDDLE, BorderWidth = 1 };
-            var colVaciaPro = new PdfPCell(new Phrase(" ")) { FixedHeight = 10, VerticalAlignment = Element.ALIGN_MIDDLE, HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
+            var colPartidaPro = new PdfPCell(new Phrase("Partida", letraoNegritaChica)) { VerticalAlignment = Element.ALIGN_MIDDLE, HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
+            var colUnidadPro = new PdfPCell(new Phrase("Unidad", letraoNegritaChica)) { VerticalAlignment = Element.ALIGN_MIDDLE, HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
+            var colCantidadPro = new PdfPCell(new Phrase("Cantidad", letraoNegritaChica)) { VerticalAlignment = Element.ALIGN_MIDDLE, HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
+            var colComponentePro = new PdfPCell(new Phrase("Componente", letraoNegritaChica)) { VerticalAlignment = Element.ALIGN_MIDDLE, HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
+            var colMarcaPro = new PdfPCell(new Phrase("Marca", letraoNegritaChica)) { VerticalAlignment = Element.ALIGN_MIDDLE, HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
+            var colModeloPro = new PdfPCell(new Phrase("Modelo", letraoNegritaChica)) { VerticalAlignment = Element.ALIGN_MIDDLE, HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
+            var colPrecioPro = new PdfPCell(new Phrase("Precio\nUnitario Pesos M.N", letraoNegritaChica)) { VerticalAlignment = Element.ALIGN_MIDDLE, HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
+            var colPrecioDolarPro = new PdfPCell(new Phrase("Precio\nUnitario Dolares", letraoNegritaChica)) { VerticalAlignment = Element.ALIGN_MIDDLE, HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
+            var colPrecioTotalPro = new PdfPCell(new Phrase("Precio Total\nPesos M.N", letraoNegritaChica)) { VerticalAlignment = Element.ALIGN_MIDDLE, HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
+            var colPrecioTotalDolarPro = new PdfPCell(new Phrase("Precio Total\nDólares", letraoNegritaChica)) { HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_MIDDLE, BorderWidth = 1 };
+            var colVaciaPro = new PdfPCell(new Phrase(" ")) { VerticalAlignment = Element.ALIGN_MIDDLE, HorizontalAlignment = Element.ALIGN_CENTER, BorderWidth = 1 };
             colVaciaPro.Border = 0;
 
 
