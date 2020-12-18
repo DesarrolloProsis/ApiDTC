@@ -18,13 +18,13 @@ namespace ApiDTC.Services
          */
         public void WriteLog(string plaza, Exception info, string metodo, int tipo)
         {
-            string logFile = $@"{DirectorioLogsBitacora}\{plaza}_log.txt";
+            string logFile = $@"{DirectorioLogsBitacora}\{plaza}\{plaza}_log.txt";
 
             if (!Directory.Exists(DirectorioLogsBitacora))
                 Directory.CreateDirectory(DirectorioLogsBitacora);
 
             //
-            string error = $"{metodo} [{tipo}] {DateTime.Now:dd/MM/yyyy hh:mm:ss}: Line: {Convert.ToInt32(info.StackTrace.Substring(info.StackTrace.LastIndexOf(" ") + 1))} {info.Message}";
+            string error = $"{metodo} [{tipo}] {DateTime.Now:dd/MM/yyyy hh:mm:ss}: Line: {Convert.ToInt32(info.StackTrace.Substring(info.StackTrace.LastIndexOf(" ") + 1))} {info.Message}.";
             if (File.Exists(logFile))                
                 File.AppendText(error);
             else File.WriteAllText(logFile, error);
@@ -32,7 +32,7 @@ namespace ApiDTC.Services
 
         public void WriteLog(string plaza, string metodo, int tipo, string info)
         {
-            string logFile = $@"{DirectorioLogsBitacora}\{plaza}_log.txt";
+            string logFile = $@"{DirectorioLogsBitacora}\{plaza}\{plaza}_log.txt";
 
             if (!Directory.Exists(DirectorioLogsBitacora))
                 Directory.CreateDirectory(DirectorioLogsBitacora);

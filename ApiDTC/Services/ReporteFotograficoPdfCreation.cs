@@ -86,24 +86,37 @@ namespace ApiDTC.Services
         #region Methods
         public Response NewPdf()
         {
-            string directory, file;
+            string directory, filename, path;
+
             DateTime now = DateTime.Now; 
-            directory = $@"{System.Environment.CurrentDirectory}\Bitacora\ReportesFotograficos\{_clavePlaza.ToUpper()}\{_ubicacion}\{now.Year}\{MesActual()}\{now.Day}";
-
-            if(_tipo == 1)
-                file = $@"{directory}\TLP-MPS-01.pdf";
+            if (_tipo == 1)
+                directory = $@"C:\Bitacora\ReportesEnProceso\{_clavePlaza.ToUpper()}\{_referenceNumber}";
             else
-                file = $@"{directory}\TLP-MPS-01_{_referenceNumber}.pdf";
+                directory = $@"C:\Bitacora\ReportesEnProceso\{_clavePlaza.ToUpper()}\{_referenceNumber}";
+            if (!Directory.Exists(directory))
+                return new Response
+                {
+                    Message = "Error: No existe el directorio",
+                    Result = null
+                };
 
+            if (_tipo == 1)
+                filename = $"ReporteFotografico-{_referenceNumber}";
+            else if(_tipo == 2)
+                filename = $@"ReporteFotografico-{_referenceNumber}-EquipoNuevo.pdf";
+            else
+                filename = $@"ReporteFotografico-{_referenceNumber}-EquipoDañado.pdf";
+
+            path = Path.Combine(directory, filename);
 
             //File in use
             try
             {   
                 if (!Directory.Exists(directory))
                     Directory.CreateDirectory(directory);
-                if (File.Exists(file))
+                if (File.Exists(path))
                 {
-                    if (FileInUse(file))
+                    if (FileInUse(path))
                     {
                         return new Response
                         {
@@ -156,7 +169,14 @@ namespace ApiDTC.Services
                     doc.Add(TablaEncabezado());
                     doc.Add(new Phrase(" "));
                     doc.Add(TablaInformacion());
-                    var fotos = Directory.GetFiles($@"{System.Environment.CurrentDirectory}\Reportes\2020\septiembre\24\Prueba\");
+                    string directoryImgs;
+                    if (_tipo == 1)
+                        directoryImgs = $@"{System.Environment.CurrentDirectory}\Reportes\2020\septiembre\24\Prueba\";
+                    else if (_tipo == 2)
+                        directoryImgs = Path.Combine(directory, "EquipoNuevoImgs");
+                    else
+                        directoryImgs = Path.Combine(directory, "EquipoDañadoImgs");
+                    var fotos = Directory.GetFiles(directoryImgs);
                     if (fotos.Length <= 4 && fotos.Length > 0)
                         doc.Add(TablaFotografias(fotos, 4));
                     else if(fotos.Length > 4 && fotos.Length <= 6)
@@ -169,7 +189,7 @@ namespace ApiDTC.Services
                     byte[] content = myMemoryStream.ToArray();
 
 
-                    using (FileStream fs = File.Create(file))
+                    using (FileStream fs = File.Create(path))
                     {
                         fs.Write(content, 0, (int)content.Length);
                     }
@@ -177,8 +197,8 @@ namespace ApiDTC.Services
             }
             catch (IOException ex)
             {
-                if (System.IO.File.Exists($@"{directory}\{_clavePlaza.ToUpper()}{DateTime.Now.Year}{MesContrato(new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Year))}{_ubicacion}{_temporal[1]}.pdf"))
-                    System.IO.File.Delete($@"{directory}\{_clavePlaza.ToUpper()}{DateTime.Now.Year}{MesContrato(new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Year))}{_ubicacion}{_temporal[1]}.pdf");
+                if (System.IO.File.Exists(path))
+                    System.IO.File.Delete(path);
                 _apiLogger.WriteLog(_clavePlaza, ex, "ReporteFotograficoPdfCreation: NewPdf", 2);
                 return new Response
                 {
@@ -189,7 +209,7 @@ namespace ApiDTC.Services
             return new Response
             {
                 Message = "Ok",
-                Result = file
+                Result = path
             };
         }
 
@@ -243,7 +263,7 @@ namespace ApiDTC.Services
                         break;
                     default: break;
                 }
-                var colTitulo = new PdfPCell(new Phrase(textoTitulo, letraNormalMediana)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, Padding = 3, PaddingRight = 10, PaddingLeft = 10, Colspan = 3, BackgroundColor = BaseColor.LightGray };
+                var colTitulo = new PdfPCell(new Phrase(textoTitulo, letraNormalMediana)) { Border = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, Padding = 3, PaddingRight = 10, PaddingLeft = 10, Colspan = 3 };
                 table.AddCell(celdaVacia);
                 table.AddCell(colTitulo);
                 table.AddCell(celdaVacia);
@@ -271,30 +291,47 @@ namespace ApiDTC.Services
             {
                 PdfPTable table;
                 if(columnas == 4)
-                    table = new PdfPTable(new float[] {50f, 50f }) { WidthPercentage = 80f };
+                    table = new PdfPTable(new float[] {50f, 50f }) { WidthPercentage = 100f };
                 else
                     table = new PdfPTable(new float[] { 33.33f, 33.33f, 33.33f }) { WidthPercentage = 80f };
 
-                var celdaVacia = new PdfPCell() { Border = 0, FixedHeight = 20 };
+                var celdaVacia = new PdfPCell() { Border = 0, FixedHeight = 10 };
 
-                table.AddCell(celdaVacia);
-                table.AddCell(celdaVacia);
-                table.AddCell(celdaVacia);
-                table.AddCell(celdaVacia);
-                List<Image> fotos = new List<Image>();
-
-                for (int i = 0; i < rutas.Length; i++)
+                if(columnas == 4)
                 {
-                    Image img = Image.GetInstance(rutas[i]);
-                    img.ScaleToFit(20f, 20f);
-                    fotos.Add(img);
+                    table.AddCell(celdaVacia);
+                    table.AddCell(celdaVacia);
+                    table.AddCell(celdaVacia);
+                    table.AddCell(celdaVacia);
                 }
-
-                
-
-                foreach (var foto in fotos)
+                else
                 {
-                    PdfPCell colFoto = new PdfPCell(foto, true) { Border = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_MIDDLE, Padding = 3 };
+                    table.AddCell(celdaVacia);
+                    table.AddCell(celdaVacia);
+                    table.AddCell(celdaVacia);
+                    table.AddCell(celdaVacia);
+                    table.AddCell(celdaVacia);
+                    table.AddCell(celdaVacia);
+                }          
+
+                foreach (var foto in rutas)
+                {
+                    Image img = Image.GetInstance(foto);
+                    if(columnas == 4)
+                    {
+                        if (img.Width > img.Height)
+                            img.ScaleAbsolute(190f, 150f);
+                        else
+                            img.ScaleAbsolute(150f, 190f);
+                    }
+                    else
+                    {
+                        if (img.Width > img.Height)
+                            img.ScaleAbsolute(140f, 130f);
+                        else
+                            img.ScaleAbsolute(130f, 140f);
+                    }
+                    PdfPCell colFoto = new PdfPCell(img) { Border = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_MIDDLE, Padding = 2 };
                     table.AddCell(colFoto);
                 }
 
@@ -330,9 +367,9 @@ namespace ApiDTC.Services
                 var colTextoFecha = new PdfPCell(new Phrase("Fecha: ", letraNormalChica)) { Border = 0, HorizontalAlignment = Element.ALIGN_RIGHT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 1 };
                 var colFecha = new PdfPCell(new Phrase("15/07/2020", letraNormalChica)) { BorderWidthBottom = 1, BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, Padding = 2 };
 
-                table.AddCell(celdaVacia);
                 table.AddCell(colTextoNoReporte);
                 table.AddCell(colNoReporte);
+                table.AddCell(celdaVacia);
                 table.AddCell(celdaVacia);
                 table.AddCell(colTextoFecha);
                 table.AddCell(colFecha);
@@ -347,9 +384,9 @@ namespace ApiDTC.Services
                 var colTextoHoraInicio = new PdfPCell(new Phrase("Hora INICIO: ", letraNormalChica)) { Border = 0, HorizontalAlignment = Element.ALIGN_RIGHT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 1 };
                 var colHoraInicio = new PdfPCell(new Phrase("12:00:00 a.m.", letraNormalChica)) { BorderWidthBottom = 1, BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, Padding = 2 };
 
-                table.AddCell(celdaVacia);
                 table.AddCell(colPlazaDeCobro);
                 table.AddCell(plazaDeCobro);
+                table.AddCell(celdaVacia);
                 table.AddCell(celdaVacia);
                 table.AddCell(colTextoHoraInicio);
                 table.AddCell(colHoraInicio);
@@ -364,9 +401,9 @@ namespace ApiDTC.Services
                 var colTextoHoraFin = new PdfPCell(new Phrase("Hora FIN: ", letraNormalChica)) { Border = 0, HorizontalAlignment = Element.ALIGN_RIGHT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 1 };
                 var colHoraFin = new PdfPCell(new Phrase("12:00:00 a.m.", letraNormalChica)) { BorderWidthBottom = 1, BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, Padding = 2 };
 
-                table.AddCell(celdaVacia);
                 table.AddCell(colUbicacion);
                 table.AddCell(ubicacion);
+                table.AddCell(celdaVacia);
                 table.AddCell(celdaVacia);
                 table.AddCell(colTextoHoraFin);
                 table.AddCell(colHoraFin);
@@ -377,9 +414,9 @@ namespace ApiDTC.Services
 
                 var tecnico = new PdfPCell(new Phrase("NOMBRE DEL TÉCNICO", letraNormalChica)) { BorderWidthBottom = 1, BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, Padding = 2, Colspan = 3 };
 
-                table.AddCell(celdaVacia);
                 table.AddCell(colTecnico);
                 table.AddCell(tecnico);
+                table.AddCell(celdaVacia);
                 table.AddCell(celdaVacia);
 
 
@@ -389,9 +426,9 @@ namespace ApiDTC.Services
 
                 var capufe = new PdfPCell(new Phrase("NOMBRE DEL PERSONAL CAPUFE", letraNormalChica)) { BorderWidthBottom = 1, BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, Padding = 2, Colspan = 3 };
 
-                table.AddCell(celdaVacia);
                 table.AddCell(colCapufe);
                 table.AddCell(capufe);
+                table.AddCell(celdaVacia);
                 table.AddCell(celdaVacia);
 
                 //Equipo nuevo o dañado
@@ -401,9 +438,9 @@ namespace ApiDTC.Services
 
                     var siniestro = new PdfPCell(new Phrase("NÚMERO DE SINIESTRO (GNP)", letraNormalChica)) { BorderWidthBottom = 1, BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, Padding = 2, Colspan = 3 };
 
-                    table.AddCell(celdaVacia);
                     table.AddCell(colSiniestro);
                     table.AddCell(siniestro);
+                    table.AddCell(celdaVacia);
                     table.AddCell(celdaVacia);
                 }
 
@@ -476,8 +513,8 @@ namespace ApiDTC.Services
 
                 var celdaVacia = new PdfPCell() { Border = 0 };
                 
-                var celdaVaciaFirmas = new PdfPCell() { Border = 0, FixedHeight = 40 };
-                for (int i = 0; i < 5; i++)
+                var celdaVaciaFirmas = new PdfPCell() { Border = 0, FixedHeight = 30 };
+                for (int i = 0; i < 10; i++)
                     table.AddCell(celdaVaciaFirmas);
 
                 //NOMRE Y FIRMA
@@ -506,14 +543,14 @@ namespace ApiDTC.Services
                 table.AddCell(colSello);
 
                 //Técnico
-                var colTecnico = new PdfPCell(new Phrase("Técnico de Servicio", letraoNegritaChica))
+                var colTecnico = new PdfPCell(new Phrase("Técnico de Servicio", letraNormalChica))
                 {
                     Border = 0,
                     HorizontalAlignment = Element.ALIGN_CENTER,
                     VerticalAlignment = Element.ALIGN_CENTER
                 };
 
-                var colPersonal = new PdfPCell(new Phrase("Personal Plaza de Cobro", letraoNegritaChica))
+                var colPersonal = new PdfPCell(new Phrase("Personal Plaza de Cobro", letraNormalChica))
                 {
                     Border = 0,
                     HorizontalAlignment = Element.ALIGN_CENTER,
@@ -527,14 +564,14 @@ namespace ApiDTC.Services
                 table.AddCell(celdaVacia);
 
                 //
-                var colProsis = new PdfPCell(new Phrase("Proyectos y Sistemas Informáticos S.A. de C.V.", letraoNegritaChica))
+                var colProsis = new PdfPCell(new Phrase("Proyectos y Sistemas Informáticos S.A. de C.V.", letraNormalChica))
                 {
                     Border = 0,
                     HorizontalAlignment = Element.ALIGN_CENTER,
                     VerticalAlignment = Element.ALIGN_CENTER
                 };
 
-                var colCapufe= new PdfPCell(new Phrase("Personal Plaza de Cobro", letraoNegritaChica))
+                var colCapufe= new PdfPCell(new Phrase("Personal Plaza de Cobro", letraNormalChica))
                 {
                     Border = 0,
                     HorizontalAlignment = Element.ALIGN_CENTER,

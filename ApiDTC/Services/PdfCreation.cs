@@ -76,28 +76,31 @@ namespace ApiDTC.Services
         #region Methods
         public Response NewPdf(int operacion)
         {
-            if(!Directory.Exists($@"{System.Environment.CurrentDirectory}\Reportes\{DateTime.Now.Year}\{MesActual()}\{DateTime.Now.Day}\"))
-                Directory.CreateDirectory($@"{System.Environment.CurrentDirectory}\Reportes\{DateTime.Now.Year}\{MesActual()}\{DateTime.Now.Day}\");
+            string directory = $@"C:\Bitacora\{_clavePlaza.ToUpper()}\DTC\{_refNum}", nameFile;
+            if(!Directory.Exists(directory))
+                Directory.CreateDirectory(directory);
 
-            string fileName;
             if (operacion == 0)
-                fileName = $@"{System.Environment.CurrentDirectory}\Reportes\{DateTime.Now.Year}\{MesActual()}\{DateTime.Now.Day}\ReporteDTC-{_refNum}.pdf";
+                nameFile = $"ReporteDTC-{_refNum}.pdf";
             else if(operacion == 1)
-                fileName = $@"{System.Environment.CurrentDirectory}\Reportes\{DateTime.Now.Year}\{MesActual()}\{DateTime.Now.Day}\ReporteDTC-{_refNum}-Finalizado.pdf";
+                nameFile = $"ReporteDTC-{_refNum}-Finalizado.pdf";
             else
-                fileName = $@"{System.Environment.CurrentDirectory}\Reportes\{DateTime.Now.Year}\{MesActual()}\{DateTime.Now.Day}\ReporteDTC-{_refNum}-Almacén.pdf";
+                nameFile = $"ReporteDTC-{_refNum}-Almacén.pdf";
 
-
-            if (File.Exists(fileName))
+            string path = Path.Combine(directory, nameFile);
+            if (!Directory.Exists(directory))
+                Directory.CreateDirectory(directory);
+            if (File.Exists(path))
             {
-                if(FileInUse(fileName))
+                if(FileInUse(path))
                 {
                     return new Response
                     {
-                        Message = $"Error: Archivo {fileName} en uso o inaccesible",
+                        Message = $"Error: Archivo {nameFile} en uso o inaccesible",
                         Result = null
                     };
-                }  
+                }
+                File.Delete(path);
             }
 
 
@@ -151,7 +154,7 @@ namespace ApiDTC.Services
                     byte[] content = myMemoryStream.ToArray();
 
 
-                    using (FileStream fs = File.Create(fileName))
+                    using (FileStream fs = File.Create(path))
                     {
                         fs.Write(content, 0, (int)content.Length);
                     }
@@ -159,14 +162,14 @@ namespace ApiDTC.Services
                 return new Response
                 {
                     Message = "Ok",
-                    Result = fileName
+                    Result = path
                 };
             }
             catch(IOException ex)
             {
                 doc.Close();
-                if(System.IO.File.Exists(fileName))
-                    System.IO.File.Delete(fileName);
+                if(File.Exists(path))
+                    File.Delete(path);
                 _apiLogger.WriteLog(_clavePlaza, ex, $"PdfCreation: NewPdf", 2);
                 return new Response
                 {

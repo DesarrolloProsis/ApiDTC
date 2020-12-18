@@ -5,6 +5,8 @@
     using System.IO;
     using ApiDTC.Services;
     using ApiDTC.Data;
+    using ApiDTC.Models;
+    using Microsoft.AspNetCore.Http;
 
     [Route("api/[controller]")]
     [ApiController]
@@ -12,12 +14,15 @@
     {
         #region Attributes
         private readonly PdfConsultasDb _db;
+
+        private readonly ApiLogger _apiLogger;
         #endregion
 
         #region Constructor
         public PDFController(PdfConsultasDb db)
         {
             this._db = db ?? throw new ArgumentNullException(nameof(db));
+            _apiLogger = new ApiLogger();
         }
         #endregion
 
@@ -132,6 +137,48 @@
             }
         }
 
+        [HttpPost("PdfSellado/{clavePlaza}/{referenceNumber}")]
+        public ActionResult<Response> PdfSellado(string clavePlaza, [FromForm(Name = "file")] IFormFile file, string referenceNumber)
+        {
+            if(file.Length > 0 || file != null)
+            {
+                string path = $@"C:\Bitacora\{clavePlaza}\DTC\{referenceNumber}", filename;
+                try
+                {
+                    if (!Directory.Exists(path))
+                        Directory.CreateDirectory(path);
+                    filename = $"ReporteDTC-{referenceNumber}-Sellado.pdf";
+                    if(System.IO.File.Exists(Path.Combine(path, filename)))
+                        System.IO.File.Delete(Path.Combine(path, filename));
+                    var fs = new FileStream(Path.Combine(path, filename), FileMode.Create);
+                    file.CopyTo(fs);
+                    fs.Close();
+                    return Ok(path);
+                }
+                catch (IOException ex)
+                {
+                    _apiLogger.WriteLog(clavePlaza, ex, "PDFController: PdfSellado", 2);
+                    return NotFound(ex.ToString());
+                }
+            }
+            return NotFound();
+        }
 
+        [HttpGet("PdfSellado/{clavePlaza}/{referenceNumber}")]
+        public IActionResult GetPdfSellado(string clavePlaza, string referenceNumber)
+        {
+            string path = $@"C:\Bitacora\{clavePlaza}\DTC\{referenceNumber}\ReporteDTC-{referenceNumber}-Sellado.pdf";
+            try
+            {
+                if (!System.IO.File.Exists(path))
+                    return NotFound(path);
+                return File(new FileStream(path, FileMode.Open, FileAccess.Read), "application/pdf");
+            }
+            catch (IOException ex)
+            {
+                _apiLogger.WriteLog(clavePlaza, ex, "PDFController: GetPdfSellado", 2);
+                return NotFound(ex.ToString());
+            }
+        }
     }
 }

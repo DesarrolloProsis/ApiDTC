@@ -122,13 +122,12 @@
             }
         }
 
-        //[HttpGet("Anual/{plaza}/{ubicacion}")]
-        [HttpGet("Dañado/{clavePlaza}/{plaza}/{ubicacion}/{referenceNumber}")]
-        public IActionResult GetEquipoDaniado(string clavePlaza, string plaza, string ubicacion, string referenceNumber)
+        [HttpGet("Semanal/Carril/{clavePlaza}/{plaza}/{ubicacion}")]
+        public IActionResult GetMantenimientoCarrilSemanal(string clavePlaza, string plaza, string ubicacion)
         {
             try
             {
-                MantenimientoPdfCreation pdf = new MantenimientoPdfCreation(clavePlaza, new ApiLogger(), 6, ubicacion, referenceNumber);
+                MantenimientoPdfCreation pdf = new MantenimientoPdfCreation(clavePlaza, new ApiLogger(), 6, ubicacion, string.Empty);
                 var pdfResult = pdf.NewPdf();
                 if (pdfResult.Result == null)
                     return NotFound(pdfResult.Message);
@@ -136,7 +135,81 @@
             }
             catch (IOException ex)
             {
-                _apiLogger.WriteLog(clavePlaza, ex, "MantenimientoPdf: GetMantenimientoAnual", 2);
+                _apiLogger.WriteLog(clavePlaza, ex, "MantenimientoPdf: GetMantenimientoCarrilSemanal", 2);
+                return NotFound(ex.ToString());
+            }
+
+        }
+
+        [HttpGet("Mensual/Carril/{clavePlaza}/{plaza}/{ubicacion}")]
+        public IActionResult GetMantenimientoCarrilMensual(string clavePlaza, string plaza, string ubicacion)
+        {
+            try
+            {
+                MantenimientoPdfCreation pdf = new MantenimientoPdfCreation(clavePlaza, new ApiLogger(), 7, ubicacion, string.Empty);
+                var pdfResult = pdf.NewPdf();
+                if (pdfResult.Result == null)
+                    return NotFound(pdfResult.Message);
+                return File(new FileStream(pdfResult.Result.ToString(), FileMode.Open, FileAccess.Read), "application/pdf");
+
+            }
+            catch (IOException ex)
+            {
+                _apiLogger.WriteLog(clavePlaza, ex, "MantenimientoPdf: GetMantenimientoCarrilMensual", 2);
+                return NotFound(ex.ToString());
+            }
+        }
+
+        [HttpGet("Trimestral/Carril/{clavePlaza}/{plaza}/{ubicacion}")]
+        public IActionResult GetMantenimientoCarrilTrimestral(string clavePlaza, string plaza, string ubicacion)
+        {
+            try
+            {
+                MantenimientoPdfCreation pdf = new MantenimientoPdfCreation(clavePlaza, new ApiLogger(), 8, ubicacion, string.Empty);
+                var pdfResult = pdf.NewPdf();
+                if (pdfResult.Result == null)
+                    return NotFound(pdfResult.Message);
+                return File(new FileStream(pdfResult.Result.ToString(), FileMode.Open, FileAccess.Read), "application/pdf");
+            }
+            catch (IOException ex)
+            {
+                _apiLogger.WriteLog(clavePlaza, ex, "MantenimientoPdf: GetMantenimientoCarrilTrimestral", 2);
+                return NotFound(ex.ToString());
+            }
+        }
+
+        [HttpGet("Semestral/Carril/{clavePlaza}/{plaza}/{ubicacion}")]
+        public IActionResult GetMantenimientoCarrilSemestral(string clavePlaza, string plaza, string ubicacion)
+        {
+            try
+            {
+                MantenimientoPdfCreation pdf = new MantenimientoPdfCreation(clavePlaza, new ApiLogger(), 9, ubicacion, string.Empty);
+                var pdfResult = pdf.NewPdf();
+                if (pdfResult.Result == null)
+                    return NotFound(pdfResult.Message);
+                return File(new FileStream(pdfResult.Result.ToString(), FileMode.Open, FileAccess.Read), "application/pdf");
+            }
+            catch (IOException ex)
+            {
+                _apiLogger.WriteLog(clavePlaza, ex, "MantenimientoPdf: GetMantenimientoCarrilSemestral", 2);
+                return NotFound(ex.ToString());
+            }
+        }
+
+        [HttpGet("Anual/Carril/{clavePlaza}/{plaza}/{ubicacion}")]
+        public IActionResult GetMantenimientoCarrilAnual(string clavePlaza, string plaza, string ubicacion)
+        {
+            try
+            {
+                MantenimientoPdfCreation pdf = new MantenimientoPdfCreation(clavePlaza, new ApiLogger(), 10, ubicacion, string.Empty);
+                var pdfResult = pdf.NewPdf();
+                if (pdfResult.Result == null)
+                    return NotFound(pdfResult.Message);
+                return File(new FileStream(pdfResult.Result.ToString(), FileMode.Open, FileAccess.Read), "application/pdf");
+            }
+            catch (IOException ex)
+            {
+                _apiLogger.WriteLog(clavePlaza, ex, "MantenimientoPdf: GetMantenimientoCarrilAnual", 2);
                 return NotFound(ex.ToString());
             }
         }
