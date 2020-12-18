@@ -27,7 +27,6 @@
         #endregion
 
         // GET: api/PDF
-        //[HttpGet("{refNum}/{inicialRef}")]
         [HttpGet("{clavePlaza}/{refNum}/{inicialRef}")]
         public IActionResult GetPDF(string clavePlaza, string refNum, string inicialRef)
         {
@@ -86,7 +85,6 @@
             }
         }
 
-        //[HttpGet("open/{refNum}")]
         [HttpGet("open/{clavePlaza}/{refNum}")]
         public IActionResult GetPDFOpen(string clavePlaza, string refNum)
         {
