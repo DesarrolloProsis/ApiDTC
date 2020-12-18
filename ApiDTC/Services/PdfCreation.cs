@@ -110,7 +110,7 @@ namespace ApiDTC.Services
                 using (MemoryStream myMemoryStream = new MemoryStream())
                 {
                     doc.SetPageSize(new Rectangle(793.701f, 609.4488f));                                     
-                    doc.SetMargins(70.8661f, 70.8661f, 40f, 28.3465f);
+                    doc.SetMargins(60f, 60f, 30f, 30f);
                     doc.AddAuthor("Prosis");
                     doc.AddTitle("Reporte Correctivo");                    
                     PdfWriter writer = PdfWriter.GetInstance(doc, myMemoryStream);
