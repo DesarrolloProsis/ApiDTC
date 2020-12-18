@@ -5,7 +5,6 @@ namespace ApiDTC.Services
 
     public class ApiLogger
     {
-        readonly string DirectorioLogsBitacora = @"C:\Bitacora";
         //TODO -> Por plaza, con código y petición origen
         /*
          1 = SQL Error
@@ -18,10 +17,11 @@ namespace ApiDTC.Services
          */
         public void WriteLog(string plaza, Exception info, string metodo, int tipo)
         {
-            string logFile = $@"{DirectorioLogsBitacora}\{plaza}\{plaza}_log.txt";
-
-            if (!Directory.Exists(DirectorioLogsBitacora))
-                Directory.CreateDirectory(DirectorioLogsBitacora);
+            string directorioLogsBitacora = $@"C:\Bitacora\{plaza}";
+            string logFile = $@"{directorioLogsBitacora}\{plaza}\{plaza}_log.txt";
+            
+            if (!Directory.Exists(directorioLogsBitacora))
+                Directory.CreateDirectory(directorioLogsBitacora);
 
             //
             string error = $"{metodo} [{tipo}] {DateTime.Now:dd/MM/yyyy hh:mm:ss}: Line: {Convert.ToInt32(info.StackTrace.Substring(info.StackTrace.LastIndexOf(" ") + 1))} {info.Message}.";
@@ -32,10 +32,11 @@ namespace ApiDTC.Services
 
         public void WriteLog(string plaza, string metodo, int tipo, string info)
         {
-            string logFile = $@"{DirectorioLogsBitacora}\{plaza}\{plaza}_log.txt";
+            string directorioLogsBitacora = $@"C:\Bitacora\{plaza}";
+            string logFile = $@"{directorioLogsBitacora}\{plaza}\{plaza}_log.txt";
 
-            if (!Directory.Exists(DirectorioLogsBitacora))
-                Directory.CreateDirectory(DirectorioLogsBitacora);
+            if (!Directory.Exists(directorioLogsBitacora))
+                Directory.CreateDirectory(directorioLogsBitacora);
 
             string evento = $"{metodo} [4] {DateTime.Now:dd/MM/yyyy hh:mm:ss}: {info}";
             if (File.Exists(logFile))
