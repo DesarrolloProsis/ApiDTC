@@ -67,11 +67,11 @@
             }
         }
 
-        [HttpPut("TerminarReporte/{clavePlaza}/{refNum}/{inicialRef}")]
-        public IActionResult TerminarReporte(string clavePlaza, string refNum, string inicialRef)
+        [HttpGet("FirmarReporte/{clavePlaza}/{refNum}/{inicialRef}")]
+        public IActionResult FirmarReporte(string clavePlaza, string refNum, string inicialRef)
         {
-            //TODO If getstore is null on
-            var get = _db.TerminarReporte(clavePlaza, refNum);
+            
+            var get = _db.FirmarReporte(clavePlaza, refNum);
             if (get.SqlResult == null)
                 return NotFound(get);
             else
@@ -153,6 +153,9 @@
         [HttpGet("PdfSellado/{clavePlaza}/{referenceNumber}")]
         public IActionResult GetPdfSellado(string clavePlaza, string referenceNumber)
         {
+            var get = _db.SelladoReporte(clavePlaza, referenceNumber);
+            if (get.SqlResult == null)
+                return NotFound(get);
             string path = $@"C:\Bitacora\{clavePlaza}\DTC\{referenceNumber}\ReporteDTC-{referenceNumber}-Sellado.pdf";
             try
             {
@@ -166,5 +169,7 @@
                 return NotFound(ex.ToString());
             }
         }
+
     }
+    
 }

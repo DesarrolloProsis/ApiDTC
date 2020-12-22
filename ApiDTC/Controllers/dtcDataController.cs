@@ -138,15 +138,15 @@
             return BadRequest(ModelState);
         }
 
-        [HttpPut("UpdateStatus/{clavePlaza}/{referenceNumber}")]
-        public ActionResult<Response> Update(string clavePlaza, string referenceNumber)
+        //[HttpPut("UpdateStatus/{clavePlaza}/{referenceNumber}")]
+        /*public ActionResult<Response> Update(string clavePlaza, string referenceNumber)
         {
             var put = _db.UpdateDtcStatus(clavePlaza, referenceNumber);
             if(put.Result == null)
                 return NotFound(put);
             return Ok(put);
         }
-
+        */
         [HttpGet("{clavePlaza}/{ReferenceNumber}")]
         public ActionResult<Response> GetHeaderEdit (string clavePlaza, string ReferenceNumber)
         {
