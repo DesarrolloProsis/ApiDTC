@@ -44,7 +44,7 @@
             }
         }
 
-        public SqlResponse TerminarReporte(string clavePlaza, string referenceNumber)
+        public SqlResponse FirmarReporte(string clavePlaza, string referenceNumber)
         {
             try
             {
@@ -54,7 +54,31 @@
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.Add("@ReferenceNumber", SqlDbType.NVarChar).Value = referenceNumber;
-                        return _sqlResult.Put(clavePlaza, cmd, sql, "TerminarReporte");
+                        cmd.Parameters.Add("@status", SqlDbType.Int).Value = 3;
+                        return _sqlResult.Put(clavePlaza, cmd, sql, "FirmarReporte");
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+
+                _apiLogger.WriteLog(clavePlaza, ex, "PdfConsultasDb: TerminarReporte", 1);
+                return new SqlResponse { SqlMessage = $"Error: {ex.Message}", SqlResult = null };
+            }
+        }
+
+        public SqlResponse SelladoReporte(string clavePlaza, string referenceNumber)
+        {
+            try
+            {
+                using (SqlConnection sql = new SqlConnection(_connectionString))
+                {
+                    using (SqlCommand cmd = new SqlCommand("spUpdateStatusDTC", sql))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.Add("@ReferenceNumber", SqlDbType.NVarChar).Value = referenceNumber;
+                        cmd.Parameters.Add("@status", SqlDbType.Int).Value = 4;
+                        return _sqlResult.Put(clavePlaza, cmd, sql, "FirmarReporte");
                     }
                 }
             }

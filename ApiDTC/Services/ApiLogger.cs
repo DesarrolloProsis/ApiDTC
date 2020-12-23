@@ -18,7 +18,7 @@ namespace ApiDTC.Services
         public void WriteLog(string plaza, Exception info, string metodo, int tipo)
         {
             string directorioLogsBitacora = $@"C:\Bitacora\{plaza}";
-            string logFile = $@"{directorioLogsBitacora}\{plaza}\{plaza}_log.txt";
+            string logFile = $@"{directorioLogsBitacora}\{plaza}_log.txt";
             
             if (!Directory.Exists(directorioLogsBitacora))
                 Directory.CreateDirectory(directorioLogsBitacora);
@@ -33,7 +33,7 @@ namespace ApiDTC.Services
         public void WriteLog(string plaza, string metodo, int tipo, string info)
         {
             string directorioLogsBitacora = $@"C:\Bitacora\{plaza}";
-            string logFile = $@"{directorioLogsBitacora}\{plaza}\{plaza}_log.txt";
+            string logFile = $@"{directorioLogsBitacora}\{plaza}_log.txt";
 
             if (!Directory.Exists(directorioLogsBitacora))
                 Directory.CreateDirectory(directorioLogsBitacora);

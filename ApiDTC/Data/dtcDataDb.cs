@@ -52,6 +52,9 @@
                         else
                             cmd.Parameters["@reportNumber"].Value = dtcData.ReportNumber;
 
+                        //SQuare
+                        dtcData.SquareId = dtcData.SquareId == "1Bi" ? "1Bis" : dtcData.SquareId;
+
                         cmd.Parameters.Add("@sinisterDate", SqlDbType.Date).Value = dtcData.SinisterDate;
                         cmd.Parameters.Add("@failureDate", SqlDbType.Date).Value = dtcData.FailureDate;
                         cmd.Parameters.Add("@failureNumber", SqlDbType.NVarChar).Value = dtcData.FailureNumber.PadLeft(6, '0');
@@ -65,7 +68,8 @@
                         cmd.Parameters.Add("@status", SqlDbType.Int).Value = dtcData.DTCStatus;
                         cmd.Parameters.Add("@flag", SqlDbType.Bit).Value = dtcData.Flag;
                         cmd.Parameters.Add("@openFlag", SqlDbType.Bit).Value = dtcData.OpenFlag;
-                        cmd.Parameters.Add("@SquareId", SqlDbType.NVarChar).Value = dtcData.SquareId;
+                        cmd.Parameters.Add("@SquareId", SqlDbType.NVarChar).Value = dtcData.SquareId;                      
+                        
 
                         return _sqlResult.Post(clavePlaza, cmd, sql, "GetStoredDtcData");
                     }
