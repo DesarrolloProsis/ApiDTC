@@ -147,6 +147,15 @@
             return Ok(put);
         }
         */
+        [HttpPut("UpdateDtcHeader/{clavePlaza}")]
+        public ActionResult<Response> UpdateHeadDtc(string clavePlaza, [FromBody] DtcHeader dtcHeader)
+        {
+            var put = _db.UpdateDtcHeader(clavePlaza, dtcHeader);
+            if(put.Result == null)
+                return NotFound(put);
+            return Ok(put);
+        }
+
         [HttpGet("{clavePlaza}/{ReferenceNumber}")]
         public ActionResult<Response> GetHeaderEdit (string clavePlaza, string ReferenceNumber)
         {

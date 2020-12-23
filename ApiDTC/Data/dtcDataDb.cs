@@ -103,17 +103,23 @@
             }
         }
 
-        public Response UpdateDtcStatus(string clavePlaza, string referenceNumber)
+        public Response UpdateDtcHeader(string clavePlaza, DtcHeader dtcHeader)
         {
             try
             {
                 using (SqlConnection sql = new SqlConnection(_connectionString))
                 {
-                    using (SqlCommand cmd = new SqlCommand("dbo.spUpdateStatusDTC", sql))
+                    using (SqlCommand cmd = new SqlCommand("dbo.spUpdateDTCHeader", sql))
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
-                        cmd.Parameters.Add("@ReferenceNumber", SqlDbType.NVarChar).Value = referenceNumber;
-                        var response = _sqlResult.Put(clavePlaza, cmd, sql, "UpdateDtcStatus");
+                        cmd.Parameters.Add("@ReferenceNumber", SqlDbType.NVarChar).Value = dtcHeader.ReferenceNumber;
+                        cmd.Parameters.Add("@NumSiniestro", SqlDbType.NVarChar).Value = dtcHeader.NumSiniestro;
+                        cmd.Parameters.Add("@NumReporte", SqlDbType.NVarChar).Value = dtcHeader.NumReporte;
+                        cmd.Parameters.Add("@FolioFalla", SqlDbType.NVarChar).Value = dtcHeader.FolioFalla;
+                        cmd.Parameters.Add("@TipoDescripcion", SqlDbType.Int).Value = dtcHeader.TipoDescripcion;
+                        cmd.Parameters.Add("@observaciones", SqlDbType.NVarChar).Value = dtcHeader.Observaciones;
+                        cmd.Parameters.Add("@Diagnostico", SqlDbType.NVarChar).Value = dtcHeader.Diagnostico;
+                        var response = _sqlResult.Put(clavePlaza, cmd, sql, "UpdateDtcHeader");
                         return new Response
                         {
                             Message = response.SqlMessage,
@@ -166,7 +172,6 @@
             }
         }
 
-        //TEST
         public Response GetDTC(string clavePlaza, int idUser, string squareCatalog)
         {
             using (SqlConnection sql = new SqlConnection(_connectionString))
@@ -382,9 +387,6 @@
             }
         }
 
-
-
-
         public Response GetDTCHeaderEdit(string clavePlaza, string ReferenceNumber)
         {
             
@@ -408,7 +410,6 @@
                 return new Response { Message = $"Error: {ex.Message}", Result = null };
             }
         }
-
         #endregion
     }
 }
