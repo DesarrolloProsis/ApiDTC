@@ -88,8 +88,6 @@ namespace ApiDTC.Services
                 nameFile = $"DTC-{_refNum}-Almacén.pdf";
 
             string path = Path.Combine(directory, nameFile);
-            if (!Directory.Exists(directory))
-                Directory.CreateDirectory(directory);
             if (File.Exists(path))
             {
                 if(FileInUse(path))

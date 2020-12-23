@@ -23,10 +23,9 @@ namespace ApiDTC.Services
             if (!Directory.Exists(directorioLogsBitacora))
                 Directory.CreateDirectory(directorioLogsBitacora);
 
-            //
-            string error = $"{metodo} [{tipo}] {DateTime.Now:dd/MM/yyyy hh:mm:ss}: Line: {Convert.ToInt32(info.StackTrace.Substring(info.StackTrace.LastIndexOf(" ") + 1))} {info.Message}.";
+            string error = $"{metodo} [{tipo}] {DateTime.Now:dd/MM/yyyy hh:mm:ss}: Line: {Convert.ToInt32(info.StackTrace.Substring(info.StackTrace.LastIndexOf(" ") + 1))} {info.Message}.\n";
             if (File.Exists(logFile))                
-                File.AppendText(error);
+                File.AppendAllText(logFile, error);
             else File.WriteAllText(logFile, error);
         }
 
@@ -38,9 +37,9 @@ namespace ApiDTC.Services
             if (!Directory.Exists(directorioLogsBitacora))
                 Directory.CreateDirectory(directorioLogsBitacora);
 
-            string evento = $"{metodo} [4] {DateTime.Now:dd/MM/yyyy hh:mm:ss}: {info}";
+            string evento = $"{metodo} [4] {DateTime.Now:dd/MM/yyyy hh:mm:ss}: {info}\n";
             if (File.Exists(logFile))
-                File.AppendText(evento);
+                File.AppendAllText(logFile, evento);
             else File.WriteAllText(logFile, evento);
         }
     }

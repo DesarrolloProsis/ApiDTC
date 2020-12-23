@@ -108,7 +108,7 @@ namespace ApiDTC.Services
                 filename = $@"DTC-{_referenceNumber}-EquipoDañado.pdf";
 
             path = Path.Combine(directory, filename);
-
+            
             //File in use
             try
             {   
