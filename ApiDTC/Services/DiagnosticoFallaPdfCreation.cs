@@ -10,7 +10,7 @@ namespace ApiDTC.Services
     using System.Data;
     using System.IO;
 
-    public class ReporteFotograficoPdfCreation
+    public class DiagnosticoFallaPdfCreation
     {
         #region Attributes
 
@@ -20,11 +20,7 @@ namespace ApiDTC.Services
 
         private readonly ApiLogger _apiLogger;
 
-        private readonly int _tipo;
-
         private readonly string _ubicacion;
-
-        private readonly string _referenceNumber;
         #endregion
 
         #region Pdf Configuration
@@ -60,23 +56,19 @@ namespace ApiDTC.Services
 
         #region Constructors
 
-        public ReporteFotograficoPdfCreation(string clavePlaza, DataTable tableHeader, ApiLogger apiLogger, int tipo, string ubicacion, string referenceNumber)
+        public DiagnosticoFallaPdfCreation(string clavePlaza, DataTable tableHeader, ApiLogger apiLogger, string ubicacion)
         {
             _clavePlaza = clavePlaza;
             _apiLogger = apiLogger;
             _tableHeader = tableHeader;
-            _tipo = tipo;
             _ubicacion = ubicacion;
-            _referenceNumber = referenceNumber;
         }
 
-        public ReporteFotograficoPdfCreation(string clavePlaza, ApiLogger apiLogger, int tipo, string ubicacion, string referenceNumber)
+        public DiagnosticoFallaPdfCreation(string clavePlaza, ApiLogger apiLogger, string ubicacion)
         {
             _clavePlaza = clavePlaza;
             _apiLogger = apiLogger;
-            _tipo = tipo;
             _ubicacion = ubicacion;
-            _referenceNumber = referenceNumber;
         }
 
         #endregion
@@ -87,10 +79,7 @@ namespace ApiDTC.Services
             string directory, filename, path;
 
             DateTime now = DateTime.Now; 
-            if (_tipo == 1)
-                directory = $@"C:\Bitacora\ReportesEnProceso\{_clavePlaza.ToUpper()}\{_referenceNumber}";
-            else
-                directory = $@"C:\Bitacora\ReportesEnProceso\{_clavePlaza.ToUpper()}\{_referenceNumber}";
+            directory = $@"C:\Bitacora\{_clavePlaza.ToUpper()}\Reportes\DiagnosticosFalla";
             if (!Directory.Exists(directory))
                 return new Response
                 {
@@ -98,12 +87,7 @@ namespace ApiDTC.Services
                     Result = null
                 };
 
-            if (_tipo == 1)
-                filename = $"DTC-{_referenceNumber}";
-            else if(_tipo == 2)
-                filename = $@"DTC-{_referenceNumber}-EquipoNuevo.pdf";
-            else
-                filename = $@"DTC-{_referenceNumber}-EquipoDañado.pdf";
+            filename = $@"DTC-DiagnosticoFalla-EquipoDañado.pdf";
 
             path = Path.Combine(directory, filename);
             
@@ -142,19 +126,7 @@ namespace ApiDTC.Services
                     doc.SetPageSize(new Rectangle(609.4488f, 793.701f));
                     doc.SetMargins(35f, 35f, 30f, 30f);
                     doc.AddAuthor("PROSIS");
-                    switch (_tipo)
-                    {
-                        case 1: 
-                            doc.AddTitle("REPORTE FOTOGRÁFICO MANTENIMIENTO PREVENTIVO");  
-                            break;
-                        case 2:
-                            doc.AddTitle("REPORTE FOTOGRÁFICO MANTENIMIENTO CORRECTIVO EQUIPO NUEVO");
-                            break;
-                        case 3:
-                            doc.AddTitle("REPORTE FOTOGRÁFICO MANTENIMIENTO CORRECTIVO EQUIPO DAÑADO");
-                            break;
-                        default: break;
-                    }
+                    doc.AddTitle("REPORTE FOTOGRÁFICO MANTENIMIENTO CORRECTIVO EQUIPO DAÑADO");
                     
 
                     PdfWriter writer = PdfWriter.GetInstance(doc, myMemoryStream);
@@ -168,12 +140,7 @@ namespace ApiDTC.Services
                     doc.Add(new Phrase(" "));
                     doc.Add(TablaInformacion());
                     string directoryImgs;
-                    if (_tipo == 1)
-                        directoryImgs = $@"{System.Environment.CurrentDirectory}\Reportes\2020\septiembre\24\Prueba\";
-                    else if (_tipo == 2)
-                        directoryImgs = Path.Combine(directory, "EquipoNuevoImgs");
-                    else
-                        directoryImgs = Path.Combine(directory, "EquipoDañadoImgs");
+                    directoryImgs = Path.Combine(directory, "EquipoDañadoImgs");
                     var fotos = Directory.GetFiles(directoryImgs);
                     if (fotos.Length <= 4 && fotos.Length > 0)
                         doc.Add(TablaFotografias(fotos, 4));
@@ -211,6 +178,22 @@ namespace ApiDTC.Services
             };
         }
 
+        private string MesContrato(DateTime fechaSolicitud)
+        {
+            try
+            {
+                DateTime contratoInicial = new DateTime(2020, 11, 1);
+                int mesesTranscurridos = (contratoInicial.Month - fechaSolicitud.Month) + (12 * (contratoInicial.Year - fechaSolicitud.Year)) + 1;
+                return mesesTranscurridos.ToString("00");
+            }
+            catch (ArgumentOutOfRangeException ex)
+            {
+                _apiLogger.WriteLog(_clavePlaza, ex, "ReporteFotograficoPdfCreation: NewPdf", 2);
+                return null;
+            }
+            
+        }
+
         private IElement TablaEncabezado()
         {
             try
@@ -232,19 +215,7 @@ namespace ApiDTC.Services
                 var celdaSalto = new PdfPCell() { Colspan = 5, Border = 0 };
                 table.AddCell(celdaSalto);
                 string textoTitulo = "";
-                switch (_tipo)
-                {
-                    case 1:
-                        textoTitulo = "REPORTE FOTOGRÁFICO MANTENIMIENTO PREVENTIVO";
-                        break;
-                    case 2:
-                        textoTitulo = "REPORTE FOTOGRÁFICO MANTENIMIENTO CORRECTIVO EQUIPO NUEVO";
-                        break;
-                    case 3:
-                        textoTitulo = "REPORTE FOTOGRÁFICO MANTENIMIENTO CORRECTIVO EQUIPO DAÑADO";
-                        break;
-                    default: break;
-                }
+                textoTitulo = "REPORTE FOTOGRÁFICO MANTENIMIENTO CORRECTIVO EQUIPO DAÑADO";
                 var colTitulo = new PdfPCell(new Phrase(textoTitulo, letraNormalMediana)) { Border = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, Padding = 3, PaddingRight = 10, PaddingLeft = 10, Colspan = 3 };
                 table.AddCell(celdaVacia);
                 table.AddCell(colTitulo);
@@ -343,7 +314,7 @@ namespace ApiDTC.Services
 
                 var colTextoNoReporte = new PdfPCell(new Phrase("No. de Reporte: ", letraoNegritaChica)) { Border = 0, HorizontalAlignment = Element.ALIGN_RIGHT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 1 };
 
-                string valorReporte = _tipo == 1 ? "TLP-MPS-01" : _referenceNumber;
+                string valorReporte = "TLP-MPS-01";
                 var colNoReporte = new PdfPCell(new Phrase(valorReporte, letraNormalChica)) { BorderWidthBottom = 1, BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, Padding = 2, Colspan = 2 };
                 
                 var colTextoFecha = new PdfPCell(new Phrase("Fecha: ", letraNormalChica)) { Border = 0, HorizontalAlignment = Element.ALIGN_RIGHT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 1 };
@@ -412,19 +383,6 @@ namespace ApiDTC.Services
                 table.AddCell(capufe);
                 table.AddCell(celdaVacia);
                 table.AddCell(celdaVacia);
-
-                //Equipo nuevo o dañado
-                if (_tipo != 1)
-                {
-                    var colSiniestro = new PdfPCell(new Phrase("No. de Siniestro: ", letraoNegritaChica)) { Border = 0, HorizontalAlignment = Element.ALIGN_RIGHT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 1, Colspan = 3 };
-
-                    var siniestro = new PdfPCell(new Phrase("NÚMERO DE SINIESTRO (GNP)", letraNormalChica)) { BorderWidthBottom = 1, BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, Padding = 2, Colspan = 3 };
-
-                    table.AddCell(colSiniestro);
-                    table.AddCell(siniestro);
-                    table.AddCell(celdaVacia);
-                    table.AddCell(celdaVacia);
-                }
 
                 return table;
             }

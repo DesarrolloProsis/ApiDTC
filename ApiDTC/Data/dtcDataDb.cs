@@ -345,7 +345,7 @@
                                 Result = null
                             };
                         }
-                        string forzarGit;
+
                         var requestedComponent = _sqlResult.DataSetMapper<EditRequestedComponent>(clavePlaza, dataSet.Tables[0], "EditRefereceOpen");
                         if (requestedComponent == null)
                         {

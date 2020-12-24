@@ -10,7 +10,7 @@ namespace ApiDTC.Services
     using System.Data;
     using System.IO;
 
-    public class ReporteFotograficoPdfCreation
+    public class FichaTecnicaAtencionPdfCreation
     {
         #region Attributes
 
@@ -19,8 +19,6 @@ namespace ApiDTC.Services
         private readonly string _clavePlaza;
 
         private readonly ApiLogger _apiLogger;
-
-        private readonly int _tipo;
 
         private readonly string _ubicacion;
 
@@ -48,7 +46,7 @@ namespace ApiDTC.Services
         public static iTextSharp.text.Font letraoNegritaChica = new iTextSharp.text.Font(NegritaChica, 6f, iTextSharp.text.Font.BOLD, BaseColor.Black);
         public static iTextSharp.text.Font letraNormalGrande = new iTextSharp.text.Font(NormalGrande, 15f, iTextSharp.text.Font.NORMAL, BaseColor.Black);
         public static iTextSharp.text.Font letraNormalMediana = new iTextSharp.text.Font(NormalMediana, 8f, iTextSharp.text.Font.NORMAL, BaseColor.Black);
-        public static iTextSharp.text.Font letraNormalMedianaSub = new iTextSharp.text.Font(NormalMediana, 7f, iTextSharp.text.Font.UNDERLINE, BaseColor.Black);
+        public static iTextSharp.text.Font letraNormalMedianaSub = new iTextSharp.text.Font(NormalMediana, 9f, iTextSharp.text.Font.UNDERLINE, BaseColor.Black);
         public static iTextSharp.text.Font letraNormalChica = new iTextSharp.text.Font(NormalChica, 6f, iTextSharp.text.Font.NORMAL, BaseColor.Black);
         public static iTextSharp.text.Font letraSubAzulChica = new iTextSharp.text.Font(NormalChicaSubAzul, 5f, iTextSharp.text.Font.UNDERLINE, BaseColor.Blue);
         public static iTextSharp.text.Font letritasMiniMini = new iTextSharp.text.Font(fuenteLetrita, 1f, iTextSharp.text.Font.NORMAL, BaseColor.Black);
@@ -60,21 +58,19 @@ namespace ApiDTC.Services
 
         #region Constructors
 
-        public ReporteFotograficoPdfCreation(string clavePlaza, DataTable tableHeader, ApiLogger apiLogger, int tipo, string ubicacion, string referenceNumber)
+        public FichaTecnicaAtencionPdfCreation(string clavePlaza, DataTable tableHeader, ApiLogger apiLogger, string ubicacion, string referenceNumber)
         {
             _clavePlaza = clavePlaza;
             _apiLogger = apiLogger;
             _tableHeader = tableHeader;
-            _tipo = tipo;
             _ubicacion = ubicacion;
             _referenceNumber = referenceNumber;
         }
 
-        public ReporteFotograficoPdfCreation(string clavePlaza, ApiLogger apiLogger, int tipo, string ubicacion, string referenceNumber)
+        public FichaTecnicaAtencionPdfCreation(string clavePlaza, ApiLogger apiLogger, string ubicacion, string referenceNumber)
         {
             _clavePlaza = clavePlaza;
             _apiLogger = apiLogger;
-            _tipo = tipo;
             _ubicacion = ubicacion;
             _referenceNumber = referenceNumber;
         }
@@ -87,24 +83,9 @@ namespace ApiDTC.Services
             string directory, filename, path;
 
             DateTime now = DateTime.Now; 
-            if (_tipo == 1)
-                directory = $@"C:\Bitacora\ReportesEnProceso\{_clavePlaza.ToUpper()}\{_referenceNumber}";
-            else
-                directory = $@"C:\Bitacora\ReportesEnProceso\{_clavePlaza.ToUpper()}\{_referenceNumber}";
-            if (!Directory.Exists(directory))
-                return new Response
-                {
-                    Message = "Error: No existe el directorio",
-                    Result = null
-                };
-
-            if (_tipo == 1)
-                filename = $"DTC-{_referenceNumber}";
-            else if(_tipo == 2)
-                filename = $@"DTC-{_referenceNumber}-EquipoNuevo.pdf";
-            else
-                filename = $@"DTC-{_referenceNumber}-EquipoDañado.pdf";
-
+            
+            directory = $@"C:\Bitacora\{_clavePlaza.ToUpper()}\Reportes";
+            filename = $"FichaTecnicaAtencion-{_referenceNumber}";
             path = Path.Combine(directory, filename);
             
             //File in use
@@ -126,7 +107,7 @@ namespace ApiDTC.Services
             }
             catch (IOException ex)
             {
-                _apiLogger.WriteLog(_clavePlaza, ex, "ReporteFotograficoPdfCreation: NewPdf", 2);
+                _apiLogger.WriteLog(_clavePlaza, ex, "FichaTecnicaAtencionPdfCreation: NewPdf", 2);
                 return new Response
                 {
                     Message = $"Error: {ex.Message}.",
@@ -142,21 +123,8 @@ namespace ApiDTC.Services
                     doc.SetPageSize(new Rectangle(609.4488f, 793.701f));
                     doc.SetMargins(35f, 35f, 30f, 30f);
                     doc.AddAuthor("PROSIS");
-                    switch (_tipo)
-                    {
-                        case 1: 
-                            doc.AddTitle("REPORTE FOTOGRÁFICO MANTENIMIENTO PREVENTIVO");  
-                            break;
-                        case 2:
-                            doc.AddTitle("REPORTE FOTOGRÁFICO MANTENIMIENTO CORRECTIVO EQUIPO NUEVO");
-                            break;
-                        case 3:
-                            doc.AddTitle("REPORTE FOTOGRÁFICO MANTENIMIENTO CORRECTIVO EQUIPO DAÑADO");
-                            break;
-                        default: break;
-                    }
+                    doc.AddTitle("FICHA TÉCNICA DE ATENCIÓN");  
                     
-
                     PdfWriter writer = PdfWriter.GetInstance(doc, myMemoryStream);
                     writer.PageEvent = new PageEventHelperVertical();
                     writer.Open();
@@ -167,20 +135,8 @@ namespace ApiDTC.Services
                     doc.Add(TablaEncabezado());
                     doc.Add(new Phrase(" "));
                     doc.Add(TablaInformacion());
-                    string directoryImgs;
-                    if (_tipo == 1)
-                        directoryImgs = $@"{System.Environment.CurrentDirectory}\Reportes\2020\septiembre\24\Prueba\";
-                    else if (_tipo == 2)
-                        directoryImgs = Path.Combine(directory, "EquipoNuevoImgs");
-                    else
-                        directoryImgs = Path.Combine(directory, "EquipoDañadoImgs");
-                    var fotos = Directory.GetFiles(directoryImgs);
-                    if (fotos.Length <= 4 && fotos.Length > 0)
-                        doc.Add(TablaFotografias(fotos, 4));
-                    else if(fotos.Length > 4 && fotos.Length <= 6)
-                        doc.Add(TablaFotografias(fotos, 6));
-
                     doc.Add(TablaObservaciones());
+                    //doc.Add(TablaFotografias());
                     doc.Add(TablaFirmas());
                     doc.Close();
                     writer.Close();
@@ -197,7 +153,7 @@ namespace ApiDTC.Services
             {
                 if (System.IO.File.Exists(path))
                     System.IO.File.Delete(path);
-                _apiLogger.WriteLog(_clavePlaza, ex, "ReporteFotograficoPdfCreation: NewPdf", 2);
+                _apiLogger.WriteLog(_clavePlaza, ex, "FichaTecnicaAtencionPdfCreation: NewPdf", 2);
                 return new Response
                 {
                     Message = $"Error: {ex.Message}.",
@@ -231,21 +187,8 @@ namespace ApiDTC.Services
 
                 var celdaSalto = new PdfPCell() { Colspan = 5, Border = 0 };
                 table.AddCell(celdaSalto);
-                string textoTitulo = "";
-                switch (_tipo)
-                {
-                    case 1:
-                        textoTitulo = "REPORTE FOTOGRÁFICO MANTENIMIENTO PREVENTIVO";
-                        break;
-                    case 2:
-                        textoTitulo = "REPORTE FOTOGRÁFICO MANTENIMIENTO CORRECTIVO EQUIPO NUEVO";
-                        break;
-                    case 3:
-                        textoTitulo = "REPORTE FOTOGRÁFICO MANTENIMIENTO CORRECTIVO EQUIPO DAÑADO";
-                        break;
-                    default: break;
-                }
-                var colTitulo = new PdfPCell(new Phrase(textoTitulo, letraNormalMediana)) { Border = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, Padding = 3, PaddingRight = 10, PaddingLeft = 10, Colspan = 3 };
+                string textoTitulo = "FICHA TÉCNICA DE ATENCIÓN";
+                var colTitulo = new PdfPCell(new Phrase(textoTitulo, letraNormalGrande)) { Border = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, Padding = 3, PaddingRight = 10, PaddingLeft = 10, Colspan = 3 };
                 table.AddCell(celdaVacia);
                 table.AddCell(colTitulo);
                 table.AddCell(celdaVacia);
@@ -255,12 +198,12 @@ namespace ApiDTC.Services
             }
             catch (PdfException ex)
             {
-                _apiLogger.WriteLog(_clavePlaza, ex, "ReporteFotograficoPdfCreation: TablaEncabezado", 5);
+                _apiLogger.WriteLog(_clavePlaza, ex, "FichaTecnicaAtencionPdfCreation: TablaEncabezado", 5);
                 return null;
             }
             catch(Exception ex)
             {
-                _apiLogger.WriteLog(_clavePlaza, ex, "ReporteFotograficoPdfCreation: TablaEncabezado", 3);
+                _apiLogger.WriteLog(_clavePlaza, ex, "FichaTecnicaAtencionPdfCreation: TablaEncabezado", 3);
                 return null;
             }
             
@@ -343,15 +286,14 @@ namespace ApiDTC.Services
 
                 var colTextoNoReporte = new PdfPCell(new Phrase("No. de Reporte: ", letraoNegritaChica)) { Border = 0, HorizontalAlignment = Element.ALIGN_RIGHT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 1 };
 
-                string valorReporte = _tipo == 1 ? "TLP-MPS-01" : _referenceNumber;
-                var colNoReporte = new PdfPCell(new Phrase(valorReporte, letraNormalChica)) { BorderWidthBottom = 1, BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, Padding = 2, Colspan = 2 };
+                string valorReporte = "TLP-MPS-01";
+                var colNoReporte = new PdfPCell(new Phrase(valorReporte, letraNormalChica)) { BorderWidthBottom = 1, BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, Padding = 2, Colspan = 3 };
                 
                 var colTextoFecha = new PdfPCell(new Phrase("Fecha: ", letraNormalChica)) { Border = 0, HorizontalAlignment = Element.ALIGN_RIGHT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 1 };
                 var colFecha = new PdfPCell(new Phrase("15/07/2020", letraNormalChica)) { BorderWidthBottom = 1, BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, Padding = 2 };
 
                 table.AddCell(colTextoNoReporte);
                 table.AddCell(colNoReporte);
-                table.AddCell(celdaVacia);
                 table.AddCell(celdaVacia);
                 table.AddCell(colTextoFecha);
                 table.AddCell(colFecha);
@@ -361,14 +303,13 @@ namespace ApiDTC.Services
 
                 var colPlazaDeCobro = new PdfPCell(new Phrase("Plaza de Cobro: ", letraoNegritaChica)) { Border = 0, HorizontalAlignment = Element.ALIGN_RIGHT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 1 };
 
-                var plazaDeCobro = new PdfPCell(new Phrase("001 TLALPAN", letraNormalChica)) { BorderWidthBottom = 1, BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, Padding = 2, Colspan = 2 };
+                var plazaDeCobro = new PdfPCell(new Phrase("001 TLALPAN", letraNormalChica)) { BorderWidthBottom = 1, BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, Padding = 2, Colspan = 3 };
 
                 var colTextoHoraInicio = new PdfPCell(new Phrase("Hora INICIO: ", letraNormalChica)) { Border = 0, HorizontalAlignment = Element.ALIGN_RIGHT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 1 };
                 var colHoraInicio = new PdfPCell(new Phrase("12:00:00 a.m.", letraNormalChica)) { BorderWidthBottom = 1, BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, Padding = 2 };
 
                 table.AddCell(colPlazaDeCobro);
                 table.AddCell(plazaDeCobro);
-                table.AddCell(celdaVacia);
                 table.AddCell(celdaVacia);
                 table.AddCell(colTextoHoraInicio);
                 table.AddCell(colHoraInicio);
@@ -378,7 +319,7 @@ namespace ApiDTC.Services
 
                 var colUbicacion = new PdfPCell(new Phrase("Ubicación: ", letraoNegritaChica)) { Border = 0, HorizontalAlignment = Element.ALIGN_RIGHT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 1 };
 
-                var ubicacion = new PdfPCell(new Phrase(_ubicacion, letraNormalChica)) { BorderWidthBottom = 1, BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, Padding = 2, Colspan = 2 };
+                var ubicacion = new PdfPCell(new Phrase(_ubicacion, letraNormalChica)) { BorderWidthBottom = 1, BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, Padding = 2, Colspan = 3 };
 
                 var colTextoHoraFin = new PdfPCell(new Phrase("Hora FIN: ", letraNormalChica)) { Border = 0, HorizontalAlignment = Element.ALIGN_RIGHT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 1 };
                 var colHoraFin = new PdfPCell(new Phrase("12:00:00 a.m.", letraNormalChica)) { BorderWidthBottom = 1, BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, Padding = 2 };
@@ -386,13 +327,22 @@ namespace ApiDTC.Services
                 table.AddCell(colUbicacion);
                 table.AddCell(ubicacion);
                 table.AddCell(celdaVacia);
-                table.AddCell(celdaVacia);
                 table.AddCell(colTextoHoraFin);
                 table.AddCell(colHoraFin);
                 table.AddCell(celdaVacia);
 
+                //Folio falla
+                var colFolioFalla = new PdfPCell(new Phrase("FOLIO DE FALLA:", letraoNegritaChica)) { Border = 0, HorizontalAlignment = Element.ALIGN_RIGHT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 1, Colspan = 3 };
+
+                var falla = new PdfPCell(new Phrase("Número de Folio Módulo Institucional CAPUFE", letraNormalChica)) { BorderWidthBottom = 1, BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, Padding = 2, Colspan = 3 };
+
+                table.AddCell(colFolioFalla);
+                table.AddCell(falla);
+                table.AddCell(celdaVacia);
+                table.AddCell(celdaVacia);
+
                 //Técnico
-                var colTecnico = new PdfPCell(new Phrase("Técnico Responsable PROSIS: ", letraoNegritaChica)) { Border = 0, HorizontalAlignment = Element.ALIGN_RIGHT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 1, Colspan = 3 };
+                var colTecnico = new PdfPCell(new Phrase("Técnico Responsable PROSIS:", letraoNegritaChica)) { Border = 0, HorizontalAlignment = Element.ALIGN_RIGHT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 1, Colspan = 3 };
 
                 var tecnico = new PdfPCell(new Phrase("NOMBRE DEL TÉCNICO", letraNormalChica)) { BorderWidthBottom = 1, BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, Padding = 2, Colspan = 3 };
 
@@ -401,41 +351,46 @@ namespace ApiDTC.Services
                 table.AddCell(celdaVacia);
                 table.AddCell(celdaVacia);
 
-
-                //Personal CAPUFE
-
-                var colCapufe= new PdfPCell(new Phrase("Personal de Plaza de Cobro CAPUFE: ", letraoNegritaChica)) { Border = 0, HorizontalAlignment = Element.ALIGN_RIGHT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 1, Colspan = 3 };
-
-                var capufe = new PdfPCell(new Phrase("NOMBRE DEL PERSONAL CAPUFE", letraNormalChica)) { BorderWidthBottom = 1, BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, Padding = 2, Colspan = 3 };
-
-                table.AddCell(colCapufe);
-                table.AddCell(capufe);
+                table.AddCell(celdaVacia);
+                table.AddCell(celdaVacia);
+                table.AddCell(celdaVacia);
+                table.AddCell(celdaVacia);
+                table.AddCell(celdaVacia);
+                table.AddCell(celdaVacia);
                 table.AddCell(celdaVacia);
                 table.AddCell(celdaVacia);
 
-                //Equipo nuevo o dañado
-                if (_tipo != 1)
-                {
-                    var colSiniestro = new PdfPCell(new Phrase("No. de Siniestro: ", letraoNegritaChica)) { Border = 0, HorizontalAlignment = Element.ALIGN_RIGHT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 1, Colspan = 3 };
+                //Tipo falla
 
-                    var siniestro = new PdfPCell(new Phrase("NÚMERO DE SINIESTRO (GNP)", letraNormalChica)) { BorderWidthBottom = 1, BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, Padding = 2, Colspan = 3 };
+                var colTipoFalla = new PdfPCell(new Phrase("TIPO DE FALLA: ", letraoNegritaChica)) { Border = 0, HorizontalAlignment = Element.ALIGN_RIGHT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 2 };
 
-                    table.AddCell(colSiniestro);
-                    table.AddCell(siniestro);
-                    table.AddCell(celdaVacia);
-                    table.AddCell(celdaVacia);
-                }
+                var operacion = new PdfPCell(new Phrase("   ", letraNormalChica)) { BorderWidthBottom = 1, BorderWidthTop = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, Padding = 2 };
+
+                var colPorOperacion = new PdfPCell(new Phrase("POR OPERACIÓN", letraNormalChica)) { Border = 0, HorizontalAlignment = Element.ALIGN_LEFT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 1, Colspan = 2 };
+                
+                var siniestro = new PdfPCell(new Phrase("   ", letraNormalChica)) { BorderWidthBottom = 1, BorderWidthTop = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, Padding = 2 };
+
+                var colPorSiniestro = new PdfPCell(new Phrase("POR SINIESTRO", letraNormalChica)) { Border = 0, HorizontalAlignment = Element.ALIGN_LEFT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 1, Colspan = 2 };
+
+
+                table.AddCell(colTipoFalla);
+                table.AddCell(celdaVacia);
+                table.AddCell(operacion);
+                table.AddCell(colPorOperacion);
+                table.AddCell(siniestro);
+                table.AddCell(colPorSiniestro);
+                
 
                 return table;
             }
             catch (PdfException ex)
             {
-                _apiLogger.WriteLog(_clavePlaza, ex, "MatenimientoPdfCreation: TablaInformacion", 5);
+                _apiLogger.WriteLog(_clavePlaza, ex, "FichaTecnicaAtencionPdfCreation: TablaInformacion", 5);
                 return null;
             }
             catch (Exception ex)
             {
-                _apiLogger.WriteLog(_clavePlaza, ex, "MatenimientoPdfCreation: TablaInformacion", 3);
+                _apiLogger.WriteLog(_clavePlaza, ex, "FichaTecnicaAtencionPdfCreation: TablaInformacion", 3);
                 return null;
             }
         }
@@ -454,19 +409,41 @@ namespace ApiDTC.Services
                 }
 
 
-                var colTextoObservaciones = new PdfPCell(new Phrase("Observaciones: ", letraoNegritaMediana)) { Border = 0, HorizontalAlignment = Element.ALIGN_LEFT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 1, Colspan = 2 };
+                var colFallaReportada = new PdfPCell(new Phrase("DESCRIPCIÓN DE LA FALLA REPORTADA: ", letraoNegritaMediana)) { Border = 0, HorizontalAlignment = Element.ALIGN_LEFT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 1, Colspan = 6 };
 
-                table.AddCell(colTextoObservaciones);
-                table.AddCell(celdaVacia);
-                table.AddCell(celdaVacia);
-                table.AddCell(celdaVacia);
-                table.AddCell(celdaVacia);
+                table.AddCell(colFallaReportada);
                 table.AddCell(celdaVacia);
                 table.AddCell(celdaVacia);
 
-                var celdaObservaciones = new PdfPCell(new Phrase("What is Lorem Ipsum ? Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.", letraNormalChica)) { BorderWidth = 0, VerticalAlignment = Element.ALIGN_TOP, HorizontalAlignment = Element.ALIGN_JUSTIFIED, Colspan = 8 };
+                var fallaReportada = new PdfPCell(new Phrase("What is Lorem Ipsum ? Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.", letraNormalMedianaSub)) { Border = 0, BorderWidthRight = 0, VerticalAlignment = Element.ALIGN_BOTTOM, HorizontalAlignment = Element.ALIGN_JUSTIFIED, Colspan = 8, Padding = 5 };
 
-                table.AddCell(celdaObservaciones);
+                table.AddCell(fallaReportada);
+                
+                for (int i = 0; i < 8; i++)
+                {
+                    table.AddCell(celdaVacia);
+                }
+
+                var colSolucion= new PdfPCell(new Phrase("SOLUCIÓN y/o INTERVENCIÓN REALIZADA PARA LA FALLA REPORTADA: ", letraoNegritaMediana)) { Border = 0, HorizontalAlignment = Element.ALIGN_LEFT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 1, Colspan = 6 };
+
+                table.AddCell(colSolucion);
+                table.AddCell(celdaVacia);
+                table.AddCell(celdaVacia);
+
+                var solucion = new PdfPCell(new Phrase("What is Lorem Ipsum ? Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.", letraNormalMedianaSub)) { Border = 0, VerticalAlignment = Element.ALIGN_BOTTOM, HorizontalAlignment = Element.ALIGN_JUSTIFIED, Colspan = 8, Padding = 5 };
+
+                table.AddCell(solucion);
+
+                for (int i = 0; i < 8; i++)
+                {
+                    table.AddCell(celdaVacia);
+                }
+
+                var colEvidencia= new PdfPCell(new Phrase("EVIDENCIA FOTOGRÁFICA DE LA ATENCIÓN A LA FALLA REPORTADA: ", letraoNegritaMediana)) { Border = 0, HorizontalAlignment = Element.ALIGN_LEFT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 1, Colspan = 6 };
+
+                table.AddCell(colEvidencia);
+                table.AddCell(celdaVacia);
+                table.AddCell(celdaVacia);
 
                 for (int i = 0; i < 16; i++)
                 {
@@ -477,12 +454,12 @@ namespace ApiDTC.Services
             }
             catch (PdfException ex)
             {
-                _apiLogger.WriteLog(_clavePlaza, ex, "ReporteFotograficoPdfCreation: TablaObservaciones", 5);
+                _apiLogger.WriteLog(_clavePlaza, ex, "FichaTecnicaAtencionPdfCreation: TablaObservaciones", 5);
                 return null;
             }
             catch (Exception ex)
             {
-                _apiLogger.WriteLog(_clavePlaza, ex, "ReporteFotograficoPdfCreation: TablaObservaciones", 3);
+                _apiLogger.WriteLog(_clavePlaza, ex, "FichaTecnicaAtencionPdfCreation: TablaObservaciones", 3);
                 return null;
             }   
         }
@@ -553,7 +530,7 @@ namespace ApiDTC.Services
                     VerticalAlignment = Element.ALIGN_CENTER
                 };
 
-                var colCapufe= new PdfPCell(new Phrase("Personal Plaza de Cobro", letraNormalChica))
+                var colCapufe= new PdfPCell(new Phrase("CAPUFE", letraNormalChica))
                 {
                     Border = 0,
                     HorizontalAlignment = Element.ALIGN_CENTER,
@@ -569,12 +546,12 @@ namespace ApiDTC.Services
             }
             catch (PdfException ex)
             {
-                _apiLogger.WriteLog(_clavePlaza, ex, "ReporteFotograficoPdfCreation: TablaFirmas", 5);
+                _apiLogger.WriteLog(_clavePlaza, ex, "FichaTecnicaAtencionPdfCreation: TablaFirmas", 5);
                 return null;
             }
             catch (Exception ex)
             {
-                _apiLogger.WriteLog(_clavePlaza, ex, "ReporteFotograficoPdfCreation: TablaFirmas", 3);
+                _apiLogger.WriteLog(_clavePlaza, ex, "FichaTecnicaAtencionPdfCreation: TablaFirmas", 3);
                 return null;
             }
         }
@@ -589,16 +566,19 @@ namespace ApiDTC.Services
             }
             catch (PdfException ex)
             {
-                _apiLogger.WriteLog(_clavePlaza, ex, "MatenimientoPdfCreation: FileInUse", 5);
+                _apiLogger.WriteLog(_clavePlaza, ex, "FichaTecnicaAtencionPdfCreation: FileInUse", 5);
                 return true;
             }
             catch (Exception ex)
             {
-                _apiLogger.WriteLog(_clavePlaza, ex, "MatenimientoPdfCreation: FileInUse", 3);
+                _apiLogger.WriteLog(_clavePlaza, ex, "FichaTecnicaAtencionPdfCreation: FileInUse", 3);
                 return true;
             }
             return fileInUse;
         }
+
+        private string MesActual() { return new System.Globalization.CultureInfo("es-ES", false).DateTimeFormat.GetMonthName(DateTime.Now.Month); }
+ 
         #endregion
     }
 }
