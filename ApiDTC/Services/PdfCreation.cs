@@ -76,25 +76,25 @@ namespace ApiDTC.Services
         #region Methods
         public Response NewPdf(int operacion)
         {
-            string directory = $@"C:\Bitacora\{_clavePlaza.ToUpper()}\DTC\{_refNum}", nameFile;
+            string directory = $@"C:\Bitacora\{_clavePlaza.ToUpper()}\DTC\{_refNum}", filename;
             if(!Directory.Exists(directory))
                 Directory.CreateDirectory(directory);
 
             if (operacion == 0)
-                nameFile = $"DTC-{_refNum}.pdf";
+                filename = $"DTC-{_refNum}.pdf";
             else if(operacion == 1)
-                nameFile = $"DTC-{_refNum}-Finalizado.pdf";
+                filename = $"DTC-{_refNum}-Finalizado.pdf";
             else
-                nameFile = $"DTC-{_refNum}-Almacén.pdf";
+                filename = $"DTC-{_refNum}-Almacén.pdf";
 
-            string path = Path.Combine(directory, nameFile);
+            string path = Path.Combine(directory, filename);
             if (File.Exists(path))
             {
                 if(FileInUse(path))
                 {
                     return new Response
                     {
-                        Message = $"Error: Archivo {nameFile} en uso o inaccesible",
+                        Message = $"Error: Archivo {filename} en uso o inaccesible",
                         Result = null
                     };
                 }

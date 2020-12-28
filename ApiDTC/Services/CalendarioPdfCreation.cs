@@ -83,22 +83,22 @@ namespace ApiDTC.Services
         #region Methods
         public Response NewPdf()
         {
-            string directory, file;
+            string directory = $@"C:\Bitacora\{_clavePlaza.ToUpper()}\CalendariosMantenimiento\{_year}\{_month}\", filename, path;
             DateTime now = DateTime.Now;
-            directory = $@"{System.Environment.CurrentDirectory}\Bitacora\CalendariosMantenimiento\{_plaza}\{now.Year}\{MesActual()}\{now.Day}";
-            file = $@"{directory}\{_plaza}{now.Year}{MesContrato(now)}C.pdf";
+            filename = $"{_plaza}{now.Year}{MesContrato(now)}C.pdf";
+            path = Path.Combine(directory, filename);
             //If file exists
             try
             {   
                 if (!Directory.Exists(directory))
                     Directory.CreateDirectory(directory);
-                if (File.Exists(file))
+                if (File.Exists(path))
                 {
-                    if (FileInUse(file))
+                    if (FileInUse(path))
                     {
                         return new Response
                         {
-                            Message = $@"Error: Archivo {directory}\{_plaza}{now.Year}{MesContrato(now)}C.pdf en uso o inaccesible",
+                            Message = $"Error: Archivo {filename} en uso o inaccesible",
                             Result = null
                         };
                     }
@@ -143,7 +143,7 @@ namespace ApiDTC.Services
                     byte[] content = myMemoryStream.ToArray();
 
 
-                    using (FileStream fs = File.Create(file))
+                    using (FileStream fs = File.Create(path))
                     {
                         fs.Write(content, 0, (int)content.Length);
                     }
@@ -151,8 +151,8 @@ namespace ApiDTC.Services
             }
             catch (IOException ex)
             {
-                if (System.IO.File.Exists($@"{System.Environment.CurrentDirectory}\CalendariosMantenimiento\{DateTime.Now.Year}\{MesActual()}\{DateTime.Now.Day}\{_plaza}{DateTime.Now.Year}01C.pdf"))
-                    System.IO.File.Delete($@"{System.Environment.CurrentDirectory}\CalendariosMantenimiento\{DateTime.Now.Year}\{MesActual()}\{DateTime.Now.Day}\{_plaza}{DateTime.Now.Year}01C.pdf");
+                if (System.IO.File.Exists(path))
+                    System.IO.File.Delete(path);
                 _apiLogger.WriteLog(_clavePlaza, ex, "CalendarioPdfCreation: NewPdf ", 2);
                 return new Response
                 {
@@ -163,7 +163,7 @@ namespace ApiDTC.Services
             return new Response
             {
                 Message = "Ok",
-                Result = file
+                Result = filename
             };
         }
         
