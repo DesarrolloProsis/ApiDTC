@@ -32,7 +32,7 @@
         [HttpGet("Mantenimiento/{clavePlaza}/{month}/{year}/{userId}/{squareId}")]
         public IActionResult GetCalendarioMantenimiento(string clavePlaza, int month, int year, int userId, string squareId)
         {
-            var dataSet = _db.GetStorePdf(clavePlaza, month, year, userId, squareId);
+            var dataSet = _db.GetStorePdf(clavePlaza, month, year, userId, squareId == "1Bi" ? squareId + "s" : squareId);
             if (dataSet.Tables[1].Rows.Count == 0)
                 return NotFound();
             CalendarioPdfCreation pdf = new CalendarioPdfCreation(clavePlaza, dataSet.Tables[1], dataSet.Tables[0], clavePlaza, new ApiLogger(), month, year, squareId);
@@ -45,7 +45,7 @@
         [HttpDelete("DeleteCalendar/{clavePlaza}/{month}/{year}/{userId}/{squareId}")]
         public ActionResult<Response> DeleteCalendar(string clavePlaza, int month, int year, int userId, string squareId)
         {
-            var get = _db.DeleteCalendar(clavePlaza, month, year, userId, squareId);
+            var get = _db.DeleteCalendar(clavePlaza, month, year, userId, squareId == "1Bi" ? squareId + "s" : squareId);
             if (get.Result == null)
                 return BadRequest(get);
             else

@@ -163,7 +163,7 @@ namespace ApiDTC.Services
             return new Response
             {
                 Message = "Ok",
-                Result = filename
+                Result = path
             };
         }
         
@@ -216,8 +216,8 @@ namespace ApiDTC.Services
                 }
                 else
                     plaza = "";
-
-                var plazaDeCobro = new Chunk($"   PLAZA DE COBRO: {_square} {plaza}", letraoNegritaMediana);
+                string plazaCobro = plaza.Equals("Tres Marías") ? $"   PLAZA DE COBRO: 0{_square}s {plaza}" : $"   PLAZA DE COBRO: {_square} {plaza}";
+                var plazaDeCobro = new Chunk(plazaCobro, letraoNegritaMediana);
                 var phraseCobro = new Phrase(plazaDeCobro);
                 var colCobro = new PdfPCell(phraseCobro) { BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, BorderWidthBottom = 1, HorizontalAlignment = Element.ALIGN_LEFT, VerticalAlignment = Element.ALIGN_MIDDLE, Padding = 2 };
                 table.AddCell(celdaVacia);

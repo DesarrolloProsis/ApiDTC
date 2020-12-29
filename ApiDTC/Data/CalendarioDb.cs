@@ -41,7 +41,7 @@ namespace ApiDTC.Data
                         using (SqlCommand cmd = new SqlCommand("dbo.spCalendarComent", sql))
                         { 
                             cmd.CommandType = CommandType.StoredProcedure;                                                        
-                            cmd.Parameters.Add("@SquareId", SqlDbType.NVarChar).Value = actividad.SquareId;
+                            cmd.Parameters.Add("@SquareId", SqlDbType.NVarChar).Value = actividad.SquareId == "1Bi" ? actividad.SquareId + "s" : actividad.SquareId;
                             cmd.Parameters.Add("@UserId", SqlDbType.Int).Value = actividad.UserId;                            
                             cmd.Parameters.Add("@Month", SqlDbType.Int).Value = actividad.Month;
                             cmd.Parameters.Add("@Year", SqlDbType.Int).Value = actividad.Year;
@@ -85,7 +85,7 @@ namespace ApiDTC.Data
                             cmd.CommandType = CommandType.StoredProcedure;
                             cmd.Parameters.Add("@CapufeLaneNum", SqlDbType.NVarChar).Value = actividad.CapufeLaneNums[i];
                             cmd.Parameters.Add("@IdGare", SqlDbType.NVarChar).Value = actividad.IdGares[i];
-                            cmd.Parameters.Add("@SquareId", SqlDbType.NVarChar).Value = actividad.SquareId;
+                            cmd.Parameters.Add("@SquareId", SqlDbType.NVarChar).Value = actividad.SquareId == "1Bi" ? actividad.SquareId + "s" : actividad.SquareId;
                             cmd.Parameters.Add("@UserId", SqlDbType.Int).Value = actividad.UserId;
                             cmd.Parameters.Add("@Day", SqlDbType.Int).Value = actividad.Day;
                             cmd.Parameters.Add("@Month", SqlDbType.Int).Value = actividad.Month;
@@ -194,7 +194,7 @@ namespace ApiDTC.Data
 
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.Add("@UserId", SqlDbType.Int).Value = actividad.UserId;
-                        cmd.Parameters.Add("@SuqareId", SqlDbType.NVarChar).Value = actividad.SquareId;
+                        cmd.Parameters.Add("@SuqareId", SqlDbType.NVarChar).Value = actividad.SquareId == "1Bi" ? actividad.SquareId + "s" : actividad.SquareId;
                         cmd.Parameters.Add("@Month", SqlDbType.Int).Value = actividad.Month;
                         cmd.Parameters.Add("@Year", SqlDbType.Int).Value = actividad.Year;
 
@@ -232,7 +232,7 @@ namespace ApiDTC.Data
                         DataSet dataSet = new DataSet();
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.Add("@UserId", SqlDbType.Int).Value = actividad.UserId;
-                        cmd.Parameters.Add("@SuqareId", SqlDbType.NVarChar).Value = actividad.SquareId;
+                        cmd.Parameters.Add("@SuqareId", SqlDbType.NVarChar).Value = actividad.SquareId == "1Bi" ? actividad.SquareId + "s" : actividad.SquareId;
                         cmd.Parameters.Add("@Month", SqlDbType.Int).Value = actividad.Month;
                         cmd.Parameters.Add("@Year", SqlDbType.Int).Value = actividad.Year;
 
@@ -268,7 +268,7 @@ namespace ApiDTC.Data
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.Add("@UserId", SqlDbType.Int).Value = actividad.UserId;                                                
-                        cmd.Parameters.Add("@SuqareId", SqlDbType.NVarChar).Value = actividad.SquareId;
+                        cmd.Parameters.Add("@SuqareId", SqlDbType.NVarChar).Value = actividad.SquareId == "1Bi" ? actividad.SquareId + "s" : actividad.SquareId;
                         cmd.Parameters.Add("@Month", SqlDbType.Int).Value = actividad.Month;
                         cmd.Parameters.Add("@Year", SqlDbType.Int).Value = actividad.Year;
                         sql.Open();
