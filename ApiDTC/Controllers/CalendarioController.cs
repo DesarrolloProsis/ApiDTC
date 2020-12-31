@@ -110,6 +110,16 @@
             }
             return BadRequest(ModelState);
         }
+
+        [HttpGet("Actividades/{clavePlaza}/{roll}/{frequency}")]
+        public ActionResult<Response> GetActivities(string clavePlaza, int roll, int frequency)
+        {
+            var get = _db.GetActivities(clavePlaza, roll, frequency);
+            if (get.Result == null)
+                return NotFound(get);
+            else
+                return Ok(get);
+        }
         #endregion
     }
 }
