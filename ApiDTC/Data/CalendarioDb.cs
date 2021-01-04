@@ -118,6 +118,37 @@ namespace ApiDTC.Data
             
         }
 
+        public Response GetActivities(string clavePlaza, int roll, int frequency)
+        {
+            try
+            {
+                using (SqlConnection sql = new SqlConnection(_connectionString))
+                {
+                    using (SqlCommand cmd = new SqlCommand("dbo.spCalendarActivitiesReport ", sql))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.Add("@Roll", SqlDbType.Int).Value = roll;
+                        cmd.Parameters.Add("@Frecuency", SqlDbType.Int).Value = frequency;
+
+                        var storedResult = _sqlResult.GetList<Activities>(clavePlaza, cmd, sql, "GetActivities");
+                        if (storedResult.Result == null)
+                            return storedResult;
+
+                        return new Response
+                        {
+                            Message = "Ok",
+                            Result = storedResult.Result
+                        };
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                _apiLogger.WriteLog(clavePlaza, ex, "CalendarioDb: GetActivities", 1);
+                return new Response { Message = $"Error: {ex.Message}", Result = null };
+            }
+        }
+
         public Response DeleteCalendar(string clavePlaza, int month, int year, int userId, string squareId)
         {
             try

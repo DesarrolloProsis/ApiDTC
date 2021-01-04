@@ -5,6 +5,7 @@
     using System.IO;
     using System.Linq;
     using System.Threading.Tasks;
+    using ApiDTC.Data;
     using ApiDTC.Services;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
@@ -15,22 +16,28 @@
     {
         #region Attributes
         private readonly ApiLogger _apiLogger;
+
+        private ReporteFotograficoDB _db;
         #endregion
 
         #region Constructor
-        public ReporteFotograficoController()
+        public ReporteFotograficoController(ReporteFotograficoDB db)
         {
+            this._db = db ?? throw new ArgumentNullException(nameof(db)); 
             _apiLogger = new ApiLogger();
         }
         #endregion
 
         #region Methods
-        [HttpGet("Reporte/{clavePlaza}/{ubicacion}")]
-        public IActionResult GetReporteFotografico(string clavePlaza, string ubicacion)
+        [HttpGet("Reporte/{clavePlaza}/{referenceNumber}")]
+        public IActionResult GetReporteFotografico(string clavePlaza, string referenceNumber)
         {
             try
             {
-                ReporteFotograficoPdfCreation pdf = new ReporteFotograficoPdfCreation(clavePlaza, new ApiLogger(), 1, ubicacion, string.Empty);
+                var dataSet = _db.GetStorePDF(clavePlaza, referenceNumber);
+                if (dataSet.Tables[0].Rows.Count == 0)
+                    return NotFound("GetStoredPdf retorna tabla vacía");
+                ReporteFotograficoPdfCreation pdf = new ReporteFotograficoPdfCreation(clavePlaza, dataSet.Tables[0], new ApiLogger(), 1, referenceNumber);
                 var pdfResult = pdf.NewPdf();
                 if (pdfResult.Result == null)
                     return NotFound(pdfResult.Message);
@@ -49,7 +56,10 @@
         {
             try
             {
-                ReporteFotograficoPdfCreation pdf = new ReporteFotograficoPdfCreation(clavePlaza, new ApiLogger(), 2, ubicacion, referenceNumber);
+                var dataSet = _db.GetStorePDF(clavePlaza, referenceNumber);
+                if (dataSet.Tables[0].Rows.Count == 0)
+                    return NotFound("GetStoredPdf retorna tabla vacía");
+                ReporteFotograficoPdfCreation pdf = new ReporteFotograficoPdfCreation(clavePlaza, dataSet.Tables[0], new ApiLogger(), 2, referenceNumber);
                 var pdfResult = pdf.NewPdf();
                 if (pdfResult.Result == null)
                     return NotFound(pdfResult.Message);
@@ -68,7 +78,10 @@
         {
             try
             {
-                ReporteFotograficoPdfCreation pdf = new ReporteFotograficoPdfCreation(clavePlaza, new ApiLogger(), 3, ubicacion, referenceNumber);
+                var dataSet = _db.GetStorePDF(clavePlaza, referenceNumber);
+                if (dataSet.Tables[0].Rows.Count == 0)
+                    return NotFound("GetStoredPdf retorna tabla vacía");
+                ReporteFotograficoPdfCreation pdf = new ReporteFotograficoPdfCreation(clavePlaza, dataSet.Tables[0], new ApiLogger(), 2, referenceNumber);
                 var pdfResult = pdf.NewPdf();
                 if (pdfResult.Result == null)
                     return NotFound(pdfResult.Message);
