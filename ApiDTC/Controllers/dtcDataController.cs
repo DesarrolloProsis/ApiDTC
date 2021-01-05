@@ -174,7 +174,7 @@
             if (image.Length > 0 || image != null)
             {
                 int numberOfImages;
-                string dir = $@"C:\Bitacora\ReportesEnProceso\{clavePlaza.ToUpper()}\{referenceNumber}\EquipoDañadoImgs";
+                string dir = $@"C:\Bitacora\{clavePlaza.ToUpper()}\DTC\{referenceNumber}\EquipoDañadoImgs";
                 string filename;
                 try
                 {
@@ -207,7 +207,7 @@
         {
             try
             {
-                string path = $@"C:\Bitacora\ReportesEnProceso\{clavePlaza.ToUpper()}\{referenceNumber}\EquipoDañadoImgs\{fileName}";
+                string path = $@"C:\Bitacora\{clavePlaza.ToUpper()}\DTC\{referenceNumber}\EquipoDañadoImgs\{fileName}";
                 if (!System.IO.File.Exists(path))
                     return NotFound(path);
                 byte[] bitMap = System.IO.File.ReadAllBytes(path);
@@ -230,7 +230,7 @@
         {
             try
             {
-                string directoy = $@"C:\Bitacora\ReportesEnProceso\{clavePlaza.ToUpper()}\{referenceNumber}\EquipoDañadoImgs";
+                string directoy = $@"C:\Bitacora\{clavePlaza.ToUpper()}\DTC\{referenceNumber}\EquipoDañadoImgs";
                 List<string> dtcImages = new List<string>();
                 if (!Directory.Exists(directoy))
                     return Ok(dtcImages);
@@ -250,12 +250,12 @@
         {
             try
             {
-                string path = $@"C:\Bitacora\ReportesEnProceso\{clavePlaza.ToUpper()}\{referenceNumber}\EquipoDañadoImgs\{fileName}";
+                string path = $@"C:\Bitacora\{clavePlaza.ToUpper()}\DTC\{referenceNumber}\EquipoDañadoImgs\{fileName}";
                 if (!System.IO.File.Exists(path))
                     return NotFound(path);
                 System.IO.File.Delete(path);
-                if (Directory.GetFiles($@"C:\Bitacora\ReportesEnProceso\{clavePlaza.ToUpper()}\{referenceNumber}\EquipoDañadoImgs").Length == 0)
-                    Directory.Delete($@"C:\Bitacora\ReportesEnProceso\{clavePlaza.ToUpper()}\{referenceNumber}\EquipoDañadoImgs");
+                if (Directory.GetFiles($@"C:\Bitacora\{clavePlaza.ToUpper()}\DTC\{referenceNumber}\EquipoDañadoImgs").Length == 0)
+                    Directory.Delete($@"C:\Bitacora\{clavePlaza.ToUpper()}\DTC\{referenceNumber}\EquipoDañadoImgs");
                 return Ok(path);
             }
             catch (IOException ex)
@@ -273,7 +273,7 @@
             if (image.Length > 0 || image != null)
             {
                 int numberOfImages;
-                string dir = $@"C:\Bitacora\ReportesEnProceso\{clavePlaza.ToUpper()}\{referenceNumber}\EquipoNuevoImgs";
+                string dir = $@"C:\Bitacora\{clavePlaza.ToUpper()}\DTC\{referenceNumber}\EquipoNuevoImgs";
                 string filename;
                 try
                 {
@@ -306,7 +306,7 @@
         {
             try
             {
-                string path = $@"C:\Bitacora\ReportesEnProceso\{clavePlaza.ToUpper()}\{referenceNumber}\EquipoNuevoImgs\{fileName}";
+                string path = $@"C:\Bitacora\{clavePlaza.ToUpper()}\DTC\{referenceNumber}\EquipoNuevoImgs\{fileName}";
                 if (!System.IO.File.Exists(path))
                     return NotFound(path);
                 byte[] bitMap = System.IO.File.ReadAllBytes(path);
@@ -329,7 +329,7 @@
         {
             try
             {
-                string directoy = $@"C:\Bitacora\ReportesEnProceso\{clavePlaza.ToUpper()}\{referenceNumber}\EquipoNuevoImgs";
+                string directoy = $@"C:\Bitacora\{clavePlaza.ToUpper()}\DTC\{referenceNumber}\EquipoNuevoImgs";
                 List<string> dtcImages = new List<string>();
                 if (!Directory.Exists(directoy))
                     return Ok(dtcImages);
@@ -349,12 +349,12 @@
         {
             try
             {
-                string path = $@"C:\Bitacora\ReportesEnProceso\{clavePlaza.ToUpper()}\{referenceNumber}\EquipoNuevoImgs\{fileName}";
+                string path = $@"C:\Bitacora\{clavePlaza.ToUpper()}\DTC\{referenceNumber}\EquipoNuevoImgs\{fileName}";
                 if (!System.IO.File.Exists(path))
                     return NotFound(path);
                 System.IO.File.Delete(path);
-                if (Directory.GetFiles($@"C:\Bitacora\ReportesEnProceso\{clavePlaza.ToUpper()}\{referenceNumber}\EquipoNuevoImgs").Length == 0)
-                    Directory.Delete($@"C:\Bitacora\ReportesEnProceso\{clavePlaza.ToUpper()}\{referenceNumber}\EquipoNuevoImgs");
+                if (Directory.GetFiles($@"C:\Bitacora\{clavePlaza.ToUpper()}\DTC\{referenceNumber}\EquipoNuevoImgs").Length == 0)
+                    Directory.Delete($@"C:\Bitacora\{clavePlaza.ToUpper()}\DTC\{referenceNumber}\EquipoNuevoImgs");
                 return Ok(path);
             }
             catch (IOException ex)

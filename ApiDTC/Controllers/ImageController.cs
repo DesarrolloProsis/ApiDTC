@@ -32,17 +32,28 @@
         [HttpPost("InsertImage/{clavePlaza}")]
         public ActionResult<Response> InsertImage(string clavePlaza, [FromForm(Name = "image")] IFormFile image, [FromForm(Name = "id")] string referenceNumber, [FromForm(Name = "plaza")] string plaza)
         {
+            _apiLogger.WriteLog(clavePlaza, "InsertImage", 1, plaza + referenceNumber);
             if (image.Length > 0 || image != null)
             {
                 
                 int numberOfImages;
                 string directoy = $@"{_environment.WebRootPath}DtcImages\{plaza}\{referenceNumber}", fileName;
+                _apiLogger.WriteLog(clavePlaza, "InsertImage", 1, directoy);
                 try
                 {
+                    _apiLogger.WriteLog(clavePlaza, "InsertImage", 1, "Evaluacion directorio");
                     if (!Directory.Exists(directoy))
+                    {
+
+                        _apiLogger.WriteLog(clavePlaza, "InsertImage", 1, "Se va a crear directorio: " + directoy);
                         Directory.CreateDirectory(directoy);
+                        _apiLogger.WriteLog(clavePlaza, "InsertImage", 1, "Se crea directorio: " + directoy);
+                    }
+                        
                     numberOfImages = Directory.GetFiles(directoy).Length + 1;
+                    _apiLogger.WriteLog(clavePlaza, "InsertImage", 1, $"{numberOfImages}");
                     fileName = $"{referenceNumber}_Image_{numberOfImages}{image.FileName.Substring(image.FileName.LastIndexOf('.'))}";
+                    _apiLogger.WriteLog(clavePlaza, "InsertImage", 1, fileName);
                     while (System.IO.File.Exists(Path.Combine(directoy, fileName)))
                     {
                         numberOfImages += 1;
@@ -55,6 +66,11 @@
                 catch (IOException ex)
                 {
                     _apiLogger.WriteLog(clavePlaza, ex, "ImageController: InsertImage", 2);
+                    return NotFound(ex.ToString());
+                }
+                catch (Exception ex)
+                {
+                    _apiLogger.WriteLog(clavePlaza, ex, "ImageController: InsertImage", 3);
                     return NotFound(ex.ToString());
                 }
                 return Ok(directoy);
