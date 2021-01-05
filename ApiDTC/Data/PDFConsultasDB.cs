@@ -54,7 +54,7 @@
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.Add("@ReferenceNumber", SqlDbType.NVarChar).Value = referenceNumber;
-                        cmd.Parameters.Add("@status", SqlDbType.Int).Value = 3;
+                        cmd.Parameters.Add("@status", SqlDbType.Int).Value = 2;
                         return _sqlResult.Put(clavePlaza, cmd, sql, "FirmarReporte");
                     }
                 }
@@ -64,6 +64,38 @@
 
                 _apiLogger.WriteLog(clavePlaza, ex, "PdfConsultasDb: TerminarReporte", 1);
                 return new SqlResponse { SqlMessage = $"Error: {ex.Message}", SqlResult = null };
+            }
+        }
+
+        public Response AutorizadoGmmp(string clavePlaza, string referenceNumber)
+        {
+            try
+            {
+                using (SqlConnection sql = new SqlConnection(_connectionString))
+                {
+                    using (SqlCommand cmd = new SqlCommand("spUpdateStatusDTC", sql))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.Add("@ReferenceNumber", SqlDbType.NVarChar).Value = referenceNumber;
+                        cmd.Parameters.Add("@status", SqlDbType.Int).Value = 4;
+                        var result = _sqlResult.Put(clavePlaza, cmd, sql, "AutorizadoGmmp");
+                        return new Response
+                        {
+                            Message = result.SqlMessage,
+                            Result = result.SqlResult
+                        };
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+
+                _apiLogger.WriteLog(clavePlaza, ex, "PdfConsultasDb: AutorizadoGmmp", 1);
+                return new Response
+                {
+                    Message = $"Error: {ex.Message}",
+                    Result = null
+                };
             }
         }
 
@@ -77,7 +109,7 @@
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.Add("@ReferenceNumber", SqlDbType.NVarChar).Value = referenceNumber;
-                        cmd.Parameters.Add("@status", SqlDbType.Int).Value = 4;
+                        cmd.Parameters.Add("@status", SqlDbType.Int).Value = 3;
                         return _sqlResult.Put(clavePlaza, cmd, sql, "FirmarReporte");
                     }
                 }

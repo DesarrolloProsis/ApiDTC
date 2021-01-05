@@ -112,6 +112,15 @@
             return NotFound();
         }
 
+        [HttpPost("Autorizado/{clavePlaza}/{referenceNumber}")]
+        public ActionResult<Response> PdfSellado(string clavePlaza, string referenceNumber)
+        {
+            var get = _db.AutorizadoGmmp(clavePlaza, referenceNumber);
+            if (get.Result == null)
+                return NotFound(get);
+            return Ok(get);
+        }
+
         [HttpGet("GetPdfSellado/{clavePlaza}/{referenceNumber}")]
         public IActionResult GetPdfSellado(string clavePlaza, string referenceNumber)
         {
