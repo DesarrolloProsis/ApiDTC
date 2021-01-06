@@ -101,6 +101,9 @@
                     var fs = new FileStream(Path.Combine(path, filename), FileMode.Create);
                     file.CopyTo(fs);
                     fs.Close();
+                    var get = _db.SelladoReporte(clavePlaza, referenceNumber);
+                    if (get.SqlResult == null)
+                        return NotFound(get);
                     return Ok(path);
                 }
                 catch (IOException ex)
@@ -123,10 +126,8 @@
 
         [HttpGet("GetPdfSellado/{clavePlaza}/{referenceNumber}")]
         public IActionResult GetPdfSellado(string clavePlaza, string referenceNumber)
-        {
-            var get = _db.SelladoReporte(clavePlaza, referenceNumber);
-            if (get.SqlResult == null)
-                return NotFound(get);
+        {            
+            
             string path = $@"C:\Bitacora\{clavePlaza}\DTC\{referenceNumber}\ReporteDTC-{referenceNumber}-Sellado.pdf";
             try
             {
