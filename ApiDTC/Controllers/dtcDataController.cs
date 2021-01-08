@@ -123,7 +123,7 @@
             }
             return BadRequest(ModelState);
         }
-
+        
         [HttpDelete("Delete/{clavePlaza}/{referenceNumber}/{userId}")]
         public ActionResult<Response> Delete(string clavePlaza, string referenceNumber, int userId)
         {
