@@ -209,14 +209,10 @@
             {
                 string path = $@"C:\Bitacora\{clavePlaza.ToUpper()}\DTC\{referenceNumber}\EquipoDañadoImgs\{fileName}";
                 if (!System.IO.File.Exists(path))
-                    return NotFound(path);
-                byte[] bitMap = System.IO.File.ReadAllBytes(path);
-                var dtcImage = new DtcImage
-                {
-                    FileName = fileName,
-                    Image = Convert.ToBase64String(bitMap)
-                };
-                return Ok(dtcImage);
+                    return NotFound("No existe el archivo");
+                Byte[] bitMap = System.IO.File.ReadAllBytes(path);
+
+                return File(bitMap, "Image/jpg");
             }
             catch (IOException ex)
             {
@@ -308,14 +304,10 @@
             {
                 string path = $@"C:\Bitacora\{clavePlaza.ToUpper()}\DTC\{referenceNumber}\EquipoNuevoImgs\{fileName}";
                 if (!System.IO.File.Exists(path))
-                    return NotFound(path);
-                byte[] bitMap = System.IO.File.ReadAllBytes(path);
-                var dtcImage = new DtcImage
-                {
-                    FileName = fileName,
-                    Image = Convert.ToBase64String(bitMap)
-                };
-                return Ok(dtcImage);
+                    return NotFound("No existe el archivo");
+                Byte[] bitMap = System.IO.File.ReadAllBytes(path);
+
+                return File(bitMap, "Image/jpg");
             }
             catch (IOException ex)
             {
