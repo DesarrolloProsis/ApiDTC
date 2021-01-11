@@ -59,7 +59,7 @@
                         cmd.Parameters.Add("@strMaintenanceFolio", SqlDbType.NVarChar).Value = item.MaintenanceFolio;
                         cmd.Parameters.Add("@MainRelationShip", SqlDbType.Int).Value = item.MainRelationship;
                         cmd.Parameters.Add("@TableFolio", SqlDbType.Int).Value = item.TableFolio;
-                        //cmd.Parameters.Add("@Amount", SqlDbType.Int).Value = item.Amount;
+                        cmd.Parameters.Add("@Amount", SqlDbType.Int).Value = item.Amount;
 
 
                         if (item == requestedComponent[requestedComponent.Count - 1])
@@ -108,7 +108,7 @@
                         cmd.Parameters.Add("@strMaintenanceFolio", SqlDbType.NVarChar).Value = item.MaintenanceFolio;
                         cmd.Parameters.Add("@MainRelationShip", SqlDbType.Int).Value = item.MainRelationship;
                         cmd.Parameters.Add("@TableFolio", SqlDbType.Int).Value = item.TableFolio;
-                        //cmd.Parameters.Add("@Amount", SqlDbType.Int).Value = item.Amount;
+                        cmd.Parameters.Add("@Amount", SqlDbType.Int).Value = item.Amount;
 
                         if (item == requestedComponent[requestedComponent.Count - 1])
                             cmd.Parameters.Add("@validationFlag", SqlDbType.Bit).Value = 1;
