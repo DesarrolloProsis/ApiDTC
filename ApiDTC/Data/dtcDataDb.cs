@@ -7,6 +7,7 @@
     using System.Data;
     using ApiDTC.Services;
     using System.Collections.Generic;
+    using System.Data.SqlTypes;
 
     public class DtcDataDb
     {
@@ -28,7 +29,7 @@
         #endregion
 
         #region Methods
-        
+
         public SqlResponse GetStoredDtcData(string clavePlaza, DtcData dtcData)
         {
             try
@@ -68,8 +69,8 @@
                         cmd.Parameters.Add("@status", SqlDbType.Int).Value = dtcData.DTCStatus;
                         cmd.Parameters.Add("@flag", SqlDbType.Bit).Value = dtcData.Flag;
                         cmd.Parameters.Add("@openFlag", SqlDbType.Bit).Value = dtcData.OpenFlag;
-                        cmd.Parameters.Add("@SquareId", SqlDbType.NVarChar).Value = dtcData.SquareId;                      
-                        
+                        cmd.Parameters.Add("@SquareId", SqlDbType.NVarChar).Value = dtcData.SquareId;
+
 
                         return _sqlResult.Post(clavePlaza, cmd, sql, "GetStoredDtcData");
                     }
@@ -81,12 +82,12 @@
                 return new SqlResponse { SqlMessage = ex.Message, SqlResult = null };
             }
         }
-        
+
         public Response GetReferenceNumber(string clavePlaza, string referenceNumber)
         {
             try
             {
-                using(SqlConnection sql = new SqlConnection(_connectionString))
+                using (SqlConnection sql = new SqlConnection(_connectionString))
                 {
                     using (SqlCommand cmd = new SqlCommand("dbo.spGetReferenceNumber", sql))
                     {
@@ -112,6 +113,7 @@
                     using (SqlCommand cmd = new SqlCommand("dbo.spUpdateDTCHeader", sql))
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
+
                         cmd.Parameters.Add("@ReferenceNumber", SqlDbType.NVarChar).Value = dtcHeader.ReferenceNumber;
                         cmd.Parameters.Add("@NumSiniestro", SqlDbType.NVarChar).Value = dtcHeader.NumSiniestro;
                         cmd.Parameters.Add("@NumReporte", SqlDbType.NVarChar).Value = dtcHeader.NumReporte;
@@ -130,7 +132,7 @@
             }
             catch (SqlException ex)
             {
-                _apiLogger.WriteLog(clavePlaza, ex, "DtcDataDb: UpdateDtcStatus", 1);
+                _apiLogger.WriteLog(clavePlaza, ex, "DtcDataDb: UpdateDtcHeader", 1);
                 return new Response { Message = $"Error: {ex.Message}", Result = null };
             }
         }
@@ -186,11 +188,11 @@
                         return _sqlResult.GetList<DtcView>(clavePlaza, cmd, sql, "GetDTC");
                     }
                 }
-                catch(SqlException ex)
+                catch (SqlException ex)
                 {
                     _apiLogger.WriteLog(clavePlaza, ex, "DtcDataDb: GetDTC", 1);
                     return new Response { Message = $"Error: {ex.Message}", Result = null };
-                } 
+                }
             }
         }
 
@@ -389,7 +391,7 @@
 
         public Response GetDTCHeaderEdit(string clavePlaza, string ReferenceNumber)
         {
-            
+
             try
             {
                 using (SqlConnection sql = new SqlConnection(_connectionString))
