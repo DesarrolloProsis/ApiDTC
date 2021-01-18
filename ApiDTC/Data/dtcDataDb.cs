@@ -58,7 +58,7 @@
 
                         cmd.Parameters.Add("@sinisterDate", SqlDbType.Date).Value = dtcData.SinisterDate;
                         cmd.Parameters.Add("@failureDate", SqlDbType.Date).Value = dtcData.FailureDate;
-                        cmd.Parameters.Add("@failureNumber", SqlDbType.NVarChar).Value = dtcData.FailureNumber.PadLeft(6, '0');
+                        cmd.Parameters.Add("@failureNumber", SqlDbType.NVarChar).Value = dtcData.FailureNumber;
                         cmd.Parameters.Add("@shippingDate", SqlDbType.Date).Value = dtcData.ShippingDate;
                         cmd.Parameters.Add("@elaborationDate", SqlDbType.Date).Value = dtcData.ElaborationDate;
                         cmd.Parameters.Add("@observation", SqlDbType.NVarChar).Value = dtcData.Observation;
@@ -115,12 +115,12 @@
                         cmd.CommandType = CommandType.StoredProcedure;
 
                         cmd.Parameters.Add("@ReferenceNumber", SqlDbType.NVarChar).Value = dtcHeader.ReferenceNumber;
-                        cmd.Parameters.Add("@NumSiniestro", SqlDbType.NVarChar).Value = dtcHeader.NumSiniestro;
-                        cmd.Parameters.Add("@NumReporte", SqlDbType.NVarChar).Value = dtcHeader.NumReporte;
-                        cmd.Parameters.Add("@FolioFalla", SqlDbType.NVarChar).Value = dtcHeader.FolioFalla;
+                        cmd.Parameters.Add("@NumSiniestro", SqlDbType.NVarChar).Value = String.IsNullOrEmpty(dtcHeader.NumSiniestro) ? SqlString.Null : dtcHeader.NumSiniestro;
+                        cmd.Parameters.Add("@NumReporte", SqlDbType.NVarChar).Value = String.IsNullOrEmpty(dtcHeader.NumReporte) ? SqlString.Null : dtcHeader.NumReporte;
+                        cmd.Parameters.Add("@FolioFalla", SqlDbType.NVarChar).Value = String.IsNullOrEmpty(dtcHeader.FolioFalla) ? SqlString.Null : dtcHeader.FolioFalla;
                         cmd.Parameters.Add("@TipoDescripcion", SqlDbType.Int).Value = dtcHeader.TipoDescripcion;
-                        cmd.Parameters.Add("@observaciones", SqlDbType.NVarChar).Value = dtcHeader.Observaciones;
-                        cmd.Parameters.Add("@Diagnostico", SqlDbType.NVarChar).Value = dtcHeader.Diagnostico;
+                        cmd.Parameters.Add("@observaciones", SqlDbType.NVarChar).Value = String.IsNullOrEmpty(dtcHeader.Observaciones) ? SqlString.Null : dtcHeader.Observaciones;
+                        cmd.Parameters.Add("@Diagnostico", SqlDbType.NVarChar).Value = String.IsNullOrEmpty(dtcHeader.Diagnostico) ? SqlString.Null : dtcHeader.Diagnostico;
                         var response = _sqlResult.Put(clavePlaza, cmd, sql, "UpdateDtcHeader");
                         return new Response
                         {

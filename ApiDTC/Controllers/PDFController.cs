@@ -150,7 +150,8 @@
             try
             {
                 if (!System.IO.File.Exists(path))
-                {
+                    System.IO.File.Delete(path);
+
                     var dataSet = _db.GetStorePDF(clavePlaza, referenceNumber, clavePlaza);
                     if (dataSet.Tables[0].Rows.Count == 0 || dataSet.Tables[1].Rows.Count == 0 || dataSet.Tables[2].Rows.Count == 0 || dataSet.Tables[3].Rows.Count == 0)
                         return NotFound("GetStorePdf retorna tabla vacía");
@@ -158,7 +159,6 @@
                     //0 = Nuevo, 1 = Firmado, 2 = Almacén
                     var pdfResult = pdf.NewPdf(1);
                     return File(new FileStream(pdfResult.Result.ToString(), FileMode.Open, FileAccess.Read), "application/pdf");
-                }
                 return File(new FileStream(path, FileMode.Open, FileAccess.Read), "application/pdf");
             }
             catch (IOException ex)
@@ -167,7 +167,7 @@
                 return NotFound(ex.ToString());
             }
         }
-
+        
         [HttpGet("FirmarReporte/{clavePlaza}/{refNum}/{inicialRef}")]
         public IActionResult FirmarReporte(string clavePlaza, string refNum, string inicialRef)
         {
