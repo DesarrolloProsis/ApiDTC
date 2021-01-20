@@ -13,7 +13,7 @@ namespace ApiDTC.Models
 
         public string ReferenceSquare { get; set; }
 
-        //public int AdminSquareId { get; set; }
+        public int AdminSquareId { get; set; }
 
         #endregion
     }

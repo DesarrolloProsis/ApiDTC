@@ -21,6 +21,7 @@
 
         public int AdminSquare { get; set; }
 
+        [DataType(DataType.Date)]
         public DateTime ReportDate { get; set; }
 
         [StringLength(30)]
