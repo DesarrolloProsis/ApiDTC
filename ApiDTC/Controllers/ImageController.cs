@@ -38,22 +38,12 @@
                 
                 int numberOfImages;
                 string directoy = $@"{_environment.WebRootPath}DtcImages\{plaza}\{referenceNumber}", fileName;
-                _apiLogger.WriteLog(clavePlaza, "InsertImage", 1, directoy);
                 try
                 {
-                    _apiLogger.WriteLog(clavePlaza, "InsertImage", 1, "Evaluacion directorio");
                     if (!Directory.Exists(directoy))
-                    {
-
-                        _apiLogger.WriteLog(clavePlaza, "InsertImage", 1, "Se va a crear directorio: " + directoy);
                         Directory.CreateDirectory(directoy);
-                        _apiLogger.WriteLog(clavePlaza, "InsertImage", 1, "Se crea directorio: " + directoy);
-                    }
-                        
                     numberOfImages = Directory.GetFiles(directoy).Length + 1;
-                    _apiLogger.WriteLog(clavePlaza, "InsertImage", 1, $"{numberOfImages}");
                     fileName = $"{referenceNumber}_Image_{numberOfImages}{image.FileName.Substring(image.FileName.LastIndexOf('.'))}";
-                    _apiLogger.WriteLog(clavePlaza, "InsertImage", 1, fileName);
                     while (System.IO.File.Exists(Path.Combine(directoy, fileName)))
                     {
                         numberOfImages += 1;

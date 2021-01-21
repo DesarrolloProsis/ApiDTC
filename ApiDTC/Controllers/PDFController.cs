@@ -95,7 +95,7 @@
                 {
                     if (!Directory.Exists(path))
                         Directory.CreateDirectory(path);
-                    filename = $"ReporteDTC-{referenceNumber}-Sellado.pdf";
+                    filename = $"DTC-{referenceNumber}-Sellado.pdf";
                     if(System.IO.File.Exists(Path.Combine(path, filename)))
                         System.IO.File.Delete(Path.Combine(path, filename));
                     var fs = new FileStream(Path.Combine(path, filename), FileMode.Create);
@@ -115,8 +115,8 @@
             return NotFound();
         }
 
-        [HttpPost("Autorizado/{clavePlaza}/{referenceNumber}")]
-        public ActionResult<Response> PdfSellado(string clavePlaza, string referenceNumber)
+        [HttpGet("Autorizado/{clavePlaza}/{referenceNumber}")]
+        public ActionResult<Response> PdfAutorizado(string clavePlaza, string referenceNumber)
         {
             var get = _db.AutorizadoGmmp(clavePlaza, referenceNumber);
             if (get.Result == null)
@@ -128,11 +128,37 @@
         public IActionResult GetPdfSellado(string clavePlaza, string referenceNumber)
         {            
             
-            string path = $@"C:\Bitacora\{clavePlaza}\DTC\{referenceNumber}\ReporteDTC-{referenceNumber}-Sellado.pdf";
+            string path = $@"C:\Bitacora\{clavePlaza}\DTC\{referenceNumber}\DTC-{referenceNumber}-Sellado.pdf";
             try
             {
                 if (!System.IO.File.Exists(path))
                     return NotFound(path);
+                return File(new FileStream(path, FileMode.Open, FileAccess.Read), "application/pdf");
+            }
+            catch (IOException ex)
+            {
+                _apiLogger.WriteLog(clavePlaza, ex, "PDFController: GetPdfSellado", 2);
+                return NotFound(ex.ToString());
+            }
+        }
+
+        [HttpGet("GetPdfFirmado/{clavePlaza}/{referenceNumber}")]
+        public IActionResult GetPdfFirmado(string clavePlaza, string referenceNumber)
+        {
+
+            string path = $@"C:\Bitacora\{clavePlaza}\DTC\{referenceNumber}\DTC-{referenceNumber}-Finalizado.pdf";
+            try
+            {
+                if (!System.IO.File.Exists(path))
+                {
+                    var dataSet = _db.GetStorePDF(clavePlaza, referenceNumber, clavePlaza);
+                    if (dataSet.Tables[0].Rows.Count == 0 || dataSet.Tables[1].Rows.Count == 0 || dataSet.Tables[2].Rows.Count == 0 || dataSet.Tables[3].Rows.Count == 0)
+                        return NotFound("GetStorePdf retorna tabla vacía");
+                    PdfCreation pdf = new PdfCreation(clavePlaza, dataSet.Tables[0], dataSet.Tables[1], dataSet.Tables[2], dataSet.Tables[3], referenceNumber, new ApiLogger());
+                    //0 = Nuevo, 1 = Firmado, 2 = Almacén
+                    var pdfResult = pdf.NewPdf(1);
+                    return File(new FileStream(pdfResult.Result.ToString(), FileMode.Open, FileAccess.Read), "application/pdf");
+                }
                 return File(new FileStream(path, FileMode.Open, FileAccess.Read), "application/pdf");
             }
             catch (IOException ex)
