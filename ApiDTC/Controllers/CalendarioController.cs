@@ -135,12 +135,12 @@
             return BadRequest(ModelState);
         }
 
-        [HttpPost("Prueba/CalendarReportData")]
-        public ActionResult<Response> InsertCalendarReportData([FromBody] CalendarReportData calendarReportData)
+        [HttpPost("CalendarReportData/{clavePlaza}")]
+        public ActionResult<Response> InsertCalendarReportData(string clavePlaza, [FromBody] CalendarReportData calendarReportData)
         {
             if (ModelState.IsValid)
             {
-                var get = _db.InsertCalendarReportData("WTF", calendarReportData);
+                var get = _db.InsertCalendarReportData(clavePlaza, calendarReportData);
                 if (get.Result == null)
                     return NotFound(get);
                 else
