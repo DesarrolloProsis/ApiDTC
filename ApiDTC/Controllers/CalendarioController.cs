@@ -32,7 +32,7 @@
         [HttpGet("Mantenimiento/{clavePlaza}/{month}/{year}/{userId}/{squareId}")]
         public IActionResult GetCalendarioMantenimiento(string clavePlaza, int month, int year, int userId, string squareId)
         {
-            var dataSet = _db.GetStorePdf(clavePlaza, month, year, userId, squareId);
+            var dataSet = _db.GetStorePdf(clavePlaza, month, year, userId, squareId == "1Bi" ? squareId + "s" : squareId);
             if (dataSet.Tables[1].Rows.Count == 0)
                 return NotFound();
             CalendarioPdfCreation pdf = new CalendarioPdfCreation(clavePlaza, dataSet.Tables[1], dataSet.Tables[0], clavePlaza, new ApiLogger(), month, year, squareId);
@@ -45,7 +45,7 @@
         [HttpDelete("DeleteCalendar/{clavePlaza}/{month}/{year}/{userId}/{squareId}")]
         public ActionResult<Response> DeleteCalendar(string clavePlaza, int month, int year, int userId, string squareId)
         {
-            var get = _db.DeleteCalendar(clavePlaza, month, year, userId, squareId);
+            var get = _db.DeleteCalendar(clavePlaza, month, year, userId, squareId == "1Bi" ? squareId + "s" : squareId);
             if (get.Result == null)
                 return BadRequest(get);
             else
@@ -105,6 +105,44 @@
                 var get = _db.GetActivity(clavePlaza, infoActividad);
                 if (get.Result == null)
                     return BadRequest(get);
+                else
+                    return Ok(get);
+            }
+            return BadRequest(ModelState);
+        }
+
+        [HttpGet("Actividades/{clavePlaza}/{roll}/{frequency}")]
+        public ActionResult<Response> GetActivities(string clavePlaza, int roll, int frequency)
+        {
+            var get = _db.GetActivities(clavePlaza, roll, frequency);
+            if (get.Result == null)
+                return NotFound(get);
+            else
+                return Ok(get);
+        }
+
+        [HttpPost("CalendarReportActivities/{clavePlaza}")]
+        public ActionResult<Response> InsertCalendarReportActivities(string clavePlaza, [FromBody] CalendarActivity calendarActivity)
+        {
+            if (ModelState.IsValid)
+            {
+                var get = _db.InsertCalendarReportActivities(clavePlaza.ToUpper(), calendarActivity);
+                if (get.Result == null)
+                    return NotFound(get);
+                else
+                    return Ok(get);
+            }
+            return BadRequest(ModelState);
+        }
+
+        [HttpPost("CalendarReportData/{clavePlaza}")]
+        public ActionResult<Response> InsertCalendarReportData(string clavePlaza, [FromBody] CalendarReportData calendarReportData)
+        {
+            if (ModelState.IsValid)
+            {
+                var get = _db.InsertCalendarReportData(clavePlaza, calendarReportData);
+                if (get.Result == null)
+                    return NotFound(get);
                 else
                     return Ok(get);
             }

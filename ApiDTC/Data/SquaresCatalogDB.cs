@@ -43,7 +43,7 @@
             }
         }
 
-        public Response GetLanes(string clavePlaza, string square)
+        public Response GetLanes(string square)
         {
             try
             {
@@ -54,7 +54,7 @@
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.Add("@Square", SqlDbType.NVarChar).Value = square;
 
-                        var storedResult = _sqlResult.GetList<Lanes>(clavePlaza, cmd, sql, "GetLanes");
+                        var storedResult = _sqlResult.GetList<Lanes>("USR", cmd, sql, "GetLanes");
                         if (storedResult.Result == null)
                             return storedResult;
 
@@ -68,7 +68,7 @@
             }
             catch (SqlException ex)
             {
-                _apiLogger.WriteLog(clavePlaza, ex, "SquaresCatalog: GetLanes", 1);
+                _apiLogger.WriteLog("USR", ex, "SquaresCatalog: GetLanes", 1);
                 return new Response { Message = $"Error: {ex.Message}", Result = null };
             }
         }

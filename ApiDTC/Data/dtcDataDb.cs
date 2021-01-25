@@ -7,6 +7,7 @@
     using System.Data;
     using ApiDTC.Services;
     using System.Collections.Generic;
+    using System.Data.SqlTypes;
 
     public class DtcDataDb
     {
@@ -28,7 +29,7 @@
         #endregion
 
         #region Methods
-        
+
         public SqlResponse GetStoredDtcData(string clavePlaza, DtcData dtcData)
         {
             try
@@ -52,9 +53,12 @@
                         else
                             cmd.Parameters["@reportNumber"].Value = dtcData.ReportNumber;
 
+                        //SQuare
+                        dtcData.SquareId = dtcData.SquareId == "1Bi" ? "1Bis" : dtcData.SquareId;
+
                         cmd.Parameters.Add("@sinisterDate", SqlDbType.Date).Value = dtcData.SinisterDate;
                         cmd.Parameters.Add("@failureDate", SqlDbType.Date).Value = dtcData.FailureDate;
-                        cmd.Parameters.Add("@failureNumber", SqlDbType.NVarChar).Value = dtcData.FailureNumber.PadLeft(6, '0');
+                        cmd.Parameters.Add("@failureNumber", SqlDbType.NVarChar).Value = dtcData.FailureNumber;
                         cmd.Parameters.Add("@shippingDate", SqlDbType.Date).Value = dtcData.ShippingDate;
                         cmd.Parameters.Add("@elaborationDate", SqlDbType.Date).Value = dtcData.ElaborationDate;
                         cmd.Parameters.Add("@observation", SqlDbType.NVarChar).Value = dtcData.Observation;
@@ -67,6 +71,7 @@
                         cmd.Parameters.Add("@openFlag", SqlDbType.Bit).Value = dtcData.OpenFlag;
                         cmd.Parameters.Add("@SquareId", SqlDbType.NVarChar).Value = dtcData.SquareId;
 
+
                         return _sqlResult.Post(clavePlaza, cmd, sql, "GetStoredDtcData");
                     }
                 }
@@ -77,12 +82,12 @@
                 return new SqlResponse { SqlMessage = ex.Message, SqlResult = null };
             }
         }
-        
+
         public Response GetReferenceNumber(string clavePlaza, string referenceNumber)
         {
             try
             {
-                using(SqlConnection sql = new SqlConnection(_connectionString))
+                using (SqlConnection sql = new SqlConnection(_connectionString))
                 {
                     using (SqlCommand cmd = new SqlCommand("dbo.spGetReferenceNumber", sql))
                     {
@@ -99,17 +104,24 @@
             }
         }
 
-        public Response UpdateDtcStatus(string clavePlaza, string referenceNumber)
+        public Response UpdateDtcHeader(string clavePlaza, DtcHeader dtcHeader)
         {
             try
             {
                 using (SqlConnection sql = new SqlConnection(_connectionString))
                 {
-                    using (SqlCommand cmd = new SqlCommand("dbo.spUpdateStatusDTC", sql))
+                    using (SqlCommand cmd = new SqlCommand("dbo.spUpdateDTCHeader", sql))
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
-                        cmd.Parameters.Add("@ReferenceNumber", SqlDbType.NVarChar).Value = referenceNumber;
-                        var response = _sqlResult.Put(clavePlaza, cmd, sql, "UpdateDtcStatus");
+
+                        cmd.Parameters.Add("@ReferenceNumber", SqlDbType.NVarChar).Value = dtcHeader.ReferenceNumber;
+                        cmd.Parameters.Add("@NumSiniestro", SqlDbType.NVarChar).Value = String.IsNullOrEmpty(dtcHeader.NumSiniestro) ? SqlString.Null : dtcHeader.NumSiniestro;
+                        cmd.Parameters.Add("@NumReporte", SqlDbType.NVarChar).Value = String.IsNullOrEmpty(dtcHeader.NumReporte) ? SqlString.Null : dtcHeader.NumReporte;
+                        cmd.Parameters.Add("@FolioFalla", SqlDbType.NVarChar).Value = String.IsNullOrEmpty(dtcHeader.FolioFalla) ? SqlString.Null : dtcHeader.FolioFalla;
+                        cmd.Parameters.Add("@TipoDescripcion", SqlDbType.Int).Value = dtcHeader.TipoDescripcion;
+                        cmd.Parameters.Add("@observaciones", SqlDbType.NVarChar).Value = String.IsNullOrEmpty(dtcHeader.Observaciones) ? SqlString.Null : dtcHeader.Observaciones;
+                        cmd.Parameters.Add("@Diagnostico", SqlDbType.NVarChar).Value = String.IsNullOrEmpty(dtcHeader.Diagnostico) ? SqlString.Null : dtcHeader.Diagnostico;
+                        var response = _sqlResult.Put(clavePlaza, cmd, sql, "UpdateDtcHeader");
                         return new Response
                         {
                             Message = response.SqlMessage,
@@ -120,7 +132,7 @@
             }
             catch (SqlException ex)
             {
-                _apiLogger.WriteLog(clavePlaza, ex, "DtcDataDb: UpdateDtcStatus", 1);
+                _apiLogger.WriteLog(clavePlaza, ex, "DtcDataDb: UpdateDtcHeader", 1);
                 return new Response { Message = $"Error: {ex.Message}", Result = null };
             }
         }
@@ -168,44 +180,22 @@
             {
                 try
                 {
-                    SqlCommand cmd = new SqlCommand("", sql)
+                    using (SqlCommand cmd = new SqlCommand("dbo.spGetDTCView", sql))
                     {
-                        CommandText = "select " +
-                                        "ReferenceNumber, " +
-                                        "SinisterNumber, " +
-                                        "ReportNumber, " +
-                                        "SinisterDate, " +
-                                        "d.StatusId, " +
-                                        "FailureDate, " +
-                                        "FailureNumber, " +
-                                        "ShippingDate, " +
-                                        "ElaborationDate, " +
-                                        "DateStamp, " +
-                                        "d.TypeDescriptionId, " +
-                                        "t.Description as TypeDescription, " +
-                                        "Observation, " +
-                                        "Diagnosis, " +
-                                        "s.StatusDescription, " +
-                                        "d.OpenMode " +
-                                      "from DTCData d " +
-                                      "inner join UserSquare u " +
-                                      "on d.UserId = u.UserId " +
-                                      "inner join TypeDescriptions t on d.TypeDescriptionId = t.TypeDescriptionId " +
-                                      "join DTCStatusCatalog s on d.StatusId = s.StatusId " +
-                                      "where d.UserId = '" + idUser + "' and u.SquareCatalogId = '" + squareCatalog + "' and d.StatusId != 0 order by DateStamp desc "
-                    };
-
-                    var info_dtc = _sqlResult.GetList<DtcDataStr>(clavePlaza, cmd, sql, "GetDtc");                    
-                    return info_dtc;
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.Add("@UserId", SqlDbType.Int).Value = idUser;
+                        cmd.Parameters.Add("@SquareId", SqlDbType.NVarChar).Value = squareCatalog;
+                        return _sqlResult.GetList<DtcView>(clavePlaza, cmd, sql, "GetDTC");
+                    }
                 }
-                catch(SqlException ex)
+                catch (SqlException ex)
                 {
                     _apiLogger.WriteLog(clavePlaza, ex, "DtcDataDb: GetDTC", 1);
                     return new Response { Message = $"Error: {ex.Message}", Result = null };
-                } 
+                }
             }
         }
-        
+
         public Response GetTableForm(string clavePlaza, string refNum)
         {
             try
@@ -238,7 +228,7 @@
             }
         }
 
-        public SqlResponse DeleteDtcData(string clavePlaza, string referenceNumber)
+        public SqlResponse DeleteDtcData(string clavePlaza, string referenceNumber, int userId)
         {
             try
             {
@@ -248,6 +238,7 @@
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.Add("@referenceNumber", SqlDbType.NVarChar).Value = referenceNumber;
+                        cmd.Parameters.Add("@UserId", SqlDbType.Int).Value = userId;
                         return _sqlResult.Post(clavePlaza, cmd, sql, "DeleteDtcData");
                     }
                 }
@@ -398,6 +389,29 @@
             }
         }
 
+        public Response GetDTCHeaderEdit(string clavePlaza, string ReferenceNumber)
+        {
+
+            try
+            {
+                using (SqlConnection sql = new SqlConnection(_connectionString))
+                {
+                    using (SqlCommand cmd = new SqlCommand("[dbo].[spGetHeaderEdit]", sql))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.Add("@ReferenceNumber", SqlDbType.NVarChar).Value = ReferenceNumber;
+                        return _sqlResult.GetList<HeaderEditDTC>(clavePlaza, cmd, sql, "GetDTCHeaderEdit");
+
+
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                _apiLogger.WriteLog(clavePlaza, ex, "DtcDataDb: GetDTCHeaderEdit", 1);
+                return new Response { Message = $"Error: {ex.Message}", Result = null };
+            }
+        }
         #endregion
     }
 }

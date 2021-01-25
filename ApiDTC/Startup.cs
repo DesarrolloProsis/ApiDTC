@@ -40,6 +40,8 @@ namespace ApiDTC
             services.AddScoped<TypeDescriptionsDb>();
             services.AddScoped<RequestedComponentDb>();
             services.AddScoped<SquaresCatalogDb>();
+            services.AddScoped<EmailDb>();
+            services.AddScoped<ReporteFotograficoDB>();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
 

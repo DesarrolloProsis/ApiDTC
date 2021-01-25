@@ -21,8 +21,7 @@
         #endregion
 
         // GET: api/SquaresCatalog
-        //[HttpGet]
-        [HttpGet("{clavePlaza}")]
+        [HttpGet]
         public ActionResult<Response> Get(string clavePlaza)
         {
             var get = _db.GetSquaresCatalog(clavePlaza);
@@ -32,11 +31,10 @@
                 return Ok(get);
         }
 
-        //[HttpGet("Lanes/{square}")]
-        [HttpGet("Lanes/{clavePlaza}/{square}")]
-        public ActionResult<Response> GetLanes(string clavePlaza, string square)
+        [HttpGet("Lanes/{square}")]
+        public ActionResult<Response> GetLanes(string square)
         {
-            var get = _db.GetLanes(clavePlaza, square);
+            var get = _db.GetLanes(square);
             if (get.Result == null)
                 return NotFound(get);
             else

@@ -83,22 +83,22 @@ namespace ApiDTC.Services
         #region Methods
         public Response NewPdf()
         {
-            string directory, file;
+            string directory = $@"C:\Bitacora\{_clavePlaza.ToUpper()}\CalendariosMantenimiento\{_year}\{_month}\", filename, path;
             DateTime now = DateTime.Now;
-            directory = $@"{System.Environment.CurrentDirectory}\Bitacora\CalendariosMantenimiento\{_plaza}\{now.Year}\{MesActual()}\{now.Day}";
-            file = $@"{directory}\{_plaza}{now.Year}{MesContrato(now)}C.pdf";
+            filename = $"{_plaza}{now.Year}{MesContrato(now)}C.pdf";
+            path = Path.Combine(directory, filename);
             //If file exists
             try
             {   
                 if (!Directory.Exists(directory))
                     Directory.CreateDirectory(directory);
-                if (File.Exists(file))
+                if (File.Exists(path))
                 {
-                    if (FileInUse(file))
+                    if (FileInUse(path))
                     {
                         return new Response
                         {
-                            Message = $@"Error: Archivo {directory}\{_plaza}{now.Year}{MesContrato(now)}C.pdf en uso o inaccesible",
+                            Message = $"Error: Archivo {filename} en uso o inaccesible",
                             Result = null
                         };
                     }
@@ -143,7 +143,7 @@ namespace ApiDTC.Services
                     byte[] content = myMemoryStream.ToArray();
 
 
-                    using (FileStream fs = File.Create(file))
+                    using (FileStream fs = File.Create(path))
                     {
                         fs.Write(content, 0, (int)content.Length);
                     }
@@ -151,8 +151,8 @@ namespace ApiDTC.Services
             }
             catch (IOException ex)
             {
-                if (System.IO.File.Exists($@"{System.Environment.CurrentDirectory}\CalendariosMantenimiento\{DateTime.Now.Year}\{MesActual()}\{DateTime.Now.Day}\{_plaza}{DateTime.Now.Year}01C.pdf"))
-                    System.IO.File.Delete($@"{System.Environment.CurrentDirectory}\CalendariosMantenimiento\{DateTime.Now.Year}\{MesActual()}\{DateTime.Now.Day}\{_plaza}{DateTime.Now.Year}01C.pdf");
+                if (System.IO.File.Exists(path))
+                    System.IO.File.Delete(path);
                 _apiLogger.WriteLog(_clavePlaza, ex, "CalendarioPdfCreation: NewPdf ", 2);
                 return new Response
                 {
@@ -163,7 +163,7 @@ namespace ApiDTC.Services
             return new Response
             {
                 Message = "Ok",
-                Result = file
+                Result = path
             };
         }
         
@@ -216,8 +216,8 @@ namespace ApiDTC.Services
                 }
                 else
                     plaza = "";
-
-                var plazaDeCobro = new Chunk($"   PLAZA DE COBRO: {_square} {plaza}", letraoNegritaMediana);
+                string plazaCobro = plaza.Equals("Tres Marías") ? $"   PLAZA DE COBRO: 0{_square}s {plaza}" : $"   PLAZA DE COBRO: {_square} {plaza}";
+                var plazaDeCobro = new Chunk(plazaCobro, letraoNegritaMediana);
                 var phraseCobro = new Phrase(plazaDeCobro);
                 var colCobro = new PdfPCell(phraseCobro) { BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, BorderWidthBottom = 1, HorizontalAlignment = Element.ALIGN_LEFT, VerticalAlignment = Element.ALIGN_MIDDLE, Padding = 2 };
                 table.AddCell(celdaVacia);
@@ -364,7 +364,7 @@ namespace ApiDTC.Services
             else
                 comentario = "";
 
-            var celdaObservaciones = new PdfPCell(new Phrase(comentario, new iTextSharp.text.Font(NormalChica, 8f, iTextSharp.text.Font.NORMAL, BaseColor.Black))) 
+            var celdaObservaciones = new PdfPCell(new Phrase(comentario, new iTextSharp.text.Font(NormalChica, 7f, iTextSharp.text.Font.NORMAL, BaseColor.Black))) 
 
             //var celdaObservaciones = new PdfPCell(new Phrase("What is Lorem Ipsum ?Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.", new iTextSharp.text.Font(NormalChica, 7f, iTextSharp.text.Font.NORMAL, BaseColor.Black)))
             { 

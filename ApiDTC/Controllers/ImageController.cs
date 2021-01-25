@@ -29,7 +29,6 @@
         #endregion
 
         #region Methods
-        //[HttpPost("InsertImage")]
         [HttpPost("InsertImage/{clavePlaza}")]
         public ActionResult<Response> InsertImage(string clavePlaza, [FromForm(Name = "image")] IFormFile image, [FromForm(Name = "id")] string referenceNumber, [FromForm(Name = "plaza")] string plaza)
         {
@@ -58,13 +57,17 @@
                     _apiLogger.WriteLog(clavePlaza, ex, "ImageController: InsertImage", 2);
                     return NotFound(ex.ToString());
                 }
+                catch (Exception ex)
+                {
+                    _apiLogger.WriteLog(clavePlaza, ex, "ImageController: InsertImage", 3);
+                    return NotFound(ex.ToString());
+                }
                 return Ok(directoy);
             }
             else
                 return NotFound("Insert another image");   
         }
 
-        //[HttpGet("DeleteDtcImages/{plaza}/{referenceNumber}/")]
         [HttpGet("DeleteDtcImages/{clavePlaza}/{plaza}/{referenceNumber}/")]
         public ActionResult<DtcImage> DeleteImage(string clavePlaza, string plaza, string referenceNumber)
         {
@@ -83,7 +86,6 @@
             }
         }
 
-        //[HttpGet("Download/{plaza}/{referenceNumber}/{fileName}")]
         [HttpGet("Download/{clavePlaza}/{plaza}/{referenceNumber}/{fileName}")]
         public ActionResult<DtcImage> Download(string clavePlaza, string plaza, string referenceNumber, string fileName)
         {
@@ -107,7 +109,6 @@
             }
         }
 
-        //[HttpGet("DownloadFile/{plaza}/{referenceNumber}/{fileName}")]
         [HttpGet("DownloadFile/{clavePlaza}/{plaza}/{referenceNumber}/{fileName}")]
         public IActionResult DownloadFile(string clavePlaza, string plaza, string referenceNumber, string fileName)
         {
@@ -147,29 +148,26 @@
             }
         }
 
-        //[HttpGet("GetImages/{plaza}/{referenceNumber}")]
         [HttpGet("GetImages/{clavePlaza}/{plaza}/{referenceNumber}")]
         public ActionResult<List<string>> GetImages(string clavePlaza, string plaza, string referenceNumber)
         {
             try
             {
                 string directoy = $@"{_environment.WebRootPath}DtcImages\{plaza}\{referenceNumber}\";
-                if (!Directory.Exists(directoy))
-                    return NotFound(directoy);
                 List<string> dtcImages = new List<string>();
+                if (!Directory.Exists(directoy))
+                    return Ok(dtcImages);
                 foreach (var item in Directory.GetFiles(directoy))
                     dtcImages.Add(item.Substring(item.LastIndexOf('\\') + 1));
                 return Ok(dtcImages);
             }
             catch (IOException ex)
             {
-                _apiLogger.WriteLog(clavePlaza, ex, "ImageController: DownloadBase", 2);
+                _apiLogger.WriteLog(clavePlaza, ex, "ImageController: GetImages", 2);
                 return NotFound(ex.ToString());
             }
         }
         
-        //https://localhost:44358/api/image/Tlalpan/TLA-20002/TLA-20002_Image_1.jpg
-        //[HttpGet("Delete/{plaza}/{referenceNumber}/{fileName}")]
         [HttpGet("Delete/{clavePlaza}/{plaza}/{referenceNumber}/{fileName}")]
         public ActionResult<string> Delete(string clavePlaza, string plaza, string referenceNumber, string fileName)
         {

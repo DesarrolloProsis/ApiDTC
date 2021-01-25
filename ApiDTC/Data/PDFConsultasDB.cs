@@ -43,7 +43,86 @@
                 return new Response { Message = $"Error: {ex.Message}", Result = null };
             }
         }
-       
+
+        public SqlResponse FirmarReporte(string clavePlaza, string referenceNumber)
+        {
+            try
+            {
+                using(SqlConnection sql = new SqlConnection(_connectionString))
+                {
+                    using(SqlCommand cmd = new SqlCommand("spUpdateStatusDTC", sql))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.Add("@ReferenceNumber", SqlDbType.NVarChar).Value = referenceNumber;
+                        cmd.Parameters.Add("@status", SqlDbType.Int).Value = 2;
+                        return _sqlResult.Put(clavePlaza, cmd, sql, "FirmarReporte");
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+
+                _apiLogger.WriteLog(clavePlaza, ex, "PdfConsultasDb: TerminarReporte", 1);
+                return new SqlResponse { SqlMessage = $"Error: {ex.Message}", SqlResult = null };
+            }
+        }
+
+        public Response AutorizadoGmmp(string clavePlaza, string referenceNumber)
+        {
+            try
+            {
+                using (SqlConnection sql = new SqlConnection(_connectionString))
+                {
+                    using (SqlCommand cmd = new SqlCommand("spUpdateStatusDTC", sql))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.Add("@ReferenceNumber", SqlDbType.NVarChar).Value = referenceNumber;
+                        cmd.Parameters.Add("@status", SqlDbType.Int).Value = 4;
+                        var result = _sqlResult.Put(clavePlaza, cmd, sql, "AutorizadoGmmp");
+                        return new Response
+                        {
+                            Message = result.SqlMessage,
+                            Result = result.SqlResult
+                        };
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+
+                _apiLogger.WriteLog(clavePlaza, ex, "PdfConsultasDb: AutorizadoGmmp", 1);
+                return new Response
+                {
+                    Message = $"Error: {ex.Message}",
+                    Result = null
+                };
+            }
+        }
+
+        public SqlResponse SelladoReporte(string clavePlaza, string referenceNumber)
+        {
+            try
+            {
+                using (SqlConnection sql = new SqlConnection(_connectionString))
+                {
+                    using (SqlCommand cmd = new SqlCommand("spUpdateStatusDTC", sql))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.Add("@ReferenceNumber", SqlDbType.NVarChar).Value = referenceNumber;
+                        cmd.Parameters.Add("@status", SqlDbType.Int).Value = 3;
+                        return _sqlResult.Put(clavePlaza, cmd, sql, "FirmarReporte");
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+
+                _apiLogger.WriteLog(clavePlaza, ex, "PdfConsultasDb: TerminarReporte", 1);
+                return new SqlResponse { SqlMessage = $"Error: {ex.Message}", SqlResult = null };
+            }
+        }
+
+
         public DataSet GetStorePDF(string clavePlaza, string numeroReferencia, string inicialRef)
         {
             try
@@ -76,6 +155,42 @@
                 return null;
             }
         }
+
+        //Para PDF
+        public DataSet GetStorePDFMetraje(string clavePlaza, string numeroReferencia, string inicialRef)
+        {
+            try
+            {
+                using (SqlConnection sql = new SqlConnection(_connectionString))
+                {
+                    using (SqlCommand cmd = new SqlCommand("[sp_DTCtoPDFPruebaMetraje]", sql))
+                    {
+                        SqlDataAdapter sqlDataAdapter = new SqlDataAdapter();
+                        DataSet dataSet = new DataSet();
+
+
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.Add("@ReferenceNumber", SqlDbType.NVarChar).Value = numeroReferencia;
+                        cmd.Parameters.Add("@SquareId", SqlDbType.NVarChar).Value = inicialRef;
+
+                        sql.Open();
+                        sqlDataAdapter = new SqlDataAdapter(cmd);
+                        sqlDataAdapter.Fill(dataSet);
+
+                        sql.Close();
+
+                        return dataSet;
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                _apiLogger.WriteLog(clavePlaza, ex, "PdfConsultasDb: GetStorePDF", 1);
+                return null;
+            }
+        }
+
+
 
         public DataSet GetStorePDFOpen(string clavePlaza, string numeroReferencia)
         {

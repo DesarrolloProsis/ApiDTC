@@ -41,7 +41,7 @@ namespace ApiDTC.Data
                         using (SqlCommand cmd = new SqlCommand("dbo.spCalendarComent", sql))
                         { 
                             cmd.CommandType = CommandType.StoredProcedure;                                                        
-                            cmd.Parameters.Add("@SquareId", SqlDbType.NVarChar).Value = actividad.SquareId;
+                            cmd.Parameters.Add("@SquareId", SqlDbType.NVarChar).Value = actividad.SquareId == "1Bi" ? actividad.SquareId + "s" : actividad.SquareId;
                             cmd.Parameters.Add("@UserId", SqlDbType.Int).Value = actividad.UserId;                            
                             cmd.Parameters.Add("@Month", SqlDbType.Int).Value = actividad.Month;
                             cmd.Parameters.Add("@Year", SqlDbType.Int).Value = actividad.Year;
@@ -85,7 +85,7 @@ namespace ApiDTC.Data
                             cmd.CommandType = CommandType.StoredProcedure;
                             cmd.Parameters.Add("@CapufeLaneNum", SqlDbType.NVarChar).Value = actividad.CapufeLaneNums[i];
                             cmd.Parameters.Add("@IdGare", SqlDbType.NVarChar).Value = actividad.IdGares[i];
-                            cmd.Parameters.Add("@SquareId", SqlDbType.NVarChar).Value = actividad.SquareId;
+                            cmd.Parameters.Add("@SquareId", SqlDbType.NVarChar).Value = actividad.SquareId == "1Bi" ? actividad.SquareId + "s" : actividad.SquareId;
                             cmd.Parameters.Add("@UserId", SqlDbType.Int).Value = actividad.UserId;
                             cmd.Parameters.Add("@Day", SqlDbType.Int).Value = actividad.Day;
                             cmd.Parameters.Add("@Month", SqlDbType.Int).Value = actividad.Month;
@@ -116,6 +116,104 @@ namespace ApiDTC.Data
                 return new Response { Message = $"Error: {ex.Message}", Result = null };
             }
             
+        }
+
+        public Response InsertCalendarReportData(string clavePlaza, CalendarReportData calendarReportData)
+        {
+            try
+            {
+                using (SqlConnection sql = new SqlConnection(_connectionString))
+                {
+                    using (SqlCommand cmd = new SqlCommand("dbo.spInsertCalendarReportData", sql))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.Add("@ReferenceNumber", SqlDbType.NVarChar).Value = calendarReportData.ReferenceNumber;
+                        cmd.Parameters.Add("@SquareId", SqlDbType.NVarChar).Value = calendarReportData.SquareId == "1Bi" ? calendarReportData.SquareId + "s" : calendarReportData.SquareId;
+                        cmd.Parameters.Add("@CapufeLaneNum", SqlDbType.NVarChar).Value = calendarReportData.CapufeLaneNum;
+                        cmd.Parameters.Add("@IdGare", SqlDbType.NVarChar).Value = calendarReportData.IdGare;
+                        cmd.Parameters.Add("@UserId", SqlDbType.Int).Value = calendarReportData.UserId;
+                        cmd.Parameters.Add("@AdminSquare", SqlDbType.Int).Value = calendarReportData.AdminSquare;
+                        cmd.Parameters.Add("@ReportDate", SqlDbType.Date).Value = calendarReportData.ReportDate;
+                        cmd.Parameters.Add("@Start", SqlDbType.NVarChar).Value = calendarReportData.Start;
+                        cmd.Parameters.Add("@End", SqlDbType.NVarChar).Value = calendarReportData.End;
+                        cmd.Parameters.Add("@Observations", SqlDbType.NVarChar).Value = calendarReportData.Observations;
+                        var storedResult = _sqlResult.Post(clavePlaza, cmd, sql, "InsertCalendarReportData");
+                        if (storedResult.SqlResult == null)
+                            return new Response { Message = "No se pudo insertar ReportData", Result = null };
+                    }
+                }
+                return new Response
+                {
+                    Message = "Ok",
+                    Result = calendarReportData
+                };
+            }
+            catch (SqlException ex)
+            {
+                _apiLogger.WriteLog(clavePlaza, ex, "CalendarioDb: InsertCalendarReportData", 1);
+                return new Response { Message = $"Error: {ex.Message}", Result = null };
+            }
+        }
+
+        public Response InsertCalendarReportActivities(string clavePlaza, CalendarActivity calendarActivity)
+        {
+            try
+            {
+                using (SqlConnection sql = new SqlConnection(_connectionString))
+                {
+                    using (SqlCommand cmd = new SqlCommand("dbo.spInsertCalendarReportActivities", sql))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.Add("@ReferenceNumber", SqlDbType.NVarChar).Value = calendarActivity.ReferenceNumber;
+                        cmd.Parameters.Add("@ComponentJob", SqlDbType.Int).Value = calendarActivity.ComponentJob;
+                        cmd.Parameters.Add("@JobStatus", SqlDbType.Int).Value = calendarActivity.JobStatus;
+                        var storedResult = _sqlResult.Post(clavePlaza, cmd, sql, "InsertCalendarReportActivities");
+                        if (storedResult.SqlResult == null)
+                            return new Response { Message = "No se pudo insertar ReportData", Result = null };
+                    }
+                }
+                return new Response
+                {
+                    Message = "Ok",
+                    Result = calendarActivity
+                };
+            }
+            catch (SqlException ex)
+            {
+                _apiLogger.WriteLog(clavePlaza, ex, "CalendarioDb: InsertCalendarReportActivities", 1);
+                return new Response { Message = $"Error: {ex.Message}", Result = null };
+            }
+        }
+
+        public Response GetActivities(string clavePlaza, int roll, int frequency)
+        {
+            try
+            {
+                using (SqlConnection sql = new SqlConnection(_connectionString))
+                {
+                    using (SqlCommand cmd = new SqlCommand("dbo.spCalendarActivitiesReport ", sql))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.Add("@Roll", SqlDbType.Int).Value = roll;
+                        cmd.Parameters.Add("@Frecuency", SqlDbType.Int).Value = frequency;
+
+                        var storedResult = _sqlResult.GetList<Activities>(clavePlaza, cmd, sql, "GetActivities");
+                        if (storedResult.Result == null)
+                            return storedResult;
+
+                        return new Response
+                        {
+                            Message = "Ok",
+                            Result = storedResult.Result
+                        };
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                _apiLogger.WriteLog(clavePlaza, ex, "CalendarioDb: GetActivities", 1);
+                return new Response { Message = $"Error: {ex.Message}", Result = null };
+            }
         }
 
         public Response DeleteCalendar(string clavePlaza, int month, int year, int userId, string squareId)
@@ -194,7 +292,7 @@ namespace ApiDTC.Data
 
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.Add("@UserId", SqlDbType.Int).Value = actividad.UserId;
-                        cmd.Parameters.Add("@SuqareId", SqlDbType.NVarChar).Value = actividad.SquareId;
+                        cmd.Parameters.Add("@SuqareId", SqlDbType.NVarChar).Value = actividad.SquareId == "1Bi" ? actividad.SquareId + "s" : actividad.SquareId;
                         cmd.Parameters.Add("@Month", SqlDbType.Int).Value = actividad.Month;
                         cmd.Parameters.Add("@Year", SqlDbType.Int).Value = actividad.Year;
 
@@ -232,7 +330,7 @@ namespace ApiDTC.Data
                         DataSet dataSet = new DataSet();
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.Add("@UserId", SqlDbType.Int).Value = actividad.UserId;
-                        cmd.Parameters.Add("@SuqareId", SqlDbType.NVarChar).Value = actividad.SquareId;
+                        cmd.Parameters.Add("@SuqareId", SqlDbType.NVarChar).Value = actividad.SquareId == "1Bi" ? actividad.SquareId + "s" : actividad.SquareId;
                         cmd.Parameters.Add("@Month", SqlDbType.Int).Value = actividad.Month;
                         cmd.Parameters.Add("@Year", SqlDbType.Int).Value = actividad.Year;
 
@@ -268,7 +366,7 @@ namespace ApiDTC.Data
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.Add("@UserId", SqlDbType.Int).Value = actividad.UserId;                                                
-                        cmd.Parameters.Add("@SuqareId", SqlDbType.NVarChar).Value = actividad.SquareId;
+                        cmd.Parameters.Add("@SuqareId", SqlDbType.NVarChar).Value = actividad.SquareId == "1Bi" ? actividad.SquareId + "s" : actividad.SquareId;
                         cmd.Parameters.Add("@Month", SqlDbType.Int).Value = actividad.Month;
                         cmd.Parameters.Add("@Year", SqlDbType.Int).Value = actividad.Year;
                         sql.Open();

@@ -5,7 +5,6 @@ namespace ApiDTC.Services
 
     public class ApiLogger
     {
-        readonly string DirectorioLogsBitacora = @"C:\Bitacora";
         //TODO -> Por plaza, con código y petición origen
         /*
          1 = SQL Error
@@ -18,28 +17,29 @@ namespace ApiDTC.Services
          */
         public void WriteLog(string plaza, Exception info, string metodo, int tipo)
         {
-            string logFile = $@"{DirectorioLogsBitacora}\{plaza}_log.txt";
+            string directorioLogsBitacora = $@"C:\Bitacora\{plaza}";
+            string logFile = $@"{directorioLogsBitacora}\{plaza}_log.txt";
+            
+            if (!Directory.Exists(directorioLogsBitacora))
+                Directory.CreateDirectory(directorioLogsBitacora);
 
-            if (!Directory.Exists(DirectorioLogsBitacora))
-                Directory.CreateDirectory(DirectorioLogsBitacora);
-
-            //
-            string error = $"{metodo} [{tipo}] {DateTime.Now:dd/MM/yyyy hh:mm:ss}: Line: {Convert.ToInt32(info.StackTrace.Substring(info.StackTrace.LastIndexOf(" ") + 1))} {info.Message}";
+            string error = $"{metodo} [{tipo}] {DateTime.Now:dd/MM/yyyy hh:mm:ss}: Line: {Convert.ToInt32(info.StackTrace.Substring(info.StackTrace.LastIndexOf(" ") + 1))} {info.Message}.\n";
             if (File.Exists(logFile))                
-                File.AppendText(error);
+                File.AppendAllText(logFile, error);
             else File.WriteAllText(logFile, error);
         }
 
         public void WriteLog(string plaza, string metodo, int tipo, string info)
         {
-            string logFile = $@"{DirectorioLogsBitacora}\{plaza}_log.txt";
+            string directorioLogsBitacora = $@"C:\Bitacora\{plaza}";
+            string logFile = $@"{directorioLogsBitacora}\{plaza}_log.txt";
 
-            if (!Directory.Exists(DirectorioLogsBitacora))
-                Directory.CreateDirectory(DirectorioLogsBitacora);
+            if (!Directory.Exists(directorioLogsBitacora))
+                Directory.CreateDirectory(directorioLogsBitacora);
 
-            string evento = $"{metodo} [4] {DateTime.Now:dd/MM/yyyy hh:mm:ss}: {info}";
+            string evento = $"{metodo} [4] {DateTime.Now:dd/MM/yyyy hh:mm:ss}: {info}\n";
             if (File.Exists(logFile))
-                File.AppendText(evento);
+                File.AppendAllText(logFile, evento);
             else File.WriteAllText(logFile, evento);
         }
     }
