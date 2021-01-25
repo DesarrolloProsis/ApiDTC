@@ -81,7 +81,7 @@
                 var dataSet = _db.GetStorePDF(clavePlaza, referenceNumber);
                 if (dataSet.Tables[0].Rows.Count == 0)
                     return NotFound("GetStoredPdf retorna tabla vacía");
-                ReporteFotograficoPdfCreation pdf = new ReporteFotograficoPdfCreation(clavePlaza, dataSet.Tables[0], new ApiLogger(), 2, referenceNumber);
+                ReporteFotograficoPdfCreation pdf = new ReporteFotograficoPdfCreation(clavePlaza, dataSet.Tables[0], new ApiLogger(), 3, referenceNumber);
                 var pdfResult = pdf.NewPdf();
                 if (pdfResult.Result == null)
                     return NotFound(pdfResult.Message);

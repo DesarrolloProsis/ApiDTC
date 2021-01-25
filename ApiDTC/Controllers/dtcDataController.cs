@@ -123,7 +123,7 @@
             }
             return BadRequest(ModelState);
         }
-
+        
         [HttpDelete("Delete/{clavePlaza}/{referenceNumber}/{userId}")]
         public ActionResult<Response> Delete(string clavePlaza, string referenceNumber, int userId)
         {
@@ -150,10 +150,14 @@
         [HttpPut("UpdateDtcHeader/{clavePlaza}")]
         public ActionResult<Response> UpdateHeadDtc(string clavePlaza, [FromBody] DtcHeader dtcHeader)
         {
-            var put = _db.UpdateDtcHeader(clavePlaza, dtcHeader);
-            if(put.Result == null)
-                return NotFound(put);
-            return Ok(put);
+            if (ModelState.IsValid)
+            {
+                var put = _db.UpdateDtcHeader(clavePlaza, dtcHeader);
+                if (put.Result == null)
+                    return NotFound(put);
+                return Ok(put);
+            }
+            return BadRequest();
         }
 
         [HttpGet("{clavePlaza}/{ReferenceNumber}")]
@@ -209,14 +213,10 @@
             {
                 string path = $@"C:\Bitacora\{clavePlaza.ToUpper()}\DTC\{referenceNumber}\EquipoDañadoImgs\{fileName}";
                 if (!System.IO.File.Exists(path))
-                    return NotFound(path);
-                byte[] bitMap = System.IO.File.ReadAllBytes(path);
-                var dtcImage = new DtcImage
-                {
-                    FileName = fileName,
-                    Image = Convert.ToBase64String(bitMap)
-                };
-                return Ok(dtcImage);
+                    return NotFound("No existe el archivo");
+                Byte[] bitMap = System.IO.File.ReadAllBytes(path);
+
+                return File(bitMap, "Image/jpg");
             }
             catch (IOException ex)
             {
@@ -308,14 +308,10 @@
             {
                 string path = $@"C:\Bitacora\{clavePlaza.ToUpper()}\DTC\{referenceNumber}\EquipoNuevoImgs\{fileName}";
                 if (!System.IO.File.Exists(path))
-                    return NotFound(path);
-                byte[] bitMap = System.IO.File.ReadAllBytes(path);
-                var dtcImage = new DtcImage
-                {
-                    FileName = fileName,
-                    Image = Convert.ToBase64String(bitMap)
-                };
-                return Ok(dtcImage);
+                    return NotFound("No existe el archivo");
+                Byte[] bitMap = System.IO.File.ReadAllBytes(path);
+
+                return File(bitMap, "Image/jpg");
             }
             catch (IOException ex)
             {

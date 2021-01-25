@@ -31,9 +31,18 @@ namespace ApiDTC.Controllers
         public IActionResult Index()
         {
             EmailService email = new EmailService(new ApiLogger());
-            if (email.Send("a.mitra2311@gmail.com", "HOLA CARA DE BOLA", "EMI"))
+            if (email.Send("rmendoza@grupo-prosis.com", "HOLA RODRIGO ;)", "rodrigo"))
                 return Ok();
             return NotFound();;
+        }
+
+        [HttpGet("Axel")]
+        public IActionResult IndexAxel()
+        {
+            EmailService email = new EmailService(new ApiLogger());
+            if (email.Send("axel.frias257@gmail.com", "HOLA RODRIGO ;)", "rodrigo"))
+                return Ok();
+            return NotFound(); ;
         }
         #endregion
     }

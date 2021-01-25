@@ -120,6 +120,34 @@
             else
                 return Ok(get);
         }
+
+        [HttpPost("CalendarReportActivities/{clavePlaza}")]
+        public ActionResult<Response> InsertCalendarReportActivities(string clavePlaza, [FromBody] CalendarActivity calendarActivity)
+        {
+            if (ModelState.IsValid)
+            {
+                var get = _db.InsertCalendarReportActivities(clavePlaza.ToUpper(), calendarActivity);
+                if (get.Result == null)
+                    return NotFound(get);
+                else
+                    return Ok(get);
+            }
+            return BadRequest(ModelState);
+        }
+
+        [HttpPost("CalendarReportData/{clavePlaza}")]
+        public ActionResult<Response> InsertCalendarReportData(string clavePlaza, [FromBody] CalendarReportData calendarReportData)
+        {
+            if (ModelState.IsValid)
+            {
+                var get = _db.InsertCalendarReportData(clavePlaza, calendarReportData);
+                if (get.Result == null)
+                    return NotFound(get);
+                else
+                    return Ok(get);
+            }
+            return BadRequest(ModelState);
+        }
         #endregion
     }
 }

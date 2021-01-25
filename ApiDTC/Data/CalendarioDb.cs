@@ -118,6 +118,73 @@ namespace ApiDTC.Data
             
         }
 
+        public Response InsertCalendarReportData(string clavePlaza, CalendarReportData calendarReportData)
+        {
+            try
+            {
+                using (SqlConnection sql = new SqlConnection(_connectionString))
+                {
+                    using (SqlCommand cmd = new SqlCommand("dbo.spInsertCalendarReportData", sql))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.Add("@ReferenceNumber", SqlDbType.NVarChar).Value = calendarReportData.ReferenceNumber;
+                        cmd.Parameters.Add("@SquareId", SqlDbType.NVarChar).Value = calendarReportData.SquareId == "1Bi" ? calendarReportData.SquareId + "s" : calendarReportData.SquareId;
+                        cmd.Parameters.Add("@CapufeLaneNum", SqlDbType.NVarChar).Value = calendarReportData.CapufeLaneNum;
+                        cmd.Parameters.Add("@IdGare", SqlDbType.NVarChar).Value = calendarReportData.IdGare;
+                        cmd.Parameters.Add("@UserId", SqlDbType.Int).Value = calendarReportData.UserId;
+                        cmd.Parameters.Add("@AdminSquare", SqlDbType.Int).Value = calendarReportData.AdminSquare;
+                        cmd.Parameters.Add("@ReportDate", SqlDbType.Date).Value = calendarReportData.ReportDate;
+                        cmd.Parameters.Add("@Start", SqlDbType.NVarChar).Value = calendarReportData.Start;
+                        cmd.Parameters.Add("@End", SqlDbType.NVarChar).Value = calendarReportData.End;
+                        cmd.Parameters.Add("@Observations", SqlDbType.NVarChar).Value = calendarReportData.Observations;
+                        var storedResult = _sqlResult.Post(clavePlaza, cmd, sql, "InsertCalendarReportData");
+                        if (storedResult.SqlResult == null)
+                            return new Response { Message = "No se pudo insertar ReportData", Result = null };
+                    }
+                }
+                return new Response
+                {
+                    Message = "Ok",
+                    Result = calendarReportData
+                };
+            }
+            catch (SqlException ex)
+            {
+                _apiLogger.WriteLog(clavePlaza, ex, "CalendarioDb: InsertCalendarReportData", 1);
+                return new Response { Message = $"Error: {ex.Message}", Result = null };
+            }
+        }
+
+        public Response InsertCalendarReportActivities(string clavePlaza, CalendarActivity calendarActivity)
+        {
+            try
+            {
+                using (SqlConnection sql = new SqlConnection(_connectionString))
+                {
+                    using (SqlCommand cmd = new SqlCommand("dbo.spInsertCalendarReportActivities", sql))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.Add("@ReferenceNumber", SqlDbType.NVarChar).Value = calendarActivity.ReferenceNumber;
+                        cmd.Parameters.Add("@ComponentJob", SqlDbType.Int).Value = calendarActivity.ComponentJob;
+                        cmd.Parameters.Add("@JobStatus", SqlDbType.Int).Value = calendarActivity.JobStatus;
+                        var storedResult = _sqlResult.Post(clavePlaza, cmd, sql, "InsertCalendarReportActivities");
+                        if (storedResult.SqlResult == null)
+                            return new Response { Message = "No se pudo insertar ReportData", Result = null };
+                    }
+                }
+                return new Response
+                {
+                    Message = "Ok",
+                    Result = calendarActivity
+                };
+            }
+            catch (SqlException ex)
+            {
+                _apiLogger.WriteLog(clavePlaza, ex, "CalendarioDb: InsertCalendarReportActivities", 1);
+                return new Response { Message = $"Error: {ex.Message}", Result = null };
+            }
+        }
+
         public Response GetActivities(string clavePlaza, int roll, int frequency)
         {
             try

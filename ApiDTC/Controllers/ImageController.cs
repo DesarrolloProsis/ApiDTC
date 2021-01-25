@@ -32,7 +32,6 @@
         [HttpPost("InsertImage/{clavePlaza}")]
         public ActionResult<Response> InsertImage(string clavePlaza, [FromForm(Name = "image")] IFormFile image, [FromForm(Name = "id")] string referenceNumber, [FromForm(Name = "plaza")] string plaza)
         {
-            _apiLogger.WriteLog(clavePlaza, "InsertImage", 1, plaza + referenceNumber);
             if (image.Length > 0 || image != null)
             {
                 
