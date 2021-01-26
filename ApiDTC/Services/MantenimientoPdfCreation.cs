@@ -66,7 +66,7 @@ namespace ApiDTC.Services
 
         #region Constructors
 
-        public MantenimientoPdfCreation(string clavePlaza, DataTable tableHeader, DataTable tableActivities, ApiLogger apiLogger, int tipo, string ubicacion, string noReporte)
+        public MantenimientoPdfCreation(string clavePlaza, DataTable tableHeader, DataTable tableActivities, ApiLogger apiLogger, int tipo, string noReporte)
         {
             _clavePlaza = clavePlaza;
             _apiLogger = apiLogger;
@@ -84,7 +84,7 @@ namespace ApiDTC.Services
         {
             DateTime now = DateTime.Now;
             string directory = $@"C:\Bitacora\{_clavePlaza}\Reportes\{_noReporte}";
-            string filename = $"{referemce}.pdf";
+            string filename = $"{_noReporte}.pdf";
             
             string path = Path.Combine(directory, filename);
 
@@ -177,7 +177,7 @@ namespace ApiDTC.Services
                     doc.Add(new Phrase(" "));
 
                     //Pdf fotografías evidencia
-                    string directoryImgs = $@"{System.Environment.CurrentDirectory}\Reportes\2020\septiembre\24\PruebaMantenimiento\";
+                    string directoryImgs = Path.Combine(directory, "FichaTecnicaAtencionImgs");
                     //string directorioEvidencias = $@"C:\Bitacora\{_clavePlaza}\Mantenimiento\{_noReporte}\EvidenciasFotograficas";
                     var fotos = Directory.GetFiles(directoryImgs);
                     if(fotos.Length != 0)

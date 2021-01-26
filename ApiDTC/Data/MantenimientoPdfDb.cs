@@ -28,7 +28,7 @@
 
         #region Methods
        
-        public DataSet GetStorePDF(string clavePlaza, string referenceNumber)
+        public DataSet GetStorePDF(string clavePlaza, string noReporte)
         {
             try
             {
@@ -41,7 +41,7 @@
 
 
                         cmd.CommandType = CommandType.StoredProcedure;
-                        cmd.Parameters.Add("@ReferenceNumber", SqlDbType.NVarChar).Value = referenceNumber;
+                        cmd.Parameters.Add("@ReferenceNumber", SqlDbType.NVarChar).Value = noReporte;
 
                         sql.Open();
                         sqlDataAdapter = new SqlDataAdapter(cmd);
