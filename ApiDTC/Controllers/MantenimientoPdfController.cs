@@ -5,6 +5,7 @@
     using System.IO;
     using System.Linq;
     using System.Threading.Tasks;
+    using ApiDTC.Data;
     using ApiDTC.Services;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
@@ -15,20 +16,23 @@
     {
         #region Attributes
         private readonly ApiLogger _apiLogger;
+
+        private readonly MantenimientoPdfDb _db;
         #endregion
 
         #region Constructor
-        public MantenimientoPdfController()
+        public MantenimientoPdfController(MantenimientoPdfDb db)
         {
+            this._db = db ?? throw new ArgumentException(nameof(db));
             _apiLogger = new ApiLogger();
         }
         #endregion
 
         #region Methods
-        //[HttpGet("Semanal/{plaza}/{ubicacion}")]
-        [HttpGet("Semanal/{clavePlaza}/{plaza}/{ubicacion}")]
-        public IActionResult GetMantenimientoSemanal(string clavePlaza, string plaza, string ubicacion)
+        [HttpGet("Semanal/{clavePlaza}/{noReporte}/{inicio}")]
+        public IActionResult GetMantenimientoSemanal(string clavePlaza, string noReporte, int inicio)
         {
+            var get = _db
             try
             {
                 MantenimientoPdfCreation pdf = new MantenimientoPdfCreation(clavePlaza, new ApiLogger(), 1, ubicacion, string.Empty);
@@ -46,8 +50,8 @@
         }
 
         //[HttpGet("Mensual/{plaza}/{ubicacion}")]
-        [HttpGet("Mensual/{clavePlaza}/{plaza}/{ubicacion}")]
-        public IActionResult GetMantenimientoMensual(string clavePlaza, string plaza, string ubicacion)
+        [HttpGet("Mensual/{clavePlaza}/{plaza}/{ubicacion}/{inicio}")]
+        public IActionResult GetMantenimientoMensual(string clavePlaza, string plaza, string ubicacion, int inicio)
         {
             try
             {
@@ -66,8 +70,8 @@
         }
 
         //[HttpGet("Trimestral/{plaza}/{ubicacion}")]
-        [HttpGet("Trimestral/{clavePlaza}/{plaza}/{ubicacion}")]
-        public IActionResult GetMantenimientoTrimestral(string clavePlaza, string plaza, string ubicacion)
+        [HttpGet("Trimestral/{clavePlaza}/{plaza}/{ubicacion}/{inicio}")]
+        public IActionResult GetMantenimientoTrimestral(string clavePlaza, string plaza, string ubicacion, int inicio)
         {
             try
             {
@@ -85,8 +89,8 @@
         }
 
         //[HttpGet("Semestral/{plaza}/{ubicacion}")]
-        [HttpGet("Semestral/{clavePlaza}/{plaza}/{ubicacion}")]
-        public IActionResult GetMantenimientoSemestral(string clavePlaza, string plaza, string ubicacion)
+        [HttpGet("Semestral/{clavePlaza}/{plaza}/{ubicacion}/{inicio}")]
+        public IActionResult GetMantenimientoSemestral(string clavePlaza, string plaza, string ubicacion, int inicio)
         {
             try
             {
@@ -103,9 +107,8 @@
             }
         }
 
-        //[HttpGet("Anual/{plaza}/{ubicacion}")]
-        [HttpGet("Anual/{clavePlaza}/{plaza}/{ubicacion}")]
-        public IActionResult GetMantenimientoAnual(string clavePlaza, string plaza, string ubicacion)
+        [HttpGet("Anual/{clavePlaza}/{plaza}/{ubicacion}/{inicio}")]
+        public IActionResult GetMantenimientoAnual(string clavePlaza, string plaza, string ubicacion, int inicio)
         {
             try
             {
@@ -122,8 +125,8 @@
             }
         }
 
-        [HttpGet("Semanal/Carril/{clavePlaza}/{plaza}/{ubicacion}")]
-        public IActionResult GetMantenimientoCarrilSemanal(string clavePlaza, string plaza, string ubicacion)
+        [HttpGet("Semanal/Carril/{clavePlaza}/{plaza}/{ubicacion}/{inicio}")]
+        public IActionResult GetMantenimientoCarrilSemanal(string clavePlaza, string plaza, string ubicacion, int inicio)
         {
             try
             {
@@ -141,8 +144,8 @@
 
         }
 
-        [HttpGet("Mensual/Carril/{clavePlaza}/{plaza}/{ubicacion}")]
-        public IActionResult GetMantenimientoCarrilMensual(string clavePlaza, string plaza, string ubicacion)
+        [HttpGet("Mensual/Carril/{clavePlaza}/{plaza}/{ubicacion}/{inicio}")]
+        public IActionResult GetMantenimientoCarrilMensual(string clavePlaza, string plaza, string ubicacion, int inicio)
         {
             try
             {
@@ -160,8 +163,8 @@
             }
         }
 
-        [HttpGet("Trimestral/Carril/{clavePlaza}/{plaza}/{ubicacion}")]
-        public IActionResult GetMantenimientoCarrilTrimestral(string clavePlaza, string plaza, string ubicacion)
+        [HttpGet("Trimestral/Carril/{clavePlaza}/{plaza}/{ubicacion}/{inicio}")]
+        public IActionResult GetMantenimientoCarrilTrimestral(string clavePlaza, string plaza, string ubicacion, int inicio)
         {
             try
             {
@@ -178,8 +181,8 @@
             }
         }
 
-        [HttpGet("Semestral/Carril/{clavePlaza}/{plaza}/{ubicacion}")]
-        public IActionResult GetMantenimientoCarrilSemestral(string clavePlaza, string plaza, string ubicacion)
+        [HttpGet("Semestral/Carril/{clavePlaza}/{plaza}/{ubicacion}/{inicio}")]
+        public IActionResult GetMantenimientoCarrilSemestral(string clavePlaza, string plaza, string ubicacion, int inicio)
         {
             try
             {
@@ -196,8 +199,8 @@
             }
         }
 
-        [HttpGet("Anual/Carril/{clavePlaza}/{plaza}/{ubicacion}")]
-        public IActionResult GetMantenimientoCarrilAnual(string clavePlaza, string plaza, string ubicacion)
+        [HttpGet("Anual/Carril/{clavePlaza}/{plaza}/{ubicacion}/{inicio}")]
+        public IActionResult GetMantenimientoCarrilAnual(string clavePlaza, string plaza, string ubicacion, int inicio)
         {
             try
             {

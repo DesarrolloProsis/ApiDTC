@@ -43,7 +43,7 @@
             
         }
 
-        [HttpPost("DiagnosticoFalla/Images/{clavePlaza}/{reportNumber}")]
+        [HttpPost("Images/{clavePlaza}/{reportNumber}")]
         public ActionResult<Response> InsertImageNuevo(string clavePlaza, [FromForm(Name = "image")] IFormFile image, string reportNumber)
         {
             if (image.Length > 0 || image != null)
@@ -77,7 +77,7 @@
                 return NotFound("Insert another image");
         }
 
-        [HttpGet("DiagnosticoFalla/Images/{clavePlaza}/{reportNumber}/{fileName}")]
+        [HttpGet("Images/{clavePlaza}/{reportNumber}/{fileName}")]
         public ActionResult<DtcImage> DownloadEquipoNuevoImg(string clavePlaza, string reportNumber, string fileName)
         {
             try
@@ -96,7 +96,7 @@
             }
         }
 
-        [HttpGet("DiagnosticoFalla/Images/GetPaths/{clavePlaza}/{reportNumber}")]
+        [HttpGet("Images/GetPaths/{clavePlaza}/{reportNumber}")]
         public ActionResult<List<string>> GetImagesEquipoNuevo(string clavePlaza, string reportNumber)
         {
             try
@@ -116,7 +116,7 @@
             }
         }
 
-        [HttpGet("DiagnosticoFalla/Images/DeleteImg/{clavePlaza}/{reportNumber}/{fileName}")]
+        [HttpGet("Images/DeleteImg/{clavePlaza}/{reportNumber}/{fileName}")]
         public ActionResult<string> DeleteEquipoNuevoImg(string clavePlaza, string reportNumber, string fileName)
         {
             try

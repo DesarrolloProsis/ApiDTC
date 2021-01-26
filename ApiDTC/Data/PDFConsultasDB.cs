@@ -131,6 +131,40 @@
             }
         }
 
+        public Response UpdateStatusAdmin(string clavePlaza, DtcStatusLog dtcStatusLog)
+        {
+            try
+            {
+                using (SqlConnection sql = new SqlConnection(_connectionString))
+                {
+                    using (SqlCommand cmd = new SqlCommand("spUpdateStatusDTCStatusLog", sql))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.Add("@ReferenceNumber", SqlDbType.NVarChar).Value = dtcStatusLog.ReferenceNumber;
+                        cmd.Parameters.Add("@UserId", SqlDbType.Int).Value = dtcStatusLog.UserId;
+                        cmd.Parameters.Add("@Status", SqlDbType.Int).Value = dtcStatusLog.StatusId;
+                        cmd.Parameters.Add("@Comment", SqlDbType.NVarChar).Value = dtcStatusLog.Comment;
+                        var result = _sqlResult.Put(clavePlaza, cmd, sql, "UpdateStatusAdmin");
+                        return new Response
+                        {
+                            Message = result.SqlMessage,
+                            Result = result.SqlResult
+                        };
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+
+                _apiLogger.WriteLog(clavePlaza, ex, "PdfConsultasDb: UpdateStatusAdmin", 1);
+                return new Response
+                {
+                    Message = $"Error: {ex.Message}",
+                    Result = null
+                };
+            }
+        }
+
         public SqlResponse SelladoReporte(string clavePlaza, string referenceNumber)
         {
             try

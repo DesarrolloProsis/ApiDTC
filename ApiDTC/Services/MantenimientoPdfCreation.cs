@@ -74,17 +74,6 @@ namespace ApiDTC.Services
             _tableActivities = tableActivities;
             _tipo = tipo;
             _temporal = TipoDeReporte(_tipo);
-            _ubicacion = ubicacion;
-            _noReporte = noReporte;
-        }
-
-        public MantenimientoPdfCreation(string clavePlaza, ApiLogger apiLogger, int tipo, string ubicacion, string noReporte)
-        {
-            _clavePlaza = clavePlaza;
-            _apiLogger = apiLogger;
-            _tipo = tipo;
-            _temporal = TipoDeReporte(_tipo);
-            _ubicacion = ubicacion;
             _noReporte = noReporte;
         }
 
@@ -94,8 +83,8 @@ namespace ApiDTC.Services
         public Response NewPdf()
         {
             DateTime now = DateTime.Now;
-            string directory = $@"C:\Bitacora\{_clavePlaza}\Mantenimiento\{_noReporte}";
-            string filename = $"{_clavePlaza.ToUpper()}{DateTime.Now.Year}{MesContrato(now)}{_ubicacion}{_temporal[0]}.pdf";
+            string directory = $@"C:\Bitacora\{_clavePlaza}\Reportes\{_noReporte}";
+            string filename = $"{referemce}.pdf";
             
             string path = Path.Combine(directory, filename);
 

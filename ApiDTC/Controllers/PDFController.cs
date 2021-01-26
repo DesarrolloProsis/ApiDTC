@@ -120,12 +120,25 @@
         }
 
         [HttpGet("ActualizarDtc/{clavePlaza}/{referenceNumber}/{status}")]
-        public ActionResult<Response> PdfAutorizado(string clavePlaza, string referenceNumber, int status)
+        public ActionResult<Response> ActualizarDtc(string clavePlaza, string referenceNumber, int status)
         {
             var get = _db.UpdateStatus(clavePlaza, referenceNumber, status);
             if (get.Result == null)
                 return NotFound(get);
             return Ok(get);
+        }
+
+        [HttpGet("ActualizarDtcAdministratores/{clavePlaza}")]
+        public ActionResult<Response> ActualizarDtcAdministradores(string clavePlaza, [FromBody] DtcStatusLog dtcStatusLog)
+        {
+            if (ModelState.IsValid)
+            {
+                var get = _db.UpdateStatusAdmin(clavePlaza, dtcStatusLog);
+                if (get.Result == null)
+                    return NotFound(get);
+                return Ok(get);
+            }
+            return BadRequest();
         }
 
         [HttpGet("Autorizado/{clavePlaza}/{referenceNumber}")]

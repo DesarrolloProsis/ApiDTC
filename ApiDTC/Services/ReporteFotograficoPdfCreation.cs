@@ -87,7 +87,7 @@ namespace ApiDTC.Services
 
             DateTime now = DateTime.Now; 
             if (_tipo == 1)
-                directory = $@"C:\Bitacora\ReportesEnProceso\{_clavePlaza.ToUpper()}\{_referenceNumber}";
+                directory = $@"C:\Bitacora\{_clavePlaza.ToUpper()}\Reportes\{_referenceNumber}";
             else
                 directory = $@"C:\Bitacora\{_clavePlaza.ToUpper()}\DTC\{_referenceNumber}";
             if (!Directory.Exists(directory))
@@ -98,7 +98,7 @@ namespace ApiDTC.Services
                 };
 
             if (_tipo == 1)
-                filename = $"DTC-{_referenceNumber}";
+                filename = $"Reporte-Fotográfico-{_referenceNumber}.pdf";
             else if(_tipo == 2)
                 filename = $@"DTC-{_referenceNumber}-EquipoNuevo.pdf";
             else
@@ -168,7 +168,7 @@ namespace ApiDTC.Services
                     doc.Add(TablaInformacion());
                     string directoryImgs;
                     if (_tipo == 1)
-                        directoryImgs = $@"{System.Environment.CurrentDirectory}\Reportes\2020\septiembre\24\Prueba\";
+                        directoryImgs = Path.Combine(directory, "MantenimientoPreventivo");
                     else if (_tipo == 2)
                         directoryImgs = Path.Combine(directory, "EquipoNuevoImgs");
                     else
