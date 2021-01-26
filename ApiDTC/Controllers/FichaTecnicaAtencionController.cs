@@ -5,6 +5,7 @@
     using System.IO;
     using System.Linq;
     using System.Threading.Tasks;
+    using ApiDTC.Models;
     using ApiDTC.Services;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
@@ -44,24 +45,24 @@
             
         }
 
-        [HttpPost("FichaTecnicaAtencion/Images/{clavePlaza}/{reportNumber}")]
+        [HttpPost("Images/{clavePlaza}/{reportNumber}")]
         public ActionResult<Response> InsertImageNuevo(string clavePlaza, [FromForm(Name = "image")] IFormFile image, string reportNumber)
         {
             if (image.Length > 0 || image != null)
             {
                 int numberOfImages;
-                string dir = $@"C:\Bitacora\{clavePlaza.ToUpper()}\Reportes\{reportNumber}\DiagnosticoFallaImgs";
+                string dir = $@"C:\Bitacora\{clavePlaza.ToUpper()}\Reportes\{reportNumber}\FichaTecnicaAtencionImgs";
                 string filename;
                 try
                 {
                     if (!Directory.Exists(dir))
                         Directory.CreateDirectory(dir);
                     numberOfImages = Directory.GetFiles(dir).Length + 1;
-                    filename = $"{reportNumber}_DiagnosticoFallaImgs_{numberOfImages}{image.FileName.Substring(image.FileName.LastIndexOf('.'))}";
+                    filename = $"{reportNumber}_FichaTecnicaAtencionImgs_{numberOfImages}{image.FileName.Substring(image.FileName.LastIndexOf('.'))}";
                     while (System.IO.File.Exists(Path.Combine(dir, filename)))
                     {
                         numberOfImages += 1;
-                        filename = $"{reportNumber}_Image_{numberOfImages}{image.FileName.Substring(image.FileName.LastIndexOf('.'))}";
+                        filename = $"{reportNumber}_FichaTecnicaAtencionImage_{numberOfImages}{image.FileName.Substring(image.FileName.LastIndexOf('.'))}";
                     }
                     var fs = new FileStream(Path.Combine(dir, filename), FileMode.Create);
                     image.CopyTo(fs);
@@ -69,7 +70,7 @@
                 }
                 catch (IOException ex)
                 {
-                    _apiLogger.WriteLog(clavePlaza, ex, "DiagnosticoFallaController: InsertImage", 2);
+                    _apiLogger.WriteLog(clavePlaza, ex, "FichaTecnicaAtencionController: InsertImage", 2);
                     return NotFound(ex.ToString());
                 }
                 return Ok(Path.Combine(dir, filename));
@@ -78,12 +79,12 @@
                 return NotFound("Insert another image");
         }
 
-        [HttpGet("EquipoNuevo/Images/{clavePlaza}/{reportNumber}/{fileName}")]
+        [HttpGet("Images/{clavePlaza}/{reportNumber}/{fileName}")]
         public ActionResult<DtcImage> DownloadEquipoNuevoImg(string clavePlaza, string reportNumber, string fileName)
         {
             try
             {
-                string path = $@"C:\Bitacora\{clavePlaza.ToUpper()}\Reportes\{reportNumber}\DiagnosticoFallaImgs\{fileName}";
+                string path = $@"C:\Bitacora\{clavePlaza.ToUpper()}\Reportes\{reportNumber}\FichaTecnicaAtencionImgs\{fileName}";
                 if (!System.IO.File.Exists(path))
                     return NotFound("No existe el archivo");
                 Byte[] bitMap = System.IO.File.ReadAllBytes(path);
@@ -92,17 +93,17 @@
             }
             catch (IOException ex)
             {
-                _apiLogger.WriteLog(clavePlaza, ex, "DiagnosticoFallaController: DownloadEquipoNuevoImg", 2);
+                _apiLogger.WriteLog(clavePlaza, ex, "FichaTecnicaAtencionController: DownloadEquipoNuevoImg", 2);
                 return NotFound(ex.ToString());
             }
         }
 
-        [HttpGet("EquipoNuevo/Images/GetPaths/{clavePlaza}/{reportNumber}")]
+        [HttpGet("Images/GetPaths/{clavePlaza}/{reportNumber}")]
         public ActionResult<List<string>> GetImagesEquipoNuevo(string clavePlaza, string reportNumber)
         {
             try
             {
-                string directoy = $@"C:\Bitacora\{clavePlaza.ToUpper()}\Reportes\{reportNumber}\DiagnosticoFallaImgs";
+                string directoy = $@"C:\Bitacora\{clavePlaza.ToUpper()}\Reportes\{reportNumber}\FichaTecnicaAtencionImgs";
                 List<string> dtcImages = new List<string>();
                 if (!Directory.Exists(directoy))
                     return Ok(dtcImages);
@@ -112,27 +113,27 @@
             }
             catch (IOException ex)
             {
-                _apiLogger.WriteLog(clavePlaza, ex, "DiagnosticoFallaController: GetImagesEquipoNuevo", 2);
+                _apiLogger.WriteLog(clavePlaza, ex, "FichaTecnicaAtencionController: GetImagesEquipoNuevo", 2);
                 return NotFound(ex.ToString());
             }
         }
 
-        [HttpGet("EquipoNuevo/Images/DeleteImg/{clavePlaza}/{reportNumber}/{fileName}")]
+        [HttpGet("Images/DeleteImg/{clavePlaza}/{reportNumber}/{fileName}")]
         public ActionResult<string> DeleteEquipoNuevoImg(string clavePlaza, string reportNumber, string fileName)
         {
             try
             {
-                string path = $@"C:\Bitacora\{clavePlaza.ToUpper()}\Reportes\{reportNumber}\DiagnosticoFallaImgs\{fileName}";
+                string path = $@"C:\Bitacora\{clavePlaza.ToUpper()}\Reportes\{reportNumber}\FichaTecnicaAtencionImgs\{fileName}";
                 if (!System.IO.File.Exists(path))
                     return NotFound(path);
                 System.IO.File.Delete(path);
-                if (Directory.GetFiles($@"C:\Bitacora\{clavePlaza.ToUpper()}\Reportes\{reportNumber}\DiagnosticoFallaImgs").Length == 0)
-                    Directory.Delete($@"C:\Bitacora\{clavePlaza.ToUpper()}\Reportes\{reportNumber}\DiagnosticoFallaImgs");
+                if (Directory.GetFiles($@"C:\Bitacora\{clavePlaza.ToUpper()}\Reportes\{reportNumber}\FichaTecnicaAtencionImgs").Length == 0)
+                    Directory.Delete($@"C:\Bitacora\{clavePlaza.ToUpper()}\Reportes\{reportNumber}\FichaTecnicaAtencionImgs");
                 return Ok(path);
             }
             catch (IOException ex)
             {
-                _apiLogger.WriteLog(clavePlaza, ex, "DiagnosticoFallaController: DeleteEquipoNuevoImg", 2);
+                _apiLogger.WriteLog(clavePlaza, ex, "FichaTecnicaAtencionController: DeleteEquipoNuevoImg", 2);
                 return NotFound(ex.ToString());
             }
         }

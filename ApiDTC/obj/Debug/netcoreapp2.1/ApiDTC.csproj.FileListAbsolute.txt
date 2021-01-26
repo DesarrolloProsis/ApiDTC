@@ -153,3 +153,21 @@ C:\Users\MACHINE 1\Desktop\CLONE APIDTC\ApiDTC\ApiDTC\obj\Debug\netcoreapp2.1\Ap
 C:\Users\MACHINE 1\Desktop\CLONE APIDTC\ApiDTC\ApiDTC\obj\Debug\netcoreapp2.1\ApiDTC.RazorTargetAssemblyInfo.cache
 C:\Users\MACHINE 1\Desktop\CLONE APIDTC\ApiDTC\ApiDTC\obj\Debug\netcoreapp2.1\ApiDTC.dll
 C:\Users\MACHINE 1\Desktop\CLONE APIDTC\ApiDTC\ApiDTC\obj\Debug\netcoreapp2.1\ApiDTC.pdb
+C:\Users\axelf\Documents\ApiDTC\ApiDTC\bin\Debug\netcoreapp2.1\appsettings.Development.json
+C:\Users\axelf\Documents\ApiDTC\ApiDTC\bin\Debug\netcoreapp2.1\appsettings.json
+C:\Users\axelf\Documents\ApiDTC\ApiDTC\bin\Debug\netcoreapp2.1\Properties\launchSettings.json
+C:\Users\axelf\Documents\ApiDTC\ApiDTC\bin\Debug\netcoreapp2.1\ApiDTC.deps.json
+C:\Users\axelf\Documents\ApiDTC\ApiDTC\bin\Debug\netcoreapp2.1\ApiDTC.runtimeconfig.json
+C:\Users\axelf\Documents\ApiDTC\ApiDTC\bin\Debug\netcoreapp2.1\ApiDTC.runtimeconfig.dev.json
+C:\Users\axelf\Documents\ApiDTC\ApiDTC\bin\Debug\netcoreapp2.1\ApiDTC.dll
+C:\Users\axelf\Documents\ApiDTC\ApiDTC\bin\Debug\netcoreapp2.1\ApiDTC.pdb
+C:\Users\axelf\Documents\ApiDTC\ApiDTC\obj\Debug\netcoreapp2.1\ApiDTC.csprojAssemblyReference.cache
+C:\Users\axelf\Documents\ApiDTC\ApiDTC\obj\Debug\netcoreapp2.1\ApiDTC.Properties.Resources.resources
+C:\Users\axelf\Documents\ApiDTC\ApiDTC\obj\Debug\netcoreapp2.1\ApiDTC.csproj.GenerateResource.cache
+C:\Users\axelf\Documents\ApiDTC\ApiDTC\obj\Debug\netcoreapp2.1\ApiDTC.RazorAssemblyInfo.cache
+C:\Users\axelf\Documents\ApiDTC\ApiDTC\obj\Debug\netcoreapp2.1\ApiDTC.RazorAssemblyInfo.cs
+C:\Users\axelf\Documents\ApiDTC\ApiDTC\obj\Debug\netcoreapp2.1\ApiDTC.AssemblyInfoInputs.cache
+C:\Users\axelf\Documents\ApiDTC\ApiDTC\obj\Debug\netcoreapp2.1\ApiDTC.AssemblyInfo.cs
+C:\Users\axelf\Documents\ApiDTC\ApiDTC\obj\Debug\netcoreapp2.1\ApiDTC.RazorTargetAssemblyInfo.cache
+C:\Users\axelf\Documents\ApiDTC\ApiDTC\obj\Debug\netcoreapp2.1\ApiDTC.dll
+C:\Users\axelf\Documents\ApiDTC\ApiDTC\obj\Debug\netcoreapp2.1\ApiDTC.pdb

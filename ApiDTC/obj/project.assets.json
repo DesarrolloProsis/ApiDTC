@@ -13134,11 +13134,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\Proyectos\\PROSIS\\ApiDTC\\ApiDTC\\ApiDTC.csproj",
+      "projectUniqueName": "C:\\Users\\axelf\\Documents\\ApiDTC\\ApiDTC\\ApiDTC.csproj",
       "projectName": "ApiDTC",
-      "projectPath": "D:\\Proyectos\\PROSIS\\ApiDTC\\ApiDTC\\ApiDTC.csproj",
+      "projectPath": "C:\\Users\\axelf\\Documents\\ApiDTC\\ApiDTC\\ApiDTC.csproj",
       "packagesPath": "C:\\Users\\axelf\\.nuget\\packages\\",
-      "outputPath": "D:\\Proyectos\\PROSIS\\ApiDTC\\ApiDTC\\obj\\",
+      "outputPath": "C:\\Users\\axelf\\Documents\\ApiDTC\\ApiDTC\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Microsoft\\Xamarin\\NuGet\\",
@@ -13158,7 +13158,6 @@
       },
       "frameworks": {
         "netcoreapp2.1": {
-          "targetAlias": "netcoreapp2.1",
           "projectReferences": {}
         }
       },
@@ -13170,7 +13169,6 @@
     },
     "frameworks": {
       "netcoreapp2.1": {
-        "targetAlias": "netcoreapp2.1",
         "dependencies": {
           "FastMember": {
             "target": "Package",
@@ -13230,7 +13228,7 @@
         ],
         "assetTargetFallback": true,
         "warn": true,
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.101\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.102\\RuntimeIdentifierGraph.json"
       }
     }
   }

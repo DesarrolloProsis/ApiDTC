@@ -99,6 +99,38 @@
             }
         }
 
+        public Response UpdateStatus(string clavePlaza, string referenceNumber, int status)
+        {
+            try
+            {
+                using (SqlConnection sql = new SqlConnection(_connectionString))
+                {
+                    using (SqlCommand cmd = new SqlCommand("spUpdateStatusDTC", sql))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.Add("@ReferenceNumber", SqlDbType.NVarChar).Value = referenceNumber;
+                        cmd.Parameters.Add("@status", SqlDbType.Int).Value = status;
+                        var result = _sqlResult.Put(clavePlaza, cmd, sql, "UpdateStatus");
+                        return new Response
+                        {
+                            Message = result.SqlMessage,
+                            Result = result.SqlResult
+                        };
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+
+                _apiLogger.WriteLog(clavePlaza, ex, "PdfConsultasDb: UpdateStatus", 1);
+                return new Response
+                {
+                    Message = $"Error: {ex.Message}",
+                    Result = null
+                };
+            }
+        }
+
         public SqlResponse SelladoReporte(string clavePlaza, string referenceNumber)
         {
             try

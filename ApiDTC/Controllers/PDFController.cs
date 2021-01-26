@@ -119,6 +119,15 @@
             return NotFound();
         }
 
+        [HttpGet("ActualizarDtc/{clavePlaza}/{referenceNumber}/{status}")]
+        public ActionResult<Response> PdfAutorizado(string clavePlaza, string referenceNumber, int status)
+        {
+            var get = _db.UpdateStatus(clavePlaza, referenceNumber, status);
+            if (get.Result == null)
+                return NotFound(get);
+            return Ok(get);
+        }
+
         [HttpGet("Autorizado/{clavePlaza}/{referenceNumber}")]
         public ActionResult<Response> PdfAutorizado(string clavePlaza, string referenceNumber)
         {
