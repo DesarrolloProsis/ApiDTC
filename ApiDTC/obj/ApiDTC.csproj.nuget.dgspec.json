@@ -1,24 +1,26 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\MACHINE 1\\Desktop\\CLONE APIDTC\\ApiDTC\\ApiDTC\\ApiDTC.csproj": {}
+    "D:\\Proyectos\\PROSIS\\ApiDTC\\ApiDTC\\ApiDTC.csproj": {}
   },
   "projects": {
-    "C:\\Users\\MACHINE 1\\Desktop\\CLONE APIDTC\\ApiDTC\\ApiDTC\\ApiDTC.csproj": {
+    "D:\\Proyectos\\PROSIS\\ApiDTC\\ApiDTC\\ApiDTC.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\MACHINE 1\\Desktop\\CLONE APIDTC\\ApiDTC\\ApiDTC\\ApiDTC.csproj",
+        "projectUniqueName": "D:\\Proyectos\\PROSIS\\ApiDTC\\ApiDTC\\ApiDTC.csproj",
         "projectName": "ApiDTC",
-        "projectPath": "C:\\Users\\MACHINE 1\\Desktop\\CLONE APIDTC\\ApiDTC\\ApiDTC\\ApiDTC.csproj",
-        "packagesPath": "C:\\Users\\MACHINE 1\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\MACHINE 1\\Desktop\\CLONE APIDTC\\ApiDTC\\ApiDTC\\obj\\",
+        "projectPath": "D:\\Proyectos\\PROSIS\\ApiDTC\\ApiDTC\\ApiDTC.csproj",
+        "packagesPath": "C:\\Users\\axelf\\.nuget\\packages\\",
+        "outputPath": "D:\\Proyectos\\PROSIS\\ApiDTC\\ApiDTC\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
+          "C:\\Microsoft\\Xamarin\\NuGet\\",
           "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
         ],
         "configFilePaths": [
-          "C:\\Users\\MACHINE 1\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "C:\\Users\\axelf\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
         ],
         "originalTargetFrameworks": [
           "netcoreapp2.1"
@@ -29,6 +31,7 @@
         },
         "frameworks": {
           "netcoreapp2.1": {
+            "targetAlias": "netcoreapp2.1",
             "projectReferences": {}
           }
         },
@@ -40,6 +43,7 @@
       },
       "frameworks": {
         "netcoreapp2.1": {
+          "targetAlias": "netcoreapp2.1",
           "dependencies": {
             "FastMember": {
               "target": "Package",
@@ -99,7 +103,7 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.101\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.101\\RuntimeIdentifierGraph.json"
         }
       }
     }
