@@ -142,7 +142,7 @@
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.Add("@ReferenceNumber", SqlDbType.NVarChar).Value = dtcStatusLog.ReferenceNumber;
                         cmd.Parameters.Add("@UserId", SqlDbType.Int).Value = dtcStatusLog.UserId;
-                        cmd.Parameters.Add("@Status", SqlDbType.Int).Value = dtcStatusLog.StatusId;
+                        cmd.Parameters.Add("@StatusId", SqlDbType.Int).Value = dtcStatusLog.StatusId;
                         cmd.Parameters.Add("@Comment", SqlDbType.NVarChar).Value = dtcStatusLog.Comment;
                         var result = _sqlResult.Put(clavePlaza, cmd, sql, "UpdateStatusAdmin");
                         return new Response
