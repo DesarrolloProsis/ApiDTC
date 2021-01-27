@@ -54,7 +54,7 @@
             
         }
 
-        [HttpPost("MantenimientoPreventivo/Images/{clavePlaza}/{reportNumber}/{semana}")]
+        [HttpPost("MantenimientoPreventivo/Images/{clavePlaza}/{reportNumber}/{se")]
         public ActionResult<Response> InsertImageNuevo(string clavePlaza, [FromForm(Name = "image")] IFormFile image, string reportNumber, int semana)
         {
             if (image.Length > 0 || image != null)
