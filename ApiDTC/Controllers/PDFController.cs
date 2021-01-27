@@ -128,7 +128,7 @@
             return Ok(get);
         }
 
-        [HttpGet("ActualizarDtcAdministratores/{clavePlaza}")]
+        [HttpPost("ActualizarDtcAdministratores/{clavePlaza}")]
         public ActionResult<Response> ActualizarDtcAdministradores(string clavePlaza, [FromBody] DtcStatusLog dtcStatusLog)
         {
             if (ModelState.IsValid)
@@ -138,7 +138,7 @@
                     return NotFound(get);
                 return Ok(get);
             }
-            return BadRequest();
+            return BadRequest(ModelState);
         }
 
         [HttpGet("Autorizado/{clavePlaza}/{referenceNumber}")]
