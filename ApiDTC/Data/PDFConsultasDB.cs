@@ -137,7 +137,7 @@
             {
                 using (SqlConnection sql = new SqlConnection(_connectionString))
                 {
-                    using (SqlCommand cmd = new SqlCommand("spUpdateStatusDTCStatusLog", sql))
+                    using (SqlCommand cmd = new SqlCommand("spUpdateDTCStatusLog", sql))
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.Add("@ReferenceNumber", SqlDbType.NVarChar).Value = dtcStatusLog.ReferenceNumber;
