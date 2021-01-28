@@ -94,8 +94,8 @@
                         cmd.Parameters.Add("@intComponentStockId", SqlDbType.Int).Value = item.ComponentsStockId;
                         cmd.Parameters.Add("@strReferenceNumber", SqlDbType.NVarChar).Value = item.ReferenceNumber;
                         cmd.Parameters.Add("@datetimeDate", SqlDbType.DateTime).Value = DateTime.Now;
-                        cmd.Parameters.Add("@strBrand", SqlDbType.NChar).Value = item.Marca;
-                        cmd.Parameters.Add("@strModel", SqlDbType.NChar).Value = item.Modelo;
+                        cmd.Parameters.Add("@strBrand", SqlDbType.NChar).Value = item.MarcaPropuesta;
+                        cmd.Parameters.Add("@strModel", SqlDbType.NChar).Value = item.ModeloPropuesto;
                         cmd.Parameters.Add("@strCapufeLaneNum", SqlDbType.NVarChar).Value = item.CapufeLaneNum;
                         cmd.Parameters.Add("@strIdGare", SqlDbType.NVarChar).Value = item.IdGare;
                         cmd.Parameters.Add("@strSerialNumber", SqlDbType.NVarChar).Value = item.NumSerie;

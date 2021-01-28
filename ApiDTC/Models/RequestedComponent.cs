@@ -15,7 +15,11 @@
         public string Marca { get; set; }
         
         public string Modelo { get; set; }
-        
+
+        public string MarcaPropuesta { get; set; }
+
+        public string ModeloPropuesto { get; set; }
+
         public string NumSerie { get; set; }
         
         public string Unity { get; set; }
