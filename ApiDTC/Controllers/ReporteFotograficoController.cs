@@ -54,24 +54,24 @@
             
         }
 
-        [HttpPost("MantenimientoPreventivo/Images/{clavePlaza}/{reportNumber}/{se")]
-        public ActionResult<Response> InsertImageNuevo(string clavePlaza, [FromForm(Name = "image")] IFormFile image, string reportNumber, int semana)
+        [HttpPost("MantenimientoPreventivo/Images/{clavePlaza}/{reportNumber}")]
+        public ActionResult<Response> InsertImageNuevo(string clavePlaza, [FromForm(Name = "image")] IFormFile image, string reportNumber)
         {
             if (image.Length > 0 || image != null)
             {
                 int numberOfImages;
-                string dir = $@"C:\Bitacora\{clavePlaza.ToUpper()}\Reportes\{reportNumber}\MantenimientoPreventivoImgs\{semana}";
+                string dir = $@"C:\Bitacora\{clavePlaza.ToUpper()}\Reportes\{reportNumber}\Imgs";
                 string filename;
                 try
                 {
                     if (!Directory.Exists(dir))
                         Directory.CreateDirectory(dir);
                     numberOfImages = Directory.GetFiles(dir).Length + 1;
-                    filename = $"{reportNumber}_MantenimientoPreventivoImgs_{semana}_{numberOfImages}{image.FileName.Substring(image.FileName.LastIndexOf('.'))}";
+                    filename = $"{reportNumber}_MantenimientoPreventivoImgs_{numberOfImages}{image.FileName.Substring(image.FileName.LastIndexOf('.'))}";
                     while (System.IO.File.Exists(Path.Combine(dir, filename)))
                     {
                         numberOfImages += 1;
-                        filename = $"{reportNumber}_MantenimientoPreventivoImgs_{semana}_{numberOfImages}{image.FileName.Substring(image.FileName.LastIndexOf('.'))}";
+                        filename = $"{reportNumber}_MantenimientoPreventivoImgs_{numberOfImages}{image.FileName.Substring(image.FileName.LastIndexOf('.'))}";
                     }
                     var fs = new FileStream(Path.Combine(dir, filename), FileMode.Create);
                     image.CopyTo(fs);
@@ -88,12 +88,12 @@
                 return NotFound("Insert another image");
         }
 
-        [HttpGet("MantenimientoPreventivo/Images/{clavePlaza}/{reportNumber}/{fileName}/{semana}")]
-        public ActionResult<DtcImage> DownloadEquipoNuevoImg(string clavePlaza, string reportNumber, string fileName, int semana)
+        [HttpGet("MantenimientoPreventivo/Images/{clavePlaza}/{reportNumber}/{fileName}")]
+        public ActionResult<DtcImage> DownloadEquipoNuevoImg(string clavePlaza, string reportNumber, string fileName)
         {
             try
             {
-                string path = $@"C:\Bitacora\{clavePlaza.ToUpper()}\Reportes\{reportNumber}\MantenimientoPreventivoImgs\{semana}\{fileName}";
+                string path = $@"C:\Bitacora\{clavePlaza.ToUpper()}\Reportes\{reportNumber}\Imgs\{fileName}";
                 if (!System.IO.File.Exists(path))
                     return NotFound("No existe el archivo");
                 Byte[] bitMap = System.IO.File.ReadAllBytes(path);
@@ -107,12 +107,12 @@
             }
         }
 
-        [HttpGet("MantenimientoPreventivo/Images/GetPaths/{clavePlaza}/{reportNumber}/{semana}")]
-        public ActionResult<List<string>> GetImagesEquipoNuevo(string clavePlaza, string reportNumber, int semana)
+        [HttpGet("MantenimientoPreventivo/Images/GetPaths/{clavePlaza}/{reportNumber}")]
+        public ActionResult<List<string>> GetImagesEquipoNuevo(string clavePlaza, string reportNumber)
         {
             try
             {
-                string directoy = $@"C:\Bitacora\{clavePlaza.ToUpper()}\Reportes\{reportNumber}\MantenimientoPreventivoImgs\{semana}";
+                string directoy = $@"C:\Bitacora\{clavePlaza.ToUpper()}\Reportes\{reportNumber}\Imgs";
                 List<string> dtcImages = new List<string>();
                 if (!Directory.Exists(directoy))
                     return Ok(dtcImages);
@@ -127,17 +127,17 @@
             }
         }
 
-        [HttpGet("MantenimientoPreventivo/Images/DeleteImg/{clavePlaza}/{reportNumber}/{fileName}/{semana}")]
-        public ActionResult<string> DeleteEquipoNuevoImg(string clavePlaza, string reportNumber, string fileName, int semana)
+        [HttpGet("MantenimientoPreventivo/Images/DeleteImg/{clavePlaza}/{reportNumber}/{fileName}")]
+        public ActionResult<string> DeleteEquipoNuevoImg(string clavePlaza, string reportNumber, string fileName)
         {
             try
             {
-                string path = $@"C:\Bitacora\{clavePlaza.ToUpper()}\Reportes\{reportNumber}\MantenimientoPreventivoImgs\{semana}\{fileName}";
+                string path = $@"C:\Bitacora\{clavePlaza.ToUpper()}\Reportes\{reportNumber}\Imgs\{fileName}";
                 if (!System.IO.File.Exists(path))
                     return NotFound(path);
                 System.IO.File.Delete(path);
-                if (Directory.GetFiles($@"C:\Bitacora\{clavePlaza.ToUpper()}\Reportes\{reportNumber}\MantenimientoPreventivoImgs\{semana}").Length == 0)
-                    Directory.Delete($@"C:\Bitacora\{clavePlaza.ToUpper()}\Reportes\{reportNumber}\MantenimientoPreventivoImgs\{semana}");
+                if (Directory.GetFiles($@"C:\Bitacora\{clavePlaza.ToUpper()}\Reportes\{reportNumber}\Imgs").Length == 0)
+                    Directory.Delete($@"C:\Bitacora\{clavePlaza.ToUpper()}\Reportes\{reportNumber}\Imgs");
                 return Ok(path);
             }
             catch (IOException ex)
