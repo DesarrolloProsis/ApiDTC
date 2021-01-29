@@ -29,8 +29,8 @@
         #endregion
 
         #region Methods
-        [HttpGet("Semanal/{clavePlaza}/{noReporte}/{inicio}")]
-        public IActionResult GetMantenimientoSemanal(string clavePlaza, string noReporte, int inicio)
+        [HttpGet("Semanal/{clavePlaza}/{noReporte}")]
+        public IActionResult GetMantenimientoSemanal(string clavePlaza, string noReporte)
         {
             try
             {
@@ -50,8 +50,8 @@
             }
             
         }
-        [HttpGet("Semanal/Carril/{clavePlaza}/{noReporte}/{inicio}")]
-        public IActionResult GetMantenimientoCarrilSemanal(string clavePlaza, string noReporte, int inicio)
+        [HttpGet("Semanal/Carril/{clavePlaza}/{noReporte}")]
+        public IActionResult GetMantenimientoCarrilSemanal(string clavePlaza, string noReporte)
         {
             try
             {

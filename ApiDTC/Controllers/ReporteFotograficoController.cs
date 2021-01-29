@@ -37,7 +37,7 @@
         {
             try
             {
-                var dataSet = _db.GetStorePDF(clavePlaza, referenceNumber);
+                var dataSet = _db.GetStorePDFReporteFotografico(clavePlaza, referenceNumber);
                 if (dataSet.Tables[0].Rows.Count == 0)
                     return NotFound("GetStoredPdf retorna tabla vacía");
                 ReporteFotograficoPdfCreation pdf = new ReporteFotograficoPdfCreation(clavePlaza, dataSet.Tables[0], new ApiLogger(), 1, referenceNumber);
@@ -55,7 +55,7 @@
         }
 
         [HttpPost("MantenimientoPreventivo/Images/{clavePlaza}/{reportNumber}")]
-        public ActionResult<Response> InsertImageNuevo(string clavePlaza, [FromForm(Name = "image")] IFormFile image, string reportNumber)
+        public ActionResult<Response> InsertImageNuevo(string clavePlaza, [FromForm(Name = "image")] IFormFile image, string reportNumber, int semana)
         {
             if (image.Length > 0 || image != null)
             {
