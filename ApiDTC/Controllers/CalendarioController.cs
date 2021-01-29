@@ -40,10 +40,10 @@
             return File(new FileStream(pdfResult.Result.ToString(), FileMode.Open, FileAccess.Read), "application/pdf");
         }
         //[HttpDelete("DeleteCalendar/{month}/{year}/{userId}/{squareId}")]
-        [HttpDelete("DeleteCalendar/{clavePlaza}/{month}/{year}/{userId}/{squareId}")]
-        public ActionResult<Response> DeleteCalendar(string clavePlaza, int month, int year, int userId, string squareId)
+        [HttpDelete("DeleteCalendar/{clavePlaza}/{CalendarId}")]
+        public ActionResult<Response> DeleteCalendar(string clavePlaza, int CalendarId)
         {
-            var get = _db.DeleteCalendar(clavePlaza, month, year, userId, squareId == "1Bi" ? squareId + "s" : squareId);
+            var get = _db.DeleteCalendar(clavePlaza, CalendarId);
             if (get.Result == null)
                 return BadRequest(get);
             else
@@ -65,7 +65,7 @@
         }
         //[HttpPost("ObservacionesInsert")]
         [HttpPost("ObservacionesInsert/{clavePlaza}")]
-        public ActionResult<Response> ObservacionesInsert(string clavePlaza, [FromBody] ActividadCalendario actividad)
+        public ActionResult<Response> ObservacionesInsert(string clavePlaza, [FromBody] InsertCommentCalendar actividad)
         {
             if (ModelState.IsValid)
             {
