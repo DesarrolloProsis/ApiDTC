@@ -45,7 +45,7 @@
             }
             catch (IOException ex)
             {
-                _apiLogger.WriteLog(clavePlaza, ex, "MantenimientoPdf: GetMantenimientoSemanal", 2);
+                _apiLogger.WriteLog(clavePlaza, ex, "MantenimientoPdf: GetMantenimiento", 2);
                 return NotFound(ex.ToString());
             }
         }
