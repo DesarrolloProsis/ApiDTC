@@ -137,6 +137,7 @@ namespace ApiDTC.Data
                         cmd.Parameters.Add("@Start", SqlDbType.NVarChar).Value = calendarReportData.Start;
                         cmd.Parameters.Add("@End", SqlDbType.NVarChar).Value = calendarReportData.End;
                         cmd.Parameters.Add("@Observations", SqlDbType.NVarChar).Value = calendarReportData.Observations;
+                        cmd.Parameters.Add("@CalendarId", SqlDbType.Int).Value = calendarReportData.CalendarId;
                         var storedResult = _sqlResult.Post(clavePlaza, cmd, sql, "InsertCalendarReportData");
                         if (storedResult.SqlResult == null)
                             return new Response { Message = "No se pudo insertar ReportData", Result = null };
