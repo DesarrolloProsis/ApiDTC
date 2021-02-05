@@ -29,7 +29,7 @@
         #endregion
 
         #region Methods
-        [HttpGet("{tipo}/{clavePlaza}/{noReporte}")]
+        [HttpGet("{clavePlaza}/{tipo}/{noReporte}")]
         public IActionResult GetMantenimiento(int tipo, string clavePlaza, string noReporte)
         {
             try

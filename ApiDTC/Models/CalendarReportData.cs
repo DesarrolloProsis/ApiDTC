@@ -32,5 +32,7 @@
 
         [StringLength(500)]
         public string Observations { get; set; }
+
+        public int CalendarId { get; set; }
     }
 }
