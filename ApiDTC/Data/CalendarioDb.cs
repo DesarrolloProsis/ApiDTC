@@ -156,27 +156,38 @@ namespace ApiDTC.Data
             }
         }
 
-        public Response InsertCalendarReportActivities(string clavePlaza, CalendarActivity calendarActivity)
+        public Response InsertCalendarReportActivities(string clavePlaza, int calendarId, List<CalendarActivity> calendarActivities)
         {
             try
             {
                 using (SqlConnection sql = new SqlConnection(_connectionString))
                 {
-                    using (SqlCommand cmd = new SqlCommand("dbo.spInsertCalendarReportActivities", sql))
+                    foreach (var calendarActivity in calendarActivities)
+                    {
+                        using (SqlCommand cmd = new SqlCommand("dbo.spInsertCalendarReportActivities", sql))
+                        {
+                            cmd.CommandType = CommandType.StoredProcedure;
+                            cmd.Parameters.Add("@ReferenceNumber", SqlDbType.NVarChar).Value = calendarActivity.ReferenceNumber;
+                            cmd.Parameters.Add("@ComponentJob", SqlDbType.Int).Value = calendarActivity.ComponentJob;
+                            cmd.Parameters.Add("@JobStatus", SqlDbType.Int).Value = calendarActivity.JobStatus;
+                            var storedResult = _sqlResult.Post(clavePlaza, cmd, sql, "InsertCalendarReportActivities");
+                            if (storedResult.SqlResult == null)
+                                return new Response { Message = "No se pudo insertar ReportData: " + storedResult.SqlMessage, Result = null };
+                        }
+                    }
+                    using (SqlCommand cmd = new SqlCommand("dbo.spUpdateCalendarStatus", sql))
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
-                        cmd.Parameters.Add("@ReferenceNumber", SqlDbType.NVarChar).Value = calendarActivity.ReferenceNumber;
-                        cmd.Parameters.Add("@ComponentJob", SqlDbType.Int).Value = calendarActivity.ComponentJob;
-                        cmd.Parameters.Add("@JobStatus", SqlDbType.Int).Value = calendarActivity.JobStatus;
-                        var storedResult = _sqlResult.Post(clavePlaza, cmd, sql, "InsertCalendarReportActivities");
+                        cmd.Parameters.Add("@CalendarId", SqlDbType.Int).Value = calendarId;
+                        var storedResult = _sqlResult.Post(clavePlaza, cmd, sql, "UpdateCalendarStatus");
                         if (storedResult.SqlResult == null)
-                            return new Response { Message = "No se pudo insertar ReportData", Result = null };
+                            return new Response { Message = "No se pudo insertar ReportData " + storedResult.SqlMessage, Result = null };
                     }
                 }
                 return new Response
                 {
                     Message = "Ok",
-                    Result = calendarActivity
+                    Result = calendarActivities
                 };
             }
             catch (SqlException ex)
