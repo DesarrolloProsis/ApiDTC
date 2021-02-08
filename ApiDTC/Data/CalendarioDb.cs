@@ -32,7 +32,7 @@ namespace ApiDTC.Data
         #endregion
 
         #region Methods
-        public Response InsertComent(string clavePlaza, ActividadCalendario actividad)
+        public Response InsertComent(string clavePlaza, InsertCommentCalendar actividad)
         {
              try
              {
@@ -92,12 +92,7 @@ namespace ApiDTC.Data
                             cmd.Parameters.Add("@Year", SqlDbType.Int).Value = actividad.Year;
                             cmd.Parameters.Add("@FrequencyId", SqlDbType.Int).Value = actividad.FrequencyId;  
                                                       
-                            cmd.Parameters.Add("@FinalFlag", SqlDbType.Bit).Value = false;
-
-                            cmd.Parameters.Add("@Comment", SqlDbType.NVarChar).Value = ".";
                             
-
-                            cmd.Parameters.Add("@UpdateFlag", SqlDbType.Bit).Value = false;
                             var storedResult = _sqlResult.Post(clavePlaza, cmd, sql, "InsertActivity");
                             if (storedResult.SqlResult == null)
                                 return new Response { Message = "No se pudo insertar Actividad en carril" + actividad.CapufeLaneNums[i] + "con idGare" + actividad.IdGares[i], Result = null };
@@ -228,7 +223,7 @@ namespace ApiDTC.Data
             }
         }
 
-        public Response DeleteCalendar(string clavePlaza, int month, int year, int userId, string squareId)
+        public Response DeleteCalendar(string clavePlaza, int CalendarId)
         {
             try
             {
@@ -237,10 +232,8 @@ namespace ApiDTC.Data
                     using (SqlCommand cmd = new SqlCommand("dbo.spDeleteCalendarData", sql))
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
-                        cmd.Parameters.Add("@UserId", SqlDbType.Int).Value = userId;
-                        cmd.Parameters.Add("@SquareId", SqlDbType.NVarChar).Value = squareId;
-                        cmd.Parameters.Add("@Month", SqlDbType.Int).Value = month;
-                        cmd.Parameters.Add("@Year", SqlDbType.Int).Value = year;
+                        cmd.Parameters.Add("@CalendarId", SqlDbType.Int).Value = CalendarId;
+                        
                         var result = _sqlResult.Post(clavePlaza, cmd, sql, "DeleteCalendar");
                         return new Response
                         {
@@ -395,8 +388,10 @@ namespace ApiDTC.Data
                                 IdGare = str[2].ToString(),
                                 Day = str[3].ToString(),
                                 FrequencyId = str[4].ToString(),
-                                DateStamp = str[5].ToString()
-                            });
+                                DateStamp = str[5].ToString(),
+                                CalendarId = str[6].ToString(),
+                                StatusMaintenance = str[7].ToString()
+                            }) ;
                         }
 
                         return new Response

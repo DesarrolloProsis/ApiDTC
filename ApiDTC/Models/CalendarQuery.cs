@@ -18,5 +18,10 @@ namespace ApiDTC.Models
         public string FrequencyId { get; set; }
 
         public string DateStamp { get; set; }
+
+        public string CalendarId { get; set; }
+
+        public string StatusMaintenance { get; set; }
+
     }
 }

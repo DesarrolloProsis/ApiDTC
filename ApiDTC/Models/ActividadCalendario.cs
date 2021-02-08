@@ -22,12 +22,8 @@ namespace ApiDTC.Models
 
         public int FrequencyId { get; set; }
 
-        public bool FinalFlag { get; set; }
 
-        [StringLength(500)]
-        public string Comment { get; set; }
+
     }
-
- 
-
+    
 }
