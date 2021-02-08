@@ -470,7 +470,7 @@ namespace ApiDTC.Services
                 table.AddCell(celdaVacia);
                 table.AddCell(celdaVacia);
 
-                var celdaObservaciones = new PdfPCell(new Phrase(Convert.ToString(_tableHeader.Rows[0]["Observaciones"]), letraNormalChica)) { BorderWidth = 0, VerticalAlignment = Element.ALIGN_TOP, HorizontalAlignment = Element.ALIGN_JUSTIFIED, Colspan = 8 };
+                var celdaObservaciones = new PdfPCell(new Phrase(Convert.ToString(_tableHeader.Rows[0]["Observation"]), letraNormalChica)) { BorderWidth = 0, VerticalAlignment = Element.ALIGN_TOP, HorizontalAlignment = Element.ALIGN_JUSTIFIED, Colspan = 8 };
 
                 table.AddCell(celdaObservaciones);
 
