@@ -32,15 +32,15 @@
         #region Methods
 
         #region Reporte fotográfico mantenimiento preventivo
-        [HttpGet("Reporte/{clavePlaza}/{referenceNumber}")]
-        public IActionResult GetReporteFotografico(string clavePlaza, string referenceNumber)
+        [HttpGet("Reporte/{clavePlaza}/{referenceNumber}/{ubicacion}")]
+        public IActionResult GetReporteFotografico(string clavePlaza, string referenceNumber, string ubicacion)
         {
             try
             {
                 var dataSet = _db.GetStorePDFReporteFotografico(clavePlaza, referenceNumber);
                 if (dataSet.Tables[0].Rows.Count == 0)
                     return NotFound("GetStoredPdf retorna tabla vacía");
-                ReporteFotograficoPdfCreation pdf = new ReporteFotograficoPdfCreation(clavePlaza, dataSet.Tables[0], new ApiLogger(), 1, referenceNumber);
+                ReporteFotograficoPdfCreation pdf = new ReporteFotograficoPdfCreation(clavePlaza, dataSet.Tables[0], new ApiLogger(), 1, referenceNumber, ubicacion);
                 var pdfResult = pdf.NewPdf();
                 if (pdfResult.Result == null)
                     return NotFound(pdfResult.Message);
@@ -157,7 +157,7 @@
                 var dataSet = _db.GetStorePDF(clavePlaza, referenceNumber);
                 if (dataSet.Tables[0].Rows.Count == 0)
                     return NotFound("GetStoredPdf retorna tabla vacía");
-                ReporteFotograficoPdfCreation pdf = new ReporteFotograficoPdfCreation(clavePlaza, dataSet.Tables[0], new ApiLogger(), 2, referenceNumber);
+                ReporteFotograficoPdfCreation pdf = new ReporteFotograficoPdfCreation(clavePlaza, dataSet.Tables[0], new ApiLogger(), 2, referenceNumber, ubicacion);
                 var pdfResult = pdf.NewPdf();
                 if (pdfResult.Result == null)
                     return NotFound(pdfResult.Message);
@@ -179,7 +179,7 @@
                 var dataSet = _db.GetStorePDF(clavePlaza, referenceNumber);
                 if (dataSet.Tables[0].Rows.Count == 0)
                     return NotFound("GetStoredPdf retorna tabla vacía");
-                ReporteFotograficoPdfCreation pdf = new ReporteFotograficoPdfCreation(clavePlaza, dataSet.Tables[0], new ApiLogger(), 3, referenceNumber);
+                ReporteFotograficoPdfCreation pdf = new ReporteFotograficoPdfCreation(clavePlaza, dataSet.Tables[0], new ApiLogger(), 3, referenceNumber, ubicacion);
                 var pdfResult = pdf.NewPdf();
                 if (pdfResult.Result == null)
                     return NotFound(pdfResult.Message);
