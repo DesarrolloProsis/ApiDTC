@@ -6,6 +6,8 @@
 
         public string Componente { get; set; }
 
+        public string Actividades { get; set; }
+
         public string Frecuencia { get; set; }
 
         public string Ubicacion { get; set; }

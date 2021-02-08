@@ -60,13 +60,14 @@ namespace ApiDTC.Services
 
         #region Constructors
 
-        public ReporteFotograficoPdfCreation(string clavePlaza, DataTable tableHeader, ApiLogger apiLogger, int tipo, string referenceNumber)
+        public ReporteFotograficoPdfCreation(string clavePlaza, DataTable tableHeader, ApiLogger apiLogger, int tipo, string referenceNumber, string ubicacion)
         {
             _clavePlaza = clavePlaza;
             _apiLogger = apiLogger;
             _tableHeader = tableHeader;
             _tipo = tipo;
             _referenceNumber = referenceNumber;
+            _ubicacion = ubicacion;
         }
 
         public ReporteFotograficoPdfCreation(string clavePlaza, ApiLogger apiLogger, int tipo, string ubicacion, string referenceNumber)
@@ -378,7 +379,8 @@ namespace ApiDTC.Services
 
                 //Ubicación
 
-                string valorUbicacion= _tipo == 1 ? Convert.ToString(_tableHeader.Rows[0]["Ubicacion"]) : Convert.ToString(_tableHeader.Rows[0]["Ubicacion"]);
+                //string valorUbicacion= _tipo == 1 ? Convert.ToString(_tableHeader.Rows[0]["Ubicacion"]) : Convert.ToString(_tableHeader.Rows[0]["Ubicacion"]);
+                string valorUbicacion = _ubicacion;
                 var colUbicacion = new PdfPCell(new Phrase("Ubicación: ", letraoNegritaChica)) { Border = 0, HorizontalAlignment = Element.ALIGN_RIGHT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 1 };
 
                 var ubicacion = new PdfPCell(new Phrase(valorUbicacion, letraNormalChica)) { BorderWidthBottom = 1, BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, Padding = 2, Colspan = 2 };
