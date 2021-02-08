@@ -117,7 +117,7 @@
             {
                 var get = _db.GetStoredDtcData(clavePlaza, dtcData);
                 if(get.SqlResult == null)
-                    return BadRequest(get);
+                    return NotFound(get);
                 else
                     return StatusCode(201, get);    
             }
