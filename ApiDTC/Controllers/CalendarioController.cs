@@ -116,12 +116,12 @@
                 return Ok(get);
         }
 
-        [HttpPost("CalendarReportActivities/{clavePlaza}")]
-        public ActionResult<Response> InsertCalendarReportActivities(string clavePlaza, [FromBody] CalendarActivity calendarActivity)
+        [HttpPost("CalendarReportActivities/{clavePlaza}/{calendarId}")]
+        public ActionResult<Response> InsertCalendarReportActivities(string clavePlaza, int CalendarId, [FromBody] List<CalendarActivity> calendarActivities)
         {
             if (ModelState.IsValid)
             {
-                var get = _db.InsertCalendarReportActivities(clavePlaza.ToUpper(), calendarActivity);
+                var get = _db.InsertCalendarReportActivities(clavePlaza.ToUpper(), CalendarId, calendarActivities);
                 if (get.Result == null)
                     return NotFound(get);
                 else
