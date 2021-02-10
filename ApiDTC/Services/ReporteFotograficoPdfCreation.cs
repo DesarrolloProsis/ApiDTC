@@ -436,12 +436,20 @@ namespace ApiDTC.Services
                 CeldasVacias(14, table);
 
                 string observaciones = Convert.ToString(_tableHeader.Rows[0]["Observaciones"]);
-                var celdaObservaciones = new PdfPCell(new Phrase(observaciones.PadRight(300, '0'), letraNormalMedianaSub)) { BorderWidth = 0, VerticalAlignment = Element.ALIGN_BOTTOM, HorizontalAlignment = Element.ALIGN_LEFT, Colspan = 8 };
-                table.AddCell(celdaObservaciones);
+                var celdaObservaciones = SeparacionObservaciones("Lorem Ipsum es simplemente el texto de relleno de las imprentas y archivos de texto. Lorem Ipsum ha sido el texto de relleno estándar de las industrias desde el año 1500, cuando un impresor (N. del T. persona que se dedica a la imprenta) desconocido usó una galería de textos y los mezcló de tal manera");
+                int celdasTotalesObservaciones = 0;
+                foreach (var linea in celdaObservaciones)
+                {
+                    celdasTotalesObservaciones +=1;
+                    var celdaLinea = new PdfPCell(new Phrase(Convert.ToString(linea), letraNormalMediana)) { BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, BorderWidthBottom = 1, FixedHeight = 15, HorizontalAlignment = Element.ALIGN_JUSTIFIED, VerticalAlignment = Element.ALIGN_CENTER, Padding = 3, Colspan = 8 };
+                    table.AddCell(celdaLinea);
+                }
+                for (int i = 0; i < 4 - celdasTotalesObservaciones; i++)
+                {
+                    var celdaLinea = new PdfPCell(new Phrase("", letraNormalMediana)) { BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, BorderWidthBottom = 1, FixedHeight = 15, HorizontalAlignment = Element.ALIGN_JUSTIFIED, VerticalAlignment = Element.ALIGN_CENTER, Padding = 3, Colspan = 8 };
+                    table.AddCell(celdaLinea);
+                }
                 CeldasVacias(16, table);
-                //107 caracteres
-//00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-
                 return table;
             }
             catch (PdfException ex)
@@ -459,6 +467,28 @@ namespace ApiDTC.Services
         private List<string> SeparacionObservaciones(string observaciones)
         {
             List<string> lineaObservaciones = new List<string>();
+            if(observaciones.Length < 125)
+            {
+                lineaObservaciones.Add(observaciones);
+                return lineaObservaciones;
+            }
+
+            var palabras = observaciones.Split(' ');
+            string linea = string.Empty;
+            foreach (var palabra in palabras)
+            {
+                linea += $" {palabra}";
+                if(linea.Length > 115)
+                {
+                    lineaObservaciones.Add(linea);
+                    linea = string.Empty;
+                }
+                if(palabra == palabras[palabras.Length - 1] && linea.Length < 115)
+                {
+                    lineaObservaciones.Add(linea);
+                    linea = string.Empty;
+                }
+            }
             return lineaObservaciones;
         }
         private IElement TablaFirmas()
