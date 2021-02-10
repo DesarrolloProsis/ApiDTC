@@ -192,6 +192,41 @@ namespace ApiDTC.Data
             }
         }
 
+        public Response obtenrDataReportEdit(string clavePlaza, int calendarId)
+        {
+            try
+            {
+                using (SqlConnection sql = new SqlConnection(_connectionString))
+                {
+                    using (SqlCommand cmd = new SqlCommand("dbo.spPreventiveMaintenance ", sql))
+                    {
+                        SqlDataAdapter sqlDataAdapter = new SqlDataAdapter();
+                        DataSet dataSet = new DataSet();
+
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.Add("@CalendarId", SqlDbType.Int).Value = calendarId;
+
+                        sql.Open();
+                        sqlDataAdapter = new SqlDataAdapter(cmd);
+                        sqlDataAdapter.Fill(dataSet);
+
+                        sql.Close();
+
+                        return new Response
+                        {
+                            Message = "Ok",
+                            Result = dataSet
+                        };
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                _apiLogger.WriteLog(clavePlaza, ex, "CalendarioDb: GetActivities", 1);
+                return new Response { Message = $"Error: {ex.Message}", Result = null };
+            }
+        }
+        
         public Response GetActivities(string clavePlaza, int roll, int frequency)
         {
             try
