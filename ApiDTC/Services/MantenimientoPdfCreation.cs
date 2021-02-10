@@ -714,7 +714,7 @@
                 table.AddCell(colSello);
 
                 //Técnico
-                string valorTecnicoProsis = _tipo == 1 ? Convert.ToString(_tableHeader.Rows[0]["TecnicoProsis"]) : Convert.ToString(_tableHeader.Rows[0]["Tecnico"]);
+                string valorTecnicoProsis = _tipo == 1 ? Convert.ToString(_tableHeader.Rows[0]["TecnicoProsis"]) : Convert.ToString(_tableHeader.Rows[0]["TecnicoProsis"]);
                 var colTecnico = new PdfPCell(new Phrase(valorTecnicoProsis, letraNormalChica))
                 {
                     Border = 0,
