@@ -143,6 +143,17 @@
             }
             return BadRequest(ModelState);
         }
+        [HttpGet("CalendarioReportDataEdit/{clavePlaza}/{calendarId}")]
+        public ActionResult<Response> ObtenerReportDataCalendarioEdit(string clavePlaza, int calendarId)
+        {            
+            
+                var get = _db.obtenrDataReportEdit(clavePlaza, calendarId);
+                if (get.Result == null)
+                    return NotFound(get);
+                else
+                    return Ok(get);
+          
+        }
         #endregion
     }
 }
