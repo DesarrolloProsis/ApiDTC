@@ -112,8 +112,7 @@
             var get = _db.GetActivities(clavePlaza, roll, frequency);
             if (get.Result == null)
                 return NotFound(get);
-            else
-                return Ok(get);
+            return Ok(get);
         }
 
         [HttpPost("CalendarReportActivities/{clavePlaza}/{calendarId}")]
@@ -124,8 +123,7 @@
                 var get = _db.InsertCalendarReportActivities(clavePlaza.ToUpper(), CalendarId, calendarActivities);
                 if (get.Result == null)
                     return NotFound(get);
-                else
-                    return Ok(get);
+                return Ok(get);
             }
             return BadRequest(ModelState);
         }
@@ -138,20 +136,18 @@
                 var get = _db.InsertCalendarReportData(clavePlaza, calendarReportData);
                 if (get.Result == null)
                     return NotFound(get);
-                else
-                    return Ok(get);
+                return Ok(get);
             }
             return BadRequest(ModelState);
         }
         [HttpGet("CalendarioReportDataEdit/{clavePlaza}/{calendarId}")]
-        public ActionResult<Response> ObtenerReportDataCalendarioEdit(string clavePlaza, int calendarId)
+        public ActionResult<Response> GetReportDataCalendarioEdit(string clavePlaza, int calendarId)
         {            
             
-                var get = _db.obtenrDataReportEdit(clavePlaza, calendarId);
+                var get = _db.GetDataReportEdit(clavePlaza, calendarId);
                 if (get.Result == null)
                     return NotFound(get);
-                else
-                    return Ok(get);
+                return Ok(get);
           
         }
         #endregion

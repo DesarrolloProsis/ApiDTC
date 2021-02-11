@@ -192,7 +192,7 @@ namespace ApiDTC.Data
             }
         }
 
-        public Response obtenrDataReportEdit(string clavePlaza, int calendarId)
+        public Response GetDataReportEdit(string clavePlaza, int calendarId)
         {
             try
             {
