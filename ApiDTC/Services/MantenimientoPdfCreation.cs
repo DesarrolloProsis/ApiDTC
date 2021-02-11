@@ -645,7 +645,7 @@
                 var colTextoObservaciones = new PdfPCell(new Phrase("Observaciones: ", letraoNegritaMediana)) { Border = 0, HorizontalAlignment = Element.ALIGN_LEFT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 1, Colspan = 2 };
 
                 table.AddCell(colTextoObservaciones);
-                CeldasVacias(7, table);
+                CeldasVacias(6, table);
 
                 var celdaObservaciones = SeparacionObservaciones(Convert.ToString(_tableHeader.Rows[0]["Observaciones"]));
                 int celdasTotalesObservaciones = 0;
