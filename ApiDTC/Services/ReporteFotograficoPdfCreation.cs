@@ -35,7 +35,6 @@ namespace ApiDTC.Services
         public static BaseFont NegritaMediana = BaseFont.CreateFont(BaseFont.HELVETICA, BaseFont.WINANSI, true);
         public static BaseFont NormalMediana = BaseFont.CreateFont(BaseFont.HELVETICA, BaseFont.WINANSI, true);
         public static BaseFont NormalChica = BaseFont.CreateFont(BaseFont.HELVETICA, BaseFont.WINANSI, true);
-        
         #endregion
         #region iText.Font
         public static iTextSharp.text.Font letraoNegritaGrande = new iTextSharp.text.Font(NegritaGrande, 11f, iTextSharp.text.Font.BOLD, BaseColor.Black);
@@ -64,6 +63,7 @@ namespace ApiDTC.Services
         #endregion
         //https://localhost:44358/api/ReporteFotografico/Reporte/JOR/B01
         #region Methods
+        
         public Response NewPdf()
         {
             string directory, filename, path;
