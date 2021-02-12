@@ -151,6 +151,38 @@ namespace ApiDTC.Data
             }
         }
 
+        public Response InsertCalendarDateLog(string clavePlaza, CalendarDateLog calendarDateLog)
+        {
+            try
+            {
+                using (SqlConnection sql = new SqlConnection(_connectionString))
+                {
+                    using (SqlCommand cmd = new SqlCommand("dbo.spCalendarDateLog", sql))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.Add("@ReferenceNumber", SqlDbType.NVarChar).Value = calendarDateLog.ReferenceNumber;
+                        cmd.Parameters.Add("@Comment", SqlDbType.NVarChar).Value = calendarDateLog.Comment;
+                        cmd.Parameters.Add("@CalendarId", SqlDbType.Int).Value = calendarDateLog.CalendarId;
+                        cmd.Parameters.Add("@Date", SqlDbType.Date).Value = calendarDateLog.Date;
+                        cmd.Parameters.Add("@UserId", SqlDbType.Int).Value = calendarDateLog.UserId;
+                        var storedResult = _sqlResult.Post(clavePlaza, cmd, sql, "InsertCalendarDateLog");
+                        if (storedResult.SqlResult == null)
+                            return new Response { Message = "No se pudo insertar ReportData", Result = null };
+                    }
+                }
+                return new Response
+                {
+                    Message = "Ok",
+                    Result = calendarDateLog
+                };
+            }
+            catch (SqlException ex)
+            {
+                _apiLogger.WriteLog(clavePlaza, ex, "CalendarioDb: InsertCalendarReportData", 1);
+                return new Response { Message = $"Error: {ex.Message}", Result = null };
+            }
+        }
+
         public Response GetCalendarInfo(string clavePlaza, int calendarId)
         {
             try
