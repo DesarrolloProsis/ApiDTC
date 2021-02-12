@@ -10,5 +10,7 @@ namespace ApiDTC.Models
         public int ComponentJob { get; set; }
 
         public int JobStatus { get; set; }
+
+        public bool FlagUpdate { get; set; }
     }
 }

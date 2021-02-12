@@ -163,6 +163,7 @@
             }
             return BadRequest(ModelState);
         }
+        
         [HttpGet("CalendarInfo/{clavePlaza}/{calendarId}")]
         public ActionResult<Response> GetCalendarInfo(string clavePlaza, int calendarId)
         {

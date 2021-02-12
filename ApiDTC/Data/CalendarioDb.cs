@@ -232,6 +232,7 @@ namespace ApiDTC.Data
                             cmd.Parameters.Add("@ReferenceNumber", SqlDbType.NVarChar).Value = calendarActivity.ReferenceNumber;
                             cmd.Parameters.Add("@ComponentJob", SqlDbType.Int).Value = calendarActivity.ComponentJob;
                             cmd.Parameters.Add("@JobStatus", SqlDbType.Int).Value = calendarActivity.JobStatus;
+                            cmd.Parameters.Add("@FlagUpdate", SqlDbType.Bit).Value = calendarActivity.FlagUpdate;
                             var storedResult = _sqlResult.Post(clavePlaza, cmd, sql, "InsertCalendarReportActivities");
                             if (storedResult.SqlResult == null)
                                 return new Response { Message = "No se pudo insertar ReportData: " + storedResult.SqlMessage, Result = null };
