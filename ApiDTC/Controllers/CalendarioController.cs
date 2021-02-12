@@ -150,6 +150,15 @@
                 return Ok(get);
           
         }
+
+        [HttpGet("CalendarInfo/{clavePlaza}/{calendarId}")]
+        public ActionResult<Response> GetCalendarInfo(string clavePlaza, int calendarId)
+        {
+            var get = _db.GetCalendarInfo(clavePlaza, calendarId);
+            if (get.Result == null)
+                return NotFound(get);
+            return Ok(get);
+        }
         #endregion
     }
 }

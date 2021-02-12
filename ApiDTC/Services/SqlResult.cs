@@ -141,6 +141,74 @@ namespace ApiDTC.Services
                 };
             }
         }
+
+        public T GetRow<T>(string clavePlaza, DataTable dataTable, string origen)
+        {
+            try
+            {
+                T obj = default;
+                int rows = 0;
+                foreach (DataRow row in dataTable.Rows)
+                {
+                    rows++;
+                    obj = Activator.CreateInstance<T>();
+                    _propertyMapped = obj.GetType().Name;
+                    foreach (PropertyInfo p in obj.GetType().GetProperties())
+                    {
+                        _propertyMapped = p.Name;
+                        if(!DBNull.Value.Equals(row[p.Name]))
+                            p.SetValue(obj, row[p.Name], null);
+                        else
+                            p.SetValue(obj, null, null);
+                    }
+                }
+                _propertyMapped = null;
+                _classMapped = null;
+                return obj;
+            }
+            catch (Exception ex)
+            {
+                _apiLogger.WriteLog(clavePlaza, ex, $"{origen}: GetList<T>", 3);
+                _propertyMapped = null;
+                _classMapped = null;
+                return default(T);
+            }
+        }
+
+        public List<T> GetRows<T>(string clavePlaza, DataTable dataTable, string origen)
+        {
+            try
+            {
+                var list = new List<T>();
+                T obj = default;
+                int rows = 0;
+                foreach (DataRow row in dataTable.Rows)
+                {
+                    rows++;
+                    obj = Activator.CreateInstance<T>();
+                    _propertyMapped = obj.GetType().Name;
+                    foreach (PropertyInfo p in obj.GetType().GetProperties())
+                    {
+                        _propertyMapped = p.Name;
+                        if(!DBNull.Value.Equals(row[p.Name]))
+                            p.SetValue(obj, row[p.Name], null);
+                        else
+                            p.SetValue(obj, null, null);
+                        list.Add(obj);
+                    }
+                }
+                _propertyMapped = null;
+                _classMapped = null;
+                return list;
+            }
+            catch (Exception ex)
+            {
+                _apiLogger.WriteLog(clavePlaza, ex, $"{origen}: GetList<T>", 3);
+                _propertyMapped = null;
+                _classMapped = null;
+                return null;
+            }
+        }
         
         public Response GetList<T>(string clavePlaza, SqlCommand command, SqlConnection con, string origen)
         {

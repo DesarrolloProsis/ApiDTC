@@ -151,6 +151,41 @@ namespace ApiDTC.Data
             }
         }
 
+        public Response GetCalendarInfo(string clavePlaza, int calendarId)
+        {
+            try
+            {
+                using (SqlConnection sql = new SqlConnection(_connectionString))
+                {
+                    using (SqlCommand cmd = new SqlCommand("spPreventiveMaintenance", sql))
+                    {
+                        SqlDataAdapter sqlDataAdapter = new SqlDataAdapter();
+                        DataSet dataSet = new DataSet();
+
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.Add("@CalendarId", SqlDbType.Int).Value = calendarId; 
+
+                        sql.Open();
+                        sqlDataAdapter = new SqlDataAdapter(cmd);
+                        sqlDataAdapter.Fill(dataSet);
+                        sql.Close();
+
+                        if(dataSet.Tables[0].Rows.Count == 0 || dataSet.Tables[1].Rows.Count == 0 )
+                            return new Response { Result = null, Message = "Sin resultado"};
+                        CalendarInfo calendarInfo = new CalendarInfo();
+                        calendarInfo.CalendarHeader = _sqlResult.GetRow<CalendarHeader>(clavePlaza, dataSet.Tables[0], "CalendarInfo: CalendarHeader");
+                        calendarInfo.ActivitiesDescription = _sqlResult.GetRows<ActivitiesDescription>(clavePlaza, dataSet.Tables[1], "CalendarInfo: ActivitiesDescription");
+                        return new Response { Result = calendarInfo, Message = "OK"};                        
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                _apiLogger.WriteLog(clavePlaza, ex, "CalendarioDb: GetStorePdf", 1);
+                return null;
+            }
+        }
+
         public Response InsertCalendarReportActivities(string clavePlaza, int calendarId, List<CalendarActivity> calendarActivities)
         {
             try
