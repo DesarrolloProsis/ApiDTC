@@ -151,6 +151,73 @@ namespace ApiDTC.Data
             }
         }
 
+        public Response InsertCalendarDateLog(string clavePlaza, CalendarDateLog calendarDateLog)
+        {
+            try
+            {
+                using (SqlConnection sql = new SqlConnection(_connectionString))
+                {
+                    using (SqlCommand cmd = new SqlCommand("dbo.spCalendarDateLog", sql))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.Add("@ReferenceNumber", SqlDbType.NVarChar).Value = calendarDateLog.ReferenceNumber;
+                        cmd.Parameters.Add("@Comment", SqlDbType.NVarChar).Value = calendarDateLog.Comment;
+                        cmd.Parameters.Add("@CalendarId", SqlDbType.Int).Value = calendarDateLog.CalendarId;
+                        cmd.Parameters.Add("@Date", SqlDbType.Date).Value = calendarDateLog.Date;
+                        cmd.Parameters.Add("@UserId", SqlDbType.Int).Value = calendarDateLog.UserId;
+                        var storedResult = _sqlResult.Post(clavePlaza, cmd, sql, "InsertCalendarDateLog");
+                        if (storedResult.SqlResult == null)
+                            return new Response { Message = "No se pudo insertar ReportData", Result = null };
+                    }
+                }
+                return new Response
+                {
+                    Message = "Ok",
+                    Result = calendarDateLog
+                };
+            }
+            catch (SqlException ex)
+            {
+                _apiLogger.WriteLog(clavePlaza, ex, "CalendarioDb: InsertCalendarReportData", 1);
+                return new Response { Message = $"Error: {ex.Message}", Result = null };
+            }
+        }
+
+        public Response GetCalendarInfo(string clavePlaza, int calendarId)
+        {
+            try
+            {
+                using (SqlConnection sql = new SqlConnection(_connectionString))
+                {
+                    using (SqlCommand cmd = new SqlCommand("spPreventiveMaintenance", sql))
+                    {
+                        SqlDataAdapter sqlDataAdapter = new SqlDataAdapter();
+                        DataSet dataSet = new DataSet();
+
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.Add("@CalendarId", SqlDbType.Int).Value = calendarId; 
+
+                        sql.Open();
+                        sqlDataAdapter = new SqlDataAdapter(cmd);
+                        sqlDataAdapter.Fill(dataSet);
+                        sql.Close();
+
+                        if(dataSet.Tables[0].Rows.Count == 0 || dataSet.Tables[1].Rows.Count == 0 )
+                            return new Response { Result = null, Message = "Sin resultado"};
+                        CalendarInfo calendarInfo = new CalendarInfo();
+                        calendarInfo.CalendarHeader = _sqlResult.GetRow<CalendarHeader>(clavePlaza, dataSet.Tables[0], "CalendarInfo: CalendarHeader");
+                        calendarInfo.ActivitiesDescription = _sqlResult.GetRows<ActivitiesDescription>(clavePlaza, dataSet.Tables[1], "CalendarInfo: ActivitiesDescription");
+                        return new Response { Result = calendarInfo, Message = "OK"};                        
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                _apiLogger.WriteLog(clavePlaza, ex, "CalendarioDb: GetStorePdf", 1);
+                return null;
+            }
+        }
+
         public Response InsertCalendarReportActivities(string clavePlaza, int calendarId, List<CalendarActivity> calendarActivities)
         {
             try
@@ -165,6 +232,7 @@ namespace ApiDTC.Data
                             cmd.Parameters.Add("@ReferenceNumber", SqlDbType.NVarChar).Value = calendarActivity.ReferenceNumber;
                             cmd.Parameters.Add("@ComponentJob", SqlDbType.Int).Value = calendarActivity.ComponentJob;
                             cmd.Parameters.Add("@JobStatus", SqlDbType.Int).Value = calendarActivity.JobStatus;
+                            cmd.Parameters.Add("@FlagUpdate", SqlDbType.Bit).Value = calendarActivity.FlagUpdate;
                             var storedResult = _sqlResult.Post(clavePlaza, cmd, sql, "InsertCalendarReportActivities");
                             if (storedResult.SqlResult == null)
                                 return new Response { Message = "No se pudo insertar ReportData: " + storedResult.SqlMessage, Result = null };

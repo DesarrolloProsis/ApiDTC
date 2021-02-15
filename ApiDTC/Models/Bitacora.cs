@@ -3,7 +3,7 @@ namespace ApiDTC.Models
     using System;
     public class Bitacora
     {
-        public DateTime Fecha { get; set; }
+        public string Fecha { get; set; }
 
         public int Month { get; set; }
 
@@ -15,7 +15,7 @@ namespace ApiDTC.Models
 
         public int DelegationId { get; set; }
 
-        public int PlazaId { get; set; }
+        public string PlazaId { get; set; }
 
         public string Nombre { get; set; }
 

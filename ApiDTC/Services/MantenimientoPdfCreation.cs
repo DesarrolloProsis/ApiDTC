@@ -608,7 +608,7 @@
                             });
                             table.AddCell(new PdfPCell
                             {
-                                Phrase = new Phrase("OK", letraNormalChica),
+                                Phrase = new Phrase(componente.Estatus, letraNormalChica),
                                 BorderWidth = 1,
                                 HorizontalAlignment = Element.ALIGN_CENTER,
                                 VerticalAlignment = Element.ALIGN_MIDDLE,

@@ -150,6 +150,28 @@
                 return Ok(get);
           
         }
+
+        [HttpPost("CalendarDateLog/{clavePlaza}")]
+        public ActionResult<Response> InsertCalendarDateLog(string clavePlaza, [FromBody] CalendarDateLog calendarDateLog)
+        {
+            if(ModelState.IsValid)
+            {
+                var get = _db.InsertCalendarDateLog(clavePlaza, calendarDateLog);
+                if(get.Result == null)
+                    return NotFound(get);
+                return Ok(get);
+            }
+            return BadRequest(ModelState);
+        }
+        
+        [HttpGet("CalendarInfo/{clavePlaza}/{calendarId}")]
+        public ActionResult<Response> GetCalendarInfo(string clavePlaza, int calendarId)
+        {
+            var get = _db.GetCalendarInfo(clavePlaza, calendarId);
+            if (get.Result == null)
+                return NotFound(get);
+            return Ok(get);
+        }
         #endregion
     }
 }
