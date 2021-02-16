@@ -477,30 +477,15 @@ namespace ApiDTC.Data
                         cmd.Parameters.Add("@SuqareId", SqlDbType.NVarChar).Value = actividad.SquareId == "1Bi" ? actividad.SquareId + "s" : actividad.SquareId;
                         cmd.Parameters.Add("@Month", SqlDbType.Int).Value = actividad.Month;
                         cmd.Parameters.Add("@Year", SqlDbType.Int).Value = actividad.Year;
-                        sql.Open();
+                        
+                        var storedResult = _sqlResult.GetList<CalendarQuery>(clavePlaza, cmd, sql, "GetActivity");
 
-                        List<CalendarQuery> lista = new List<CalendarQuery>();
-                        var str = cmd.ExecuteReader();
-
-                        while (str.Read())
-                        {
-                            lista.Add(new CalendarQuery
-                            {
-                                Lane = str[0].ToString(),
-                                CapufeLaneNum = str[1].ToString(),
-                                IdGare = str[2].ToString(),
-                                Day = str[3].ToString(),
-                                FrequencyId = str[4].ToString(),
-                                DateStamp = str[5].ToString(),
-                                CalendarId = str[6].ToString(),
-                                StatusMaintenance = str[7].ToString()
-                            }) ;
-                        }
-
+                        if(storedResult.Result == null)
+                            return new Response { Result = null, Message = storedResult.Message };
                         return new Response
                         {
                             Message = "Ok",
-                            Result = lista
+                            Result = storedResult.Result
                         };
                  
                     }
