@@ -169,8 +169,11 @@ namespace ApiDTC.Services
                         doc.Add(TablaFotografias(fotosCorte, 6));
                     }
 
-                    doc.Add(TablaObservaciones());
-                    doc.Add(TablaFirmas());
+                    PdfContentByte cb = writer.DirectContent;
+                    PdfPTable tablaObservaciones = TablaObservaciones();
+                    tablaObservaciones.WriteSelectedRows(0, -1, 30, 275, cb);
+                    PdfPTable tablaFirmas = TablaFirmas();
+                    tablaFirmas.WriteSelectedRows(0, -1, 30, 200, cb);
                     doc.Close();
                     writer.Close();
                     byte[] content = myMemoryStream.ToArray();
@@ -414,7 +417,7 @@ namespace ApiDTC.Services
             }
         }
 
-        private IElement TablaObservaciones()
+        private PdfPTable TablaObservaciones()
         {
             try
             {
@@ -483,7 +486,7 @@ namespace ApiDTC.Services
             return lineaObservaciones;
         }
         
-        private IElement TablaFirmas()
+        private PdfPTable TablaFirmas()
         {
             try
             {
