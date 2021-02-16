@@ -11,7 +11,6 @@
     public class MantenimientoPdfCreation
     {
         #region Attributes
-
         private readonly DataTable _tableHeader;
 
         private readonly DataTable _tableActivities;
@@ -507,10 +506,7 @@
                 while(pivotes.Count != 0)
                 {
                     PdfPTable table = new PdfPTable(new float[] { 19.17f, 19.17f, 26.67f, 8.67f, 9.67f, 8.67f }) { WidthPercentage = 100f };
-                    var celdaVacia = new PdfPCell() { Border = 0 };
-                    //ESPACIO
-                    for (int i = 0; i < 12; i++)
-                        table.AddCell(celdaVacia);
+                    CeldasVacias(12, table);
 
                     table.AddCell(new PdfPCell(new Phrase("EQUIPO", letraoNegritaChica))
                     {
@@ -619,7 +615,7 @@
                         {
                             pivotes.Remove(equipo);
                             doc.Add(table);
-                            doc.NewPage();
+                            //doc.NewPage();
                         }
                     }
                 }
@@ -656,7 +652,7 @@
                     table.AddCell(celdaLinea);
                 }
                 
-                for (int i = 0; i < 4 - celdasTotalesObservaciones; i++)
+                for (int i = 0; i < 3 - celdasTotalesObservaciones; i++)
                 {
                     var celdaLinea = new PdfPCell(new Phrase("", letraNormalMediana)) { BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, BorderWidthBottom = 1, FixedHeight = 15, HorizontalAlignment = Element.ALIGN_JUSTIFIED, VerticalAlignment = Element.ALIGN_CENTER, Padding = 3, Colspan = 8 };
                     table.AddCell(celdaLinea);
