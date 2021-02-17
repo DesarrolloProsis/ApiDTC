@@ -67,8 +67,17 @@
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.Add("@user", SqlDbType.Int).Value = idTec;
-
-                        return _sqlResult.GetList<Login>("USR", cmd, sql, "GetHeadTec");
+                        var login = _sqlResult.GetRow<Login>("USR", cmd, sql, "GetHeadTec");
+                        var token = BuildToken(login.UserId);
+                        var loginToken = new LoginToken{
+                            Login = login,
+                            UserToken = token
+                        };
+                        var result = new Response{
+                            Message = "Ok",
+                            Result = loginToken
+                        };
+                        return result;
                     }
                 }
             }
@@ -97,7 +106,7 @@
                             Login = login,
                             UserToken = token
                         };
-                        return _sqlResult.GetList<Login>("USR", cmd, sql, "GetStoreLogin");
+                        return new Response { Result = loginToken, Message = "Ok" };
                     }
                 }
             }
@@ -121,8 +130,13 @@
                         cmd.Parameters.Add("@NombreUsuario", SqlDbType.NVarChar).Value = nombreUsuario;
                         cmd.Parameters.Add("@Contraseña", SqlDbType.NVarChar).Value = passWord;
                         cmd.Parameters.Add("@Flag", SqlDbType.Bit).Value = flag;
-
-                        return _sqlResult.GetList<Cookie>("USR", cmd, sql, "GetStoreLoginCookie");
+                        var cookie = _sqlResult.GetRow<Cookie>("USR", cmd, sql, "GetStoreLoginCookie");
+                        var token = BuildToken(cookie.UserId);
+                        var cookieToken  = new CookieToken{
+                            Cookie = cookie,
+                            UserToken = token
+                        };
+                        return new Response { Result = cookieToken, Message = "Ok" }; 
                     }
                 }
             }

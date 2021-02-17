@@ -7,11 +7,14 @@
     using System.Threading.Tasks;
     using ApiDTC.Models;
     using ApiDTC.Services;
+    using Microsoft.AspNetCore.Authentication.JwtBearer;
+    using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
 
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class FichaTecnicaAtencionController : ControllerBase
     {
         #region Attributes

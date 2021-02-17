@@ -42,7 +42,7 @@ namespace ApiDTC.Controllers
             else
                 return Ok(get);
         }
-
+        
         // GET: api/Login
         [HttpGet("ValidUser/{userName}/{passWord}/{flag}")]
         public ActionResult<Response> ValidUser(string userName, string passWord, bool flag)

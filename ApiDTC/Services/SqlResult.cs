@@ -124,6 +124,7 @@ namespace ApiDTC.Services
                         Result = null
                     };
                 }
+                con.Close();
                 return new Response
                 {
                     Message = "Result found",
@@ -145,10 +146,15 @@ namespace ApiDTC.Services
         {
             try
             {
+                con.Open();
                 T obj = default;
+                if (con.State != ConnectionState.Open)
+                {
+                    return default(T);
+                }
                 int rows = 0;
                 var reader = command.ExecuteReader();
-                foreach (DataRow row in reader)
+                if(reader.Read())
                 {
                     rows++;
                     obj = Activator.CreateInstance<T>();
@@ -156,12 +162,13 @@ namespace ApiDTC.Services
                     foreach (PropertyInfo p in obj.GetType().GetProperties())
                     {
                         _propertyMapped = p.Name;
-                        if(!DBNull.Value.Equals(row[p.Name]))
-                            p.SetValue(obj, row[p.Name], null);
+                        if(!DBNull.Value.Equals(reader[p.Name]))
+                            p.SetValue(obj, reader[p.Name], null);
                         else
                             p.SetValue(obj, null, null);
                     }
                 }
+                con.Close();
                 _propertyMapped = null;
                 _classMapped = null;
                 return obj;
@@ -215,6 +222,7 @@ namespace ApiDTC.Services
                 var list = new List<T>();
                 T obj = default;
                 int rows = 0;
+
                 foreach (DataRow row in dataTable.Rows)
                 {
                     rows++;
