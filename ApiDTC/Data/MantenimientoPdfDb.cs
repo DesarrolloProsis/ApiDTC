@@ -34,7 +34,7 @@
             {
                 using (SqlConnection sql = new SqlConnection(_connectionString))
                 {
-                    using (SqlCommand cmd = new SqlCommand("spCalendarReportToDTC", sql))
+                    using (SqlCommand cmd = new SqlCommand("spCalendarReportToPDF", sql))
                     {
                         SqlDataAdapter sqlDataAdapter = new SqlDataAdapter();
                         DataSet dataSet = new DataSet();
