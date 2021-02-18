@@ -26,10 +26,10 @@ namespace ApiDTC.Controllers
         #endregion
 
         #region Methods
-        [HttpGet("{userName}/{passWord}/{flag}")]
-        public ActionResult<Response> GetLogin(string userName, string passWord, bool flag)
+        [HttpGet]
+        public ActionResult<Response> GetLogin([FromBody] LoginUserInfo loginUserInfo)
         {        
-            var get = _db.GetStoreLogin(userName, passWord, flag);
+            var get = _db.GetStoreLogin(loginUserInfo);
             if(get.Result == null)
                 return NotFound(get);
             else
@@ -37,10 +37,10 @@ namespace ApiDTC.Controllers
         }
 
         // GET: api/Login
-        [HttpGet("ValidUser/{userName}/{passWord}/{flag}")]
-        public ActionResult<Response> ValidUser(string userName, string passWord, bool flag)
+        [HttpGet("ValidUser")]
+        public ActionResult<Response> ValidUser([FromBody] LoginUserInfo loginUserInfo)
         {
-            var get = _db.GetStoreLoginCookie(userName, passWord, flag);
+            var get = _db.GetStoreLoginCookie(loginUserInfo);
             if(get.Result == null)
                 return NotFound(get);
             else

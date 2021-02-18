@@ -156,8 +156,6 @@
                     writer.Open();
 
                     doc.Open();
-                    
-
                     doc.Add(TablaEncabezado());
                     doc.Add(new Phrase(" "));
                     doc.Add(TablaInformacion());
@@ -643,7 +641,6 @@
                     var celdaLinea = new PdfPCell(new Phrase(Convert.ToString(linea), letraNormalMediana)) { BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, BorderWidthBottom = 1, FixedHeight = 15, HorizontalAlignment = Element.ALIGN_JUSTIFIED, VerticalAlignment = Element.ALIGN_CENTER, Padding = 3, Colspan = 8 };
                     table.AddCell(celdaLinea);
                 }
-                
                 for (int i = 0; i < 3 - celdasTotalesObservaciones; i++)
                 {
                     var celdaLinea = new PdfPCell(new Phrase("", letraNormalMediana)) { BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, BorderWidthBottom = 1, FixedHeight = 15, HorizontalAlignment = Element.ALIGN_JUSTIFIED, VerticalAlignment = Element.ALIGN_CENTER, Padding = 3, Colspan = 8 };

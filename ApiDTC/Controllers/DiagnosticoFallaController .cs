@@ -23,13 +23,14 @@
         }
         #endregion
 
+        //https://localhost:44358/api/DiagnosticoFalla/TLA/B01/TLA-DF-001-02
         #region Methods
-        [HttpGet("{clavePlaza}/{ubicacion}")]
-        public IActionResult GetDiagnosticoFalla(string clavePlaza, string ubicacion)
+        [HttpGet("{clavePlaza}/{ubicacion}/{noReporte}")]
+        public IActionResult GetDiagnosticoFalla(string clavePlaza, string ubicacion, string noReporte)
         {
             try
             {
-                DiagnosticoFallaPdfCreation pdf = new DiagnosticoFallaPdfCreation(clavePlaza, new ApiLogger(), ubicacion);
+                DiagnosticoFallaPdfCreation pdf = new DiagnosticoFallaPdfCreation(clavePlaza, new ApiLogger(), ubicacion, noReporte);
                 var pdfResult = pdf.NewPdf();
                 if (pdfResult.Result == null)
                     return NotFound(pdfResult.Message);
@@ -43,6 +44,7 @@
             
         }
 
+        #region DiagnosticoImages
         [HttpPost("Images/{clavePlaza}/{reportNumber}")]
         public ActionResult<Response> InsertImageNuevo(string clavePlaza, [FromForm(Name = "image")] IFormFile image, string reportNumber)
         {
@@ -55,6 +57,8 @@
                 {
                     if (!Directory.Exists(dir))
                         Directory.CreateDirectory(dir);
+                    if(Directory.GetFiles(dir).Length >= 4)
+                        return NotFound("Ya existen cuatro imágenes");
                     numberOfImages = Directory.GetFiles(dir).Length + 1;
                     filename = $"{reportNumber}_DiagnosticoFallaImgs_{numberOfImages}{image.FileName.Substring(image.FileName.LastIndexOf('.'))}";
                     while (System.IO.File.Exists(Path.Combine(dir, filename)))
@@ -78,7 +82,7 @@
         }
 
         [HttpGet("Images/{clavePlaza}/{reportNumber}/{fileName}")]
-        public ActionResult<DtcImage> DownloadEquipoNuevoImg(string clavePlaza, string reportNumber, string fileName)
+        public ActionResult<DtcImage> DownloadDiagnosticoImg(string clavePlaza, string reportNumber, string fileName)
         {
             try
             {
@@ -91,13 +95,13 @@
             }
             catch (IOException ex)
             {
-                _apiLogger.WriteLog(clavePlaza, ex, "DiagnosticoFallaController: DownloadEquipoNuevoImg", 2);
+                _apiLogger.WriteLog(clavePlaza, ex, "DiagnosticoFallaController: DownloadDiagnosticoImg", 2);
                 return NotFound(ex.ToString());
             }
         }
 
         [HttpGet("Images/GetPaths/{clavePlaza}/{reportNumber}")]
-        public ActionResult<List<string>> GetImagesEquipoNuevo(string clavePlaza, string reportNumber)
+        public ActionResult<List<string>> GetImagesDiagnostico(string clavePlaza, string reportNumber)
         {
             try
             {
@@ -111,13 +115,13 @@
             }
             catch (IOException ex)
             {
-                _apiLogger.WriteLog(clavePlaza, ex, "DiagnosticoFallaController: GetImagesEquipoNuevo", 2);
+                _apiLogger.WriteLog(clavePlaza, ex, "DiagnosticoFallaController: GetImagesDiagnostico", 2);
                 return NotFound(ex.ToString());
             }
         }
 
         [HttpGet("Images/DeleteImg/{clavePlaza}/{reportNumber}/{fileName}")]
-        public ActionResult<string> DeleteEquipoNuevoImg(string clavePlaza, string reportNumber, string fileName)
+        public ActionResult<string> DeleteDiagnosticoImg(string clavePlaza, string reportNumber, string fileName)
         {
             try
             {
@@ -131,10 +135,11 @@
             }
             catch (IOException ex)
             {
-                _apiLogger.WriteLog(clavePlaza, ex, "DiagnosticoFallaController: DeleteEquipoNuevoImg", 2);
+                _apiLogger.WriteLog(clavePlaza, ex, "DiagnosticoFallaController: DeleteDiagnosticoImg", 2);
                 return NotFound(ex.ToString());
             }
         }
+        #endregion
         #endregion
     }
 }

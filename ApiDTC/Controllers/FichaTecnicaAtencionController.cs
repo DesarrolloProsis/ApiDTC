@@ -26,12 +26,12 @@
         #endregion
 
         #region Methods
-        [HttpGet("{clavePlaza}/{ubicacion}")]
-        public IActionResult GetFichaTecnicaAtencion(string clavePlaza, string ubicacion)
+        [HttpGet("{clavePlaza}/{ubicacion}/{referenceNumber}")]
+        public IActionResult GetFichaTecnicaAtencion(string clavePlaza, string ubicacion, string referenceNumber)
         {
             try
             {
-                FichaTecnicaAtencionPdfCreation pdf = new FichaTecnicaAtencionPdfCreation(clavePlaza, new ApiLogger(), ubicacion, string.Empty);
+                FichaTecnicaAtencionPdfCreation pdf = new FichaTecnicaAtencionPdfCreation(clavePlaza, new ApiLogger(), ubicacion, referenceNumber);
                 var pdfResult = pdf.NewPdf();
                 if (pdfResult.Result == null)
                     return NotFound(pdfResult.Message);
@@ -45,6 +45,7 @@
             
         }
 
+        #region FichaTecnicaImages
         [HttpPost("Images/{clavePlaza}/{reportNumber}")]
         public ActionResult<Response> InsertImageNuevo(string clavePlaza, [FromForm(Name = "image")] IFormFile image, string reportNumber)
         {
@@ -57,6 +58,8 @@
                 {
                     if (!Directory.Exists(dir))
                         Directory.CreateDirectory(dir);
+                    if(Directory.GetFiles(dir).Length >= 4)
+                        return NotFound("Ya existen cuatro imágenes");
                     numberOfImages = Directory.GetFiles(dir).Length + 1;
                     filename = $"{reportNumber}_FichaTecnicaAtencionImgs_{numberOfImages}{image.FileName.Substring(image.FileName.LastIndexOf('.'))}";
                     while (System.IO.File.Exists(Path.Combine(dir, filename)))
@@ -80,7 +83,7 @@
         }
 
         [HttpGet("Images/{clavePlaza}/{reportNumber}/{fileName}")]
-        public ActionResult<DtcImage> DownloadEquipoNuevoImg(string clavePlaza, string reportNumber, string fileName)
+        public ActionResult<DtcImage> DownloadFichaTecnicaImg(string clavePlaza, string reportNumber, string fileName)
         {
             try
             {
@@ -93,13 +96,13 @@
             }
             catch (IOException ex)
             {
-                _apiLogger.WriteLog(clavePlaza, ex, "FichaTecnicaAtencionController: DownloadEquipoNuevoImg", 2);
+                _apiLogger.WriteLog(clavePlaza, ex, "FichaTecnicaAtencionController: DownloadFichaTecnicaImg", 2);
                 return NotFound(ex.ToString());
             }
         }
 
         [HttpGet("Images/GetPaths/{clavePlaza}/{reportNumber}")]
-        public ActionResult<List<string>> GetImagesEquipoNuevo(string clavePlaza, string reportNumber)
+        public ActionResult<List<string>> GetImagesFichaTecnica(string clavePlaza, string reportNumber)
         {
             try
             {
@@ -113,13 +116,13 @@
             }
             catch (IOException ex)
             {
-                _apiLogger.WriteLog(clavePlaza, ex, "FichaTecnicaAtencionController: GetImagesEquipoNuevo", 2);
+                _apiLogger.WriteLog(clavePlaza, ex, "FichaTecnicaAtencionController: GetImagesFichaTecnica", 2);
                 return NotFound(ex.ToString());
             }
         }
 
         [HttpGet("Images/DeleteImg/{clavePlaza}/{reportNumber}/{fileName}")]
-        public ActionResult<string> DeleteEquipoNuevoImg(string clavePlaza, string reportNumber, string fileName)
+        public ActionResult<string> DeleteFichaTecnicaImg(string clavePlaza, string reportNumber, string fileName)
         {
             try
             {
@@ -133,10 +136,11 @@
             }
             catch (IOException ex)
             {
-                _apiLogger.WriteLog(clavePlaza, ex, "FichaTecnicaAtencionController: DeleteEquipoNuevoImg", 2);
+                _apiLogger.WriteLog(clavePlaza, ex, "FichaTecnicaAtencionController: DeleteFichaTecnicaImg", 2);
                 return NotFound(ex.ToString());
             }
         }
+        #endregion
         #endregion
     }
 }

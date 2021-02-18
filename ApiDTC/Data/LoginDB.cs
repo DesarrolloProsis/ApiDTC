@@ -71,7 +71,7 @@
             }
         }
 
-        public Response GetStoreLogin(string nombreUsuario, string passWord, bool flag)
+        public Response GetStoreLogin(LoginUserInfo loginUserInfo)
         {
             try
             {
@@ -80,9 +80,9 @@
                     using (SqlCommand cmd = new SqlCommand("dbo.sp_Login", sql))
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
-                        cmd.Parameters.Add("@NombreUsuario", SqlDbType.NVarChar).Value = nombreUsuario;
-                        cmd.Parameters.Add("@Contraseña", SqlDbType.NVarChar).Value = passWord;
-                        cmd.Parameters.Add("@Flag", SqlDbType.Bit).Value = flag;
+                        cmd.Parameters.Add("@NombreUsuario", SqlDbType.NVarChar).Value = loginUserInfo.Username;
+                        cmd.Parameters.Add("@Contraseña", SqlDbType.NVarChar).Value = loginUserInfo.Password;
+                        cmd.Parameters.Add("@Flag", SqlDbType.Bit).Value = loginUserInfo.Flag;
 
                         return _sqlResult.GetList<Login>("USR", cmd, sql, "GetStoreLogin");
                     }
@@ -96,7 +96,7 @@
             
         }
 
-        public Response GetStoreLoginCookie(string nombreUsuario, string passWord, bool flag)
+        public Response GetStoreLoginCookie(LoginUserInfo loginUserInfo)
         {
             try
             {
@@ -105,9 +105,9 @@
                     using (SqlCommand cmd = new SqlCommand("dbo.sp_Login", sql))
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
-                        cmd.Parameters.Add("@NombreUsuario", SqlDbType.NVarChar).Value = nombreUsuario;
-                        cmd.Parameters.Add("@Contraseña", SqlDbType.NVarChar).Value = passWord;
-                        cmd.Parameters.Add("@Flag", SqlDbType.Bit).Value = flag;
+                        cmd.Parameters.Add("@NombreUsuario", SqlDbType.NVarChar).Value = loginUserInfo.Username;
+                        cmd.Parameters.Add("@Contraseña", SqlDbType.NVarChar).Value = loginUserInfo.Password;
+                        cmd.Parameters.Add("@Flag", SqlDbType.Bit).Value = loginUserInfo.Password;
 
                         return _sqlResult.GetList<Cookie>("USR", cmd, sql, "GetStoreLoginCookie");
                     }
