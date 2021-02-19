@@ -18,6 +18,8 @@
 
         #region Attributes
         private readonly CalendarioDb _db;
+
+        private readonly ApiLogger _apiLogger;
         #endregion
 
         #region Constructor
@@ -25,6 +27,7 @@
         public CalendarioController(CalendarioDb db)
         {
             this._db = db ?? throw new ArgumentNullException(nameof(db));
+            _apiLogger = new ApiLogger();
         }
         #endregion
 
@@ -39,6 +42,38 @@
             var pdfResult = pdf.NewPdf();
             return File(new FileStream(pdfResult.Result.ToString(), FileMode.Open, FileAccess.Read), "application/pdf");
         }
+
+        [HttpPost("CalendarioEscaneado/{clavePlaza}/{month}/{year}")]
+        public ActionResult<Response> CalendarioEscaneado([FromForm(Name = "file")] IFormFile file, string clavePlaza, int month, int year)
+        {
+            if(file.Length > 0 || file != null)
+            {
+                if(file.FileName.EndsWith(".pdf") || file.FileName.EndsWith(".PDF"))
+                {
+                    string path = $@"C:\Bitacora\{clavePlaza.ToUpper()}\CalendariosMantenimiento\{year}\{month}\";
+                    string filename = $"{clavePlaza.ToUpper()}{year}-{month.ToString("00")}C-Escaneado.pdf";
+                    try
+                    {
+                        if (!Directory.Exists(path))
+                            Directory.CreateDirectory(path);
+                        if (System.IO.File.Exists(Path.Combine(path, filename)))
+                            System.IO.File.Delete(Path.Combine(path, filename));
+                        var fs = new FileStream(Path.Combine(path, filename), FileMode.Create);
+                        file.CopyTo(fs);
+                        fs.Close();
+                        return Ok(path);
+                    }
+                    catch (IOException ex)
+                    {
+                        _apiLogger.WriteLog(clavePlaza, ex, "CalendarioController: CalendarioEscaneado", 2);
+                        return NotFound(ex.ToString());
+                    }
+                }
+                return NotFound("Ingresa un archivo pdf");
+            }
+            return NotFound();
+        }
+
         //[HttpDelete("DeleteCalendar/{month}/{year}/{userId}/{squareId}")]
         [HttpDelete("DeleteCalendar/{clavePlaza}/{CalendarId}")]
         public ActionResult<Response> DeleteCalendar(string clavePlaza, int CalendarId)

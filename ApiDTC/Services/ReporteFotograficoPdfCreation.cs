@@ -147,7 +147,6 @@ namespace ApiDTC.Services
                     
 
                     doc.Add(TablaEncabezado());
-                    doc.Add(new Phrase(" "));
                     doc.Add(TablaInformacion());
                     string directoryImgs;
                     if (_tipo == 1)
@@ -157,16 +156,20 @@ namespace ApiDTC.Services
                     else
                         directoryImgs = Path.Combine(directory, "EquipoDañadoImgs");
                     var fotos = Directory.GetFiles(directoryImgs);
-                    if (fotos.Length <= 4 && fotos.Length > 0)
-                        doc.Add(TablaFotografias(fotos, 4));
-                    else if(fotos.Length > 4 && fotos.Length <= 6)
-                        doc.Add(TablaFotografias(fotos, 6));
+                    if(fotos.Length <= 8)
+                        doc.Add(TablaFotografias(fotos));
                     else
                     {
-                        string[] fotosCorte = new string[6];
-                        for (int i = 0; i < 6; i++)
-                            fotosCorte[i] = fotos[i];
-                        doc.Add(TablaFotografias(fotosCorte, 6));
+                        string[] primerasFotos = new string[8];
+                        string[] restoFotos = new string[fotos.Length - 8];
+                        int resto = fotos.Length - 8;
+                        for (int i = 0; i < 8; i++)
+                            primerasFotos[i] = fotos[i];
+                        for (int i = 0; i < resto; i++)
+                            restoFotos[i] = fotos[i + 8];
+                        doc.Add(TablaFotografias(primerasFotos));
+                        doc.NewPage();
+                        doc.Add(TablaFotografias(restoFotos));
                     }
 
                     PdfContentByte cb = writer.DirectContent;
@@ -257,22 +260,35 @@ namespace ApiDTC.Services
             
         }
 
-        private IElement TablaFotografias(string[] rutas, int columnas)
+        private IElement TablaFotografias(string[] rutas)
         {
 
             try
             {
+                int columnas = 0;
                 PdfPTable table;
-                if(columnas == 4)
+                if(rutas.Length <= 4)
+                {
                     table = new PdfPTable(new float[] {50f, 50f }) { WidthPercentage = 100f };
-                else
-                    table = new PdfPTable(new float[] { 33.33f, 33.33f, 33.33f }) { WidthPercentage = 80f };
+                    columnas = 4;
+                }
+                else if(rutas.Length > 4 && rutas.Length <= 6)
+                {
+                    table = new PdfPTable(new float[] { 33.33f, 33.33f, 33.33f }) { WidthPercentage = 100f };
+                    columnas = 6;
+                }
+                else 
+                {
+                    table = new PdfPTable(new float[] { 25f, 25f, 25f, 25f }) { WidthPercentage = 100f };
+                    columnas = 8;
+                }
 
                 if(columnas == 4)
                     CeldasVacias(4, table);
-                else
+                else if(columnas == 6)
                     CeldasVacias(6, table);       
-
+                else 
+                    CeldasVacias(8, table);
                 foreach (var foto in rutas)
                 {
                     Image img = Image.GetInstance(foto);
@@ -283,19 +299,37 @@ namespace ApiDTC.Services
                         else
                             img.ScaleAbsolute(130f, 170f);
                     }
-                    else
+                    else if(columnas == 6)
                     {
                         if (img.Width > img.Height)
-                            img.ScaleAbsolute(130f, 140f);
+                            img.ScaleAbsolute(120f, 130f);
                         else
-                            img.ScaleAbsolute(140f, 130f);
+                            img.ScaleAbsolute(130f, 120f);
+                    }
+                    else if(columnas == 8)
+                    {
+                        if (img.Width > img.Height)
+                            img.ScaleAbsolute(100f, 110f);
+                        else
+                            img.ScaleAbsolute(110f, 100f);
                     }
                     PdfPCell colFoto = new PdfPCell(img) { Border = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_MIDDLE, Padding = 2 };
                     table.AddCell(colFoto);
                 }
-                float alto = (columnas == 4) ? 170f :  140f;
                 for (int i = 0; i < columnas - rutas.Length; i++)
-                    table.AddCell(new PdfPCell() { Border = 0, FixedHeight = 110f});
+                {
+                    Image logo = Image.GetInstance($@"{System.Environment.CurrentDirectory}\Media\sinImagen.png");
+                    logo.ScaleAbsolute(90f, 110f);
+                    
+                    if(columnas == 4)
+                        logo.ScaleAbsolute(170f, 130f);
+                    else if(columnas == 6)
+                        logo.ScaleAbsolute(120f, 130f);
+                    else if(columnas == 8)
+                        logo.ScaleAbsolute(100f, 110f);
+                    PdfPCell colLogo = new PdfPCell(logo) { Border = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_MIDDLE, Padding = 2 };
+                    table.AddCell(colLogo);
+                }
 
                 return table;
             }
