@@ -5,6 +5,7 @@
     using System.IO;
     using System.Linq;
     using System.Threading.Tasks;
+    using ApiDTC.Data;
     using ApiDTC.Models;
     using ApiDTC.Services;
     using Microsoft.AspNetCore.Http;
@@ -16,11 +17,14 @@
     {
         #region Attributes
         private readonly ApiLogger _apiLogger;
+
+        private readonly FichaTecnicaDb _db;
         #endregion
 
         #region Constructor
-        public FichaTecnicaAtencionController()
+        public FichaTecnicaAtencionController(FichaTecnicaDb db)
         {
+            this._db = db ?? throw new ArgumentNullException(nameof(db));
             _apiLogger = new ApiLogger();
         }
         #endregion
@@ -43,6 +47,48 @@
                 return NotFound(ex.ToString());
             }
             
+        }
+
+        [HttpPost("FichaTecnicaDiagnostico/{clavePlaza}")]
+        public ActionResult<Response> Post(string clavePlaza, [FromBody] FichaTecnicaDiagnostico fichaTecnicaDiagnostico)
+        {
+            if (ModelState.IsValid)
+            {
+                var get = _db.InsertDiagnosticoFichaTecnica(clavePlaza, fichaTecnicaDiagnostico);
+                if (get.Result == null)
+                    return BadRequest(get);
+                else
+                    return Ok(get);
+            }
+            return BadRequest(ModelState);
+        }
+
+        [HttpPost("FichaTecnicaDiagnostico/{clavePlaza}")]
+        public ActionResult<Response> InsertFichaTecnicaDiagnostico(string clavePlaza, [FromBody] FichaTecnicaDiagnostico fichaTecnicaDiagnostico)
+        {
+            if (ModelState.IsValid)
+            {
+                var get = _db.InsertDiagnosticoFichaTecnica(clavePlaza, fichaTecnicaDiagnostico);
+                if (get.Result == null)
+                    return BadRequest(get);
+                else
+                    return Ok(get);
+            }
+            return BadRequest(ModelState);
+        }
+
+        [HttpPost("FichaTecnicaDiagnostico/{clavePlaza}")]
+        public ActionResult<Response> InsertFichaTecnicaIntervencion(string clavePlaza, [FromBody] FichaTecnicaIntervencion fichaTecnicaIntervencion)
+        {
+            if (ModelState.IsValid)
+            {
+                var get = _db.InsertFichaTecnicaIntervencion(clavePlaza, fichaTecnicaIntervencion);
+                if (get.Result == null)
+                    return BadRequest(get);
+                else
+                    return Ok(get);
+            }
+            return BadRequest(ModelState);
         }
 
         #region FichaTecnicaImages

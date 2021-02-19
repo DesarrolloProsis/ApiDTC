@@ -38,20 +38,20 @@ namespace ApiDTC.Data
              {
                 using (SqlConnection sql = new SqlConnection(_connectionString)) 
                 {                                         
-                        using (SqlCommand cmd = new SqlCommand("dbo.spCalendarComent", sql))
-                        { 
-                            cmd.CommandType = CommandType.StoredProcedure;                                                        
-                            cmd.Parameters.Add("@SquareId", SqlDbType.NVarChar).Value = actividad.SquareId == "1Bi" ? actividad.SquareId + "s" : actividad.SquareId;
-                            cmd.Parameters.Add("@UserId", SqlDbType.Int).Value = actividad.UserId;                            
-                            cmd.Parameters.Add("@Month", SqlDbType.Int).Value = actividad.Month;
-                            cmd.Parameters.Add("@Year", SqlDbType.Int).Value = actividad.Year;
-                            
-                            cmd.Parameters.Add("@Comment", SqlDbType.NVarChar).Value = actividad.Comment;
-                            
-                            var storedResult = _sqlResult.Post(clavePlaza, cmd, sql, "InsertComent");
-                            if (storedResult.SqlResult == null)
-                                return new Response { Message = "No se pudo insertar comentario", Result = null };
-                        }
+                    using (SqlCommand cmd = new SqlCommand("dbo.spCalendarComent", sql))
+                    { 
+                        cmd.CommandType = CommandType.StoredProcedure;                                                        
+                        cmd.Parameters.Add("@SquareId", SqlDbType.NVarChar).Value = actividad.SquareId == "1Bi" ? actividad.SquareId + "s" : actividad.SquareId;
+                        cmd.Parameters.Add("@UserId", SqlDbType.Int).Value = actividad.UserId;                            
+                        cmd.Parameters.Add("@Month", SqlDbType.Int).Value = actividad.Month;
+                        cmd.Parameters.Add("@Year", SqlDbType.Int).Value = actividad.Year;
+                        
+                        cmd.Parameters.Add("@Comment", SqlDbType.NVarChar).Value = actividad.Comment;
+                        
+                        var storedResult = _sqlResult.Post(clavePlaza, cmd, sql, "InsertComent");
+                        if (storedResult.SqlResult == null)
+                            return new Response { Message = "No se pudo insertar comentario", Result = null };
+                    }
                        
                 }
                 return new Response
@@ -61,7 +61,6 @@ namespace ApiDTC.Data
                 };
             }
             catch(SqlException ex)
-
             {
                 _apiLogger.WriteLog(clavePlaza, ex, "CalendarioDb: InsertComment", 1);
                 return new Response { Message = $"Error: {ex.Message}", Result = null };
