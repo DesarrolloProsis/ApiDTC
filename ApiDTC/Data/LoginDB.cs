@@ -83,8 +83,10 @@
                         cmd.Parameters.Add("@NombreUsuario", SqlDbType.NVarChar).Value = loginUserInfo.Username;
                         cmd.Parameters.Add("@Contraseña", SqlDbType.NVarChar).Value = loginUserInfo.Password;
                         cmd.Parameters.Add("@Flag", SqlDbType.Bit).Value = loginUserInfo.Flag;
-
-                        return _sqlResult.GetList<Login>("USR", cmd, sql, "GetStoreLogin");
+                        if(loginUserInfo.Flag)
+                            return _sqlResult.GetList<LoginTrue>("USR", cmd, sql, "GetStoreLogin");
+                        else
+                            return _sqlResult.GetList<Login>("USR", cmd, sql, "GetStoreLogin");
                     }
                 }
             }

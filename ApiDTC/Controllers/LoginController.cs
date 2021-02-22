@@ -26,7 +26,7 @@ namespace ApiDTC.Controllers
         #endregion
 
         #region Methods
-        [HttpGet]
+        [HttpPost]
         public ActionResult<Response> GetLogin([FromBody] LoginUserInfo loginUserInfo)
         {        
             var get = _db.GetStoreLogin(loginUserInfo);
@@ -37,7 +37,7 @@ namespace ApiDTC.Controllers
         }
 
         // GET: api/Login
-        [HttpGet("ValidUser")]
+        [HttpPost("ValidUser")]
         public ActionResult<Response> ValidUser([FromBody] LoginUserInfo loginUserInfo)
         {
             var get = _db.GetStoreLoginCookie(loginUserInfo);
