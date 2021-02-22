@@ -456,6 +456,7 @@ namespace ApiDTC.Services
             try
             {
                 PdfPTable table = new PdfPTable(new float[] { 12.5f, 12.5f, 12.5f, 12.5f, 12.5f, 12.5f, 12.5f, 12.5f }) { WidthPercentage = 100f };
+                table.TotalWidth = 550;
                 CeldasVacias(24, table);
 
 
@@ -525,7 +526,7 @@ namespace ApiDTC.Services
             try
             {
                 PdfPTable table = new PdfPTable(new float[] { 30f, 10f, 30f, 10f, 30f }) { WidthPercentage = 100f };
-
+                table.TotalWidth = 550;
                 CeldasVacias(15, table);
                 var celdaVaciaFirmas = new PdfPCell() { Border = 0, FixedHeight = 30 };
                 for (int i = 0; i < 4; i++)
