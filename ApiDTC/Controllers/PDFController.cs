@@ -119,6 +119,15 @@
             return NotFound();
         }
 
+        [HttpGet("PdfExists/{clavePlaza}/{referenceNumber}")]
+        public ActionResult PdfExists(string clavePlaza, string referenceNumber)
+        {
+            string path =  $@"C:\Bitacora\{clavePlaza}\DTC\{referenceNumber}\DTC-{referenceNumber}-Sellado.pdf";
+            if(System.IO.File.Exists((path)))
+                return Ok();
+            return NotFound();
+        }
+
         [HttpGet("ActualizarDtc/{clavePlaza}/{referenceNumber}/{status}")]
         public ActionResult<Response> ActualizarDtc(string clavePlaza, string referenceNumber, int status)
         {
