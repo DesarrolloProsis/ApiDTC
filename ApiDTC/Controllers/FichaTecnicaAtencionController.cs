@@ -50,20 +50,6 @@
         }
 
         [HttpPost("FichaTecnicaDiagnostico/{clavePlaza}")]
-        public ActionResult<Response> Post(string clavePlaza, [FromBody] FichaTecnicaDiagnostico fichaTecnicaDiagnostico)
-        {
-            if (ModelState.IsValid)
-            {
-                var get = _db.InsertDiagnosticoFichaTecnica(clavePlaza, fichaTecnicaDiagnostico);
-                if (get.Result == null)
-                    return BadRequest(get);
-                else
-                    return Ok(get);
-            }
-            return BadRequest(ModelState);
-        }
-
-        [HttpPost("FichaTecnicaDiagnostico/{clavePlaza}")]
         public ActionResult<Response> InsertFichaTecnicaDiagnostico(string clavePlaza, [FromBody] FichaTecnicaDiagnostico fichaTecnicaDiagnostico)
         {
             if (ModelState.IsValid)
