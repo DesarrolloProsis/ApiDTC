@@ -109,7 +109,7 @@
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.Add("@NombreUsuario", SqlDbType.NVarChar).Value = loginUserInfo.Username;
                         cmd.Parameters.Add("@Contraseña", SqlDbType.NVarChar).Value = loginUserInfo.Password;
-                        cmd.Parameters.Add("@Flag", SqlDbType.Bit).Value = loginUserInfo.Password;
+                        cmd.Parameters.Add("@Flag", SqlDbType.Bit).Value = loginUserInfo.Flag;
 
                         return _sqlResult.GetList<Cookie>("USR", cmd, sql, "GetStoreLoginCookie");
                     }
