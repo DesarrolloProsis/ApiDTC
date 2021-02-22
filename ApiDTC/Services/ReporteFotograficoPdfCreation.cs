@@ -156,17 +156,17 @@ namespace ApiDTC.Services
                     else
                         directoryImgs = Path.Combine(directory, "EquipoDañadoImgs");
                     var fotos = Directory.GetFiles(directoryImgs);
-                    if(fotos.Length <= 8)
+                    if(fotos.Length <= 12)
                         doc.Add(TablaFotografias(fotos));
                     else
                     {
-                        string[] primerasFotos = new string[8];
-                        string[] restoFotos = new string[fotos.Length - 8];
-                        int resto = fotos.Length - 8;
-                        for (int i = 0; i < 8; i++)
+                        string[] primerasFotos = new string[12];
+                        string[] restoFotos = new string[fotos.Length - 12];
+                        int resto = fotos.Length - 12;
+                        for (int i = 0; i < 12; i++)
                             primerasFotos[i] = fotos[i];
                         for (int i = 0; i < resto; i++)
-                            restoFotos[i] = fotos[i + 8];
+                            restoFotos[i] = fotos[i + 12];
                         doc.Add(TablaFotografias(primerasFotos));
                         doc.NewPage();
                         doc.Add(TablaFotografias(restoFotos));
