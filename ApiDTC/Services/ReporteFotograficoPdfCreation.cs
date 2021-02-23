@@ -176,7 +176,7 @@ namespace ApiDTC.Services
                     PdfPTable tablaObservaciones = TablaObservaciones();
                     tablaObservaciones.WriteSelectedRows(0, -1, 30, 275, cb);
                     PdfPTable tablaFirmas = TablaFirmas();
-                    tablaFirmas.WriteSelectedRows(0, -1, 30, 200, cb);
+                    tablaFirmas.WriteSelectedRows(0, -1, 30, 180, cb);
                     doc.Close();
                     writer.Close();
                     byte[] content = myMemoryStream.ToArray();
@@ -277,10 +277,10 @@ namespace ApiDTC.Services
                     table = new PdfPTable(new float[] { 33.33f, 33.33f, 33.33f }) { WidthPercentage = 100f };
                     columnas = 6;
                 }
-                else 
+                else
                 {
                     table = new PdfPTable(new float[] { 25f, 25f, 25f, 25f }) { WidthPercentage = 100f };
-                    columnas = 8;
+                    columnas = 12;
                 }
 
                 if(columnas == 4)
@@ -295,18 +295,18 @@ namespace ApiDTC.Services
                     if(columnas == 4)
                     {
                         if (img.Width > img.Height)
-                            img.ScaleAbsolute(170f, 130f);
+                            img.ScaleAbsolute(180f, 140f);
                         else
-                            img.ScaleAbsolute(130f, 170f);
+                            img.ScaleAbsolute(140f, 180f);
                     }
                     else if(columnas == 6)
                     {
                         if (img.Width > img.Height)
-                            img.ScaleAbsolute(120f, 130f);
+                            img.ScaleAbsolute(130f, 140f);
                         else
-                            img.ScaleAbsolute(130f, 120f);
+                            img.ScaleAbsolute(140f, 130f);
                     }
-                    else if(columnas == 8)
+                    else if(columnas == 12)
                     {
                         if (img.Width > img.Height)
                             img.ScaleAbsolute(100f, 110f);
@@ -325,7 +325,7 @@ namespace ApiDTC.Services
                         logo.ScaleAbsolute(170f, 130f);
                     else if(columnas == 6)
                         logo.ScaleAbsolute(120f, 130f);
-                    else if(columnas == 8)
+                    else if(columnas == 12)
                         logo.ScaleAbsolute(100f, 110f);
                     PdfPCell colLogo = new PdfPCell(logo) { Border = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_MIDDLE, Padding = 2 };
                     table.AddCell(colLogo);
@@ -531,9 +531,13 @@ namespace ApiDTC.Services
                 var celdaVaciaFirmas = new PdfPCell() { Border = 0, FixedHeight = 30 };
                 for (int i = 0; i < 4; i++)
                     table.AddCell(celdaVaciaFirmas);
-                table.AddCell(new PdfPCell() {BorderWidthTop = 1, BorderWidthBottom = 0, BorderWidthLeft = 1, BorderWidthRight = 1, FixedHeight = 30, Rowspan = 3 });
-                for (int i = 0; i < 8; i++)
+                table.AddCell(new PdfPCell() {BorderWidthTop = 1, BorderWidthBottom = 0, BorderWidthLeft = 1, BorderWidthRight = 1, FixedHeight = 30 });
+                for (int i = 0; i < 4; i++)
                     table.AddCell(celdaVaciaFirmas);
+                table.AddCell(new PdfPCell() {BorderWidthTop = 0, BorderWidthBottom = 0, BorderWidthLeft = 1, BorderWidthRight = 1, FixedHeight = 30 });
+                for (int i = 0; i < 4; i++)
+                    table.AddCell(celdaVaciaFirmas);
+                table.AddCell(new PdfPCell() {BorderWidthTop = 0, BorderWidthBottom = 0, BorderWidthLeft = 1, BorderWidthRight = 1, FixedHeight = 30 });
                 //NOMRE Y FIRMA
                 var colNombre = new PdfPCell(new Phrase("Nombre y Firma", letraoNormalChicaFirmas))
                 {
@@ -560,7 +564,7 @@ namespace ApiDTC.Services
                 table.AddCell(colSello);
 
                 //Técnico
-                string valorTecnicoProsis = _tipo == 1 ? Convert.ToString(_tableHeader.Rows[0]["TecnicoProsis"]) : Convert.ToString(_tableHeader.Rows[0]["Tecnico"]);
+                string valorTecnicoProsis = _tipo == 1 ? Convert.ToString(_tableHeader.Rows[0]["TecnicoProsis"]) : Convert.ToString(_tableHeader.Rows[0]["TecnicoProsis"]);
                 var colTecnico = new PdfPCell(new Phrase(valorTecnicoProsis, letraNormalChica))
                 {
                     Border = 0,
@@ -604,12 +608,12 @@ namespace ApiDTC.Services
             }
             catch (PdfException ex)
             {
-                _apiLogger.WriteLog(_clavePlaza, ex, "ReporteFotograficoPdfCreation: TablaFirmas", 5);
+                _apiLogger.WriteLog(_clavePlaza, ex, "MantenimientoPdfCreation: TablaFirmas", 5);
                 return null;
             }
             catch (Exception ex)
             {
-                _apiLogger.WriteLog(_clavePlaza, ex, "ReporteFotograficoPdfCreation: TablaFirmas", 3);
+                _apiLogger.WriteLog(_clavePlaza, ex, "MantenimientoPdfCreation: TablaFirmas", 3);
                 return null;
             }
         }
