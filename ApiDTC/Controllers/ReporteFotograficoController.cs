@@ -8,22 +8,32 @@
     using ApiDTC.Data;
     using ApiDTC.Models;
     using ApiDTC.Services;
+    using Microsoft.AspNetCore.Authentication.JwtBearer;
+    using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.Extensions.Configuration;
 
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class ReporteFotograficoController : ControllerBase
     {
         #region Attributes
         private readonly ApiLogger _apiLogger;
 
         private ReporteFotograficoDB _db;
+
+        private readonly string _disk;
+
+        private readonly string _folder;
         #endregion
 
         #region Constructor
-        public ReporteFotograficoController(ReporteFotograficoDB db)
+        public ReporteFotograficoController(ReporteFotograficoDB db, IConfiguration configuration)
         {
+            this._disk = $@"{Convert.ToString(configuration.GetValue<string>("Path:Disk"))}";
+            this._folder = $"{Convert.ToString(configuration.GetValue<string>("Path:Folder"))}";
             this._db = db ?? throw new ArgumentNullException(nameof(db)); 
             _apiLogger = new ApiLogger();
         }
@@ -41,7 +51,7 @@
                 if (dataSet.Tables[0].Rows.Count == 0)
                     return NotFound("GetStoredPdf retorna tabla vacía");
                 ReporteFotograficoPdfCreation pdf = new ReporteFotograficoPdfCreation(clavePlaza, dataSet.Tables[0], new ApiLogger(), 1, referenceNumber, ubicacion);
-                var pdfResult = pdf.NewPdf();
+                var pdfResult = pdf.NewPdf($@"{this._disk}:\{this._folder}");
                 if (pdfResult.Result == null)
                     return NotFound(pdfResult.Message);
                 return File(new FileStream(pdfResult.Result.ToString(), FileMode.Open, FileAccess.Read), "application/pdf");
@@ -60,7 +70,7 @@
             if (image.Length > 0 || image != null)
             {
                 int numberOfImages;
-                string dir = $@"C:\Bitacora\{clavePlaza.ToUpper()}\Reportes\{reportNumber}\Imgs";
+                string dir = $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\Reportes\{reportNumber}\Imgs";
                 string filename;
                 try
                 {
@@ -93,7 +103,7 @@
         {
             try
             {
-                string path = $@"C:\Bitacora\{clavePlaza.ToUpper()}\Reportes\{reportNumber}\Imgs\{fileName}";
+                string path = $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\Reportes\{reportNumber}\Imgs\{fileName}";
                 if (!System.IO.File.Exists(path))
                     return NotFound("No existe el archivo");
                 Byte[] bitMap = System.IO.File.ReadAllBytes(path);
@@ -112,7 +122,7 @@
         {
             try
             {
-                string directoy = $@"C:\Bitacora\{clavePlaza.ToUpper()}\Reportes\{reportNumber}\Imgs";
+                string directoy = $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\Reportes\{reportNumber}\Imgs";
                 List<string> dtcImages = new List<string>();
                 if (!Directory.Exists(directoy))
                     return Ok(dtcImages);
@@ -132,12 +142,12 @@
         {
             try
             {
-                string path = $@"C:\Bitacora\{clavePlaza.ToUpper()}\Reportes\{reportNumber}\Imgs\{fileName}";
+                string path = $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\Reportes\{reportNumber}\Imgs\{fileName}";
                 if (!System.IO.File.Exists(path))
                     return NotFound(path);
                 System.IO.File.Delete(path);
-                if (Directory.GetFiles($@"C:\Bitacora\{clavePlaza.ToUpper()}\Reportes\{reportNumber}\Imgs").Length == 0)
-                    Directory.Delete($@"C:\Bitacora\{clavePlaza.ToUpper()}\Reportes\{reportNumber}\Imgs");
+                if (Directory.GetFiles($@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\Reportes\{reportNumber}\Imgs").Length == 0)
+                    Directory.Delete($@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\Reportes\{reportNumber}\Imgs");
                 return Ok(path);
             }
             catch (IOException ex)
@@ -158,7 +168,7 @@
                 if (dataSet.Tables[0].Rows.Count == 0)
                     return NotFound("GetStoredPdf retorna tabla vacía");
                 ReporteFotograficoPdfCreation pdf = new ReporteFotograficoPdfCreation(clavePlaza, dataSet.Tables[0], new ApiLogger(), 2, referenceNumber, ubicacion);
-                var pdfResult = pdf.NewPdf();
+                var pdfResult = pdf.NewPdf($@"{this._disk}:\{this._folder}");
                 if (pdfResult.Result == null)
                     return NotFound(pdfResult.Message);
                 return File(new FileStream(pdfResult.Result.ToString(), FileMode.Open, FileAccess.Read), "application/pdf");
@@ -180,7 +190,7 @@
                 if (dataSet.Tables[0].Rows.Count == 0)
                     return NotFound("GetStoredPdf retorna tabla vacía");
                 ReporteFotograficoPdfCreation pdf = new ReporteFotograficoPdfCreation(clavePlaza, dataSet.Tables[0], new ApiLogger(), 3, referenceNumber, ubicacion);
-                var pdfResult = pdf.NewPdf();
+                var pdfResult = pdf.NewPdf($@"{this._disk}:\{this._folder}");
                 if (pdfResult.Result == null)
                     return NotFound(pdfResult.Message);
                 return File(new FileStream(pdfResult.Result.ToString(), FileMode.Open, FileAccess.Read), "application/pdf");

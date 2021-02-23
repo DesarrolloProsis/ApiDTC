@@ -4,6 +4,7 @@
     using ApiDTC.Data;
     using ApiDTC.Models;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.Extensions.Configuration;
 
     [Route("api/[controller]")]
     [ApiController]
@@ -14,7 +15,7 @@
         #endregion
 
         #region Constructor
-        public UserController(UserDb db)
+        public UserController(UserDb db, IConfiguration configuration)
         {
             this._db = db ?? throw new ArgumentNullException(nameof(db));
         }

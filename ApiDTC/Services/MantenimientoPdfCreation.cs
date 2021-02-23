@@ -23,8 +23,6 @@
 
         private readonly string[] _temporal;
 
-        private readonly string _ubicacion;
-
         private readonly string _noReporte;
 
         private string _textoTitulo;
@@ -71,10 +69,10 @@
 
         #endregion
         #region Methods
-        public Response NewPdf()
+        public Response NewPdf(string folder)
         {
             DateTime now = DateTime.Now;
-            string directory = $@"C:\Bitacora\{_clavePlaza}\Reportes\{_noReporte}";
+            string directory = $@"{folder}\{_clavePlaza}\Reportes\{_noReporte}";
             string filename = $"{_noReporte}.pdf";
             
             string path = Path.Combine(directory, filename);

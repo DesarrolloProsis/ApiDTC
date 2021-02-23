@@ -81,9 +81,9 @@ namespace ApiDTC.Services
         #endregion
 
         #region Methods
-        public Response NewPdf()
+        public Response NewPdf(string folder)
         {
-            string directory = $@"C:\Bitacora\{_clavePlaza.ToUpper()}\CalendariosMantenimiento\{_year}\{_month}\", filename, path;
+            string directory = $@"{folder}\{_clavePlaza.ToUpper()}\CalendariosMantenimiento\{_year}\{_month}\", filename, path;
             DateTime now = DateTime.Now;
             filename = $"{_plaza}{now.Year}{MesContrato(now)}C.pdf";
             path = Path.Combine(directory, filename);

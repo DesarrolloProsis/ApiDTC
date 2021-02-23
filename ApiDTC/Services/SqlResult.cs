@@ -13,7 +13,7 @@ namespace ApiDTC.Services
         private readonly ApiLogger _apiLogger;
 
 
-        private string _propertyMapped, _classMapped;
+        private string _propertyMapped;
         #endregion
 
         #region Constructor
@@ -124,6 +124,7 @@ namespace ApiDTC.Services
                         Result = null
                     };
                 }
+                con.Close();
                 return new Response
                 {
                     Message = "Result found",
@@ -139,6 +140,43 @@ namespace ApiDTC.Services
                     Result = null
 
                 };
+            }
+        }
+        public T GetRow<T>(string clavePlaza, SqlCommand command, SqlConnection con, string origen)
+        {
+            try
+            {
+                con.Open();
+                T obj = default;
+                if (con.State != ConnectionState.Open)
+                {
+                    return default(T);
+                }
+                int rows = 0;
+                var reader = command.ExecuteReader();
+                if(reader.Read())
+                {
+                    rows++;
+                    obj = Activator.CreateInstance<T>();
+                    _propertyMapped = obj.GetType().Name;
+                    foreach (PropertyInfo p in obj.GetType().GetProperties())
+                    {
+                        _propertyMapped = p.Name;
+                        if(!DBNull.Value.Equals(reader[p.Name]))
+                            p.SetValue(obj, reader[p.Name], null);
+                        else
+                            p.SetValue(obj, null, null);
+                    }
+                }
+                con.Close();
+                _propertyMapped = null;
+                return obj;
+            }
+            catch (Exception ex)
+            {
+                _apiLogger.WriteLog(clavePlaza, ex, $"{origen}: GetList<T>", 3);
+                _propertyMapped = null;
+                return default(T);
             }
         }
 
@@ -163,14 +201,12 @@ namespace ApiDTC.Services
                     }
                 }
                 _propertyMapped = null;
-                _classMapped = null;
                 return obj;
             }
             catch (Exception ex)
             {
                 _apiLogger.WriteLog(clavePlaza, ex, $"{origen}: GetList<T>", 3);
                 _propertyMapped = null;
-                _classMapped = null;
                 return default(T);
             }
         }
@@ -198,14 +234,12 @@ namespace ApiDTC.Services
                     }
                 }
                 _propertyMapped = null;
-                _classMapped = null;
                 return list;
             }
             catch (Exception ex)
             {
                 _apiLogger.WriteLog(clavePlaza, ex, $"{origen}: GetList<T>", 3);
                 _propertyMapped = null;
-                _classMapped = null;
                 return null;
             }
         }
@@ -269,14 +303,12 @@ namespace ApiDTC.Services
                     list.Add(obj);
                 }
                 _propertyMapped = null;
-                _classMapped = null;
                 return list;
             }
             catch (Exception ex)
             {
                 _apiLogger.WriteLog(clavePlaza, ex, $"{origen}: DataSetMapper<T>", 3);
                 _propertyMapped = null;
-                _classMapped = null;
                 return null;
             }
         }
@@ -332,7 +364,6 @@ namespace ApiDTC.Services
                     list.Add(obj);
                 }
                 _propertyMapped = null;
-                _classMapped = null;
                 return new Response
                 {
                     Message = "Ok",
@@ -344,7 +375,6 @@ namespace ApiDTC.Services
             {
                 _apiLogger.WriteLog(clavePLaza, ex, $"{origen}: GetMapper<T>", 3);
                 _propertyMapped = null;
-                _classMapped = null;
                 return new Response
                 {
                     Message = $"Error: {ex.Message}",

@@ -3,27 +3,35 @@
     using System;
     using System.Collections.Generic;
     using System.IO;
-    using System.Linq;
-    using System.Threading.Tasks;
     using ApiDTC.Data;
     using ApiDTC.Models;
     using ApiDTC.Services;
+    using Microsoft.AspNetCore.Authentication.JwtBearer;
+    using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.Extensions.Configuration;
 
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class FichaTecnicaAtencionController : ControllerBase
     {
         #region Attributes
         private readonly ApiLogger _apiLogger;
 
         private readonly FichaTecnicaDb _db;
+
+        private readonly string _disk;
+
+        private readonly string _folder;
         #endregion
 
         #region Constructor
-        public FichaTecnicaAtencionController(FichaTecnicaDb db)
+        public FichaTecnicaAtencionController(FichaTecnicaDb db, IConfiguration configuration)
         {
+            this._disk = $@"{Convert.ToString(configuration.GetValue<string>("Path:Disk"))}";
+            this._folder = $"{Convert.ToString(configuration.GetValue<string>("Path:Folder"))}";
             this._db = db ?? throw new ArgumentNullException(nameof(db));
             _apiLogger = new ApiLogger();
         }
@@ -36,7 +44,7 @@
             try
             {
                 FichaTecnicaAtencionPdfCreation pdf = new FichaTecnicaAtencionPdfCreation(clavePlaza, new ApiLogger(), ubicacion, referenceNumber);
-                var pdfResult = pdf.NewPdf();
+                var pdfResult = pdf.NewPdf($@"{this._disk}:\{this._folder}");
                 if (pdfResult.Result == null)
                     return NotFound(pdfResult.Message);
                 return File(new FileStream(pdfResult.Result.ToString(), FileMode.Open, FileAccess.Read), "application/pdf");
@@ -84,7 +92,7 @@
             if (image.Length > 0 || image != null)
             {
                 int numberOfImages;
-                string dir = $@"C:\Bitacora\{clavePlaza.ToUpper()}\Reportes\{reportNumber}\FichaTecnicaAtencionImgs";
+                string dir = $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\Reportes\{reportNumber}\FichaTecnicaAtencionImgs";
                 string filename;
                 try
                 {
@@ -119,7 +127,7 @@
         {
             try
             {
-                string path = $@"C:\Bitacora\{clavePlaza.ToUpper()}\Reportes\{reportNumber}\FichaTecnicaAtencionImgs\{fileName}";
+                string path = $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\Reportes\{reportNumber}\FichaTecnicaAtencionImgs\{fileName}";
                 if (!System.IO.File.Exists(path))
                     return NotFound("No existe el archivo");
                 Byte[] bitMap = System.IO.File.ReadAllBytes(path);
@@ -138,7 +146,7 @@
         {
             try
             {
-                string directoy = $@"C:\Bitacora\{clavePlaza.ToUpper()}\Reportes\{reportNumber}\FichaTecnicaAtencionImgs";
+                string directoy = $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\Reportes\{reportNumber}\FichaTecnicaAtencionImgs";
                 List<string> dtcImages = new List<string>();
                 if (!Directory.Exists(directoy))
                     return Ok(dtcImages);
@@ -158,12 +166,12 @@
         {
             try
             {
-                string path = $@"C:\Bitacora\{clavePlaza.ToUpper()}\Reportes\{reportNumber}\FichaTecnicaAtencionImgs\{fileName}";
+                string path = $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\Reportes\{reportNumber}\FichaTecnicaAtencionImgs\{fileName}";
                 if (!System.IO.File.Exists(path))
                     return NotFound(path);
                 System.IO.File.Delete(path);
-                if (Directory.GetFiles($@"C:\Bitacora\{clavePlaza.ToUpper()}\Reportes\{reportNumber}\FichaTecnicaAtencionImgs").Length == 0)
-                    Directory.Delete($@"C:\Bitacora\{clavePlaza.ToUpper()}\Reportes\{reportNumber}\FichaTecnicaAtencionImgs");
+                if (Directory.GetFiles($@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\Reportes\{reportNumber}\FichaTecnicaAtencionImgs").Length == 0)
+                    Directory.Delete($@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\Reportes\{reportNumber}\FichaTecnicaAtencionImgs");
                 return Ok(path);
             }
             catch (IOException ex)

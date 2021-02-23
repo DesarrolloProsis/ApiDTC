@@ -74,13 +74,13 @@ namespace ApiDTC.Services
         #endregion
         //https://localhost:44358/api/ReporteFotografico/Reporte/JOR/B01
         #region Methods
-        public Response NewPdf()
+        public Response NewPdf(string folder)
         {
             string directory, filename, path;
 
             DateTime now = DateTime.Now; 
             
-            directory = $@"C:\Bitacora\{_clavePlaza.ToUpper()}\Reportes\{_referenceNumber}";
+            directory = $@"{folder}\{_clavePlaza.ToUpper()}\Reportes\{_referenceNumber}";
             filename = $"{_referenceNumber}-FichaTecnica.pdf";
             path = Path.Combine(directory, filename); 
             

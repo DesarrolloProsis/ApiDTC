@@ -76,9 +76,9 @@ namespace ApiDTC.Services
         #endregion
         
         #region Methods
-        public Response NewPdf(int operacion)
+        public Response NewPdf(string folder, int operacion)
         {
-            string directory = $@"C:\Bitacora\{_clavePlaza.ToUpper()}\DTC\{_refNum}", filename;
+            string directory = $@"{folder}\{_clavePlaza.ToUpper()}\DTC\{_refNum}", filename;
             if(!Directory.Exists(directory))
                 Directory.CreateDirectory(directory);
 

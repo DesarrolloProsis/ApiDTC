@@ -5,20 +5,30 @@
     using System.IO;
     using ApiDTC.Models;
     using ApiDTC.Services;
+    using Microsoft.AspNetCore.Authentication.JwtBearer;
+    using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.Extensions.Configuration;
 
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class DiagnosticoFallaController : ControllerBase
     {
         #region Attributes
         private readonly ApiLogger _apiLogger;
+        
+        private readonly string _disk;
+
+        private readonly string _folder;
         #endregion
 
         #region Constructor
-        public DiagnosticoFallaController()
+        public DiagnosticoFallaController(IConfiguration configuration)
         {
+            this._disk = $@"{Convert.ToString(configuration.GetValue<string>("Path:Disk"))}";
+            this._folder = $"{Convert.ToString(configuration.GetValue<string>("Path:Folder"))}";
             _apiLogger = new ApiLogger();
         }
         #endregion
@@ -31,7 +41,7 @@
             try
             {
                 DiagnosticoFallaPdfCreation pdf = new DiagnosticoFallaPdfCreation(clavePlaza, new ApiLogger(), ubicacion, noReporte);
-                var pdfResult = pdf.NewPdf();
+                var pdfResult = pdf.NewPdf($@"{this._disk}:\{this._folder}");
                 if (pdfResult.Result == null)
                     return NotFound(pdfResult.Message);
                 return File(new FileStream(pdfResult.Result.ToString(), FileMode.Open, FileAccess.Read), "application/pdf");
@@ -51,7 +61,7 @@
             if (image.Length > 0 || image != null)
             {
                 int numberOfImages;
-                string dir = $@"C:\Bitacora\{clavePlaza.ToUpper()}\Reportes\{reportNumber}\DiagnosticoFallaImgs";
+                string dir = $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\Reportes\{reportNumber}\DiagnosticoFallaImgs";
                 string filename;
                 try
                 {
@@ -86,7 +96,7 @@
         {
             try
             {
-                string path = $@"C:\Bitacora\{clavePlaza.ToUpper()}\Reportes\{reportNumber}\DiagnosticoFallaImgs\{fileName}";
+                string path = $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\Reportes\{reportNumber}\DiagnosticoFallaImgs\{fileName}";
                 if (!System.IO.File.Exists(path))
                     return NotFound("No existe el archivo");
                 Byte[] bitMap = System.IO.File.ReadAllBytes(path);
@@ -105,7 +115,7 @@
         {
             try
             {
-                string directoy = $@"C:\Bitacora\{clavePlaza.ToUpper()}\Reportes\{reportNumber}\DiagnosticoFallaImgs";
+                string directoy = $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\Reportes\{reportNumber}\DiagnosticoFallaImgs";
                 List<string> dtcImages = new List<string>();
                 if (!Directory.Exists(directoy))
                     return Ok(dtcImages);
@@ -125,12 +135,12 @@
         {
             try
             {
-                string path = $@"C:\Bitacora\{clavePlaza.ToUpper()}\Reportes\{reportNumber}\DiagnosticoFallaImgs\{fileName}";
+                string path = $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\Reportes\{reportNumber}\DiagnosticoFallaImgs\{fileName}";
                 if (!System.IO.File.Exists(path))
                     return NotFound(path);
                 System.IO.File.Delete(path);
-                if (Directory.GetFiles($@"C:\Bitacora\{clavePlaza.ToUpper()}\Reportes\{reportNumber}\DiagnosticoFallaImgs").Length == 0)
-                    Directory.Delete($@"C:\Bitacora\{clavePlaza.ToUpper()}\Reportes\{reportNumber}\DiagnosticoFallaImgs");
+                if (Directory.GetFiles($@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\Reportes\{reportNumber}\DiagnosticoFallaImgs").Length == 0)
+                    Directory.Delete($@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\Reportes\{reportNumber}\DiagnosticoFallaImgs");
                 return Ok(path);
             }
             catch (IOException ex)
