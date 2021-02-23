@@ -1,6 +1,8 @@
 ﻿using ApiDTC.Data;
 using ApiDTC.Services;
 using MailKit.Net.Smtp;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MimeKit;
 using MimeKit.Text;
@@ -13,6 +15,7 @@ namespace ApiDTC.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class EmailController : Controller
     {
         #region Attributes

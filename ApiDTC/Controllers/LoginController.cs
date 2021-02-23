@@ -1,26 +1,28 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using ApiDTC.Data;
-using ApiDTC.Models;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-
+﻿
 namespace ApiDTC.Controllers
 {
+    using System;
+    using ApiDTC.Data;
+    using ApiDTC.Models;
+    using Microsoft.AspNetCore.Http;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.AspNetCore.Mvc.Rendering;
+    using Microsoft.Extensions.Configuration;
+    
     [Route("api/[controller]")]
     [ApiController]
     public class LoginController : ControllerBase
     {
         #region Attributes
         private readonly LoginDb _db;
+        
+        private string _hash;
         #endregion
         
         #region Constructor
-        public LoginController(LoginDb db) 
+        public LoginController(LoginDb db, IConfiguration configuration) 
         {
+            this._hash = Convert.ToString(configuration.GetValue<string>("JWT:key"));
             this._db = db ?? throw new ArgumentNullException(nameof(db));
         }
         #endregion
@@ -35,7 +37,7 @@ namespace ApiDTC.Controllers
             else
                 return Ok(get);
         }
-
+        
         // GET: api/Login
         [HttpPost("ValidUser")]
         public ActionResult<Response> ValidUser([FromBody] LoginUserInfo loginUserInfo)

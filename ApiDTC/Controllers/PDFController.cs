@@ -7,9 +7,12 @@
     using ApiDTC.Data;
     using ApiDTC.Models;
     using Microsoft.AspNetCore.Http;
+    using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Authentication.JwtBearer;
 
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class PDFController : ControllerBase
     {
         #region Attributes

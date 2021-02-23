@@ -124,6 +124,7 @@ namespace ApiDTC.Services
                         Result = null
                     };
                 }
+                con.Close();
                 return new Response
                 {
                     Message = "Result found",
