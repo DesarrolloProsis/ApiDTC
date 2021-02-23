@@ -12,6 +12,7 @@
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.Extensions.Configuration;
 
     [Route("api/[controller]")]
     [ApiController]
@@ -23,12 +24,18 @@
         private readonly CalendarioDb _db;
 
         private readonly ApiLogger _apiLogger;
+
+        private readonly string _disk;
+
+        private readonly string _folder;
         #endregion
 
         #region Constructor
   
-        public CalendarioController(CalendarioDb db)
+        public CalendarioController(CalendarioDb db, IConfiguration configuration)
         {
+            this._disk = $@"{Convert.ToString(configuration.GetValue<string>("Path:Disk"))}";
+            this._folder = $"{Convert.ToString(configuration.GetValue<string>("Path:Folder"))}";
             this._db = db ?? throw new ArgumentNullException(nameof(db));
             _apiLogger = new ApiLogger();
         }
@@ -42,7 +49,7 @@
             if (dataSet.Tables[1].Rows.Count == 0)
                 return NotFound();
             CalendarioPdfCreation pdf = new CalendarioPdfCreation(clavePlaza, dataSet.Tables[1], dataSet.Tables[0], clavePlaza, new ApiLogger(), month, year, squareId);
-            var pdfResult = pdf.NewPdf();
+            var pdfResult = pdf.NewPdf($@"{this._disk}:\{this._folder}");
             return File(new FileStream(pdfResult.Result.ToString(), FileMode.Open, FileAccess.Read), "application/pdf");
         }
 
@@ -53,7 +60,7 @@
             {
                 if(file.FileName.EndsWith(".pdf") || file.FileName.EndsWith(".PDF"))
                 {
-                    string path = $@"C:\Bitacora\{clavePlaza.ToUpper()}\CalendariosMantenimiento\{year}\{month}\";
+                    string path = $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\CalendariosMantenimiento\{year}\{month}\";
                     string filename = $"{clavePlaza.ToUpper()}{year}-{month.ToString("00")}C-Escaneado.pdf";
                     try
                     {
@@ -77,7 +84,6 @@
             return NotFound();
         }
 
-        //[HttpDelete("DeleteCalendar/{month}/{year}/{userId}/{squareId}")]
         [HttpDelete("DeleteCalendar/{clavePlaza}/{CalendarId}")]
         public ActionResult<Response> DeleteCalendar(string clavePlaza, int CalendarId)
         {
@@ -87,7 +93,7 @@
             else
                 return Ok(get);
         }        
-        //[HttpPost("Actividad")]
+        
         [HttpPost("Actividad/{clavePlaza}")]
         public ActionResult<Response> Post(string clavePlaza, [FromBody] ActividadCalendario actividad)
         {
@@ -101,7 +107,7 @@
             }
             return BadRequest(ModelState);
         }
-        //[HttpPost("ObservacionesInsert")]
+        
         [HttpPost("ObservacionesInsert/{clavePlaza}")]
         public ActionResult<Response> ObservacionesInsert(string clavePlaza, [FromBody] InsertCommentCalendar actividad)
         {

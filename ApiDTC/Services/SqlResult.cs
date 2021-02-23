@@ -142,6 +142,45 @@ namespace ApiDTC.Services
                 };
             }
         }
+        public T GetRow<T>(string clavePlaza, SqlCommand command, SqlConnection con, string origen)
+        {
+            try
+            {
+                con.Open();
+                T obj = default;
+                if (con.State != ConnectionState.Open)
+                {
+                    return default(T);
+                }
+                int rows = 0;
+                var reader = command.ExecuteReader();
+                if(reader.Read())
+                {
+                    rows++;
+                    obj = Activator.CreateInstance<T>();
+                    _propertyMapped = obj.GetType().Name;
+                    foreach (PropertyInfo p in obj.GetType().GetProperties())
+                    {
+                        _propertyMapped = p.Name;
+                        if(!DBNull.Value.Equals(reader[p.Name]))
+                            p.SetValue(obj, reader[p.Name], null);
+                        else
+                            p.SetValue(obj, null, null);
+                    }
+                }
+                con.Close();
+                _propertyMapped = null;
+                _classMapped = null;
+                return obj;
+            }
+            catch (Exception ex)
+            {
+                _apiLogger.WriteLog(clavePlaza, ex, $"{origen}: GetList<T>", 3);
+                _propertyMapped = null;
+                _classMapped = null;
+                return default(T);
+            }
+        }
 
         public T GetRow<T>(string clavePlaza, DataTable dataTable, string origen)
         {
