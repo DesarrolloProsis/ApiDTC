@@ -22,8 +22,5 @@ namespace ApiDTC.Models
         public int CalendarId { get; set; }
 
         public bool StatusMaintenance { get; set; }
-
-        public string StatusMaintenance { get; set; }
-
     }
 }
