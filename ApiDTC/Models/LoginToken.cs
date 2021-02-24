@@ -8,4 +8,13 @@ namespace ApiDTC.Models
         public UserToken UserToken { get; set; }
         #endregion
     }
+
+    public class LoginTokenTrue
+    {
+        #region Properties
+        public LoginTrue Login { get; set; }
+
+        public UserToken UserToken { get; set; }
+        #endregion
+    }
 }

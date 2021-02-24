@@ -100,10 +100,30 @@
                         cmd.Parameters.Add("@NombreUsuario", SqlDbType.NVarChar).Value = loginUserInfo.Username;
                         cmd.Parameters.Add("@Contraseña", SqlDbType.NVarChar).Value = loginUserInfo.Password;
                         cmd.Parameters.Add("@Flag", SqlDbType.Bit).Value = loginUserInfo.Flag;
+                        
                         if(loginUserInfo.Flag)
-                            return _sqlResult.GetList<LoginTrue>("USR", cmd, sql, "GetStoreLogin");
-                        else
-                            return _sqlResult.GetList<Login>("USR", cmd, sql, "GetStoreLogin");
+                        {
+                            var loginTrue = _sqlResult.GetRow<LoginTrue>("USR", cmd, sql, "GetStoreLogin");
+                            var tokenTrue = BuildToken(loginTrue.UserId);
+                            var loginTokenTrue = new LoginTokenTrue
+                            {
+                                Login = loginTrue,
+                                UserToken = tokenTrue
+
+                            };
+                            return new Response { Result = loginTokenTrue, Message = "Ok" };
+                        }
+                        
+                        var login = _sqlResult.GetRow<Login>("USR", cmd, sql, "GetStoreLogin");
+                        var token = BuildToken(login.UserId);
+                        var loginToken = new LoginToken
+                        {
+                            Login = login,
+                            UserToken = token
+
+                        };
+                        return new Response { Result = loginToken, Message = "Ok" };
+                        
                     }
                 }
             }
@@ -127,8 +147,13 @@
                         cmd.Parameters.Add("@NombreUsuario", SqlDbType.NVarChar).Value = loginUserInfo.Username;
                         cmd.Parameters.Add("@Contraseña", SqlDbType.NVarChar).Value = loginUserInfo.Password;
                         cmd.Parameters.Add("@Flag", SqlDbType.Bit).Value = loginUserInfo.Flag;
-
-                        return _sqlResult.GetList<Cookie>("USR", cmd, sql, "GetStoreLoginCookie");
+                        var cookie = _sqlResult.GetRow<Cookie>("USR", cmd, sql, "GetStoreLoginCookie");
+                        var token = BuildToken(cookie.UserId);
+                        var cookieToken  = new CookieToken{
+                            Cookie = cookie,
+                            UserToken = token
+                        };
+                        return new Response { Result = cookieToken, Message = "Ok" }; 
                     }
                 }
             }
