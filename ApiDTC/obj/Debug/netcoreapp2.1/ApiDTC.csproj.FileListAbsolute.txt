@@ -171,6 +171,13 @@ C:\Users\MACHINE 1\Desktop\CLONE APIDTC\ApiDTC\ApiDTC\obj\Debug\netcoreapp2.1\Ap
 C:\Users\MACHINE 1\Desktop\CLONE APIDTC\ApiDTC\ApiDTC\obj\Debug\netcoreapp2.1\ApiDTC.RazorTargetAssemblyInfo.cache
 C:\Users\MACHINE 1\Desktop\CLONE APIDTC\ApiDTC\ApiDTC\obj\Debug\netcoreapp2.1\ApiDTC.dll
 C:\Users\MACHINE 1\Desktop\CLONE APIDTC\ApiDTC\ApiDTC\obj\Debug\netcoreapp2.1\ApiDTC.pdb
+C:\Users\LANUBE\Documents\ApiDTC\ApiDTC\bin\Debug\netcoreapp2.1\appsettings.Development.json
+C:\Users\LANUBE\Documents\ApiDTC\ApiDTC\bin\Debug\netcoreapp2.1\appsettings.json
+C:\Users\LANUBE\Documents\ApiDTC\ApiDTC\bin\Debug\netcoreapp2.1\ApiDTC.deps.json
+C:\Users\LANUBE\Documents\ApiDTC\ApiDTC\bin\Debug\netcoreapp2.1\ApiDTC.runtimeconfig.json
+C:\Users\LANUBE\Documents\ApiDTC\ApiDTC\bin\Debug\netcoreapp2.1\ApiDTC.runtimeconfig.dev.json
+C:\Users\LANUBE\Documents\ApiDTC\ApiDTC\bin\Debug\netcoreapp2.1\ApiDTC.dll
+C:\Users\LANUBE\Documents\ApiDTC\ApiDTC\bin\Debug\netcoreapp2.1\ApiDTC.pdb
 C:\Users\LANUBE\Documents\ApiDTC\ApiDTC\obj\Debug\netcoreapp2.1\ApiDTC.csprojAssemblyReference.cache
 C:\Users\LANUBE\Documents\ApiDTC\ApiDTC\obj\Debug\netcoreapp2.1\ApiDTC.Properties.Resources.resources
 C:\Users\LANUBE\Documents\ApiDTC\ApiDTC\obj\Debug\netcoreapp2.1\ApiDTC.csproj.GenerateResource.cache
@@ -179,13 +186,6 @@ C:\Users\LANUBE\Documents\ApiDTC\ApiDTC\obj\Debug\netcoreapp2.1\ApiDTC.AssemblyI
 C:\Users\LANUBE\Documents\ApiDTC\ApiDTC\obj\Debug\netcoreapp2.1\ApiDTC.csproj.CoreCompileInputs.cache
 C:\Users\LANUBE\Documents\ApiDTC\ApiDTC\obj\Debug\netcoreapp2.1\ApiDTC.RazorAssemblyInfo.cache
 C:\Users\LANUBE\Documents\ApiDTC\ApiDTC\obj\Debug\netcoreapp2.1\ApiDTC.RazorAssemblyInfo.cs
-C:\Users\LANUBE\Documents\ApiDTC\ApiDTC\bin\Debug\netcoreapp2.1\appsettings.Development.json
-C:\Users\LANUBE\Documents\ApiDTC\ApiDTC\bin\Debug\netcoreapp2.1\appsettings.json
-C:\Users\LANUBE\Documents\ApiDTC\ApiDTC\bin\Debug\netcoreapp2.1\ApiDTC.deps.json
-C:\Users\LANUBE\Documents\ApiDTC\ApiDTC\bin\Debug\netcoreapp2.1\ApiDTC.runtimeconfig.json
-C:\Users\LANUBE\Documents\ApiDTC\ApiDTC\bin\Debug\netcoreapp2.1\ApiDTC.runtimeconfig.dev.json
-C:\Users\LANUBE\Documents\ApiDTC\ApiDTC\bin\Debug\netcoreapp2.1\ApiDTC.dll
-C:\Users\LANUBE\Documents\ApiDTC\ApiDTC\bin\Debug\netcoreapp2.1\ApiDTC.pdb
 C:\Users\LANUBE\Documents\ApiDTC\ApiDTC\obj\Debug\netcoreapp2.1\ApiDTC.RazorTargetAssemblyInfo.cache
 C:\Users\LANUBE\Documents\ApiDTC\ApiDTC\obj\Debug\netcoreapp2.1\ApiDTC.dll
 C:\Users\LANUBE\Documents\ApiDTC\ApiDTC\obj\Debug\netcoreapp2.1\ApiDTC.pdb
