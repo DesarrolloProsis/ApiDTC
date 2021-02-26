@@ -27,7 +27,6 @@
         #region Methods
 
         // GET: api/Component
-        //[HttpGet("GetComponetV2/{squareId}/{agreementId}/{attachedId}/{relationShip}/{relationShipPrincipal}")]
         [HttpGet("GetComponetV2/{clavePlaza}/{squareId}/{agreementId}/{attachedId}/{relationShip}/{relationShipPrincipal}")]
         public ActionResult<Response> GetComponents(string clavePlaza, string squareId, int agreementId, int attachedId, int relationShip, int relationShipPrincipal)
         {
