@@ -67,8 +67,10 @@
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.Add("@user", SqlDbType.Int).Value = idTec;
-                        var login = _sqlResult.GetRow<Login>("USR", cmd, sql, "GetHeadTec");
-                        var token = BuildToken(login.UserId);
+                        var login = _sqlResult.GetRows<Login>("USR", cmd, sql, "GetHeadTec");
+                        if(login.Count == 0)
+                            return new Response { Message = $"Error", Result = null };
+                        var token = BuildToken(login[0].UserId);
                         var loginToken = new LoginToken{
                             Login = login,
                             UserToken = token
@@ -103,8 +105,10 @@
                         
                         if(loginUserInfo.Flag)
                         {
-                            var loginTrue = _sqlResult.GetRow<LoginTrue>("USR", cmd, sql, "GetStoreLogin");
-                            var tokenTrue = BuildToken(loginTrue.UserId);
+                            var loginTrue = _sqlResult.GetRows<LoginTrue>("USR", cmd, sql, "GetStoreLogin");
+                            if(loginTrue.Count == 0)
+                                return new Response { Message = $"Error", Result = null };
+                            var tokenTrue = BuildToken(loginTrue[0].UserId);
                             var loginTokenTrue = new LoginTokenTrue
                             {
                                 Login = loginTrue,
@@ -114,8 +118,10 @@
                             return new Response { Result = loginTokenTrue, Message = "Ok" };
                         }
                         
-                        var login = _sqlResult.GetRow<Login>("USR", cmd, sql, "GetStoreLogin");
-                        var token = BuildToken(login.UserId);
+                        var login = _sqlResult.GetRows<Login>("USR", cmd, sql, "GetStoreLogin");
+                        if(login.Count == 0)
+                            return new Response { Message = $"Error", Result = null };
+                        var token = BuildToken(login[0].UserId);
                         var loginToken = new LoginToken
                         {
                             Login = login,
@@ -147,8 +153,10 @@
                         cmd.Parameters.Add("@NombreUsuario", SqlDbType.NVarChar).Value = loginUserInfo.Username;
                         cmd.Parameters.Add("@Contraseña", SqlDbType.NVarChar).Value = loginUserInfo.Password;
                         cmd.Parameters.Add("@Flag", SqlDbType.Bit).Value = loginUserInfo.Flag;
-                        var cookie = _sqlResult.GetRow<Cookie>("USR", cmd, sql, "GetStoreLoginCookie");
-                        var token = BuildToken(cookie.UserId);
+                        var cookie = _sqlResult.GetRows<Cookie>("USR", cmd, sql, "GetStoreLoginCookie");
+                        if(cookie.Count == 0)
+                            return new Response { Message = $"Error", Result = null };
+                        var token = BuildToken(cookie[0].UserId);
                         var cookieToken  = new CookieToken{
                             Cookie = cookie,
                             UserToken = token

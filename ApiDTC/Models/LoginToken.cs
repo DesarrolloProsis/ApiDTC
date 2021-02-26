@@ -1,9 +1,12 @@
+
 namespace ApiDTC.Models
 {
+    using System.Collections.Generic;
+    
     public class LoginToken
     {
         #region Properties
-        public Login Login { get; set; }
+        public List<Login> Login { get; set; }
 
         public UserToken UserToken { get; set; }
         #endregion
@@ -12,7 +15,7 @@ namespace ApiDTC.Models
     public class LoginTokenTrue
     {
         #region Properties
-        public LoginTrue Login { get; set; }
+        public List<LoginTrue> Login { get; set; }
 
         public UserToken UserToken { get; set; }
         #endregion

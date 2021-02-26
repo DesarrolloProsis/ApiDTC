@@ -13,15 +13,14 @@ namespace ApiDTC.Models
 
         public string IdGare { get; set; }
 
-        public string Day { get; set; }
+        public int Day { get; set; }
 
-        public string FrequencyId { get; set; }
+        public int FrequencyId { get; set; }
 
-        public string DateStamp { get; set; }
+        public DateTime DateStamp { get; set; }
 
-        public string CalendarId { get; set; }
+        public int CalendarId { get; set; }
 
-        public string StatusMaintenance { get; set; }
-
+        public bool StatusMaintenance { get; set; }
     }
 }
