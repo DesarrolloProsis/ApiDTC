@@ -138,6 +138,7 @@
             }
         }
 
+        [AllowAnonymous]
         [HttpGet("MantenimientoPreventivo/Images/DeleteImg/{clavePlaza}/{reportNumber}/{fileName}")]
         public ActionResult<string> DeleteEquipoNuevoImg(string clavePlaza, string reportNumber, string fileName)
         {

@@ -207,6 +207,7 @@
                 return NotFound("Insert another image");
         }
 
+        [AllowAnonymous]
         [HttpGet("EquipoDañado/Images/{clavePlaza}/{referenceNumber}/{fileName}")]
         public ActionResult<DtcImage> DownloadEquipoDaniadoImg(string clavePlaza, string referenceNumber, string fileName)
         {
@@ -303,6 +304,7 @@
                 return NotFound("Insert another image");
         }
 
+        [AllowAnonymous]
         [HttpGet("EquipoNuevo/Images/{clavePlaza}/{referenceNumber}/{fileName}")]
         public ActionResult<DtcImage> DownloadEquipoNuevoImg(string clavePlaza, string referenceNumber, string fileName)
         {

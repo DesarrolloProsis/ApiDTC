@@ -131,6 +131,7 @@
             }
         }
 
+        [AllowAnonymous]
         [HttpGet("Images/DeleteImg/{clavePlaza}/{reportNumber}/{fileName}")]
         public ActionResult<string> DeleteDiagnosticoImg(string clavePlaza, string reportNumber, string fileName)
         {
