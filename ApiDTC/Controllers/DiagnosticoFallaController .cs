@@ -91,6 +91,7 @@
                 return NotFound("Insert another image");
         }
 
+        [AllowAnonymous]
         [HttpGet("Images/{clavePlaza}/{reportNumber}/{fileName}")]
         public ActionResult<DtcImage> DownloadDiagnosticoImg(string clavePlaza, string reportNumber, string fileName)
         {

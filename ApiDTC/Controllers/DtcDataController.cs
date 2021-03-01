@@ -246,6 +246,7 @@
             }
         }
 
+        [AllowAnonymous]
         [HttpGet("EquipoDañado/Images/DeleteImg/{clavePlaza}/{referenceNumber}/{fileName}")]
         public ActionResult<string> DeleteEquipoDaniadoImg(string clavePlaza, string referenceNumber, string fileName)
         {
@@ -341,6 +342,7 @@
             }
         }
 
+        [AllowAnonymous]
         [HttpGet("EquipoNuevo/Images/DeleteImg/{clavePlaza}/{referenceNumber}/{fileName}")]
         public ActionResult<string> DeleteEquipoNuevoImg(string clavePlaza, string referenceNumber, string fileName)
         {

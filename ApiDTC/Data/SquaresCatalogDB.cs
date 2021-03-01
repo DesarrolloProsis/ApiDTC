@@ -52,7 +52,7 @@
                     using (SqlCommand cmd = new SqlCommand("dbo.spSquareLanes", sql))
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
-                        cmd.Parameters.Add("@Square", SqlDbType.NVarChar).Value = square;
+                        cmd.Parameters.Add("@Square", SqlDbType.NVarChar).Value = square == "1Bi" ? square + "s" : square;
 
                         var storedResult = _sqlResult.GetList<Lanes>("USR", cmd, sql, "GetLanes");
                         if (storedResult.Result == null)
