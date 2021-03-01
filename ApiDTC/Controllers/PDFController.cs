@@ -187,6 +187,31 @@
             }
         }
 
+        [HttpGet("RefrescarArchivo/{clavePlaza}/{referenceNumber}")]
+        public IActionResult RefrescarArchivo(string clavePlaza, string referenceNumber)
+        {
+            string path = $@"{this._disk}:\{this._folder}\{clavePlaza}\DTC\{referenceNumber}\DTC-{referenceNumber}-Finalizado.pdf";
+            try
+            {
+                if (System.IO.File.Exists(path))
+                {
+                    var dataSet = _db.GetStorePDF(clavePlaza, referenceNumber, clavePlaza);
+                    if (dataSet.Tables[0].Rows.Count == 0 || dataSet.Tables[1].Rows.Count == 0 || dataSet.Tables[2].Rows.Count == 0 || dataSet.Tables[3].Rows.Count == 0)
+                        return NotFound("GetStorePdf retorna tabla vacía");
+                    PdfCreation pdf = new PdfCreation(clavePlaza, dataSet.Tables[0], dataSet.Tables[1], dataSet.Tables[2], dataSet.Tables[3], referenceNumber, new ApiLogger());
+                    //0 = Nuevo, 1 = Firmado, 2 = Almacén
+                    var pdfResult = pdf.NewPdf($@"{this._disk}:\{this._folder}", 1);
+                    return File(new FileStream(pdfResult.Result.ToString(), FileMode.Open, FileAccess.Read), "application/pdf");
+                }
+                return NotFound("No existe el archivo");
+            }
+            catch (IOException ex)
+            {
+                _apiLogger.WriteLog(clavePlaza, ex, "PDFController: GetPdfFirmado", 2);
+                return NotFound(ex.ToString());
+            }
+        }
+
         [HttpGet("GetPdfFirmado/{clavePlaza}/{referenceNumber}")]
         public IActionResult GetPdfFirmado(string clavePlaza, string referenceNumber)
         {

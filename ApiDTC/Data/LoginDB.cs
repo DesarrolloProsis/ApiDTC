@@ -70,14 +70,9 @@
                         var login = _sqlResult.GetRows<Login>("USR", cmd, sql, "GetHeadTec");
                         if(login.Count == 0)
                             return new Response { Message = $"Error", Result = null };
-                        var token = BuildToken(login[0].UserId);
-                        var loginToken = new LoginToken{
-                            Login = login,
-                            UserToken = token
-                        };
                         var result = new Response{
                             Message = "Ok",
-                            Result = loginToken
+                            Result = login
                         };
                         return result;
                     }
@@ -108,27 +103,12 @@
                             var loginTrue = _sqlResult.GetRows<LoginTrue>("USR", cmd, sql, "GetStoreLogin");
                             if(loginTrue.Count == 0)
                                 return new Response { Message = $"Error", Result = null };
-                            var tokenTrue = BuildToken(loginTrue[0].UserId);
-                            var loginTokenTrue = new LoginTokenTrue
-                            {
-                                Login = loginTrue,
-                                UserToken = tokenTrue
-
-                            };
-                            return new Response { Result = loginTokenTrue, Message = "Ok" };
+                            return new Response { Result = loginTrue, Message = "Ok" };
                         }
-                        
                         var login = _sqlResult.GetRows<Login>("USR", cmd, sql, "GetStoreLogin");
                         if(login.Count == 0)
                             return new Response { Message = $"Error", Result = null };
-                        var token = BuildToken(login[0].UserId);
-                        var loginToken = new LoginToken
-                        {
-                            Login = login,
-                            UserToken = token
-
-                        };
-                        return new Response { Result = loginToken, Message = "Ok" };
+                        return new Response { Result = login, Message = "Ok" };
                         
                     }
                 }
