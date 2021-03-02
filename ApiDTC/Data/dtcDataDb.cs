@@ -204,21 +204,22 @@
 
                             string directoy = $@"{disk}:\{folder}\{clavePlaza.ToUpper()}\DTC\{dtcView.ReferenceNumber}\EquipoDañadoImgs";
                             List<string> dtcImages = new List<string>();
-                            if (Directory.GetFiles(directoy) != null)
+                            if(Directory.Exists(directoy))
                             {
+                                if (Directory.GetFiles(directoy) != null)
+                                {
                                 foreach (var item in Directory.GetFiles(directoy))
                                     dtcImages.Add(item.Substring(item.LastIndexOf('\\') + 1));
+                                }
                             }
+                            
                             viewInfo.Paths = dtcImages;
                             
                             dtcViewInfo.Add(viewInfo);
                         }
                         return new Response
                         {
-                            Result = new DtcViewInfo
-                            {
-                                
-                            },
+                            Result = dtcViewInfo,
                             Message = "Ok"
                         };
                         

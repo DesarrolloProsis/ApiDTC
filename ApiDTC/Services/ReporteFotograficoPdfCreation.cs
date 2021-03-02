@@ -444,7 +444,7 @@ namespace ApiDTC.Services
                 CeldasVacias(2, table);
 
                 //Equipo nuevo o dañado
-                if (_tipo != 1)
+                /*if (_tipo != 1)
                 {
                     var colSiniestro = new PdfPCell(new Phrase("No. de Siniestro: ", letraoNegritaChica)) { Border = 0, HorizontalAlignment = Element.ALIGN_RIGHT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 1, Colspan = 3 };
 
@@ -453,7 +453,7 @@ namespace ApiDTC.Services
                     table.AddCell(colSiniestro);
                     table.AddCell(siniestro);
                     CeldasVacias(2, table);
-                }
+                }*/
 
                 return table;
             }
@@ -582,7 +582,7 @@ namespace ApiDTC.Services
                 table.AddCell(colSello);
 
                 //Técnico
-                string valorTecnicoProsis = _tipo == 1 ? Convert.ToString(_tableHeader.Rows[0]["TecnicoProsis"]) : Convert.ToString(_tableHeader.Rows[0]["TecnicoProsis"]);
+                string valorTecnicoProsis = _tipo == 1 ? Convert.ToString(_tableHeader.Rows[0]["TecnicoProsis"]) : Convert.ToString(_tableHeader.Rows[0]["Tecnico"]);
                 var colTecnico = new PdfPCell(new Phrase(valorTecnicoProsis, letraNormalChica))
                 {
                     Border = 0,
