@@ -192,8 +192,10 @@
 
                         foreach(var dtcView in dtcViewList)
                         {
-                            DtcViewInfo viewInfo = new DtcViewInfo();
-                            viewInfo.DtcView = dtcView;
+                            DtcViewInfo viewInfo = new DtcViewInfo
+                            {
+                                DtcView = dtcView
+                            };
                             string path = $@"{disk}:\{folder}\{clavePlaza}\DTC\{dtcView.ReferenceNumber}\DTC-{dtcView.ReferenceNumber}-Sellado.pdf";
                             if (System.IO.File.Exists((path)))
                                 viewInfo.PdfExists = true;
