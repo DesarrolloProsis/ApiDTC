@@ -203,9 +203,11 @@ namespace ApiDTC.Data
 
                         if(dataSet.Tables[0].Rows.Count == 0 || dataSet.Tables[1].Rows.Count == 0 )
                             return new Response { Result = null, Message = "Sin resultado"};
-                        CalendarInfo calendarInfo = new CalendarInfo();
-                        calendarInfo.CalendarHeader = _sqlResult.GetRow<CalendarHeader>(clavePlaza, dataSet.Tables[0], "CalendarInfo: CalendarHeader");
-                        calendarInfo.ActivitiesDescription = _sqlResult.GetRows<ActivitiesDescription>(clavePlaza, dataSet.Tables[1], "CalendarInfo: ActivitiesDescription");
+                        CalendarInfo calendarInfo = new CalendarInfo
+                        {
+                            CalendarHeader = _sqlResult.GetRow<CalendarHeader>(clavePlaza, dataSet.Tables[0], "CalendarInfo: CalendarHeader"),
+                            ActivitiesDescription = _sqlResult.GetRows<ActivitiesDescription>(clavePlaza, dataSet.Tables[1], "CalendarInfo: ActivitiesDescription")
+                        };
                         return new Response { Result = calendarInfo, Message = "OK"};                        
                     }
                 }

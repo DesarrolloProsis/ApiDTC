@@ -67,8 +67,6 @@ namespace ApiDTC.Services
         public Response NewPdf(string folder)
         {
             string directory, filename, path;
-
-            DateTime now = DateTime.Now; 
             if (_tipo == 1)
                 directory = $@"{folder}\{_clavePlaza.ToUpper()}\Reportes\{_referenceNumber}";
             else
@@ -381,34 +379,48 @@ namespace ApiDTC.Services
                 string valorPlaza = _tipo == 1 ? Convert.ToString(_tableHeader.Rows[0]["Plaza"]) : Convert.ToString(_tableHeader.Rows[0]["Plaza"]);
                 var plazaDeCobro = new PdfPCell(new Phrase(valorPlaza, letraNormalChica)) { BorderWidthBottom = 1, BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_BOTTOM, Padding = 2, Colspan = 2 };
 
-                string valorHoraInicio = _tipo == 1 ? Convert.ToString(_tableHeader.Rows[0]["Inicio"]) : Convert.ToString(_tableHeader.Rows[0]["HoraInicio"]);
-                var colTextoHoraInicio = new PdfPCell(new Phrase("Hora INICIO: ", letraoNegritaChica)) { Border = 0, HorizontalAlignment = Element.ALIGN_RIGHT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 4 };
-                var colHoraInicio = new PdfPCell(new Phrase(valorHoraInicio, letraNormalChica)) { BorderWidthBottom = 1, BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_BOTTOM, Padding = 2 };
-
+                
+               
+                
                 table.AddCell(colPlazaDeCobro);
                 table.AddCell(plazaDeCobro);
                 CeldasVacias(2, table);
-                table.AddCell(colTextoHoraInicio);
-                table.AddCell(colHoraInicio);
+                if (_tipo == 1)
+                {
+                    string valorHoraInicio = _tipo == 1 ? Convert.ToString(_tableHeader.Rows[0]["Inicio"]) : " ";
+                    var colTextoHoraInicio = new PdfPCell(new Phrase("Hora INICIO: ", letraoNegritaChica)) { Border = 0, HorizontalAlignment = Element.ALIGN_RIGHT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 4 };
+                    var colHoraInicio = new PdfPCell(new Phrase(valorHoraInicio, letraNormalChica)) { BorderWidthBottom = 1, BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_BOTTOM, Padding = 2 };
+
+                    table.AddCell(colTextoHoraInicio);
+                    table.AddCell(colTextoHoraInicio);
+                }
+                else
+                    CeldasVacias(2, table);
                 CeldasVacias(1, table);
 
                 //Ubicación
 
-                //string valorUbicacion= _tipo == 1 ? Convert.ToString(_tableHeader.Rows[0]["Ubicacion"]) : Convert.ToString(_tableHeader.Rows[0]["Ubicacion"]);
-                string valorUbicacion = _ubicacion;
+                string valorUbicacion= _tipo == 1 ? _ubicacion : Convert.ToString(_tableHeader.Rows[0]["Ubicacion"]);
                 var colUbicacion = new PdfPCell(new Phrase("Ubicación: ", letraoNegritaChica)) { Border = 0, HorizontalAlignment = Element.ALIGN_RIGHT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 4 };
 
                 var ubicacion = new PdfPCell(new Phrase(valorUbicacion, letraNormalChica)) { BorderWidthBottom = 1, BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_BOTTOM, Padding = 2, Colspan = 2 };
 
-                string valorHoraFin = _tipo == 1 ? Convert.ToString(_tableHeader.Rows[0]["Fin"]) : Convert.ToString(_tableHeader.Rows[0]["HoraFin"]);
-                var colTextoHoraFin = new PdfPCell(new Phrase("Hora FIN: ", letraoNegritaChica)) { Border = 0, HorizontalAlignment = Element.ALIGN_RIGHT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 4 };
-                var colHoraFin = new PdfPCell(new Phrase(valorHoraFin, letraNormalChica)) { BorderWidthBottom = 1, BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_BOTTOM, Padding = 2 };
-
+               
                 table.AddCell(colUbicacion);
                 table.AddCell(ubicacion);
                 CeldasVacias(2, table);
-                table.AddCell(colTextoHoraFin);
-                table.AddCell(colHoraFin);
+                if(_tipo == 1)
+                {
+                    string valorHoraFin = _tipo == 1 ? Convert.ToString(_tableHeader.Rows[0]["Fin"]) : " ";
+                    var colTextoHoraFin = new PdfPCell(new Phrase("Hora FIN: ", letraoNegritaChica)) { Border = 0, HorizontalAlignment = Element.ALIGN_RIGHT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 4 };
+                    var colHoraFin = new PdfPCell(new Phrase(valorHoraFin, letraNormalChica)) { BorderWidthBottom = 1, BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_BOTTOM, Padding = 2 };
+
+                    table.AddCell(colTextoHoraFin);
+                    table.AddCell(colHoraFin);
+                }
+                else
+                    CeldasVacias(2, table);
+                
                 CeldasVacias(1, table);
 
                 //Técnico

@@ -220,23 +220,8 @@
                 Message = "Ok",
                 Result = path
             };
-        }
+        } 
 
-        private string MesContrato(DateTime fechaSolicitud)
-        {
-            try
-            {
-                DateTime contratoInicial = new DateTime(2020, 11, 1);
-                int mesesTranscurridos = (contratoInicial.Month - fechaSolicitud.Month) + (12 * (contratoInicial.Year - fechaSolicitud.Year)) + 1;
-                return mesesTranscurridos.ToString("00");
-            }
-            catch (ArgumentOutOfRangeException ex)
-            {
-                _apiLogger.WriteLog(_clavePlaza, ex, "MatenimientoPdfCreation: NewPdf", 2);
-                return null;
-            }
-            
-        }
 
         private IElement TablaEncabezado()
         {
@@ -305,111 +290,6 @@
                 return null;
             }
             
-        }
-
-        private IElement TablaEncabezadoEvidencias(int pagina)
-        {
-            try
-            {
-                Image logo = Image.GetInstance($@"{System.Environment.CurrentDirectory}\Media\prosis-logo.jpg");
-                logo.ScalePercent(10f);
-                //Encabezado
-                PdfPTable table = new PdfPTable(new float[] { 25f, 25f, 25f, 25f }) { WidthPercentage = 100f };
-
-                PdfPCell colLogo = new PdfPCell(logo) { Border = 0, HorizontalAlignment = Element.ALIGN_LEFT, VerticalAlignment = Element.ALIGN_MIDDLE };
-                table.AddCell(colLogo);
-                CeldasVacias(3, table);
-
-
-                var celdaSalto = new PdfPCell() { Colspan = 4, Border = 0 };
-
-                var colTitulo = new PdfPCell(new Phrase(_textoTitulo, letraoNegritaMediana)) { Border = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, Padding = 5, PaddingRight = 20, PaddingLeft = 20, Colspan = 2 };
-                CeldasVacias(1, table);
-                table.AddCell(colTitulo);
-                CeldasVacias(1, table);
-
-
-                var colPlaza = new PdfPCell(new Phrase("PLAZA (PONER PALMILLAS)", letraoNegritaMediana)) { Border = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, Padding = 5, PaddingRight = 20, PaddingLeft = 20, Colspan = 2 };
-                CeldasVacias(1, table);
-                table.AddCell(colPlaza); ;
-                CeldasVacias(1, table);
-
-
-                var colReporte = new PdfPCell(new Phrase($"REPORTE: (pág. {pagina})", letraoNegritaMediana)) { Border = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, Padding = 5, PaddingRight = 20, PaddingLeft = 20, Colspan = 2 };
-                CeldasVacias(1, table);
-                table.AddCell(colReporte);
-                CeldasVacias(1, table);
-                table.AddCell(celdaSalto);
-
-                return table;
-            }
-            catch (PdfException ex)
-            {
-                _apiLogger.WriteLog(_clavePlaza, ex, "MatenimientoPdfCreation: TablaEncabezadoEvidencias", 5);
-                return null;
-            }
-            catch (Exception ex)
-            {
-                _apiLogger.WriteLog(_clavePlaza, ex, "MatenimientoPdfCreation: TablaEncabezadoEvidencias", 3);
-                return null;
-            }
-        }
-
-        private IElement TablaFotografias(string[] rutas, int indice, int ultimo)
-        {
-
-            try
-            {
-                PdfPTable table = new PdfPTable(new float[] { 33f, 33f, 33f }) { WidthPercentage = 100f };
-                var celdaVacia = new PdfPCell() { Border = 0, FixedHeight = 150 };
-
-                int inicio, hasta;
-
-                //Inicio del recorrido
-                if (indice == 1)
-                    inicio = 0;
-                else
-                    inicio = ((indice - 1) * 9);
-
-                //Hasta donde
-                if (rutas.Length % 9 == 0)
-                    hasta = (indice * 9);
-                else if (rutas.Length < 9)
-                    hasta = rutas.Length % 9;
-                else if (inicio == 0 && rutas.Length > 9)
-                    hasta = 9;
-                else if (indice == ultimo)
-                    hasta = inicio + (rutas.Length % 9);
-                else
-                    hasta = inicio + 9;
-
-                for (int i = inicio; i < hasta; i++)
-                {
-                    Image img = Image.GetInstance(rutas[i]);
-                    if (img.Width > img.Height)
-                        img.ScaleAbsolute(170f, 150f);
-                    else
-                        img.ScaleAbsolute(150f, 170f);
-                    PdfPCell colFoto = new PdfPCell(img) { Border = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_MIDDLE, Padding = 2 };
-                    table.AddCell(colFoto);
-                }
-
-                //for (int i = 0; i < (9 - fotos.Count) + 3; i++)
-                for (int i = 0; i < 9 - (hasta - inicio); i++)
-                    table.AddCell(celdaVacia);
-
-                return table;
-            }
-            catch (PdfException ex)
-            {
-                _apiLogger.WriteLog(_clavePlaza, ex, "MatenimientoPdfCreation: TablaFotografias", 5);
-                return null;
-            }
-            catch (Exception ex)
-            {
-                _apiLogger.WriteLog(_clavePlaza, ex, "MatenimientoPdfCreation: TablaFotografias", 3);
-                return null;
-            }
         }
 
         private IElement TablaInformacion()
@@ -812,75 +692,6 @@
             }
         }
 
-        private List<Equipo> EquiposPivote(List<Equipo> equipos)
-        {
-            List<Equipo> equiposFinales = new List<Equipo>();
-            int conteo = 0;
-            foreach (Equipo item in equipos)
-            {
-                foreach (Componente componente in item.Componentes)
-                {
-                    conteo = conteo + 1;
-                    //Si hay menos de 38 componentes, y la lista no ha registrado el item del conteo idéntico al número de componentes
-                    if (_tableActivities.Rows.Count < 38 && !equiposFinales.Contains(item) && conteo == _tableActivities.Rows.Count)
-                    {
-                        equiposFinales.Add(item);
-                        break;
-                    }
-
-                    else if (_tableActivities.Rows.Count == 38 && !equiposFinales.Contains(item) && conteo == 38)
-                    {
-                        equiposFinales.Add(item);
-                        break;
-                    }
-                    else if (_tableActivities.Rows.Count > 38)
-                    {
-                        if (conteo == 38 && !equiposFinales.Contains(item))
-                            equiposFinales.Add(item);
-                        if (_tableActivities.Rows.Count < 81)
-                        {
-                            if (conteo == _tableActivities.Rows.Count && !equiposFinales.Contains(item))
-                            {
-                                equiposFinales.Add(item);
-                                break;
-                            }
-                        }
-                        else if (_tableActivities.Rows.Count == 81)
-                        {
-                            if (conteo == 81 && !equiposFinales.Contains(item))
-                            {
-                                equiposFinales.Add(item);
-                                break;
-                            }
-                        }
-                        else
-                        {
-                            if (_tableActivities.Rows.Count < 91)
-                            {
-                                if (conteo == _tableActivities.Rows.Count && !equiposFinales.Contains(item))
-                                {
-                                    equiposFinales.Add(item);
-                                    break;
-                                }
-                            }
-                            else if (_tableActivities.Rows.Count == 91 && !equiposFinales.Contains(item) && conteo == 91)
-                            {
-                                equiposFinales.Add(item);
-                                break;
-                            }
-                            else
-                            {
-                                if (53 % (conteo - 38) == 0 && !equiposFinales.Contains(item))
-                                    equiposFinales.Add(item);
-                                else if (conteo == _tableActivities.Rows.Count && !equiposFinales.Contains(item))
-                                    equiposFinales.Add(item);
-                            }
-                        }
-                    }
-                }
-            }
-            return equiposFinales;
-        }
         
         private List<string> SeparacionObservaciones(string observaciones)
         {

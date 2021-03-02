@@ -40,10 +40,11 @@
         #region Methods
 
         #region Operaciones DTC
+        //TODO mandar si tiene pdf y fotos
         [HttpGet("{clavePlaza}/{IdUser}/{SquareCatalog}")]
         public ActionResult<Response> Get(string clavePlaza, int IdUser, string SquareCatalog)
         {   
-            var get = _db.GetDTC(clavePlaza, IdUser, SquareCatalog);
+            var get = _db.GetDTC(clavePlaza, IdUser, SquareCatalog, this._disk, this._folder);
             if(get.Result == null)
                 return NotFound(get);
             else
@@ -53,7 +54,7 @@
         [HttpGet("Open/{clavePlaza}/{IdUser}/{SquareCatalog}")]
         public ActionResult<Response> GetOpen(string clavePlaza, int IdUser, string SquareCatalog)
         {
-            var get = _db.GetDTC(clavePlaza, IdUser, SquareCatalog);
+            var get = _db.GetDTC(clavePlaza, IdUser, SquareCatalog, this._disk, this._folder);
             if (get.Result == null)
                 return NotFound(get);
             else

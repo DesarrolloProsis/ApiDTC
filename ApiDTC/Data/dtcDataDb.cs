@@ -8,6 +8,7 @@
     using ApiDTC.Services;
     using System.Collections.Generic;
     using System.Data.SqlTypes;
+    using System.IO;
 
     public class DtcDataDb
     {
@@ -174,7 +175,7 @@
             }
         }
 
-        public Response GetDTC(string clavePlaza, int idUser, string squareCatalog)
+        public Response GetDTC(string clavePlaza, int idUser, string squareCatalog, string disk, string folder)
         {
             using (SqlConnection sql = new SqlConnection(_connectionString))
             {
@@ -185,7 +186,42 @@
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.Add("@UserId", SqlDbType.Int).Value = idUser;
                         cmd.Parameters.Add("@SquareId", SqlDbType.NVarChar).Value = squareCatalog;
-                        return _sqlResult.GetList<DtcView>(clavePlaza, cmd, sql, "GetDTC");
+                        var dtcViewList = _sqlResult.GetRows<DtcView>(clavePlaza, cmd, sql, "DtcDataDb: GetDTC");
+
+                        List<DtcViewInfo> dtcViewInfo = new List<DtcViewInfo>();
+
+                        foreach(var dtcView in dtcViewList)
+                        {
+                            DtcViewInfo viewInfo = new DtcViewInfo
+                            {
+                                DtcView = dtcView
+                            };
+                            string path = $@"{disk}:\{folder}\{clavePlaza}\DTC\{dtcView.ReferenceNumber}\DTC-{dtcView.ReferenceNumber}-Sellado.pdf";
+                            if (System.IO.File.Exists((path)))
+                                viewInfo.PdfExists = true;
+                            else
+                                viewInfo.PdfExists = false;
+
+                            string directoy = $@"{disk}:\{folder}\{clavePlaza.ToUpper()}\DTC\{dtcView.ReferenceNumber}\EquipoDañadoImgs";
+                            List<string> dtcImages = new List<string>();
+                            if (Directory.GetFiles(directoy) != null)
+                            {
+                                foreach (var item in Directory.GetFiles(directoy))
+                                    dtcImages.Add(item.Substring(item.LastIndexOf('\\') + 1));
+                            }
+                            viewInfo.Paths = dtcImages;
+                            
+                            dtcViewInfo.Add(viewInfo);
+                        }
+                        return new Response
+                        {
+                            Result = new DtcViewInfo
+                            {
+                                
+                            },
+                            Message = "Ok"
+                        };
+                        
                     }
                 }
                 catch (SqlException ex)
