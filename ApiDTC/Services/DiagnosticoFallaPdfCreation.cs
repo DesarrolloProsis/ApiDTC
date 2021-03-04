@@ -175,7 +175,7 @@ namespace ApiDTC.Services
             }
             catch (ArgumentOutOfRangeException ex)
             {
-                _apiLogger.WriteLog(_clavePlaza, ex, "ReporteFotograficoPdfCreation: NewPdf", 2);
+                _apiLogger.WriteLog(_clavePlaza, ex, "InventarioPdfCreation: NewPdf", 2);
                 return null;
             }
             
@@ -209,12 +209,12 @@ namespace ApiDTC.Services
             }
             catch (PdfException ex)
             {
-                _apiLogger.WriteLog(_clavePlaza, ex, "ReporteFotograficoPdfCreation: TablaEncabezado", 5);
+                _apiLogger.WriteLog(_clavePlaza, ex, "InventarioPdfCreation: TablaEncabezado", 5);
                 return null;
             }
             catch(Exception ex)
             {
-                _apiLogger.WriteLog(_clavePlaza, ex, "ReporteFotograficoPdfCreation: TablaEncabezado", 3);
+                _apiLogger.WriteLog(_clavePlaza, ex, "InventarioPdfCreation: TablaEncabezado", 3);
                 return null;
             }
             
