@@ -261,30 +261,4 @@ namespace ApiDTC.Services
         }
         #endregion
     }
-
-    #region Clase Inventario prueba
-    public class Equipo
-    {
-        public string Nombre { get; set; }
-
-        public List<InventarioComponente> InventarioComponentes{ get; set; }
-    }
-
-    public class InventarioComponente
-    {
-        public string Descripcion { get; set; }
-
-        public string Detalle { get; set; }
-
-        public string Marca { get; set; }
-
-        public string Modelo { get; set; }
-
-        public string Serie { get; set; }
-
-        public string NoInventario { get; set; }
-
-        public string Observaciones { get; set; }
-    }
-    #endregion
 }
