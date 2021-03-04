@@ -1,6 +1,4 @@
-﻿
-
-namespace ApiDTC.Services
+﻿namespace ApiDTC.Services
 {
     using ApiDTC.Models;
     using iTextSharp.text;
