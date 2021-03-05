@@ -576,20 +576,34 @@ namespace ApiDTC.Services
                 return lineaObservaciones;
             }
 
-            var palabras = observaciones.Split(' ');
-            string linea = string.Empty;
-            foreach (var palabra in palabras)
+            char[] separadores = new char[]{
+                ' ',
+                ',',
+                '.'
+            };
+            var palabras = observaciones.Split(separadores);
+            List<string> palabrasSinVacio = new List<string>();
+            foreach(var palabra in palabras)
             {
-                linea += $" {palabra}";
-                if(linea.Length > 115)
+                if(!string.IsNullOrEmpty(palabra))
+                    palabrasSinVacio.Add(palabra);
+            }
+            string linea = string.Empty;
+            foreach (var palabra in palabrasSinVacio)
+            {
+                if(!string.IsNullOrEmpty(palabra))
                 {
-                    lineaObservaciones.Add(linea);
-                    linea = string.Empty;
-                }
-                if(palabra == palabras[palabras.Length - 1] && linea.Length < 115)
-                {
-                    lineaObservaciones.Add(linea);
-                    linea = string.Empty;
+                    linea += $"{palabra} ";
+                    if(linea.Length > 110)
+                    {
+                        lineaObservaciones.Add(linea);
+                        linea = string.Empty;
+                    }
+                    if(palabra == palabrasSinVacio[palabrasSinVacio.Count - 1] && linea.Length < 110)
+                    {
+                        lineaObservaciones.Add(linea);
+                        linea = string.Empty;
+                    }
                 }
             }
             return lineaObservaciones;
