@@ -112,7 +112,7 @@ namespace ApiDTC.Data
             
         }
 
-        public Response InsertCalendarReportData(string clavePlaza, CalendarReportData calendarReportData)
+        public Response InsertCalendarReportData(string clavePlaza, CalendarReportData calendarReportData, bool update)
         {
             try
             {
@@ -132,6 +132,7 @@ namespace ApiDTC.Data
                         cmd.Parameters.Add("@End", SqlDbType.NVarChar).Value = calendarReportData.End;
                         cmd.Parameters.Add("@Observations", SqlDbType.NVarChar).Value = calendarReportData.Observations;
                         cmd.Parameters.Add("@CalendarId", SqlDbType.Int).Value = calendarReportData.CalendarId;
+                        cmd.Parameters.Add("@UpdateFlag", SqlDbType.BigInt).Value = update;
                         var storedResult = _sqlResult.Post(clavePlaza, cmd, sql, "InsertCalendarReportData");
                         if (storedResult.SqlResult == null)
                             return new Response { Message = "No se pudo insertar ReportData", Result = null };
