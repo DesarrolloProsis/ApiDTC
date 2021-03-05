@@ -64,6 +64,47 @@
             
         }
 
+        [HttpGet("MantenimientoExists/{clavePlaza}/{referenceNumber}")]
+        public ActionResult PdfExists(string clavePlaza, string referenceNumber)
+        {
+            string path =  $@"{this._disk}:\{this._folder}\{clavePlaza}\Reportes\{referenceNumber}\ReporteFotográficoSellado-{referenceNumber}.pdf";
+            if(System.IO.File.Exists((path)))
+                return Ok();
+            return NotFound();
+        }
+
+        [HttpPost("MantenimiendoSellado/{clavePlaza}/{referenceNumber}")]
+        public ActionResult<Response> FichaTecnicaSellada(string clavePlaza, [FromForm(Name = "file")] IFormFile file, string referenceNumber)
+        {
+            if(file.Length > 0 || file != null)
+            {
+                if(file.FileName.EndsWith(".pdf") || file.FileName.EndsWith(".PDF"))
+                {
+                    string path = $@"{this._disk}:\{this._folder}\{clavePlaza}\Reportes\{referenceNumber}", filename;
+                    try
+                    {
+                        if (!Directory.Exists(path))
+                            Directory.CreateDirectory(path);
+                        filename = $"ReporteFotográficoSellado-{referenceNumber}.pdf";
+                        if (System.IO.File.Exists(Path.Combine(path, filename)))
+                            System.IO.File.Delete(Path.Combine(path, filename));
+                        var fs = new FileStream(Path.Combine(path, filename), FileMode.Create);
+                        file.CopyTo(fs);
+                        fs.Close();
+                        return Ok(path);
+                    }
+                    catch (IOException ex)
+                    {
+                        _apiLogger.WriteLog(clavePlaza, ex, "ReporteFotograficoController: MantenimiendoSellado", 2);
+                        return NotFound(ex.ToString());
+                    }
+                }
+                return NotFound("Ingresa un archivo pdf");
+            }
+            return NotFound();
+        }
+
+        
         [HttpPost("MantenimientoPreventivo/Images/{clavePlaza}/{reportNumber}")]
         public ActionResult<Response> InsertImageNuevo(string clavePlaza, [FromForm(Name = "image")] IFormFile image, string reportNumber, int semana)
         {
@@ -182,6 +223,47 @@
                 return NotFound(ex.ToString());
             }
         }
+        
+        [HttpGet("Nuevo/PdfExists/{clavePlaza}/{referenceNumber}")]
+        public ActionResult NuevoPdfSelladoExists(string clavePlaza, string referenceNumber)
+        {
+            string path =  $@"{this._disk}:\{this._folder}\{clavePlaza}\DTC\{referenceNumber}\DTC-{referenceNumber}-EquipoNuevoSellado.pdf";
+            if(System.IO.File.Exists((path)))
+                return Ok();
+            return NotFound();
+        }
+
+        [HttpPost("Nuevo/ReporteSellado/{clavePlaza}/{referenceNumber}")]
+        public ActionResult<Response> EquipoNuevoSellado(string clavePlaza, [FromForm(Name = "file")] IFormFile file, string referenceNumber)
+        {
+            if(file.Length > 0 || file != null)
+            {
+                if(file.FileName.EndsWith(".pdf") || file.FileName.EndsWith(".PDF"))
+                {
+                    string path = $@"{this._disk}:\{this._folder}\{clavePlaza}\DTC\{referenceNumber}", filename;
+                    try
+                    {
+                        if (!Directory.Exists(path))
+                            Directory.CreateDirectory(path);
+                        filename = $"DTC-{referenceNumber}-EquipoNuevoSellado.pdf";
+                        if (System.IO.File.Exists(Path.Combine(path, filename)))
+                            System.IO.File.Delete(Path.Combine(path, filename));
+                        var fs = new FileStream(Path.Combine(path, filename), FileMode.Create);
+                        file.CopyTo(fs);
+                        fs.Close();
+                        return Ok(path);
+                    }
+                    catch (IOException ex)
+                    {
+                        _apiLogger.WriteLog(clavePlaza, ex, "ReporteFotograficoController: EquipoNuevoSellado", 2);
+                        return NotFound(ex.ToString());
+                    }
+                }
+                return NotFound("Ingresa un archivo pdf");
+            }
+            return NotFound();
+        }
+
 
         [HttpGet("Dañado/{clavePlaza}/{ubicacion}/{referenceNumber}")]
         public IActionResult GetReporteEquipoDañado(string clavePlaza, string ubicacion, string referenceNumber)
@@ -202,6 +284,46 @@
                 _apiLogger.WriteLog(clavePlaza, ex, "ReporteFotograficoController: GetReporteEquipoDañado", 2);
                 return NotFound(ex.ToString());
             }
+        }
+
+        [HttpGet("Dañado/PdfExists/{clavePlaza}/{referenceNumber}")]
+        public ActionResult DañadoPdfSelladoExists(string clavePlaza, string referenceNumber)
+        {
+            string path =  $@"{this._disk}:\{this._folder}\{clavePlaza}\DTC\{referenceNumber}\DTC-{referenceNumber}-EquipoDañadoSellado.pdf";
+            if(System.IO.File.Exists((path)))
+                return Ok();
+            return NotFound();
+        }
+
+        [HttpPost("Dañado/ReporteSellado/{clavePlaza}/{referenceNumber}")]
+        public ActionResult<Response> EquipoDañadoSellado(string clavePlaza, [FromForm(Name = "file")] IFormFile file, string referenceNumber)
+        {
+            if(file.Length > 0 || file != null)
+            {
+                if(file.FileName.EndsWith(".pdf") || file.FileName.EndsWith(".PDF"))
+                {
+                    string path = $@"{this._disk}:\{this._folder}\{clavePlaza}\DTC\{referenceNumber}", filename;
+                    try
+                    {
+                        if (!Directory.Exists(path))
+                            Directory.CreateDirectory(path);
+                        filename = $"DTC-{referenceNumber}-EquipoDañadoSellado.pdf";
+                        if (System.IO.File.Exists(Path.Combine(path, filename)))
+                            System.IO.File.Delete(Path.Combine(path, filename));
+                        var fs = new FileStream(Path.Combine(path, filename), FileMode.Create);
+                        file.CopyTo(fs);
+                        fs.Close();
+                        return Ok(path);
+                    }
+                    catch (IOException ex)
+                    {
+                        _apiLogger.WriteLog(clavePlaza, ex, "ReporteFotograficoController: EquipoDañadoSellado", 2);
+                        return NotFound(ex.ToString());
+                    }
+                }
+                return NotFound("Ingresa un archivo pdf");
+            }
+            return NotFound();
         }
         #endregion
         

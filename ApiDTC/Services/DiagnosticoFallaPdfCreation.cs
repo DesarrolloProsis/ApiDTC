@@ -80,7 +80,7 @@ namespace ApiDTC.Services
 
             DateTime now = DateTime.Now; 
             directory = $@"{folder}\{_clavePlaza.ToUpper()}\Reportes\{_noReporte}";
-            filename = $"{_noReporte}.pdf";
+            filename = $"{_noReporte}-Diagnostico.pdf";
             path = Path.Combine(directory, filename); 
             
             try

@@ -56,6 +56,46 @@
             }
             
         }
+        
+        [HttpGet("FichaTecnicaExists/{clavePlaza}/{referenceNumber}")]
+        public ActionResult PdfExists(string clavePlaza, string referenceNumber)
+        {
+            string path =  $@"{this._disk}:\{this._folder}\{clavePlaza}\Reportes\{referenceNumber}\{referenceNumber}-FichaTecnicaSellado.pdf";
+            if(System.IO.File.Exists((path)))
+                return Ok();
+            return NotFound();
+        }
+
+        [HttpPost("FichaTecnicaSellada/{clavePlaza}/{referenceNumber}")]
+        public ActionResult<Response> FichaTecnicaSellada(string clavePlaza, [FromForm(Name = "file")] IFormFile file, string referenceNumber)
+        {
+            if(file.Length > 0 || file != null)
+            {
+                if(file.FileName.EndsWith(".pdf") || file.FileName.EndsWith(".PDF"))
+                {
+                    string path = $@"{this._disk}:\{this._folder}\{clavePlaza}\Reportes\{referenceNumber}", filename;
+                    try
+                    {
+                        if (!Directory.Exists(path))
+                            Directory.CreateDirectory(path);
+                        filename = $"{referenceNumber}-FichaTecnicaSellado.pdf";
+                        if (System.IO.File.Exists(Path.Combine(path, filename)))
+                            System.IO.File.Delete(Path.Combine(path, filename));
+                        var fs = new FileStream(Path.Combine(path, filename), FileMode.Create);
+                        file.CopyTo(fs);
+                        fs.Close();
+                        return Ok(path);
+                    }
+                    catch (IOException ex)
+                    {
+                        _apiLogger.WriteLog(clavePlaza, ex, "FichaTecnicaAtencionController: FichaTecnicaSellada", 2);
+                        return NotFound(ex.ToString());
+                    }
+                }
+                return NotFound("Ingresa un archivo pdf");
+            }
+            return NotFound();
+        }
 
         [HttpPost("FichaTecnicaDiagnostico/{clavePlaza}")]
         public ActionResult<Response> InsertFichaTecnicaDiagnostico(string clavePlaza, [FromBody] FichaTecnicaDiagnostico fichaTecnicaDiagnostico)

@@ -719,26 +719,13 @@
             {
                 if(!string.IsNullOrEmpty(palabra))
                 {
-                    /*if(palabra.Contains(','))
-                    {
-                        string temp = null;
-                        foreach (var caracter in palabra)
-                        {
-                            if(caracter == ',')
-                                temp += $", ";
-                            else
-                                temp += $"{caracter}";
-                        }
-                        linea += $"{temp} ";
-                    }
-                    else*/
                     linea += $"{palabra} ";
                     if(linea.Length > 110)
                     {
                         lineaObservaciones.Add(linea);
                         linea = string.Empty;
                     }
-                    if(palabra == palabrasSinVacio[palabrasSinVacio.Count - 1] && linea.Length < 115)
+                    if(palabra == palabrasSinVacio[palabrasSinVacio.Count - 1] && linea.Length < 110)
                     {
                         lineaObservaciones.Add(linea);
                         linea = string.Empty;
