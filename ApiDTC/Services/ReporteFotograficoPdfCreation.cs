@@ -354,7 +354,7 @@
                 var colNoReporte = new PdfPCell(new Phrase(valorReporte, letraNormalChica)) { BorderWidthBottom = 1, BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_BOTTOM, Padding = 2, Colspan = 2 };
 
                 //TODO cambiar valor de fecha en Reporte fotográfico según el stored de Alex
-                string valorFecha = _tipo == 1 ? Convert.ToString(_tableHeader.Rows[0]["Fecha"]).Substring(0, 8) : "01/01/2021 ";
+                string valorFecha = _tipo == 1 ? Convert.ToString(_tableHeader.Rows[0]["Fecha"]).Substring(0, 10) : "01/01/2021 ";
 
 
                 table.AddCell(colTextoNoReporte);
@@ -385,7 +385,7 @@
                 var colHoraInicio = new PdfPCell(new Phrase(valorHoraInicio, letraNormalChica)) { BorderWidthBottom = 1, BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_BOTTOM, Padding = 2 };
 
                 table.AddCell(colTextoHoraInicio);
-                table.AddCell(colTextoHoraInicio);
+                table.AddCell(colHoraInicio);
                 CeldasVacias(1, table);
 
                 //Ubicación
