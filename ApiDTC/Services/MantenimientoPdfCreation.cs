@@ -276,7 +276,7 @@
                 string valorReporte = Convert.ToString(_tableHeader.Rows[0]["NumeroReporte"]);
                 var colTextoNoReporte = new PdfPCell(new Phrase("No. de Reporte:", letraoNegritaMediana)) { Border = 0, HorizontalAlignment = Element.ALIGN_RIGHT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 4, Colspan = 2 };
                 var colNoReporte = new PdfPCell(new Phrase(valorReporte, letraNormalMediana)) { BorderWidthBottom = 1, BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_BOTTOM, Padding = 2, Colspan = 2 };
-                10/10/2020
+                
                 string valorFecha  = Convert.ToString(_tableHeader.Rows[0]["Fecha"]).Substring(0, 10);
                 var colTextoFecha = new PdfPCell(new Phrase("Fecha:", letraoNegritaMediana)) { Border = 0, HorizontalAlignment = Element.ALIGN_RIGHT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 4 };
                 var colFecha = new PdfPCell(new Phrase(valorFecha, letraNormalMediana)) { BorderWidthBottom = 1, BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_BOTTOM, Padding = 2 };
@@ -296,7 +296,7 @@
 
                 string valorHoraInicio = Convert.ToString(_tableHeader.Rows[0]["Inicio"]);
                 var inicioDateTime = Convert.ToDateTime(valorHoraInicio);
-                string conversionInicio = inicioDateTime.ToString("hh:mm:ss tt", CultureInfo.CurrentCulture);
+                string conversionInicio = inicioDateTime.ToString("hh:mm tt", CultureInfo.CurrentCulture);
                 var colHoraInicio = new PdfPCell(new Phrase(conversionInicio, letraNormalMediana)) { BorderWidthBottom = 1, BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_BOTTOM, Padding = 2 };
 
                 table.AddCell(colTextoPlaza);
@@ -312,8 +312,8 @@
 
                 var colTextoHoraFin = new PdfPCell(new Phrase("Hora FIN:", letraoNegritaMediana)) { Border = 0, HorizontalAlignment = Element.ALIGN_RIGHT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 4 };
                 string valorHoraFin = Convert.ToString(_tableHeader.Rows[0]["Fin"]);
-                var finDateTime = Convert.ToDateTime(valorHoraInicio);
-                string conversionFin = inicioDateTime.ToString("hh:mm:ss tt", CultureInfo.CurrentCulture);
+                var finDateTime = Convert.ToDateTime(valorHoraFin);
+                string conversionFin = finDateTime.ToString("hh:mm tt", CultureInfo.CurrentCulture);
                 var colHoraFin = new PdfPCell(new Phrase(conversionFin, letraNormalMediana)) { BorderWidthBottom = 1, BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_BOTTOM, Padding = 2 };
 
                 table.AddCell(colTextoUbicacion);
