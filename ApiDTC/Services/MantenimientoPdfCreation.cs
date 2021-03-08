@@ -161,6 +161,7 @@
 
                     List<Equipo> equipos = CreacionListaActividades();
                     TablaDescripcion(doc, equipos);
+                    doc.Add(new Phrase("\n\n\n\n\n\n"));
                     PdfContentByte cb = writer.DirectContent;
                     PdfPTable tablaObservaciones = TablaObservaciones();
                     tablaObservaciones.WriteSelectedRows(0, -1, 30, 275, cb);
@@ -354,13 +355,13 @@
             }
         }
 
-        private void TablaDescripcion(Document doc, List<Equipo> equipos)
+        private int TablaDescripcion(Document doc, List<Equipo> equipos)
         {
             try
             {
-                PdfPTable table = new PdfPTable(new float[] { 19.17f, 19.17f, 26.67f, 8.67f, 9.67f, 8.67f }) { WidthPercentage = 100f };
+                PdfPTable table = new PdfPTable(new float[] { 19.17f, 19.17f, 26.67f, 8.67f, 10.67f, 7.67f }) { WidthPercentage = 100f };
                 CeldasVacias(12, table);
-
+                int numeroComponentes = 0;
                 table.AddCell(new PdfPCell(new Phrase("EQUIPO", letraoNegritaChica))
                 {
                     BackgroundColor = BaseColor.LightGray,
@@ -423,6 +424,7 @@
                     table.AddCell(colEquipo);
                     foreach (var componente in equipo.Componentes)
                     {
+                        numeroComponentes += 1;
                         table.AddCell(new PdfPCell
                         {
                             Phrase = new Phrase(componente.Nombre, letraNormalChica),
@@ -466,6 +468,7 @@
                     }
                 }
                 doc.Add(table);
+                return numeroComponentes;
             }
             catch (PdfException ex)
             {
