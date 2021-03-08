@@ -6,6 +6,7 @@
     using System;
     using System.Collections.Generic;
     using System.Data;
+    using System.Globalization;
     using System.IO;
 
     public class MantenimientoPdfCreation
@@ -166,33 +167,6 @@
                     PdfPTable tablaFirmas = TablaFirmas();
                     tablaFirmas.WriteSelectedRows(0, -1, 30, 200, cb);
 
-                    //Pdf fotografías evidencia
-                    /*string directoryImgs = Path.Combine(directory, "Imgs");
-                    var fotos = Directory.GetFiles(directoryImgs);
-                    if(fotos.Length != 0)
-                    {
-                        doc.NewPage();
-
-                        int paginasNecesarias = fotos.Length / 9 + (fotos.Length % 9 != 0 ? 1 : 0);
-
-                        for (int i = 0; i < paginasNecesarias; i++)
-                        {
-                            if (i == 0)
-                            {
-                                doc.Add(TablaEncabezadoEvidencias(i + 1));
-                                doc.Add(TablaFotografias(fotos, i + 1, paginasNecesarias));
-                                continue;
-                            }
-                            else
-                                doc.NewPage();
-                            doc.Add(TablaEncabezadoEvidencias(i + 1));
-                            doc.Add(TablaFotografias(fotos, i + 1, paginasNecesarias));
-
-                           // if (i == paginasNecesarias - 1)
-                                
-                        }
-                        doc.Add(TablaFirmas());
-                    }*/
                     doc.Close();
                     writer.Close();
                     byte[] content = myMemoryStream.ToArray();
@@ -301,8 +275,8 @@
                 string valorReporte = Convert.ToString(_tableHeader.Rows[0]["NumeroReporte"]);
                 var colTextoNoReporte = new PdfPCell(new Phrase("No. de Reporte:", letraoNegritaMediana)) { Border = 0, HorizontalAlignment = Element.ALIGN_RIGHT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 4, Colspan = 2 };
                 var colNoReporte = new PdfPCell(new Phrase(valorReporte, letraNormalMediana)) { BorderWidthBottom = 1, BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_BOTTOM, Padding = 2, Colspan = 2 };
-                
-                string valorFecha  = Convert.ToString(_tableHeader.Rows[0]["Fecha"]).Substring(0, 8);
+                10/10/2020
+                string valorFecha  = Convert.ToString(_tableHeader.Rows[0]["Fecha"]).Substring(0, 10);
                 var colTextoFecha = new PdfPCell(new Phrase("Fecha:", letraoNegritaMediana)) { Border = 0, HorizontalAlignment = Element.ALIGN_RIGHT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 4 };
                 var colFecha = new PdfPCell(new Phrase(valorFecha, letraNormalMediana)) { BorderWidthBottom = 1, BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_BOTTOM, Padding = 2 };
 
@@ -318,8 +292,11 @@
                 var colPlaza = new PdfPCell(new Phrase(valorPlaza, letraNormalMediana)) { BorderWidthBottom = 1, BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_BOTTOM, Padding = 2, Colspan = 2 };
                 
                 var colTextoHoraInicio = new PdfPCell(new Phrase("Hora INICIO:", letraoNegritaMediana)) { Border = 0, HorizontalAlignment = Element.ALIGN_RIGHT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 4 };
+
                 string valorHoraInicio = Convert.ToString(_tableHeader.Rows[0]["Inicio"]);
-                var colHoraInicio = new PdfPCell(new Phrase(valorHoraInicio, letraNormalMediana)) { BorderWidthBottom = 1, BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_BOTTOM, Padding = 2 };
+                var inicioDateTime = Convert.ToDateTime(valorHoraInicio);
+                string conversionInicio = inicioDateTime.ToString("hh:mm:ss tt", CultureInfo.CurrentCulture);
+                var colHoraInicio = new PdfPCell(new Phrase(conversionInicio, letraNormalMediana)) { BorderWidthBottom = 1, BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_BOTTOM, Padding = 2 };
 
                 table.AddCell(colTextoPlaza);
                 table.AddCell(colPlaza);
@@ -334,7 +311,9 @@
 
                 var colTextoHoraFin = new PdfPCell(new Phrase("Hora FIN:", letraoNegritaMediana)) { Border = 0, HorizontalAlignment = Element.ALIGN_RIGHT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 4 };
                 string valorHoraFin = Convert.ToString(_tableHeader.Rows[0]["Fin"]);
-                var colHoraFin = new PdfPCell(new Phrase(valorHoraFin, letraNormalMediana)) { BorderWidthBottom = 1, BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_BOTTOM, Padding = 2 };
+                var finDateTime = Convert.ToDateTime(valorHoraInicio);
+                string conversionFin = inicioDateTime.ToString("hh:mm:ss tt", CultureInfo.CurrentCulture);
+                var colHoraFin = new PdfPCell(new Phrase(conversionFin, letraNormalMediana)) { BorderWidthBottom = 1, BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_BOTTOM, Padding = 2 };
 
                 table.AddCell(colTextoUbicacion);
                 table.AddCell(colUbicacion);

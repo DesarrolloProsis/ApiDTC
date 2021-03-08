@@ -6,6 +6,7 @@
     using System;
     using System.Collections.Generic;
     using System.Data;
+    using System.Globalization;
     using System.IO;
 
     public class ReporteFotograficoPdfCreation
@@ -381,8 +382,10 @@
                 CeldasVacias(2, table);
                 //TODO poner la hora inicio del stored de Alex en reporte fotográfico equipo nuevo y dañado
                 string valorHoraInicio = _tipo == 1 ? Convert.ToString(_tableHeader.Rows[0]["Inicio"]) : "12:00";
+                var inicioDateTime = Convert.ToDateTime(valorHoraInicio);
+                string conversionInicio = inicioDateTime.ToString("hh:mm:ss tt", CultureInfo.CurrentCulture);
                 var colTextoHoraInicio = new PdfPCell(new Phrase("Hora INICIO: ", letraoNegritaChica)) { Border = 0, HorizontalAlignment = Element.ALIGN_RIGHT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 4 };
-                var colHoraInicio = new PdfPCell(new Phrase(valorHoraInicio, letraNormalChica)) { BorderWidthBottom = 1, BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_BOTTOM, Padding = 2 };
+                var colHoraInicio = new PdfPCell(new Phrase(conversionInicio, letraNormalChica)) { BorderWidthBottom = 1, BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_BOTTOM, Padding = 2 };
 
                 table.AddCell(colTextoHoraInicio);
                 table.AddCell(colHoraInicio);
@@ -401,8 +404,10 @@
                 table.AddCell(ubicacion);
                 CeldasVacias(2, table);
                 string valorHoraFin = _tipo == 1 ? Convert.ToString(_tableHeader.Rows[0]["Fin"]) : "13:00";
+                var finDateTime = Convert.ToDateTime(valorHoraInicio);
+                string conversionFin = inicioDateTime.ToString("hh:mm:ss tt", CultureInfo.CurrentCulture);
                 var colTextoHoraFin = new PdfPCell(new Phrase("Hora FIN: ", letraoNegritaChica)) { Border = 0, HorizontalAlignment = Element.ALIGN_RIGHT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 4 };
-                var colHoraFin = new PdfPCell(new Phrase(valorHoraFin, letraNormalChica)) { BorderWidthBottom = 1, BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_BOTTOM, Padding = 2 };
+                var colHoraFin = new PdfPCell(new Phrase(conversionFin, letraNormalChica)) { BorderWidthBottom = 1, BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_BOTTOM, Padding = 2 };
 
                 table.AddCell(colTextoHoraFin);
                 table.AddCell(colHoraFin);
