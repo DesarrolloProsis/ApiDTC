@@ -289,6 +289,7 @@
                 foreach (var foto in rutas)
                 {
                     System.Drawing.Image imageReview = System.Drawing.Image.FromFile(foto);
+                    string fotoTemporal = foto.Substring(0, foto.LastIndexOf('.')) + "-temp." + foto.Substring(foto.LastIndexOf('.'), foto.Length);
                     foreach (var prop in imageReview.PropertyItems)
                     {
                         if(prop.Id == 0x0112)
@@ -296,13 +297,11 @@
                             int orientationValue = imageReview.GetPropertyItem(prop.Id).Value[0];
                             System.Drawing.RotateFlipType rotateFlipType = GetOrientationToFlipType(orientationValue);
                             imageReview.RotateFlip(rotateFlipType);
-                            if(File.Exists(foto))
-                                File.Delete(foto);
                             imageReview.RemovePropertyItem(0x0112);
-                            imageReview.Save(foto);
+                            imageReview.Save(fotoTemporal);
                         }
                     }
-                    Image img = Image.GetInstance(foto);
+                    Image img = Image.GetInstance(fotoTemporal);
                     if (columnas == 4)
                     {
                         if (img.Width > img.Height)
@@ -326,6 +325,7 @@
                     }
                     PdfPCell colFoto = new PdfPCell(img) { Border = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_MIDDLE, Padding = 2 };
                     table.AddCell(colFoto);
+                    File.Delete(fotoTemporal);
                 }
                 for (int i = 0; i < columnas - rutas.Length; i++)
                 {
