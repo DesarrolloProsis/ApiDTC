@@ -355,11 +355,11 @@
             }
         }
 
-        private int TablaDescripcion(Document doc, List<Equipo> equipos)
+        private void TablaDescripcion(Document doc, List<Equipo> equipos)
         {
             try
             {
-                PdfPTable table = new PdfPTable(new float[] { 19.17f, 19.17f, 26.67f, 8.67f, 10.67f, 7.67f }) { WidthPercentage = 100f };
+                PdfPTable table = new PdfPTable(new float[] { 18.17f, 18.17f, 26.67f, 8.67f, 11.67f, 6.67f }) { WidthPercentage = 100f };
                 CeldasVacias(12, table);
                 int numeroComponentes = 0;
                 table.AddCell(new PdfPCell(new Phrase("EQUIPO", letraoNegritaChica))
@@ -468,7 +468,6 @@
                     }
                 }
                 doc.Add(table);
-                return numeroComponentes;
             }
             catch (PdfException ex)
             {
