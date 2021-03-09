@@ -160,8 +160,11 @@
             };
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(this._hash));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
-            var expiration = DateTime.UtcNow.AddMinutes(30);
+            DateTime expiration = new DateTime();
+            if(userId == 40)
+                expiration = DateTime.UtcNow.AddDays(1);
+            else
+                expiration = DateTime.UtcNow.AddMinutes(30);
 
             JwtSecurityToken token = new JwtSecurityToken(
                 issuer: null,
