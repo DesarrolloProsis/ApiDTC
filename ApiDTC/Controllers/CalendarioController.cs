@@ -84,6 +84,14 @@
             return NotFound();
         }
 
+        [HttpGet("Exists/{clavePlaza}/{referenceNumber}/{year}/{month}")]
+        public ActionResult CalendarioExists(string clavePlaza, string referenceNumber, int year, int month)
+        {
+            string path =  $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\CalendariosMantenimiento\{clavePlaza.ToUpper()}{year}-{month.ToString("00")}C-Escaneado.pdf";
+            if(System.IO.File.Exists((path)))
+                return Ok();
+            return NotFound();
+        }
         [HttpDelete("DeleteCalendar/{clavePlaza}/{CalendarId}")]
         public ActionResult<Response> DeleteCalendar(string clavePlaza, int CalendarId)
         {

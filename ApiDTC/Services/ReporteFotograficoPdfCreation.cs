@@ -288,6 +288,20 @@
                     CeldasVacias(8, table);
                 foreach (var foto in rutas)
                 {
+                    System.Drawing.Image imageReview = System.Drawing.Image.FromFile(foto);
+                    foreach (var prop in imageReview.PropertyItems)
+                    {
+                        if(prop.Id == 0x0112)
+                        {
+                            int orientationValue = imageReview.GetPropertyItem(prop.Id).Value[0];
+                            System.Drawing.RotateFlipType rotateFlipType = GetOrientationToFlipType(orientationValue);
+                            imageReview.RotateFlip(rotateFlipType);
+                            if(File.Exists(foto))
+                                File.Delete(foto);
+                            imageReview.RemovePropertyItem(0x0112);
+                            imageReview.Save(foto);
+                        }
+                    }
                     Image img = Image.GetInstance(foto);
                     if (columnas == 4)
                     {
@@ -434,17 +448,6 @@
                 table.AddCell(capufe);
                 CeldasVacias(2, table);
 
-                //Equipo nuevo o dañado
-                /*if (_tipo != 1)
-                {
-                    var colSiniestro = new PdfPCell(new Phrase("No. de Siniestro: ", letraoNegritaChica)) { Border = 0, HorizontalAlignment = Element.ALIGN_RIGHT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 1, Colspan = 3 };
-
-                    var siniestro = new PdfPCell(new Phrase(Convert.ToString(_tableHeader.Rows[0]["NumeroSiniestro"]), letraNormalChica)) { BorderWidthBottom = 1, BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, Padding = 2, Colspan = 3 };
-
-                    table.AddCell(colSiniestro);
-                    table.AddCell(siniestro);
-                    CeldasVacias(2, table);
-                }*/
 
                 return table;
             }
@@ -660,6 +663,44 @@
                 return true;
             }
             return fileInUse;
+        }
+
+        private static System.Drawing.RotateFlipType GetOrientationToFlipType(int orientationValue)
+        {
+            System.Drawing.RotateFlipType rotateFlipType = System.Drawing.RotateFlipType.RotateNoneFlipNone;
+
+            switch (orientationValue)
+            {
+                case 1:
+                    rotateFlipType = System.Drawing.RotateFlipType.RotateNoneFlipNone;
+                    break;
+                case 2:
+                    rotateFlipType = System.Drawing.RotateFlipType.RotateNoneFlipX;
+                    break;
+                case 3:
+                    rotateFlipType = System.Drawing.RotateFlipType.Rotate180FlipNone;
+                    break;
+                case 4:
+                    rotateFlipType = System.Drawing.RotateFlipType.Rotate180FlipX;
+                    break;
+                case 5:
+                    rotateFlipType = System.Drawing.RotateFlipType.Rotate90FlipX;
+                    break;
+                case 6:
+                    rotateFlipType = System.Drawing.RotateFlipType.Rotate90FlipNone;
+                    break;
+                case 7:
+                    rotateFlipType = System.Drawing.RotateFlipType.Rotate270FlipX;
+                    break;
+                case 8:
+                    rotateFlipType = System.Drawing.RotateFlipType.Rotate270FlipNone;
+                    break;
+                default:
+                    rotateFlipType = System.Drawing.RotateFlipType.RotateNoneFlipNone;
+                    break;
+            }
+
+            return rotateFlipType;
         }
         #endregion
     }

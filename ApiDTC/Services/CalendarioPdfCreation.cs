@@ -85,7 +85,7 @@ namespace ApiDTC.Services
         {
             string directory = $@"{folder}\{_clavePlaza.ToUpper()}\CalendariosMantenimiento\{_year}\{_month}\", filename, path;
             DateTime now = DateTime.Now;
-            filename = $"{_plaza}{now.Year}{MesContrato(now)}C.pdf";
+            filename = $"{_plaza.ToUpper()}{_year}-{_month.ToString("00")}C.pdf";
             path = Path.Combine(directory, filename);
             //If file exists
             try
