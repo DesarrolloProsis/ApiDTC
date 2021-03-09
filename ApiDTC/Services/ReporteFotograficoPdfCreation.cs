@@ -168,7 +168,11 @@
                         doc.NewPage();
                         doc.Add(TablaFotografias(restoFotos));
                     }
-
+                    foreach (var img in Directory.GetFiles(directoryImgs))
+                    {
+                        if(img.Contains("temp"))
+                            File.Delete(img);
+                    }
                     PdfContentByte cb = writer.DirectContent;
                     PdfPTable tablaObservaciones = TablaObservaciones();
                     tablaObservaciones.WriteSelectedRows(0, -1, 30, 275, cb);
@@ -262,6 +266,7 @@
 
             try
             {
+                List<string> temporales = new List<string>();
                 int columnas = 0;
                 PdfPTable table;
                 if (rutas.Length <= 4)
@@ -289,7 +294,8 @@
                 foreach (var foto in rutas)
                 {
                     System.Drawing.Image imageReview = System.Drawing.Image.FromFile(foto);
-                    string fotoTemporal = foto.Substring(0, foto.LastIndexOf('.')) + "-temp." + foto.Substring(foto.LastIndexOf('.'), foto.Length);
+                    string fotoTemporal = foto.Substring(0, foto.LastIndexOf('.')) + "-temp.jpg";
+                    temporales.Add(fotoTemporal);
                     foreach (var prop in imageReview.PropertyItems)
                     {
                         if(prop.Id == 0x0112)
@@ -298,9 +304,13 @@
                             System.Drawing.RotateFlipType rotateFlipType = GetOrientationToFlipType(orientationValue);
                             imageReview.RotateFlip(rotateFlipType);
                             imageReview.RemovePropertyItem(0x0112);
+                            if(!File.Exists(fotoTemporal))
+                                imageReview.Save(fotoTemporal);
                             imageReview.Save(fotoTemporal);
                         }
                     }
+                    if(!File.Exists(fotoTemporal))
+                        imageReview.Save(fotoTemporal);
                     Image img = Image.GetInstance(fotoTemporal);
                     if (columnas == 4)
                     {
@@ -325,7 +335,6 @@
                     }
                     PdfPCell colFoto = new PdfPCell(img) { Border = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_MIDDLE, Padding = 2 };
                     table.AddCell(colFoto);
-                    File.Delete(fotoTemporal);
                 }
                 for (int i = 0; i < columnas - rutas.Length; i++)
                 {
@@ -341,7 +350,6 @@
                     PdfPCell colLogo = new PdfPCell(logo) { Border = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_MIDDLE, Padding = 2 };
                     table.AddCell(colLogo);
                 }
-
                 return table;
             }
             catch (PdfException ex)
