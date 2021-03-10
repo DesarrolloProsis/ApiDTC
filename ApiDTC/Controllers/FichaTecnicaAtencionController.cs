@@ -153,10 +153,10 @@
                     image.CopyTo(fs);
                     fs.Close();
 
-                    FileInfo fi = new FileInfo(filename);
+                    FileInfo fi = new FileInfo(Path.Combine(dir, filename));
                     if(fi.Length > 1000000)
                     {
-                        string temporal = filename + "_temp";
+                        string temporal = Path.Combine(dir, filename) + "_temp";
                         using(var imgOrigin = Image.Load(Path.Combine(dir, filename)))
                         {
                             var jpegOptions = new JpegOptions(){
@@ -164,12 +164,12 @@
                             };
                             imgOrigin.Save(Path.Combine(dir, temporal), jpegOptions);
                         }
-                        if(System.IO.File.Exists(filename))
+                        if(System.IO.File.Exists(Path.Combine(dir, filename)))
                         {
                             //Se borra archivo grande
-                            System.IO.File.Delete(filename);
+                            System.IO.File.Delete(Path.Combine(dir, filename));
                             //Archivo temporal actualiza su nombre al real
-                            System.IO.File.Move(temporal, filename);
+                            System.IO.File.Move(Path.Combine(dir, temporal), Path.Combine(dir, filename));
                         }
                     }
                 }

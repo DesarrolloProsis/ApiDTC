@@ -100,6 +100,8 @@ namespace ApiDTC.Services
                 VerticalAlignment = Element.ALIGN_MIDDLE 
             };
             table.AddCell(colLogo);
+            for (int i = 0; i < 7; i++)
+                table.AddCell(new PdfPCell() { Border = 0 });
             document.Add(table);
         }
 
