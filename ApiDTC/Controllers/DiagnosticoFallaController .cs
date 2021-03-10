@@ -5,6 +5,8 @@
     using System.IO;
     using ApiDTC.Models;
     using ApiDTC.Services;
+    using Aspose.Imaging;
+    using Aspose.Imaging.ImageOptions;
     using Microsoft.AspNetCore.Authentication.JwtBearer;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Http;
@@ -13,7 +15,7 @@
 
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class DiagnosticoFallaController : ControllerBase
     {
         #region Attributes
@@ -118,6 +120,26 @@
                     var fs = new FileStream(Path.Combine(dir, filename), FileMode.Create);
                     image.CopyTo(fs);
                     fs.Close();
+
+                    FileInfo fi = new FileInfo(filename);
+                    if(fi.Length > 1000000)
+                    {
+                        string temporal = filename + "_temp";
+                        using(var imgOrigin = Image.Load(Path.Combine(dir, filename)))
+                        {
+                            var jpegOptions = new JpegOptions(){
+                                CompressionType = Aspose.Imaging.FileFormats.Jpeg.JpegCompressionMode.Progressive
+                            };
+                            imgOrigin.Save(Path.Combine(dir, temporal), jpegOptions);
+                        }
+                        if(System.IO.File.Exists(filename))
+                        {
+                            //Se borra archivo grande
+                            System.IO.File.Delete(filename);
+                            //Archivo temporal actualiza su nombre al real
+                            System.IO.File.Move(temporal, filename);
+                        }
+                    }
                 }
                 catch (IOException ex)
                 {

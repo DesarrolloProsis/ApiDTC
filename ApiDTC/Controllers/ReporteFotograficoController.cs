@@ -131,23 +131,26 @@
                     image.CopyTo(fs);
                     fs.Close();
 
-                    string temporal1 = filename.Substring(0, filename.LastIndexOf('.')) + "_Progressive" + filename.Substring(filename.LastIndexOf('.'));
-                    using(var imgOrigin = Image.Load(Path.Combine(dir, filename)))
+                    FileInfo fi = new FileInfo(filename);
+                    if(fi.Length > 1000000)
                     {
-                        var jpegOptions = new JpegOptions(){
-                            CompressionType = Aspose.Imaging.FileFormats.Jpeg.JpegCompressionMode.Progressive
-                        };
-                        imgOrigin.Save(Path.Combine(dir, temporal1), jpegOptions);
-                    }
-                    string temporal2 = filename.Substring(0, filename.LastIndexOf('.')) + "_Baseline" + filename.Substring(filename.LastIndexOf('.'));
-                    using (var imgOrigin = Image.Load(Path.Combine(dir, filename)))
-                    {
-                        var jpegOptions = new JpegOptions()
+                        string temporal = filename + "_temp";
+                        using(var imgOrigin = Image.Load(Path.Combine(dir, filename)))
                         {
-                            CompressionType = Aspose.Imaging.FileFormats.Jpeg.JpegCompressionMode.Baseline
-                        };
-                        imgOrigin.Save(Path.Combine(dir, temporal2), jpegOptions);
+                            var jpegOptions = new JpegOptions(){
+                                CompressionType = Aspose.Imaging.FileFormats.Jpeg.JpegCompressionMode.Progressive
+                            };
+                            imgOrigin.Save(Path.Combine(dir, temporal), jpegOptions);
+                        }
+                        if(System.IO.File.Exists(filename))
+                        {
+                            //Se borra archivo grande
+                            System.IO.File.Delete(filename);
+                            //Archivo temporal actualiza su nombre al real
+                            System.IO.File.Move(temporal, filename);
+                        }
                     }
+                    
                 }
                 catch (IOException ex)
                 {
