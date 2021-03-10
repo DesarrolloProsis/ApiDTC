@@ -2,11 +2,14 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Drawing.Imaging;
     using System.IO;
     using System.Linq;
     using System.Threading.Tasks;
     using ApiDTC.Data;
     using ApiDTC.Models;
+    using Aspose.Imaging;
+    using Aspose.Imaging.ImageOptions;
     using ApiDTC.Services;
     using Microsoft.AspNetCore.Authentication.JwtBearer;
     using Microsoft.AspNetCore.Authorization;
@@ -127,6 +130,24 @@
                     var fs = new FileStream(Path.Combine(dir, filename), FileMode.Create);
                     image.CopyTo(fs);
                     fs.Close();
+
+                    string temporal1 = filename.Substring(0, filename.LastIndexOf('.')) + "_Progressive" + filename.Substring(filename.LastIndexOf('.'));
+                    using(var imgOrigin = Image.Load(Path.Combine(dir, filename)))
+                    {
+                        var jpegOptions = new JpegOptions(){
+                            CompressionType = Aspose.Imaging.FileFormats.Jpeg.JpegCompressionMode.Progressive
+                        };
+                        imgOrigin.Save(Path.Combine(dir, temporal1), jpegOptions);
+                    }
+                    string temporal2 = filename.Substring(0, filename.LastIndexOf('.')) + "_Baseline" + filename.Substring(filename.LastIndexOf('.'));
+                    using (var imgOrigin = Image.Load(Path.Combine(dir, filename)))
+                    {
+                        var jpegOptions = new JpegOptions()
+                        {
+                            CompressionType = Aspose.Imaging.FileFormats.Jpeg.JpegCompressionMode.Baseline
+                        };
+                        imgOrigin.Save(Path.Combine(dir, temporal2), jpegOptions);
+                    }
                 }
                 catch (IOException ex)
                 {
