@@ -84,14 +84,33 @@
             return NotFound();
         }
 
-        [HttpGet("Exists/{clavePlaza}/{referenceNumber}/{year}/{month}")]
-        public ActionResult CalendarioExists(string clavePlaza, string referenceNumber, int year, int month)
+        [HttpGet("Exists/{clavePlaza}/{year}/{month}")]
+        public ActionResult CalendarioExists(string clavePlaza, int year, int month)
         {
             string path =  $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\CalendariosMantenimiento\{clavePlaza.ToUpper()}{year}-{month.ToString("00")}C-Escaneado.pdf";
             if(System.IO.File.Exists((path)))
                 return Ok();
             return NotFound();
         }
+
+        [HttpGet("GetPdfSellado/{clavePlaza}/{year}/{month}")]
+        public ActionResult GetPdfSellado(string clavePlaza, int year, int month)
+        {            
+            
+            string path =  $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\CalendariosMantenimiento\{clavePlaza.ToUpper()}{year}-{month.ToString("00")}C-Escaneado.pdf";
+            try
+            {
+                if (!System.IO.File.Exists(path))
+                    return NotFound(path);
+                return File(new FileStream(path, FileMode.Open, FileAccess.Read), "application/pdf");
+            }
+            catch (IOException ex)
+            {
+                _apiLogger.WriteLog(clavePlaza, ex, "CalendarioController: GetPdfSellado", 2);
+                return NotFound(ex.ToString());
+            }
+        }
+        
         [HttpDelete("DeleteCalendar/{clavePlaza}/{CalendarId}")]
         public ActionResult<Response> DeleteCalendar(string clavePlaza, int CalendarId)
         {

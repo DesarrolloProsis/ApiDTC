@@ -48,8 +48,7 @@ namespace ApiDTC.Services
         public static iTextSharp.text.Font letraNormalMedianaSub = new iTextSharp.text.Font(NormalMediana, 7f, iTextSharp.text.Font.UNDERLINE, BaseColor.Black);
         public static iTextSharp.text.Font letraNormalChica = new iTextSharp.text.Font(NormalChica, 6f, iTextSharp.text.Font.NORMAL, BaseColor.Black);
         #endregion
-        #region Logo
-        #endregion
+
         #endregion
 
         #region Constructors
@@ -137,9 +136,13 @@ namespace ApiDTC.Services
                     string directoryImgs = Path.Combine(directory, "DiagnosticoFallaImgs");
                     string[] fotos = new string[4];
                     if(Directory.Exists(directoryImgs))
+                    {
                         fotos = Directory.GetFiles(directoryImgs);
-                    doc.Add(TablaFotografias(fotos));
-                    doc.Add(TablaFirmas());
+                    }
+
+                    PdfContentByte cb = writer.DirectContent;
+                    PdfPTable tablaFirmas = TablaFirmas();
+                    tablaFirmas.WriteSelectedRows(0, -1, 30, 200, cb);
                     doc.Close();
                     writer.Close();
                     byte[] content = myMemoryStream.ToArray();
@@ -173,19 +176,9 @@ namespace ApiDTC.Services
         {
             try
             {
-                iTextSharp.text.Image logo = iTextSharp.text.Image.GetInstance($@"{System.Environment.CurrentDirectory}\Media\prosis-logo.jpg");
-                logo.ScalePercent(10f);
-
                 //Encabezado
                 PdfPTable table = new PdfPTable(new float[] { 20f, 20f, 20f, 20f, 20f }) { WidthPercentage = 100f };
 
-                var celdaVacia = new PdfPCell() { Border = 0 };
-                PdfPCell colLogo = new PdfPCell(logo) { Border = 0, HorizontalAlignment = Element.ALIGN_LEFT, VerticalAlignment = Element.ALIGN_MIDDLE };
-                table.AddCell(colLogo);
-                CeldasVacias(4, table);
-
-                var celdaSalto = new PdfPCell() { Colspan = 5, Border = 0 };
-                table.AddCell(celdaSalto);
                 string textoTitulo = "FICHA TÉCNICA DE ATENCIÓN";
                 var colTitulo = new PdfPCell(new Phrase(textoTitulo, letraoNegritaGrande)) { Border = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, Padding = 3, Colspan = 3 };
                 CeldasVacias(1, table);
@@ -457,7 +450,7 @@ namespace ApiDTC.Services
             }
         }
 
-        private IElement TablaFirmas()
+        private PdfPTable TablaFirmas()
         {
             try
             {

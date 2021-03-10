@@ -43,8 +43,6 @@
         public static iTextSharp.text.Font letraNormalMediana = new iTextSharp.text.Font(NormalMediana, 9f, iTextSharp.text.Font.NORMAL, BaseColor.Black);
         public static iTextSharp.text.Font letraNormalChica = new iTextSharp.text.Font(NormalChica, 8f, iTextSharp.text.Font.NORMAL, BaseColor.Black);
         #endregion
-        #region Logo
-        #endregion
         #endregion
 
         #region Constructors
@@ -217,16 +215,10 @@
         {
             try
             {
-                iTextSharp.text.Image logo = iTextSharp.text.Image.GetInstance($@"{System.Environment.CurrentDirectory}\Media\prosis-logo.jpg");
-                logo.ScalePercent(10f);
 
                 //Encabezado
                 PdfPTable table = new PdfPTable(new float[] { 16.67f, 16.67f, 16.67f, 16.67f, 16.67f, 16.67f }) { WidthPercentage = 100f };
-
-                var celdaVacia = new PdfPCell() { Border = 0 };
-                PdfPCell colLogo = new PdfPCell(logo) { Border = 0, HorizontalAlignment = Element.ALIGN_LEFT, VerticalAlignment = Element.ALIGN_MIDDLE };
-                table.AddCell(colLogo);
-                CeldasVacias(17, table);
+                CeldasVacias(6, table);
 
                 string textoTitulo = "";
                 switch (_tipo)

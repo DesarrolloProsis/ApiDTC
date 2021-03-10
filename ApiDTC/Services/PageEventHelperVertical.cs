@@ -78,6 +78,7 @@ namespace ApiDTC.Services
         {
             base.OnStartPage(writer, document);
             Rectangle pageSize = document.PageSize;
+            
             if (Title != string.Empty)
             {
                 cb.BeginText();
@@ -87,31 +88,19 @@ namespace ApiDTC.Services
                 cb.ShowText(Title);
                 cb.EndText();
             }
-            if (HeaderLeft + HeaderRight != string.Empty)
-            {
-                PdfPTable HeaderTable = new PdfPTable(2);
-                HeaderTable.DefaultCell.VerticalAlignment = Element.ALIGN_MIDDLE;
-                HeaderTable.TotalWidth = pageSize.Width - 80;
-                HeaderTable.SetWidthPercentage(new float[] { 45, 45 }, pageSize);
 
-                PdfPCell HeaderLeftCell = new PdfPCell(new Phrase(8, HeaderLeft, HeaderFont))
-                {
-                    Padding = 5,
-                    PaddingBottom = 8,
-                    BorderWidthRight = 0
-                };
-                HeaderTable.AddCell(HeaderLeftCell);
-                PdfPCell HeaderRightCell = new PdfPCell(new Phrase(8, HeaderRight, HeaderFont))
-                {
-                    HorizontalAlignment = PdfPCell.ALIGN_RIGHT,
-                    Padding = 5,
-                    PaddingBottom = 8,
-                    BorderWidthLeft = 0
-                };
-                HeaderTable.AddCell(HeaderRightCell);
-                cb.SetRgbColorFill(0, 0, 0);
-                HeaderTable.WriteSelectedRows(0, -1, pageSize.GetLeft(40), pageSize.GetTop(50), cb);
-            }
+            PdfPTable table = new PdfPTable(new float[] { 25f, 25f, 25f, 25f }) { WidthPercentage = 100f };
+
+            iTextSharp.text.Image logo = iTextSharp.text.Image.GetInstance($@"{System.Environment.CurrentDirectory}\Media\prosis-logo.jpg");
+            logo.ScalePercent(10f);
+            PdfPCell colLogo = new PdfPCell(logo) { 
+                Border = 0, 
+                Colspan = 4,
+                HorizontalAlignment = Element.ALIGN_LEFT, 
+                VerticalAlignment = Element.ALIGN_MIDDLE 
+            };
+            table.AddCell(colLogo);
+            document.Add(table);
         }
 
         public override void OnEndPage(PdfWriter writer, Document document)

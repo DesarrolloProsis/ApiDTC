@@ -51,8 +51,6 @@
         public static iTextSharp.text.Font letraNormalMedianaSub = new iTextSharp.text.Font(NormalMediana, 7f, iTextSharp.text.Font.UNDERLINE, BaseColor.Black);
         public static iTextSharp.text.Font letraNormalChica = new iTextSharp.text.Font(NormalChica, 6f, iTextSharp.text.Font.NORMAL, BaseColor.Black);
         #endregion
-        #region Logo
-        #endregion
         #endregion
 
         #region Constructors
@@ -202,18 +200,10 @@
         {
             try
             {
-                iTextSharp.text.Image logo = iTextSharp.text.Image.GetInstance($@"{System.Environment.CurrentDirectory}\Media\prosis-logo.jpg");
-                logo.ScalePercent(10f);
 
                 //Encabezado
                 PdfPTable table = new PdfPTable(new float[] { 25f, 25f, 25f, 25f }) { WidthPercentage = 100f };
                 
-                PdfPCell colLogo = new PdfPCell(logo) { Border = 0, HorizontalAlignment = Element.ALIGN_LEFT, VerticalAlignment = Element.ALIGN_MIDDLE };
-                table.AddCell(colLogo);
-                CeldasVacias(1, table);
-
-                var celdaSalto = new PdfPCell() { Colspan = 5, Border = 0 };
-                table.AddCell(celdaSalto);
                 switch (_tipo)
                 {
                     case 1:
