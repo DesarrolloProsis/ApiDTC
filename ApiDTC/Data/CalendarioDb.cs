@@ -161,7 +161,7 @@ namespace ApiDTC.Data
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.Add("@ReferenceNumber", SqlDbType.NVarChar).Value = calendarDateLog.ReferenceNumber;
-                        cmd.Parameters.Add("@Comment", SqlDbType.NVarChar).Value = calendarDateLog.Comment;
+                        cmd.Parameters.Add("@Comment", SqlDbType.NVarChar).Value = (string.IsNullOrEmpty(calendarDateLog.Comment)) ? "." :calendarDateLog.Comment;
                         cmd.Parameters.Add("@CalendarId", SqlDbType.Int).Value = calendarDateLog.CalendarId;
                         cmd.Parameters.Add("@Date", SqlDbType.Date).Value = calendarDateLog.Date;
                         cmd.Parameters.Add("@UserId", SqlDbType.Int).Value = calendarDateLog.UserId;
