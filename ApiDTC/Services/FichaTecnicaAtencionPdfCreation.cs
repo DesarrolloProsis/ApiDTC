@@ -140,6 +140,12 @@ namespace ApiDTC.Services
                         fotos = Directory.GetFiles(directoryImgs);
                     }
 
+                    foreach (var img in Directory.GetFiles(directoryImgs))
+                    {
+                        if(img.Contains("temp"))
+                            File.Delete(img);
+                    }
+                    
                     PdfContentByte cb = writer.DirectContent;
                     PdfPTable tablaFirmas = TablaFirmas();
                     tablaFirmas.WriteSelectedRows(0, -1, 30, 200, cb);
@@ -215,7 +221,24 @@ namespace ApiDTC.Services
 
                 foreach (var foto in rutas)
                 {
-                    Image img = Image.GetInstance(foto);
+                    System.Drawing.Image imageReview = System.Drawing.Image.FromFile(foto);
+                    string fotoTemporal = foto.Substring(0, foto.LastIndexOf('.')) + "-temp.jpg";
+                    foreach (var prop in imageReview.PropertyItems)
+                    {
+                        if(prop.Id == 0x0112)
+                        {
+                            int orientationValue = imageReview.GetPropertyItem(prop.Id).Value[0];
+                            System.Drawing.RotateFlipType rotateFlipType = GetOrientationToFlipType(orientationValue);
+                            imageReview.RotateFlip(rotateFlipType);
+                            imageReview.RemovePropertyItem(0x0112);
+                            if(!File.Exists(fotoTemporal))
+                                imageReview.Save(fotoTemporal);
+                            imageReview.Save(fotoTemporal);
+                        }
+                    }
+                    if(!File.Exists(fotoTemporal))
+                        imageReview.Save(fotoTemporal);
+                    Image img = Image.GetInstance(fotoTemporal);
                     if (img.Width > img.Height)
                         img.ScaleAbsolute(110f, 90f);
                     else
@@ -577,7 +600,7 @@ namespace ApiDTC.Services
         private List<string> SeparacionObservaciones(string observaciones)
         {
             List<string> lineaObservaciones = new List<string>();
-            if(observaciones.Length < 125)
+            if (observaciones.Length < 125)
             {
                 lineaObservaciones.Add(observaciones);
                 return lineaObservaciones;
@@ -617,6 +640,43 @@ namespace ApiDTC.Services
         }
         private string MesActual() { return new System.Globalization.CultureInfo("es-ES", false).DateTimeFormat.GetMonthName(DateTime.Now.Month); }
  
+        private static System.Drawing.RotateFlipType GetOrientationToFlipType(int orientationValue)
+        {
+            System.Drawing.RotateFlipType rotateFlipType = System.Drawing.RotateFlipType.RotateNoneFlipNone;
+
+            switch (orientationValue)
+            {
+                case 1:
+                    rotateFlipType = System.Drawing.RotateFlipType.RotateNoneFlipNone;
+                    break;
+                case 2:
+                    rotateFlipType = System.Drawing.RotateFlipType.RotateNoneFlipX;
+                    break;
+                case 3:
+                    rotateFlipType = System.Drawing.RotateFlipType.Rotate180FlipNone;
+                    break;
+                case 4:
+                    rotateFlipType = System.Drawing.RotateFlipType.Rotate180FlipX;
+                    break;
+                case 5:
+                    rotateFlipType = System.Drawing.RotateFlipType.Rotate90FlipX;
+                    break;
+                case 6:
+                    rotateFlipType = System.Drawing.RotateFlipType.Rotate90FlipNone;
+                    break;
+                case 7:
+                    rotateFlipType = System.Drawing.RotateFlipType.Rotate270FlipX;
+                    break;
+                case 8:
+                    rotateFlipType = System.Drawing.RotateFlipType.Rotate270FlipNone;
+                    break;
+                default:
+                    rotateFlipType = System.Drawing.RotateFlipType.RotateNoneFlipNone;
+                    break;
+            }
+
+            return rotateFlipType;
+        }
         #endregion
     }
 }

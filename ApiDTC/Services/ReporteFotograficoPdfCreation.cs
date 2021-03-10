@@ -258,7 +258,6 @@
 
             try
             {
-                List<string> temporales = new List<string>();
                 int columnas = 0;
                 PdfPTable table;
                 if (rutas.Length <= 4)
@@ -287,7 +286,6 @@
                 {
                     System.Drawing.Image imageReview = System.Drawing.Image.FromFile(foto);
                     string fotoTemporal = foto.Substring(0, foto.LastIndexOf('.')) + "-temp.jpg";
-                    temporales.Add(fotoTemporal);
                     foreach (var prop in imageReview.PropertyItems)
                     {
                         if(prop.Id == 0x0112)
