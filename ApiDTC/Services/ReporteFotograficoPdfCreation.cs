@@ -163,17 +163,16 @@
                         List<string> restoFotos = new List<string>();
                         for (int i = 0; i < 20; i++)
                         {
-                            if(fotos[i] != null)
-                                primerasFotos.Add(fotos[i]);
-                            else
+                            if(fotos.Count - 1 < i)
                                 break;
+                            primerasFotos.Add(fotos[i]);
                         }
                         if(fotos.Count > 20)
                         {
-                            for (int i = 20; i < 36; i++)
+                            for (int i = 20; i < fotos.Count; i++)
                             {
                                 if(fotos[i] != null)
-                                    primerasFotos.Add(fotos[i]);
+                                    restoFotos.Add(fotos[i]);
                                 else
                                     break;
                             }
@@ -315,12 +314,6 @@
                     cuadros = 20;
                 }
 
-                if (cuadros == 4)
-                    CeldasVacias(4, table);
-                else if (cuadros == 6)
-                    CeldasVacias(6, table);
-                else
-                    CeldasVacias(8, table);
                 foreach (var foto in rutas)
                 {
                     System.Drawing.Image imageReview = System.Drawing.Image.FromFile(foto);
@@ -334,7 +327,7 @@
                             imageReview.RotateFlip(rotateFlipType);
                             imageReview.RemovePropertyItem(0x0112);
                             if(!File.Exists(fotoTemporal))
-                                imageReview.Save(fotoTemporal);
+                                File.Delete(fotoTemporal);
                             imageReview.Save(fotoTemporal);
                         }
                     }
@@ -355,7 +348,7 @@
                         else
                             img.ScaleAbsolute(140f, 130f);
                     }
-                    else if (cuadros == 12)
+                    else 
                     {
                         if (img.Width > img.Height)
                             img.ScaleAbsolute(100f, 110f);
@@ -374,7 +367,7 @@
                         logo.ScaleAbsolute(170f, 130f);
                     else if (cuadros == 6)
                         logo.ScaleAbsolute(120f, 130f);
-                    else if (cuadros == 12)
+                    else 
                         logo.ScaleAbsolute(100f, 110f);
                     PdfPCell colLogo = new PdfPCell(logo) { Border = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_MIDDLE, Padding = 2 };
                     table.AddCell(colLogo);
