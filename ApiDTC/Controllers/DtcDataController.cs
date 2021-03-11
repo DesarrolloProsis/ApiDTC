@@ -218,13 +218,13 @@
                             System.IO.File.Move(Path.Combine(dir, temporal), Path.Combine(dir, filename));
                         }
                     }
+                    return Ok(Path.Combine(dir, filename));
                 }
                 catch (IOException ex)
                 {
                     _apiLogger.WriteLog(clavePlaza, ex, "ImageController: InsertImage", 2);
                     return NotFound(ex.ToString());
                 }
-                return Ok(Path.Combine(dir, filename));
             }
             else
                 return NotFound("Insert another image");
@@ -335,13 +335,13 @@
                             System.IO.File.Move(Path.Combine(dir, temporal), Path.Combine(dir, filename));
                         }
                     }
+                    return Ok(Path.Combine(dir, filename));
                 }
                 catch (IOException ex)
                 {
                     _apiLogger.WriteLog(clavePlaza, ex, "DtcDataController: InsertImage", 2);
                     return NotFound(ex.ToString());
                 }
-                return Ok(Path.Combine(dir, filename));
             }
             else
                 return NotFound("Insert another image");

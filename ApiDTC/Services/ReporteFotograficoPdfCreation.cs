@@ -150,18 +150,42 @@
                         directoryImgs = Path.Combine(directory, "EquipoNuevoImgs");
                     else
                         directoryImgs = Path.Combine(directory, "EquipoDañadoImgs");
-                    var fotos = Directory.GetFiles(directoryImgs);
-                    if (fotos.Length <= 12)
+                    var files = Directory.GetFiles(directoryImgs);
+                    List<string> fotos = new List<string>();
+                    foreach (var file in files)
+                        fotos.Add(file);
+                    
+                    if (fotos.Count <= 12)
                         doc.Add(TablaFotografias(fotos));
                     else
                     {
-                        string[] primerasFotos = new string[12];
+                        List<string> primerasFotos = new List<string>();
+                        List<string> restoFotos = new List<string>();
+                        for (int i = 0; i < 20; i++)
+                        {
+                            if(fotos[i] != null)
+                                primerasFotos.Add(fotos[i]);
+                            else
+                                break;
+                        }
+                        if(fotos.Count > 20)
+                        {
+                            for (int i = 20; i < 36; i++)
+                            {
+                                if(fotos[i] != null)
+                                    primerasFotos.Add(fotos[i]);
+                                else
+                                    break;
+                            }
+                        }
+
+                        /*string[] primerasFotos = new string[12];
                         string[] restoFotos = new string[fotos.Length - 12];
                         int resto = fotos.Length - 12;
                         for (int i = 0; i < 12; i++)
                             primerasFotos[i] = fotos[i];
                         for (int i = 0; i < resto; i++)
-                            restoFotos[i] = fotos[i + 12];
+                            restoFotos[i] = fotos[i + 12];*/
                         doc.Add(TablaFotografias(primerasFotos));
                         doc.NewPage();
                         doc.Add(TablaFotografias(restoFotos));
@@ -253,32 +277,47 @@
 
         }
 
-        private IElement TablaFotografias(string[] rutas)
+        private IElement TablaFotografias(List<string> rutas)
         {
 
             try
             {
-                int columnas = 0;
+                int cuadros = 0;
                 PdfPTable table;
-                if (rutas.Length <= 4)
+                if (rutas.Count <= 4)
                 {
                     table = new PdfPTable(new float[] { 50f, 50f }) { WidthPercentage = 100f };
-                    columnas = 4;
+                    cuadros = 4;
                 }
-                else if (rutas.Length > 4 && rutas.Length <= 6)
+                else if (rutas.Count > 4 && rutas.Count <= 6)
                 {
                     table = new PdfPTable(new float[] { 33.33f, 33.33f, 33.33f }) { WidthPercentage = 100f };
-                    columnas = 6;
+                    cuadros = 6;
+                }
+                else if (rutas.Count > 6 && rutas.Count <= 12)
+                {
+                    table = new PdfPTable(new float[] { 25f, 25f, 25f, 25f }) { WidthPercentage = 100f };
+                    cuadros = 12;
+                }
+                else if (rutas.Count > 12 && rutas.Count <= 16)
+                {
+                    table = new PdfPTable(new float[] { 25f, 25f, 25f, 25f }) { WidthPercentage = 100f };
+                    cuadros = 16;
+                }
+                else if (rutas.Count > 16 && rutas.Count <= 20)
+                {
+                    table = new PdfPTable(new float[] { 25f, 25f, 25f, 25f }) { WidthPercentage = 100f };
+                    cuadros = 20;
                 }
                 else
                 {
                     table = new PdfPTable(new float[] { 25f, 25f, 25f, 25f }) { WidthPercentage = 100f };
-                    columnas = 12;
+                    cuadros = 20;
                 }
 
-                if (columnas == 4)
+                if (cuadros == 4)
                     CeldasVacias(4, table);
-                else if (columnas == 6)
+                else if (cuadros == 6)
                     CeldasVacias(6, table);
                 else
                     CeldasVacias(8, table);
@@ -302,21 +341,21 @@
                     if(!File.Exists(fotoTemporal))
                         imageReview.Save(fotoTemporal);
                     Image img = Image.GetInstance(fotoTemporal);
-                    if (columnas == 4)
+                    if (cuadros == 4)
                     {
                         if (img.Width > img.Height)
                             img.ScaleAbsolute(180f, 140f);
                         else
                             img.ScaleAbsolute(140f, 180f);
                     }
-                    else if (columnas == 6)
+                    else if (cuadros == 6)
                     {
                         if (img.Width > img.Height)
                             img.ScaleAbsolute(130f, 140f);
                         else
                             img.ScaleAbsolute(140f, 130f);
                     }
-                    else if (columnas == 12)
+                    else if (cuadros == 12)
                     {
                         if (img.Width > img.Height)
                             img.ScaleAbsolute(100f, 110f);
@@ -326,16 +365,16 @@
                     PdfPCell colFoto = new PdfPCell(img) { Border = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_MIDDLE, Padding = 2 };
                     table.AddCell(colFoto);
                 }
-                for (int i = 0; i < columnas - rutas.Length; i++)
+                for (int i = 0; i < cuadros - rutas.Count; i++)
                 {
                     Image logo = Image.GetInstance($@"{System.Environment.CurrentDirectory}\Media\sinImagen.png");
                     logo.ScaleAbsolute(90f, 110f);
 
-                    if (columnas == 4)
+                    if (cuadros == 4)
                         logo.ScaleAbsolute(170f, 130f);
-                    else if (columnas == 6)
+                    else if (cuadros == 6)
                         logo.ScaleAbsolute(120f, 130f);
-                    else if (columnas == 12)
+                    else if (cuadros == 12)
                         logo.ScaleAbsolute(100f, 110f);
                     PdfPCell colLogo = new PdfPCell(logo) { Border = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_MIDDLE, Padding = 2 };
                     table.AddCell(colLogo);
@@ -506,7 +545,7 @@
         private List<string> SeparacionObservaciones(string observaciones)
         {
             List<string> lineaObservaciones = new List<string>();
-            if (observaciones.Length < 125)
+            if (observaciones.Length <= 100)
             {
                 lineaObservaciones.Add(observaciones);
                 return lineaObservaciones;
@@ -530,12 +569,12 @@
                 if(!string.IsNullOrEmpty(palabra))
                 {
                     linea += $"{palabra} ";
-                    if(linea.Length > 110)
+                    if(linea.Length > 100)
                     {
                         lineaObservaciones.Add(linea);
                         linea = string.Empty;
                     }
-                    if(palabra == palabrasSinVacio[palabrasSinVacio.Count - 1] && linea.Length < 110)
+                    if(palabra == palabrasSinVacio[palabrasSinVacio.Count - 1] && linea.Length < 100)
                     {
                         lineaObservaciones.Add(linea);
                         linea = string.Empty;

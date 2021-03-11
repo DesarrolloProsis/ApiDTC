@@ -667,7 +667,7 @@
         private List<string> SeparacionObservaciones(string observaciones)
         {
             List<string> lineaObservaciones = new List<string>();
-            if(observaciones.Length < 125)
+            if(observaciones.Length <= 100)
             {
                 lineaObservaciones.Add(observaciones);
                 return lineaObservaciones;
@@ -691,12 +691,12 @@
                 if(!string.IsNullOrEmpty(palabra))
                 {
                     linea += $"{palabra} ";
-                    if(linea.Length > 110)
+                    if(linea.Length > 100)
                     {
                         lineaObservaciones.Add(linea);
                         linea = string.Empty;
                     }
-                    if(palabra == palabrasSinVacio[palabrasSinVacio.Count - 1] && linea.Length < 110)
+                    if(palabra == palabrasSinVacio[palabrasSinVacio.Count - 1] && linea.Length < 100)
                     {
                         lineaObservaciones.Add(linea);
                         linea = string.Empty;
