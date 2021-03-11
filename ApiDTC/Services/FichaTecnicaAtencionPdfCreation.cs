@@ -230,7 +230,7 @@ namespace ApiDTC.Services
                             imageReview.RotateFlip(rotateFlipType);
                             imageReview.RemovePropertyItem(0x0112);
                             if(!File.Exists(fotoTemporal))
-                                imageReview.Save(fotoTemporal);
+                                File.Delete(fotoTemporal);
                             imageReview.Save(fotoTemporal);
                         }
                     }
