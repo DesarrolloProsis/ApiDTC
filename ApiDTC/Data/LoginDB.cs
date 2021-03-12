@@ -121,6 +121,12 @@
             
         }
 
+        public Response RefreshToken(UserRefreshToken userRefreshToken)
+        {
+            var token = BuildToken(userRefreshToken.UserId);
+            return new Response { Result = token, Message = "Ok" };
+        }
+
         public Response GetStoreLoginCookie(LoginUserInfo loginUserInfo)
         {
             try

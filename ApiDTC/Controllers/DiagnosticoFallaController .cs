@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.IO;
+    using ApiDTC.Data;
     using ApiDTC.Models;
     using ApiDTC.Services;
     using Aspose.Imaging;
@@ -19,6 +20,8 @@
     public class DiagnosticoFallaController : ControllerBase
     {
         #region Attributes
+        private readonly DiagnosticoDb _db;
+
         private readonly ApiLogger _apiLogger;
         
         private readonly string _disk;
@@ -27,8 +30,10 @@
         #endregion
 
         #region Constructor
-        public DiagnosticoFallaController(IConfiguration configuration)
+        public DiagnosticoFallaController(DiagnosticoDb db, IConfiguration configuration)
         {
+            
+            this._db = db ?? throw new ArgumentNullException(nameof(db));
             this._disk = $@"{Convert.ToString(configuration.GetValue<string>("Path:Disk"))}";
             this._folder = $"{Convert.ToString(configuration.GetValue<string>("Path:Folder"))}";
             _apiLogger = new ApiLogger();
@@ -53,6 +58,20 @@
                 _apiLogger.WriteLog(clavePlaza, ex, "FichaTecnicaAtencionController: GetFichaTecnicaAtencion", 2);
                 return NotFound(ex.ToString());
             }   
+        }
+
+        [HttpPost("InsertDiagnosticoDeFalla/{clavePlaza}")]
+        public ActionResult<Response> InsertDiagnosticoDeFalla(string clavePlaza, [FromBody] DiagnosticoDeFalla diagnosticoDeFalla)
+        {
+            if (ModelState.IsValid)
+            {
+                var get = _db.InsertFaultDiagnosis(clavePlaza, diagnosticoDeFalla);
+                if (get.Result == null)
+                    return BadRequest(get);
+                else
+                    return Ok(get);
+            }
+            return BadRequest(ModelState);
         }
 
         [HttpGet("Exists/{clavePlaza}/{referenceNumber}")]

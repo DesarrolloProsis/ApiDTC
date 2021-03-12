@@ -109,7 +109,6 @@ namespace ApiDTC.Data
                 _apiLogger.WriteLog(clavePlaza, ex, "CalendarioDb: InsertActivity", 1);
                 return new Response { Message = $"Error: {ex.Message}", Result = null };
             }
-            
         }
 
         public Response InsertCalendarReportData(string clavePlaza, CalendarReportData calendarReportData, bool update)
