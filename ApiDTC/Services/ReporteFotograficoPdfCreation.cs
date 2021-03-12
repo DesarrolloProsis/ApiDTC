@@ -178,13 +178,6 @@
                             }
                         }
 
-                        /*string[] primerasFotos = new string[12];
-                        string[] restoFotos = new string[fotos.Length - 12];
-                        int resto = fotos.Length - 12;
-                        for (int i = 0; i < 12; i++)
-                            primerasFotos[i] = fotos[i];
-                        for (int i = 0; i < resto; i++)
-                            restoFotos[i] = fotos[i + 12];*/
                         doc.Add(TablaFotografias(primerasFotos));
                         doc.NewPage();
                         doc.Add(TablaFotografias(restoFotos));
@@ -316,6 +309,12 @@
 
                 foreach (var foto in rutas)
                 {
+                    //Si procesa un archivo temporal que no se eliminó
+                    if(foto.Contains("-temp"))
+                    {
+                        File.Delete(foto);
+                        continue;
+                    }
                     System.Drawing.Image imageReview = System.Drawing.Image.FromFile(foto);
                     string fotoTemporal = foto.Substring(0, foto.LastIndexOf('.')) + "-temp.jpg";
                     foreach (var prop in imageReview.PropertyItems)
@@ -329,6 +328,7 @@
                             if(!File.Exists(fotoTemporal))
                                 File.Delete(fotoTemporal);
                             imageReview.Save(fotoTemporal);
+                            break;
                         }
                     }
                     if(!File.Exists(fotoTemporal))

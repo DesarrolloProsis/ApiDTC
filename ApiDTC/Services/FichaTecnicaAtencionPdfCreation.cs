@@ -219,6 +219,12 @@ namespace ApiDTC.Services
 
                 foreach (var foto in rutas)
                 {
+                    //Si procesa un archivo temporal que no se eliminó
+                    if(foto.Contains("-temp"))
+                    {
+                        File.Delete(foto);
+                        continue;
+                    }
                     System.Drawing.Image imageReview = System.Drawing.Image.FromFile(foto);
                     string fotoTemporal = foto.Substring(0, foto.LastIndexOf('.')) + "-temp.jpg";
                     foreach (var prop in imageReview.PropertyItems)
@@ -232,6 +238,7 @@ namespace ApiDTC.Services
                             if(!File.Exists(fotoTemporal))
                                 File.Delete(fotoTemporal);
                             imageReview.Save(fotoTemporal);
+                            break;
                         }
                     }
                     if(!File.Exists(fotoTemporal))
