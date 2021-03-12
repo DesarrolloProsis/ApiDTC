@@ -24,5 +24,7 @@
         public string strMaintenanceDate { get; set; }
         
         public string strMaintenanceFolio { get; set; }
+
+        public int intUserId { get; set; }
     }
 }

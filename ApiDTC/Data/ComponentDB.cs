@@ -161,7 +161,7 @@
                         cmd.Parameters.Add("@intUbicacion", SqlDbType.Int).Value = updateInventory.intUbicacion;
                         cmd.Parameters.Add("@strMaintenanceDate", SqlDbType.NVarChar).Value = updateInventory.strMaintenanceDate;
                         cmd.Parameters.Add("@strMaintenanceFolio", SqlDbType.NVarChar).Value = updateInventory.strMaintenanceFolio;
-
+                        cmd.Parameters.Add("@intUserId", SqlDbType.Int).Value = updateInventory.intUserId;
 
                         var reader = _sqlResult.Put(clavePlaza, cmd, sql, "PutComponentInventary");
                         if (reader.SqlResult == null)
