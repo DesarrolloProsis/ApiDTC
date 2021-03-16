@@ -73,7 +73,7 @@ namespace ApiDTC.Data
             {
                 using (SqlConnection sql = new SqlConnection(_connectionString))
                 {
-                    using (SqlCommand cmd = new SqlCommand("dbo.spInsertFaultDiagnosis"))
+                    using (SqlCommand cmd = new SqlCommand("dbo.spInsertFualtDiagnosisLanes"))
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.Add("@ReferenceNumber", SqlDbType.NVarChar).Value = fichaTecnicaIntervencionLane.ReferenceNumber;

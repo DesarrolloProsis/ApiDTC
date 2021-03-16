@@ -87,7 +87,7 @@
         [HttpGet("Exists/{clavePlaza}/{year}/{month}")]
         public ActionResult CalendarioExists(string clavePlaza, int year, int month)
         {
-            string path =  $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\CalendariosMantenimiento\{clavePlaza.ToUpper()}{year}-{month.ToString("00")}C-Escaneado.pdf";
+            string path =  $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\CalendariosMantenimiento\{year}\{month}\{clavePlaza.ToUpper()}{year}-{month.ToString("00")}C-Escaneado.pdf";
             if(System.IO.File.Exists((path)))
                 return Ok();
             return NotFound();
@@ -97,7 +97,7 @@
         public ActionResult GetPdfSellado(string clavePlaza, int year, int month)
         {            
             
-            string path =  $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\CalendariosMantenimiento\{clavePlaza.ToUpper()}{year}-{month.ToString("00")}C-Escaneado.pdf";
+            string path =  $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\CalendariosMantenimiento\{year}\{month}\{clavePlaza.ToUpper()}{year}-{month.ToString("00")}C-Escaneado.pdf";
             try
             {
                 if (!System.IO.File.Exists(path))
