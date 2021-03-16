@@ -67,7 +67,7 @@ namespace ApiDTC.Data
             }
         }
 
-        public Response InsertFichaTecnicaIntervencion(string clavePlaza, FichaTecnicaIntervencion fichaTecnicaIntervencion)
+        public Response InsertFichaTecnicaIntervencionLane(string clavePlaza, FichaTecnicaIntervencionLane fichaTecnicaIntervencionLane)
         {
             try
             {
@@ -76,11 +76,15 @@ namespace ApiDTC.Data
                     using (SqlCommand cmd = new SqlCommand("dbo.spInsertFaultDiagnosis"))
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
-                        cmd.Parameters.Add("@DiagnosisId", SqlDbType.Int).Value = fichaTecnicaIntervencion.DiagnosisId;
-                        cmd.Parameters.Add("@TypeFaultId", SqlDbType.Int).Value = fichaTecnicaIntervencion.TypeFaultId;
-                        cmd.Parameters.Add("@CapufeLaneNum", SqlDbType.NVarChar).Value = fichaTecnicaIntervencion.Intervention;
-
-                        var storedResult = _sqlResult.Post(clavePlaza, cmd, sql, "InsertFichaTecnicaIntervencion");
+                        cmd.Parameters.Add("@ReferenceNumber", SqlDbType.NVarChar).Value = fichaTecnicaIntervencionLane.ReferenceNumber;
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.Add("@CapuLaneNum", SqlDbType.NVarChar).Value = fichaTecnicaIntervencionLane.CapuLaneNum;
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.Add("@IdGare", SqlDbType.NVarChar).Value = fichaTecnicaIntervencionLane.IdGare;
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.Add("@AddFlag", SqlDbType.Bit).Value = fichaTecnicaIntervencionLane.AddFlag;
+                        
+                        var storedResult = _sqlResult.Post(clavePlaza, cmd, sql, "InsertFichaTecnicaIntervencionLane");
                         if (storedResult.SqlResult == null)
                             return new Response { Message = "Error: " + storedResult.SqlMessage, Result = null };
                     }
@@ -88,12 +92,12 @@ namespace ApiDTC.Data
                 return new Response
                 {
                     Message = "Ok",
-                    Result = fichaTecnicaIntervencion
+                    Result = fichaTecnicaIntervencionLane
                 };
             }
             catch(SqlException ex)
             {
-                _apiLogger.WriteLog(clavePlaza, ex, "FichaTecnicaDb: InsertFichaTecnicaIntervencion", 1);
+                _apiLogger.WriteLog(clavePlaza, ex, "FichaTecnicaDb: InsertFichaTecnicaIntervencionLane", 1);
                 return new Response { Message = $"Error: {ex.Message}", Result = null };
             }
         }

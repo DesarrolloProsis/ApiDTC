@@ -113,12 +113,12 @@
             return BadRequest(ModelState);
         }
 
-        [HttpPost("FichaTecnicaDiagnostico/{clavePlaza}")]
-        public ActionResult<Response> InsertFichaTecnicaIntervencion(string clavePlaza, [FromBody] FichaTecnicaIntervencion fichaTecnicaIntervencion)
+        [HttpPost("FichaTecnicaDiagnosticoLane/{clavePlaza}")]
+        public ActionResult<Response> InsertFichaTecnicaIntervencionLane(string clavePlaza, [FromBody] FichaTecnicaIntervencionLane fichaTecnicaIntervencionLane)
         {
             if (ModelState.IsValid)
             {
-                var get = _db.InsertFichaTecnicaIntervencion(clavePlaza, fichaTecnicaIntervencion);
+                var get = _db.InsertFichaTecnicaIntervencionLane(clavePlaza, fichaTecnicaIntervencionLane);
                 if (get.Result == null)
                     return BadRequest(get);
                 else
