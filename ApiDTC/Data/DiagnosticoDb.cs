@@ -51,7 +51,7 @@ namespace ApiDTC.Data
 
                         var storedResult = _sqlResult.Post(clavePlaza, cmd, sql, "InsertFaultDiagnosis");
                         if (storedResult.SqlResult == null)
-                            return new Response { Message = "No se pudo diagnóstico de falla " + diagnosticoDeFalla.ReferenceNumber, Result = null };
+                            return new Response { Message = "No se pudo diagnï¿½stico de falla " + diagnosticoDeFalla.ReferenceNumber, Result = null };
                     }
                 }
                 return new Response
@@ -66,6 +66,48 @@ namespace ApiDTC.Data
                 return new Response { Message = $"Error: {ex.Message}", Result = null };
             }
             
+        }
+
+        public Response GetDiagnosticoInfo(string clavePlaza, string referenceNumber)
+        {
+            try
+            {
+                using (SqlConnection sql = new SqlConnection(_connectionString))
+                {
+                    using (SqlCommand cmd = new SqlCommand("[dbo].[spGetFaultDiagnosis]", sql))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.Add("@ReferenceNumber", SqlDbType.NVarChar).Value = referenceNumber;
+                        return _sqlResult.GetList<DiagnosticoDeFallaInfo>(clavePlaza, cmd, sql, "GetDiagnosticoInfo");
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                _apiLogger.WriteLog(clavePlaza, ex, "DiagnosticoDb: GetDiagnosticoInfo", 1);
+                return new Response { Message = $"Error: {ex.Message}", Result = null };
+            }
+        }
+
+        public DiagnosticoDeFallaInfo GetDiagnosticoInfoPdf(string clavePlaza, string referenceNumber)
+        {
+            try
+            {
+                using (SqlConnection sql = new SqlConnection(_connectionString))
+                {
+                    using (SqlCommand cmd = new SqlCommand("[dbo].[spGetFaultDiagnosis]", sql))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.Add("@ReferenceNumber", SqlDbType.NVarChar).Value = referenceNumber;
+                        return _sqlResult.GetRow<DiagnosticoDeFallaInfo>(clavePlaza, cmd, sql, "GetDTCHeaderEdit");
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                _apiLogger.WriteLog(clavePlaza, ex, "DiagnosticoDb: GetDiagnosticoInfo", 1);
+                return null;
+            }
         }
         #endregion
     }

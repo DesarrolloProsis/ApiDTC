@@ -42,12 +42,15 @@
 
         //https://localhost:44358/api/DiagnosticoFalla/TLA/B01/TLA-DF-001-02
         #region Methods
-        [HttpGet("{clavePlaza}/{ubicacion}/{noReporte}")]
-        public IActionResult GetDiagnosticoFalla(string clavePlaza, string ubicacion, string noReporte)
+        [HttpGet("{clavePlaza}/{ubicacion}/{referenceNumber}")]
+        public IActionResult GetDiagnosticoFalla(string clavePlaza, string ubicacion, string referenceNumber)
         {
             try
             {
-                DiagnosticoFallaPdfCreation pdf = new DiagnosticoFallaPdfCreation(clavePlaza, new ApiLogger(), ubicacion, noReporte);
+                var getInfoPdf = _db.GetDiagnosticoInfoPdf(clavePlaza, referenceNumber);
+                if(getInfoPdf == null)
+                    return NotFound();
+                DiagnosticoFallaPdfCreation pdf = new DiagnosticoFallaPdfCreation(clavePlaza, getInfoPdf, new ApiLogger(), referenceNumber);
                 var pdfResult = pdf.NewPdf($@"{this._disk}:\{this._folder}");
                 if (pdfResult.Result == null)
                     return NotFound(pdfResult.Message);
@@ -59,6 +62,15 @@
                 return NotFound(ex.ToString());
             }   
         }
+
+       [HttpGet("GetDiagnosticoInfo/{clavePlaza}/{referenceNumber}")]
+        public ActionResult<Response> GetBitacora(string clavePlaza, string referenceNumber)
+        {
+            var get = _db.GetDiagnosticoInfo(clavePlaza, referenceNumber);
+            if(get.Result == null)
+                return NotFound(get);
+            return Ok(get);
+        } 
 
         [HttpPost("InsertDiagnosticoDeFalla/{clavePlaza}")]
         public ActionResult<Response> InsertDiagnosticoDeFalla(string clavePlaza, [FromBody] DiagnosticoDeFalla diagnosticoDeFalla)

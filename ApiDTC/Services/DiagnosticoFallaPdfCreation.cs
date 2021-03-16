@@ -14,7 +14,7 @@ namespace ApiDTC.Services
     {
         #region Attributes
 
-        private readonly DataTable _tableHeader;
+        private readonly DiagnosticoDeFallaInfo _diagnosticoDeFallaInfo;
 
         private readonly string _clavePlaza;
 
@@ -22,7 +22,7 @@ namespace ApiDTC.Services
 
         private readonly string _ubicacion;
 
-        private readonly string _noReporte;
+        private readonly string _referenceNumber;
         #endregion
 
         #region Pdf Configuration
@@ -52,20 +52,12 @@ namespace ApiDTC.Services
 
         #region Constructors
 
-        public DiagnosticoFallaPdfCreation(string clavePlaza, DataTable tableHeader, ApiLogger apiLogger, string ubicacion)
+        public DiagnosticoFallaPdfCreation(string clavePlaza, DiagnosticoDeFallaInfo diagnosticoDeFallaInfo, ApiLogger apiLogger, string referenceNumber)
         {
             _clavePlaza = clavePlaza;
             _apiLogger = apiLogger;
-            _tableHeader = tableHeader;
-            _ubicacion = ubicacion;
-        }
-
-        public DiagnosticoFallaPdfCreation(string clavePlaza, ApiLogger apiLogger, string ubicacion, string noReporte)
-        {
-            _clavePlaza = clavePlaza;
-            _apiLogger = apiLogger;
-            _ubicacion = ubicacion;
-            _noReporte = noReporte;
+            _diagnosticoDeFallaInfo = diagnosticoDeFallaInfo;
+            _referenceNumber = referenceNumber;
         }
 
         #endregion
@@ -77,8 +69,8 @@ namespace ApiDTC.Services
             string directory, filename, path;
 
             DateTime now = DateTime.Now; 
-            directory = $@"{folder}\{_clavePlaza.ToUpper()}\Reportes\{_noReporte}";
-            filename = $"{_noReporte}-Diagnostico.pdf";
+            directory = $@"{folder}\{_clavePlaza.ToUpper()}\Reportes\{_referenceNumber}";
+            filename = $"{_referenceNumber}-Diagnostico.pdf";
             path = Path.Combine(directory, filename); 
             
             try
@@ -296,7 +288,7 @@ namespace ApiDTC.Services
                 CeldasVacias(8, table);
                 var colTextoNoReporte = new PdfPCell(new Phrase("No. de Reporte:", letraoNegritaMediana)) { Border = 0, HorizontalAlignment = Element.ALIGN_RIGHT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 5 };
 
-                string valorReporte = _noReporte;
+                string valorReporte = _referenceNumber;
                 var colNoReporte = new PdfPCell(new Phrase(valorReporte, letraNormalMediana)) { BorderWidthBottom = 1, BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_BOTTOM, Padding = 2, Colspan = 3 };
 
                 var colTextoFecha = new PdfPCell(new Phrase("Fecha:", letraoNegritaMediana)) { Border = 0, HorizontalAlignment = Element.ALIGN_RIGHT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 5 };
