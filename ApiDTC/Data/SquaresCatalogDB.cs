@@ -72,6 +72,35 @@
                 return new Response { Message = $"Error: {ex.Message}", Result = null };
             }
         }
+
+        public Response GetAdmins()
+        {
+            try
+            {
+                using (SqlConnection sql = new SqlConnection(_connectionString))
+                {
+                    using (SqlCommand cmd = new SqlCommand("dbo.spAdminsSquareCrud", sql))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+
+                        var storedResult = _sqlResult.GetList<AdminInfo>("USR", cmd, sql, "GetLanes");
+                        if (storedResult.Result == null)
+                            return storedResult;
+
+                        return new Response
+                        {
+                            Message = "Ok",
+                            Result = storedResult.Result
+                        };
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                _apiLogger.WriteLog("USR", ex, "SquaresCatalog: GetLanes", 1);
+                return new Response { Message = $"Error: {ex.Message}", Result = null };
+            }
+        }
         #endregion
     }
 }

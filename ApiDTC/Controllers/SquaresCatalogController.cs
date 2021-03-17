@@ -43,5 +43,15 @@
             else
                 return Ok(get);
         }
+
+        [HttpGet("Admins")]
+        public ActionResult<Response> GetLanes()
+        {
+            var get = _db.GetAdmins();
+            if (get.Result == null)
+                return NotFound(get);
+            else
+                return Ok(get);
+        }
     }
 }

@@ -58,6 +58,7 @@
             }
             
         }
+
         
         [HttpGet("FichaTecnicaExists/{clavePlaza}/{referenceNumber}")]
         public ActionResult PdfExists(string clavePlaza, string referenceNumber)
@@ -99,6 +100,29 @@
             return NotFound();
         }
 
+        [HttpPost("FichaTecnica/{clavePlaza}")]
+        public ActionResult<Response> InsertFichaTecnica(string clavePlaza, [FromBody] FichaTecnica fichaTecnica)
+        {
+            if(ModelState.IsValid)
+            {
+                var post = _db.InsertFichaTecnica(clavePlaza, fichaTecnica);
+                if(post.Result == null)
+                    return NotFound(post);
+                return Ok(post);
+            }
+            return BadRequest(ModelState);
+        }
+
+        [HttpGet("FichaTecnica/{clavePlaza}/{referenceNumber}")]
+        public ActionResult<Response> GetFichaTecnica(string clavePlaza, string referenceNumber)
+        {
+            var get = _db.GetTechnicalSheet(clavePlaza, referenceNumber);
+            if (get.Result == null)
+                return NotFound(get);
+            else
+                return Ok(get);
+        }
+
         [HttpPost("FichaTecnicaDiagnostico/{clavePlaza}")]
         public ActionResult<Response> InsertFichaTecnicaDiagnostico(string clavePlaza, [FromBody] FichaTecnicaDiagnostico fichaTecnicaDiagnostico)
         {
@@ -106,9 +130,8 @@
             {
                 var get = _db.InsertDiagnosticoFichaTecnica(clavePlaza, fichaTecnicaDiagnostico);
                 if (get.Result == null)
-                    return BadRequest(get);
-                else
-                    return Ok(get);
+                    return NotFound(get);
+                return Ok(get);
             }
             return BadRequest(ModelState);
         }
