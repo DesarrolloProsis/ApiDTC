@@ -31,6 +31,8 @@ namespace ApiDTC.Services
         private readonly string _square;
 
         private readonly string _clavePlaza;
+
+        private readonly int _idUser;
         #endregion
 
         #region Pdf Configuration
@@ -66,7 +68,7 @@ namespace ApiDTC.Services
 
         #region Constructors
 
-        public CalendarioPdfCreation(string clavePlaza, DataTable tableHeader, DataTable tableActivities, string plaza, ApiLogger apiLogger, int month, int year, string square)
+        public CalendarioPdfCreation(string clavePlaza, DataTable tableHeader, DataTable tableActivities, string plaza, ApiLogger apiLogger, int month, int year, string square, int idUser)
         {
             _clavePlaza = clavePlaza;
             _apiLogger = apiLogger;
@@ -76,6 +78,7 @@ namespace ApiDTC.Services
             _month = month;
             _year = year;
             _square = square;
+            _idUser = idUser;
         }
 
         #endregion
@@ -85,7 +88,7 @@ namespace ApiDTC.Services
         {
             string directory = $@"{folder}\{_clavePlaza.ToUpper()}\CalendariosMantenimiento\{_year}\{_month}\", filename, path;
             DateTime now = DateTime.Now;
-            filename = $"{_plaza.ToUpper()}{_year}-{_month.ToString("00")}C.pdf";
+            filename = $"{_plaza.ToUpper()}{_year}-{_month.ToString("00")}C-{_idUser}.pdf";
             path = Path.Combine(directory, filename);
             //If file exists
             try

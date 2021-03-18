@@ -42,26 +42,26 @@
         #endregion
 
         #region Methods
-        [HttpGet("Mantenimiento/{clavePlaza}/{month}/{year}/{userId}/{squareId}")]
-        public IActionResult GetCalendarioMantenimiento(string clavePlaza, int month, int year, int userId, string squareId)
+        [HttpGet("Mantenimiento/{clavePlaza}/{month}/{year}/{userId}/{squareId}/{idUser}")]
+        public IActionResult GetCalendarioMantenimiento(string clavePlaza, int month, int year, int userId, string squareId, int idUser)
         {
             var dataSet = _db.GetStorePdf(clavePlaza, month, year, userId, squareId == "1Bi" ? squareId + "s" : squareId);
             if (dataSet.Tables[1].Rows.Count == 0)
                 return NotFound();
-            CalendarioPdfCreation pdf = new CalendarioPdfCreation(clavePlaza, dataSet.Tables[1], dataSet.Tables[0], clavePlaza, new ApiLogger(), month, year, squareId);
+            CalendarioPdfCreation pdf = new CalendarioPdfCreation(clavePlaza, dataSet.Tables[1], dataSet.Tables[0], clavePlaza, new ApiLogger(), month, year, squareId, idUser);
             var pdfResult = pdf.NewPdf($@"{this._disk}:\{this._folder}");
             return File(new FileStream(pdfResult.Result.ToString(), FileMode.Open, FileAccess.Read), "application/pdf");
         }
 
-        [HttpPost("CalendarioEscaneado/{clavePlaza}/{month}/{year}")]
-        public ActionResult<Response> CalendarioEscaneado([FromForm(Name = "file")] IFormFile file, string clavePlaza, int month, int year)
+        [HttpPost("CalendarioEscaneado/{clavePlaza}/{month}/{year}/{idUser}")]
+        public ActionResult<Response> CalendarioEscaneado([FromForm(Name = "file")] IFormFile file, string clavePlaza, int month, int year, int idUser)
         {
             if(file.Length > 0 || file != null)
             {
                 if(file.FileName.EndsWith(".pdf") || file.FileName.EndsWith(".PDF"))
                 {
                     string path = $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\CalendariosMantenimiento\{year}\{month}\";
-                    string filename = $"{clavePlaza.ToUpper()}{year}-{month.ToString("00")}C-Escaneado.pdf";
+                    string filename = $"{clavePlaza.ToUpper()}{year}-{month.ToString("00")}C-{idUser}-Escaneado.pdf";
                     try
                     {
                         if (!Directory.Exists(path))
@@ -84,20 +84,20 @@
             return NotFound();
         }
 
-        [HttpGet("Exists/{clavePlaza}/{year}/{month}")]
-        public ActionResult CalendarioExists(string clavePlaza, int year, int month)
+        [HttpGet("Exists/{clavePlaza}/{year}/{month}/{idUser}")]
+        public ActionResult CalendarioExists(string clavePlaza, int year, int month, int idUser)
         {
-            string path =  $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\CalendariosMantenimiento\{year}\{month}\{clavePlaza.ToUpper()}{year}-{month.ToString("00")}C-Escaneado.pdf";
+            string path =  $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\CalendariosMantenimiento\{year}\{month}\{clavePlaza.ToUpper()}{year}-{month.ToString("00")}C-{idUser}-Escaneado.pdf";
             if(System.IO.File.Exists((path)))
                 return Ok();
             return NotFound();
         }
 
-        [HttpGet("GetPdfSellado/{clavePlaza}/{year}/{month}")]
-        public ActionResult GetPdfSellado(string clavePlaza, int year, int month)
+        [HttpGet("GetPdfSellado/{clavePlaza}/{year}/{month}/{idUser}")]
+        public ActionResult GetPdfSellado(string clavePlaza, int year, int month, int idUser)
         {            
             
-            string path =  $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\CalendariosMantenimiento\{year}\{month}\{clavePlaza.ToUpper()}{year}-{month.ToString("00")}C-Escaneado.pdf";
+            string path =  $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\CalendariosMantenimiento\{year}\{month}\{clavePlaza.ToUpper()}{year}-{month.ToString("00")}C-{idUser}-Escaneado.pdf";
             try
             {
                 if (!System.IO.File.Exists(path))

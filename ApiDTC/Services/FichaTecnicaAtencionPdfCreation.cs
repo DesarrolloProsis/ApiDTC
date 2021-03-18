@@ -605,13 +605,33 @@ namespace ApiDTC.Services
         private List<string> SeparacionObservaciones(string observaciones)
         {
             List<string> lineaObservaciones = new List<string>();
-            if (observaciones.Length <= 100)
+            if(observaciones.Length <= 100)
             {
                 lineaObservaciones.Add(observaciones);
                 return lineaObservaciones;
             }
 
-            char[] separadores = new char[]{
+            string linea = string.Empty;
+            for (int i = 0; i < observaciones.Length; i++)
+            {
+                if(observaciones[i].Equals(',') || observaciones[i].Equals('.') || observaciones[i].Equals('.') || observaciones[i].Equals(':'))
+                {
+                    if(i < observaciones.Length - 1 && !observaciones[i + 1].Equals(' '))
+                    {
+                        linea += observaciones[i] + ' ';
+                        continue;
+                    }
+                }
+                linea += observaciones[i];
+                if(linea.Length == 100)
+                {
+                    lineaObservaciones.Add(linea);
+                    linea = string.Empty;
+                }
+            }
+            lineaObservaciones.Add(linea);
+
+            /*char[] separadores = new char[]{
                 ' ',
                 ',',
                 '.'
@@ -640,7 +660,7 @@ namespace ApiDTC.Services
                         linea = string.Empty;
                     }
                 }
-            }
+            }*/
             return lineaObservaciones;
         }
         private string MesActual() { return new System.Globalization.CultureInfo("es-ES", false).DateTimeFormat.GetMonthName(DateTime.Now.Month); }
