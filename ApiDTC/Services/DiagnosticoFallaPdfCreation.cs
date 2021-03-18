@@ -598,12 +598,12 @@ namespace ApiDTC.Services
                 {
                     if(i < observaciones.Length - 1 && !observaciones[i + 1].Equals(' '))
                     {
-                        linea += observaciones[i] + ' ';
+                        linea += $"{observaciones[i]} ";
                         continue;
                     }
                 }
                 linea += observaciones[i];
-                if(linea.Length == 100)
+                if(linea.Length >= 100)
                 {
                     lineaObservaciones.Add(linea);
                     linea = string.Empty;
