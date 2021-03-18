@@ -151,41 +151,45 @@
                     else
                         directoryImgs = Path.Combine(directory, "EquipoDañadoImgs");
                     var files = Directory.GetFiles(directoryImgs);
-                    List<string> fotos = new List<string>();
-                    foreach (var file in files)
-                        fotos.Add(file);
-                    
-                    if (fotos.Count <= 12)
-                        doc.Add(TablaFotografias(fotos));
-                    else
+                    if(files.Length != 0)
                     {
-                        List<string> primerasFotos = new List<string>();
-                        List<string> restoFotos = new List<string>();
-                        for (int i = 0; i < 20; i++)
+                        List<string> fotos = new List<string>();
+                        foreach (var file in files)
+                            fotos.Add(file);
+                        
+                        if (fotos.Count <= 12)
+                            doc.Add(TablaFotografias(fotos));
+                        else
                         {
-                            if(fotos.Count - 1 < i)
-                                break;
-                            primerasFotos.Add(fotos[i]);
-                        }
-                        if(fotos.Count > 20)
-                        {
-                            for (int i = 20; i < fotos.Count; i++)
+                            List<string> primerasFotos = new List<string>();
+                            List<string> restoFotos = new List<string>();
+                            for (int i = 0; i < 20; i++)
                             {
-                                if(fotos[i] != null)
-                                    restoFotos.Add(fotos[i]);
-                                else
+                                if(fotos.Count - 1 < i)
                                     break;
+                                primerasFotos.Add(fotos[i]);
                             }
-                        }
+                            if(fotos.Count > 20)
+                            {
+                                for (int i = 20; i < fotos.Count; i++)
+                                {
+                                    if(fotos[i] != null)
+                                        restoFotos.Add(fotos[i]);
+                                    else
+                                        break;
+                                }
+                            }
 
-                        doc.Add(TablaFotografias(primerasFotos));
-                        doc.NewPage();
-                        doc.Add(TablaFotografias(restoFotos));
-                    }
-                    foreach (var img in Directory.GetFiles(directoryImgs))
-                    {
-                        if(img.Contains("temp"))
-                            File.Delete(img);
+                            doc.Add(TablaFotografias(primerasFotos));
+                            doc.NewPage();
+                            doc.Add(TablaFotografias(restoFotos));
+                        }
+                        
+                        foreach (var img in Directory.GetFiles(directoryImgs))
+                        {
+                            if(img.Contains("temp"))
+                                File.Delete(img);
+                        }
                     }
                     PdfContentByte cb = writer.DirectContent;
                     PdfPTable tablaObservaciones = TablaObservaciones();
