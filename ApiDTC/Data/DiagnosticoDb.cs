@@ -45,7 +45,7 @@ namespace ApiDTC.Data
                         cmd.Parameters.Add("@UserId", SqlDbType.Int).Value = diagnosticoDeFalla.UserId;
                         cmd.Parameters.Add("@FailureDescription", SqlDbType.NVarChar).Value = diagnosticoDeFalla.FailureDescription;
                         cmd.Parameters.Add("@FailureDiagnosis", SqlDbType.NVarChar).Value = diagnosticoDeFalla.FailureDiagnosis;
-                        cmd.Parameters.Add("@CauseFailure", SqlDbType.Int).Value = diagnosticoDeFalla.CauseFailure;
+                        cmd.Parameters.Add("@CauseFailure", SqlDbType.NVarChar).Value = diagnosticoDeFalla.CauseFailure;
                         cmd.Parameters.Add("@AdminSquareId", SqlDbType.Int).Value = diagnosticoDeFalla.AdminSquareId;
                         cmd.Parameters.Add("@UpdateFlag", SqlDbType.Bit).Value = diagnosticoDeFalla.UpdateFlag;
 
