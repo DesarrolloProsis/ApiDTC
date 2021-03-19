@@ -20,6 +20,8 @@ namespace ApiDTC.Models
 
         public string NumeroSiniestro { get; set; }
 
+        public string TecnicoProsis { get; set; }
+
         public string DescripcionFalla { get; set; }
 
         public string Intervencion { get; set; }

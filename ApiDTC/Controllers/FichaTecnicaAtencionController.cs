@@ -40,12 +40,16 @@
         #endregion
 
         #region Methods
+        #region PDF
         [HttpGet("{clavePlaza}/{ubicacion}/{referenceNumber}")]
         public IActionResult GetFichaTecnicaAtencion(string clavePlaza, string ubicacion, string referenceNumber)
         {
             try
             {
-                FichaTecnicaAtencionPdfCreation pdf = new FichaTecnicaAtencionPdfCreation(clavePlaza, new ApiLogger(), ubicacion, referenceNumber);
+                var getInfoPdf = _db.GetFichaTecnicaPdf(clavePlaza, referenceNumber);
+                if(getInfoPdf == null)
+                    return NotFound();
+                FichaTecnicaAtencionPdfCreation pdf = new FichaTecnicaAtencionPdfCreation(clavePlaza, new ApiLogger(), getInfoPdf);
                 var pdfResult = pdf.NewPdf($@"{this._disk}:\{this._folder}");
                 if (pdfResult.Result == null)
                     return NotFound(pdfResult.Message);
@@ -58,7 +62,6 @@
             }
             
         }
-
         
         [HttpGet("FichaTecnicaExists/{clavePlaza}/{referenceNumber}")]
         public ActionResult PdfExists(string clavePlaza, string referenceNumber)
@@ -99,8 +102,10 @@
             }
             return NotFound();
         }
+        #endregion
 
-        [HttpPost("FichaTecnica/{clavePlaza}")]
+        #region CRUD
+        [HttpPost("Insert/{clavePlaza}")]
         public ActionResult<Response> InsertFichaTecnica(string clavePlaza, [FromBody] FichaTecnica fichaTecnica)
         {
             if(ModelState.IsValid)
@@ -113,7 +118,7 @@
             return BadRequest(ModelState);
         }
 
-        [HttpGet("FichaTecnica/{clavePlaza}/{referenceNumber}")]
+        [HttpGet("Get/{clavePlaza}/{referenceNumber}")]
         public ActionResult<Response> GetFichaTecnica(string clavePlaza, string referenceNumber)
         {
             var get = _db.GetTechnicalSheet(clavePlaza, referenceNumber);
@@ -123,32 +128,7 @@
                 return Ok(get);
         }
 
-        [HttpPost("FichaTecnicaDiagnostico/{clavePlaza}")]
-        public ActionResult<Response> InsertFichaTecnicaDiagnostico(string clavePlaza, [FromBody] FichaTecnicaDiagnostico fichaTecnicaDiagnostico)
-        {
-            if (ModelState.IsValid)
-            {
-                var get = _db.InsertDiagnosticoFichaTecnica(clavePlaza, fichaTecnicaDiagnostico);
-                if (get.Result == null)
-                    return NotFound(get);
-                return Ok(get);
-            }
-            return BadRequest(ModelState);
-        }
-
-        [HttpPost("FichaTecnicaDiagnosticoLane/{clavePlaza}")]
-        public ActionResult<Response> InsertFichaTecnicaIntervencionLane(string clavePlaza, [FromBody] FichaTecnicaIntervencionLane fichaTecnicaIntervencionLane)
-        {
-            if (ModelState.IsValid)
-            {
-                var get = _db.InsertFichaTecnicaIntervencionLane(clavePlaza, fichaTecnicaIntervencionLane);
-                if (get.Result == null)
-                    return BadRequest(get);
-                else
-                    return Ok(get);
-            }
-            return BadRequest(ModelState);
-        }
+        #endregion
 
         #region FichaTecnicaImages
         [HttpPost("Images/{clavePlaza}/{reportNumber}")]

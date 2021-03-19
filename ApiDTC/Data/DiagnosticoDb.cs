@@ -26,6 +26,8 @@ namespace ApiDTC.Data
         #endregion
         
         #region Methods
+        
+        //Información del diagnóstico de falla
         public Response InsertFaultDiagnosis(string clavePlaza, DiagnosticoDeFalla diagnosticoDeFalla)
         {
             try
@@ -51,7 +53,7 @@ namespace ApiDTC.Data
 
                         var storedResult = _sqlResult.Post(clavePlaza, cmd, sql, "InsertFaultDiagnosis");
                         if (storedResult.SqlResult == null)
-                            return new Response { Message = "No se pudo diagn�stico de falla " + diagnosticoDeFalla.ReferenceNumber, Result = null };
+                            return new Response { Message = "No se pudo diagnóstico de falla " + diagnosticoDeFalla.ReferenceNumber, Result = null };
                     }
                 }
                 return new Response
@@ -68,6 +70,43 @@ namespace ApiDTC.Data
             
         }
 
+        //Carriles del diagnóstico de falla
+        public Response InsertFichaTecnicaIntervencionLane(string clavePlaza, FichaTecnicaIntervencionLane fichaTecnicaIntervencionLane)
+        {
+            try
+            {
+                using (SqlConnection sql = new SqlConnection(_connectionString))
+                {
+                    using (SqlCommand cmd = new SqlCommand("dbo.spInsertFualtDiagnosisLanes"))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.Add("@ReferenceNumber", SqlDbType.NVarChar).Value = fichaTecnicaIntervencionLane.ReferenceNumber;
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.Add("@CapuLaneNum", SqlDbType.NVarChar).Value = fichaTecnicaIntervencionLane.CapuLaneNum;
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.Add("@IdGare", SqlDbType.NVarChar).Value = fichaTecnicaIntervencionLane.IdGare;
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.Add("@AddFlag", SqlDbType.Bit).Value = fichaTecnicaIntervencionLane.AddFlag;
+                        
+                        var storedResult = _sqlResult.Post(clavePlaza, cmd, sql, "InsertFichaTecnicaIntervencionLane");
+                        if (storedResult.SqlResult == null)
+                            return new Response { Message = "Error: " + storedResult.SqlMessage, Result = null };
+                    }
+                }
+                return new Response
+                {
+                    Message = "Ok",
+                    Result = fichaTecnicaIntervencionLane
+                };
+            }
+            catch(SqlException ex)
+            {
+                _apiLogger.WriteLog(clavePlaza, ex, "FichaTecnicaDb: InsertFichaTecnicaIntervencionLane", 1);
+                return new Response { Message = $"Error: {ex.Message}", Result = null };
+            }
+        }
+
+        //Información diagnóstico de falla formato Response
         public Response GetDiagnosticoInfo(string clavePlaza, string referenceNumber)
         {
             try
@@ -89,6 +128,7 @@ namespace ApiDTC.Data
             }
         }
 
+        //Información diagnóstico de falla formato PDF
         public DiagnosticoDeFallaInfo GetDiagnosticoInfoPdf(string clavePlaza, string referenceNumber)
         {
             try
@@ -99,7 +139,7 @@ namespace ApiDTC.Data
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.Add("@ReferenceNumber", SqlDbType.NVarChar).Value = referenceNumber;
-                        return _sqlResult.GetRow<DiagnosticoDeFallaInfo>(clavePlaza, cmd, sql, "GetDTCHeaderEdit");
+                        return _sqlResult.GetRow<DiagnosticoDeFallaInfo>(clavePlaza, cmd, sql, "GetDiagnosticoInfoPdf");
                     }
                 }
             }

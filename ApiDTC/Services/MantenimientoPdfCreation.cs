@@ -685,7 +685,7 @@
                     }
                 }
                 linea += observaciones[i];
-                if(linea.Length == 100)
+                if(linea.Length >= 100)
                 {
                     lineaObservaciones.Add(linea);
                     linea = string.Empty;

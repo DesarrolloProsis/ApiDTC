@@ -6,7 +6,7 @@ namespace ApiDTC.Models
     public class DiagnosticoDeFalla
     {
         [Required]
-        [StringLength(300)]
+        [StringLength(30)]
         public string ReferenceNumber { get; set; }
 
         [Required]

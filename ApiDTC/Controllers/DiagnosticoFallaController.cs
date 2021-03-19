@@ -42,6 +42,8 @@
 
         //https://localhost:44358/api/DiagnosticoFalla/TLA/B01/TLA-DF-001-02
         #region Methods
+        
+        #region PDF
         [HttpGet("{clavePlaza}/{ubicacion}/{referenceNumber}")]
         public IActionResult GetDiagnosticoFalla(string clavePlaza, string ubicacion, string referenceNumber)
         {
@@ -50,7 +52,7 @@
                 var getInfoPdf = _db.GetDiagnosticoInfoPdf(clavePlaza, referenceNumber);
                 if(getInfoPdf == null)
                     return NotFound();
-                DiagnosticoFallaPdfCreation pdf = new DiagnosticoFallaPdfCreation(clavePlaza, getInfoPdf, new ApiLogger(), referenceNumber);
+                DiagnosticoFallaPdfCreation pdf = new DiagnosticoFallaPdfCreation(clavePlaza, getInfoPdf, new ApiLogger());
                 var pdfResult = pdf.NewPdf($@"{this._disk}:\{this._folder}");
                 if (pdfResult.Result == null)
                     return NotFound(pdfResult.Message);
@@ -61,29 +63,6 @@
                 _apiLogger.WriteLog(clavePlaza, ex, "FichaTecnicaAtencionController: GetFichaTecnicaAtencion", 2);
                 return NotFound(ex.ToString());
             }   
-        }
-
-       [HttpGet("GetDiagnosticoInfo/{clavePlaza}/{referenceNumber}")]
-        public ActionResult<Response> GetBitacora(string clavePlaza, string referenceNumber)
-        {
-            var get = _db.GetDiagnosticoInfo(clavePlaza, referenceNumber);
-            if(get.Result == null)
-                return NotFound(get);
-            return Ok(get);
-        } 
-
-        [HttpPost("InsertDiagnosticoDeFalla/{clavePlaza}")]
-        public ActionResult<Response> InsertDiagnosticoDeFalla(string clavePlaza, [FromBody] DiagnosticoDeFalla diagnosticoDeFalla)
-        {
-            if (ModelState.IsValid)
-            {
-                var get = _db.InsertFaultDiagnosis(clavePlaza, diagnosticoDeFalla);
-                if (get.Result == null)
-                    return BadRequest(get);
-                else
-                    return Ok(get);
-            }
-            return BadRequest(ModelState);
         }
 
         [HttpGet("Exists/{clavePlaza}/{referenceNumber}")]
@@ -124,6 +103,45 @@
                 return NotFound("Ingresa un archivo pdf");
             }
             return NotFound();
+        }
+
+        #endregion
+       
+       [HttpGet("GetDiagnosticoInfo/{clavePlaza}/{referenceNumber}")]
+        public ActionResult<Response> GetBitacora(string clavePlaza, string referenceNumber)
+        {
+            var get = _db.GetDiagnosticoInfo(clavePlaza, referenceNumber);
+            if(get.Result == null)
+                return NotFound(get);
+            return Ok(get);
+        } 
+
+        [HttpPost("InsertDiagnosticoDeFalla/{clavePlaza}")]
+        public ActionResult<Response> InsertDiagnosticoDeFalla(string clavePlaza, [FromBody] DiagnosticoDeFalla diagnosticoDeFalla)
+        {
+            if (ModelState.IsValid)
+            {
+                var get = _db.InsertFaultDiagnosis(clavePlaza, diagnosticoDeFalla);
+                if (get.Result == null)
+                    return BadRequest(get);
+                else
+                    return Ok(get);
+            }
+            return BadRequest(ModelState);
+        }
+
+        [HttpPost("FichaTecnicaDiagnosticoLane/{clavePlaza}")]
+        public ActionResult<Response> InsertFichaTecnicaIntervencionLane(string clavePlaza, [FromBody] FichaTecnicaIntervencionLane fichaTecnicaIntervencionLane)
+        {
+            if (ModelState.IsValid)
+            {
+                var get = _db.InsertFichaTecnicaIntervencionLane(clavePlaza, fichaTecnicaIntervencionLane);
+                if (get.Result == null)
+                    return BadRequest(get);
+                else
+                    return Ok(get);
+            }
+            return BadRequest(ModelState);
         }
 
         #region DiagnosticoImages
