@@ -41,8 +41,8 @@
 
         #region Methods
         #region PDF
-        [HttpGet("{clavePlaza}/{ubicacion}/{referenceNumber}")]
-        public IActionResult GetFichaTecnicaAtencion(string clavePlaza, string ubicacion, string referenceNumber)
+        [HttpGet("{clavePlaza}/{referenceNumber}")]
+        public IActionResult GetFichaTecnicaAtencion(string clavePlaza, string referenceNumber)
         {
             try
             {
