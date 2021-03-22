@@ -121,12 +121,11 @@ namespace ApiDTC.Services
                     {
                         fotos = Directory.GetFiles(directoryImgs);
                         doc.Add(TablaFotografias(fotos));
-                    }
-
-                    foreach (var img in Directory.GetFiles(directoryImgs))
-                    {
-                        if(img.Contains("temp"))
-                            File.Delete(img);
+                        foreach (var img in Directory.GetFiles(directoryImgs))
+                        {
+                            if(img.Contains("temp"))
+                                File.Delete(img);
+                        }
                     }
 
                     PdfContentByte cb = writer.DirectContent;
