@@ -44,8 +44,8 @@
         #region Methods
         
         #region PDF
-        [HttpGet("{clavePlaza}/{ubicacion}/{referenceNumber}")]
-        public IActionResult GetDiagnosticoFalla(string clavePlaza, string ubicacion, string referenceNumber)
+        [HttpGet("{clavePlaza}/{referenceNumber}")]
+        public IActionResult GetDiagnosticoFalla(string clavePlaza, string referenceNumber)
         {
             try
             {
