@@ -30,7 +30,5 @@ namespace ApiDTC.Models
         public string CausaFalla { get; set; }
 
         public string AdministradorPlaza { get; set; }
-
-        public int UserId { get; set; }
     }
 }
