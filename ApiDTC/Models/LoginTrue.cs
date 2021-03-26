@@ -14,6 +14,8 @@ namespace ApiDTC.Models
         public string SquareName { get; set; }
 
         public int AdminSquareId { get; set; }
+
+        public string PlazaAdministrador { get; set; }
         #endregion
     }
 }

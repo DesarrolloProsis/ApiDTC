@@ -34,8 +34,6 @@ namespace ApiDTC.Models
 
         public string AdminMail { get; set; }
 
-
-
-
+        public int AdminSquareId { get; set; }
     }
 }

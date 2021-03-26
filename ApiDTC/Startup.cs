@@ -39,7 +39,7 @@ namespace ApiDTC
             services.AddScoped<DtcDataDb>();
             services.AddScoped<ComponentDb>();
             services.AddScoped<LoginDb>();
-            services.AddScoped <MantenimientoPdfDb>();
+            services.AddScoped<MantenimientoPdfDb>();
             services.AddScoped<PdfConsultasDb>();
             services.AddScoped<TypeDescriptionsDb>();
             services.AddScoped<RequestedComponentDb>();
