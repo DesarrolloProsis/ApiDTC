@@ -47,6 +47,7 @@ namespace ApiDTC
             services.AddScoped<EmailDb>();
             services.AddScoped<MantenimientoDb>();
             services.AddScoped<DiagnosticoDb>();
+            services.AddScoped<FichaTecnicaDb>();
             services.AddScoped<InventarioDb>();
             services.AddScoped<ReporteFotograficoDB>();
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>

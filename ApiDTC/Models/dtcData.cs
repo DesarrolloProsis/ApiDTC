@@ -43,6 +43,8 @@
         public bool OpenFlag { get; set; }
 
         public string SquareId { get; set; }
+
+        public int AdminId { get; set; }
         #endregion
     }
 }

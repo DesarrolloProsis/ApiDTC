@@ -71,7 +71,7 @@
                         cmd.Parameters.Add("@flag", SqlDbType.Bit).Value = dtcData.Flag;
                         cmd.Parameters.Add("@openFlag", SqlDbType.Bit).Value = dtcData.OpenFlag;
                         cmd.Parameters.Add("@SquareId", SqlDbType.NVarChar).Value = dtcData.SquareId;
-
+                        cmd.Parameters.Add("@AdminId", SqlDbType.Int).Value = dtcData.AdminId;
 
                         return _sqlResult.Post(clavePlaza, cmd, sql, "GetStoredDtcData");
                     }
