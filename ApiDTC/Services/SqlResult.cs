@@ -142,6 +142,7 @@ namespace ApiDTC.Services
                 };
             }
         }
+
         public T GetRow<T>(string clavePlaza, SqlCommand command, SqlConnection con, string origen)
         {
             try
