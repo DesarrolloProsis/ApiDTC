@@ -53,5 +53,44 @@
             else
                 return Ok(get);
         }
+
+        [HttpPost("InsertAdmin")]
+        public ActionResult<Response> InsertAdmin([FromBody] InsertAdmin insertAdmin)
+        {
+            if(ModelState.IsValid)
+            {
+                var post = _db.InsertAdmin(insertAdmin);
+                if(post.Result == null)
+                    return NotFound(post);
+                return Ok(post);
+            }
+            return BadRequest();
+        }
+
+        [HttpPut("UpdateAdmin")]
+        public ActionResult<Response> UpdateAdmin([FromBody] UpdateAdmin updateAdmin)
+        {
+            if(ModelState.IsValid)
+            {
+                var put = _db.UpdateAdmin(updateAdmin);
+                if(put.Result == null)
+                    return NotFound(put);
+                return Ok(put);
+            }
+            return BadRequest();
+        }
+
+        [HttpPut("UpdateAdminStatus")]
+        public ActionResult<Response> UpdateAdminStatus([FromBody] UpdateAdminStatus updateAdminStatus)
+        {
+            if(ModelState.IsValid)
+            {
+                var put = _db.UpdateAdminStatus(updateAdminStatus);
+                if(put.Result == null)
+                    return NotFound(put);
+                return Ok(put);
+            }
+            return BadRequest();
+        }
     }
 }

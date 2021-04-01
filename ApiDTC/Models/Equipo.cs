@@ -1,4 +1,3 @@
-
 namespace ApiDTC.Models
 {
     using System.Collections.Generic;

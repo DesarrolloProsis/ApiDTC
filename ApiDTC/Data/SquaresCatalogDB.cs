@@ -3,6 +3,7 @@
     using ApiDTC.Models;
     using ApiDTC.Services;
     using Microsoft.Extensions.Configuration;
+    using System;
     using System.Data;
     using System.Data.SqlClient;
 
@@ -69,6 +70,99 @@
             catch (SqlException ex)
             {
                 _apiLogger.WriteLog("USR", ex, "SquaresCatalog: GetLanes", 1);
+                return new Response { Message = $"Error: {ex.Message}", Result = null };
+            }
+        }
+
+        public Response UpdateAdminStatus(UpdateAdminStatus updateAdminStatus)
+        {
+            try
+            {
+                using (SqlConnection sql = new SqlConnection(_connectionString))
+                {
+                    using (SqlCommand cmd = new SqlCommand("dbo.spUpdateStatusAdminCrud", sql))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.Add("@Status", SqlDbType.Bit).Value = updateAdminStatus.Status;
+                        cmd.Parameters.Add("@AdminId", SqlDbType.Int).Value = updateAdminStatus.AdminId;
+                        var response = _sqlResult.Put("USR", cmd, sql, "UpdateAdminStatus");
+                        return new Response
+                        {
+                            Message = response.SqlMessage,
+                            Result = response.SqlResult
+                        };
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                _apiLogger.WriteLog("USR", ex, "SquaresCatalogDb: UpdateAdminStatus", 1);
+                return new Response { Message = $"Error: {ex.Message}", Result = null };
+            }
+        }
+
+        public Response UpdateAdmin(UpdateAdmin updateAdmin)
+        {
+            try
+            {
+                using (SqlConnection sql = new SqlConnection(_connectionString))
+                {
+                    using (SqlCommand cmd = new SqlCommand("dbo.spUpdateAdminSquareCrud", sql))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.Add("@Nombre", SqlDbType.NVarChar).Value = updateAdmin.Nombre;
+                        cmd.Parameters.Add("@ApellidoP", SqlDbType.NVarChar).Value = updateAdmin.ApellidoP;
+                        cmd.Parameters.Add("@ApellidoM", SqlDbType.NVarChar).Value = updateAdmin.ApellidoM;
+                        cmd.Parameters.Add("@Mail", SqlDbType.NVarChar).Value = updateAdmin.Mail;
+                        cmd.Parameters.Add("@Plaza", SqlDbType.NVarChar).Value = updateAdmin.Plaza;
+                        cmd.Parameters.Add("@AdminId", SqlDbType.Int).Value = updateAdmin.AdminId;
+                        var response = _sqlResult.Put("USR", cmd, sql, "UpdateAdmin");
+                        return new Response
+                        {
+                            Message = response.SqlMessage,
+                            Result = response.SqlResult
+                        };
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                _apiLogger.WriteLog("USR", ex, "SquaresCatalogDb: UpdateAdmin", 1);
+                return new Response { Message = $"Error: {ex.Message}", Result = null };
+            }
+        }
+
+        public Response InsertAdmin(InsertAdmin insertAdmin)
+        {
+            try
+            {
+                using (SqlConnection sql = new SqlConnection(_connectionString))
+                {
+                    using (SqlCommand cmd = new SqlCommand("dbo.spInsertAdminSquareCrud"))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.Add("@Nombre", SqlDbType.NVarChar).Value = insertAdmin.Nombre;
+                        cmd.Parameters.Add("@ApellidoP", SqlDbType.NVarChar).Value = insertAdmin.ApellidoP;
+                        cmd.Parameters.Add("@ApellidoM", SqlDbType.NVarChar).Value = insertAdmin.ApellidoM;
+                        cmd.Parameters.Add("@Mail", SqlDbType.NVarChar).Value = insertAdmin.Mail;
+                        cmd.Parameters.Add("@Plaza", SqlDbType.NVarChar).Value = insertAdmin.Plaza;
+                        
+                        var storedResult = _sqlResult.Post("USR", cmd, sql, "InsertAdmin");
+                        if (storedResult.SqlResult == null)
+                            return new Response { Message = "Error: " + storedResult.SqlMessage, Result = null };
+                    }
+                }
+                return new Response
+                {
+                    Message = "Ok",
+                    Result = insertAdmin
+                };
+            }
+            catch(SqlException ex)
+            {
+                _apiLogger.WriteLog("USR", ex, "SquaresCatalogDb: InsertAdmin", 1);
                 return new Response { Message = $"Error: {ex.Message}", Result = null };
             }
         }
