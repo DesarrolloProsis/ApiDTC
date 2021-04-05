@@ -38,7 +38,7 @@ namespace ApiDTC.Controllers
                 return Ok(get);
         }
         
-        [HttpGet("Refresh")]
+        [HttpPost("Refresh")]
         public ActionResult<Response> RefreshToken([FromBody] UserRefreshToken userRefreshToken)
         {
             return _db.RefreshToken(userRefreshToken);
