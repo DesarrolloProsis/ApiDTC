@@ -32,7 +32,7 @@ namespace ApiDTC.Data
             {
                 using (SqlConnection sql = new SqlConnection(_connectionString))
                 {
-                    using (SqlCommand cmd = new SqlCommand("dbo.spInsertTechnicalSheet"))
+                    using (SqlCommand cmd = new SqlCommand("dbo.spInsertTechnicalSheet", sql))
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.Add("@TypeFaultId", SqlDbType.Int).Value = fichaTecnica.TypeFaultId;
