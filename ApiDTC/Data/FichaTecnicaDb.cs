@@ -26,7 +26,7 @@ namespace ApiDTC.Data
         #endregion
         
         #region Methods
-            public Response InsertFichaTecnica(string clavePlaza, FichaTecnica fichaTecnica)
+        public Response InsertFichaTecnica(string clavePlaza, FichaTecnica fichaTecnica)
         {
             try
             {
