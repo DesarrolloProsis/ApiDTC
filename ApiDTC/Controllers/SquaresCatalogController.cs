@@ -44,10 +44,10 @@
                 return Ok(get);
         }
 
-        [HttpGet("Admins")]
-        public ActionResult<Response> GetLanes()
+        [HttpGet("Admins/{userId}")]
+        public ActionResult<Response> GetLanes(int userId)
         {
-            var get = _db.GetAdmins();
+            var get = _db.GetAdmins(userId);
             if (get.Result == null)
                 return NotFound(get);
             else

@@ -167,7 +167,7 @@
             }
         }
 
-        public Response GetAdmins()
+        public Response GetAdmins(int userId)
         {
             try
             {
@@ -176,7 +176,7 @@
                     using (SqlCommand cmd = new SqlCommand("dbo.spAdminsSquareCrud", sql))
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
-
+                        cmd.Parameters.Add("@UserId", SqlDbType.Int).Value = userId;
                         var storedResult = _sqlResult.GetList<AdminInfo>("USR", cmd, sql, "GetLanes");
                         if (storedResult.Result == null)
                             return storedResult;
