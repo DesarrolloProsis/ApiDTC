@@ -140,7 +140,7 @@
             {
                 using (SqlConnection sql = new SqlConnection(_connectionString))
                 {
-                    using (SqlCommand cmd = new SqlCommand("dbo.spInsertAdminSquareCrud"))
+                    using (SqlCommand cmd = new SqlCommand("dbo.spInsertAdminSquareCrud", sql))
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.Add("@Nombre", SqlDbType.NVarChar).Value = insertAdmin.Nombre;
