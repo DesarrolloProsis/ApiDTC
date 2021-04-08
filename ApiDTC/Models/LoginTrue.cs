@@ -9,7 +9,7 @@ namespace ApiDTC.Models
         
         public string Name { get; set; }
 
-        public int RollId { get; set; }
+        public int RolId { get; set; }
         #endregion
     }
 }

@@ -153,7 +153,7 @@
                             return new Response { Message = $"Error", Result = null };
                     }
 
-                    using (SqlCommand cmd = new SqlCommand("dbo.spGetHeadersDTC", sql))
+                    using (SqlCommand cmd = new SqlCommand("dbo.spGetSquaresDTC", sql))
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.Add("@UserId", SqlDbType.Int).Value = loginTrue.UserId;
