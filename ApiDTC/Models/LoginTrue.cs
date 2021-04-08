@@ -11,7 +11,7 @@ namespace ApiDTC.Models
 
         public int RolId { get; set; }
 
-        public string RollDescription { get; set; }
+        public string RolDescription { get; set; }
         #endregion
     }
 }
