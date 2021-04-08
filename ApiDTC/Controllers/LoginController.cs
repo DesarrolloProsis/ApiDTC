@@ -43,17 +43,27 @@ namespace ApiDTC.Controllers
         {
             return _db.RefreshToken(userRefreshToken);
         }
-        
-        // GET: api/Login
-        [HttpPost("ValidUser")]
-        public ActionResult<Response> ValidUser([FromBody] LoginUserInfo loginUserInfo)
+
+        [HttpPost("Cookie/{userId}")]
+        public ActionResult<Response> Cookie([FromBody] UserRefreshToken userRefreshToken)
         {
-            var get = _db.GetStoreLoginCookie(loginUserInfo);
+            var get = _db.GetStoreCookie(userRefreshToken);
             if(get.Result == null)
                 return NotFound(get);
             else
                 return Ok(get);
         }
+
+        [HttpPost("LoginInfo/{userId}")]
+        public ActionResult<Response> LoginInfo([FromBody] UserRefreshToken userRefreshToken)
+        {
+            var get = _db.GetStoreLoginInfo(userRefreshToken);
+            if(get.Result == null)
+                return NotFound(get);
+            else
+                return Ok(get);
+        }
+
         // GET: api/Login
         //Regresa técnicos de plaza
         [HttpGet("buscarTec/{numPlaza}")]

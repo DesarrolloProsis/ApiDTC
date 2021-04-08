@@ -57,7 +57,40 @@
             }
             
         }
-        
+
+        public Response GetStoreCookie(UserRefreshToken userRefreshToken)
+        {
+            try
+            {
+                List<Cookie> cookies;
+                using (SqlConnection sql = new SqlConnection(_connectionString))
+                {
+
+                    using (SqlCommand cmd = new SqlCommand("dbo.spGetSquaresDTC", sql))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.Add("@UserId", SqlDbType.Int).Value = userRefreshToken.UserId;
+
+                        cookies = _sqlResult.GetRows<Cookie>("USR", cmd, sql, "GetStoreLogin");
+                        if(cookies is null)
+                            return new Response { Message = $"Error", Result = null };                        
+                    }
+
+                    var token = BuildToken(userRefreshToken.UserId);
+                    return new Response{
+                        Result = new CookieToken{Cookie = cookies, UserToken = token },
+                        Message = "Ok"
+                    };
+                    
+                }
+            }
+            catch (SqlException ex)
+            {
+                _apiLogger.WriteLog("INIT", ex, "LoginDb: GetHeadTec", 1);
+                return new Response { Message = $"Error: {ex.Message}", Result = null };
+            }
+        }
+
         public Response GetHeadTec(int idTec)
         {
             try
@@ -86,12 +119,41 @@
             }
         }
 
+        public Response GetStoreLoginInfo(UserRefreshToken userRefreshToken)
+        {
+            try
+            {
+                List<Login> loginList;
+                using (SqlConnection sql = new SqlConnection(_connectionString))
+                {
+
+                    using (SqlCommand cmd = new SqlCommand("dbo.spGetHeadersDTC", sql))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.Add("@UserId", SqlDbType.Int).Value = userRefreshToken.UserId;
+
+                        loginList = _sqlResult.GetRows<Login>("USR", cmd, sql, "GetStoreLogin");
+                        if(loginList.Count == 0)
+                            return new Response { Message = $"Error", Result = null };                        
+                    }
+                    return new Response{
+                        Result = new LoginValido{LoginList = loginList },
+                        Message = "Ok"
+                    };
+                }
+            }
+            catch (SqlException ex)
+            {
+                _apiLogger.WriteLog("INIT", ex, "LoginDb: GetHeadTec", 1);
+                return new Response { Message = $"Error: {ex.Message}", Result = null };
+            }
+        }
+
         public Response GetStoreLogin(LoginUserInfo loginUserInfo)
         {
             try
             {
                 LoginTrue loginTrue;
-                List<Login> loginList;
                 using (SqlConnection sql = new SqlConnection(_connectionString))
                 {
                     using (SqlCommand cmd = new SqlCommand("dbo.sp_Login", sql))
@@ -104,18 +166,8 @@
                         if(loginTrue is null)
                             return new Response { Message = $"Error", Result = null };                        
                     }
-
-                    using (SqlCommand cmd = new SqlCommand("dbo.spGetHeadersDTC", sql))
-                    {
-                        cmd.CommandType = CommandType.StoredProcedure;
-                        cmd.Parameters.Add("@UserId", SqlDbType.Int).Value = loginTrue.UserId;
-
-                        loginList = _sqlResult.GetRows<Login>("USR", cmd, sql, "GetStoreLogin");
-                        if(loginList.Count == 0)
-                            return new Response { Message = $"Error", Result = null };                        
-                    }
                     return new Response{
-                        Result = new LoginValido{LoginList = loginList, LoginTrue = loginTrue },
+                        Result = loginTrue,
                         Message = "Ok"
                     };
                 }
@@ -132,50 +184,6 @@
         {
             var token = BuildToken(userRefreshToken.UserId);
             return new Response { Result = token, Message = "Ok" };
-        }
-
-        public Response GetStoreLoginCookie(LoginUserInfo loginUserInfo)
-        {
-            try
-            {
-                LoginTrue loginTrue;
-                List<Cookie> cookies;
-                using (SqlConnection sql = new SqlConnection(_connectionString))
-                {
-                    using (SqlCommand cmd = new SqlCommand("dbo.sp_Login", sql))
-                    {
-                        cmd.CommandType = CommandType.StoredProcedure;
-                        cmd.Parameters.Add("@NombreUsuario", SqlDbType.NVarChar).Value = loginUserInfo.Username;
-                        cmd.Parameters.Add("@Contraseña", SqlDbType.NVarChar).Value = loginUserInfo.Password;
-
-                        loginTrue = _sqlResult.GetRow<LoginTrue>("USR", cmd, sql, "GetStoreLoginCookie");
-                        if(loginTrue is null)
-                            return new Response { Message = $"Error", Result = null };
-                    }
-
-                    using (SqlCommand cmd = new SqlCommand("dbo.spGetSquaresDTC", sql))
-                    {
-                        cmd.CommandType = CommandType.StoredProcedure;
-                        cmd.Parameters.Add("@UserId", SqlDbType.Int).Value = loginTrue.UserId;
-
-                        cookies = _sqlResult.GetRows<Cookie>("USR", cmd, sql, "GetStoreLogin");
-                        if(cookies is null)
-                            return new Response { Message = $"Error", Result = null };                        
-                    }
-
-                    var token = BuildToken(loginTrue.UserId);
-                    return new Response{
-                        Result = new CookieToken{LoginTrue = loginTrue, Cookie = cookies, UserToken = token },
-                        Message = "Ok"
-                    };
-                    
-                }
-            }
-            catch (SqlException ex)
-            {
-                _apiLogger.WriteLog("INIT", ex, "LoginDb: GetHeadTec", 1);
-                return new Response { Message = $"Error: {ex.Message}", Result = null };
-            }
         }
 
         private UserToken BuildToken(int userId)
