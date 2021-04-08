@@ -10,6 +10,8 @@ namespace ApiDTC.Models
         public string Name { get; set; }
 
         public int RolId { get; set; }
+
+        public string RollDescription { get; set; }
         #endregion
     }
 }
