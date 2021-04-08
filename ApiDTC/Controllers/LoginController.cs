@@ -44,7 +44,7 @@ namespace ApiDTC.Controllers
             return _db.RefreshToken(userRefreshToken);
         }
 
-        [HttpPost("Cookie/{userId}")]
+        [HttpPost("Cookie")]
         public ActionResult<Response> Cookie([FromBody] UserRefreshToken userRefreshToken)
         {
             var get = _db.GetStoreCookie(userRefreshToken);
@@ -54,7 +54,7 @@ namespace ApiDTC.Controllers
                 return Ok(get);
         }
 
-        [HttpPost("LoginInfo/{userId}")]
+        [HttpPost("LoginInfo")]
         public ActionResult<Response> LoginInfo([FromBody] UserRefreshToken userRefreshToken)
         {
             var get = _db.GetStoreLoginInfo(userRefreshToken);
