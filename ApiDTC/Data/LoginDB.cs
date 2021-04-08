@@ -190,7 +190,7 @@
             if(userId == 40)
                 expiration = DateTime.UtcNow.AddDays(1);
             else
-                expiration = DateTime.UtcNow.AddMinutes(3);
+                expiration = DateTime.UtcNow.AddMinutes(30);
 
             JwtSecurityToken token = new JwtSecurityToken(
                 issuer: null,
