@@ -10,6 +10,7 @@
     using System.Text;
     using Microsoft.IdentityModel.Tokens;
     using System;
+    using System.Collections.Generic;
 
     public class LoginDb
     {
@@ -89,6 +90,8 @@
         {
             try
             {
+                LoginTrue loginTrue;
+                List<Login> loginList;
                 using (SqlConnection sql = new SqlConnection(_connectionString))
                 {
                     using (SqlCommand cmd = new SqlCommand("dbo.sp_Login", sql))
@@ -96,21 +99,25 @@
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.Add("@NombreUsuario", SqlDbType.NVarChar).Value = loginUserInfo.Username;
                         cmd.Parameters.Add("@Contraseña", SqlDbType.NVarChar).Value = loginUserInfo.Password;
-                        cmd.Parameters.Add("@Flag", SqlDbType.Bit).Value = loginUserInfo.Flag;
                         
-                        if(loginUserInfo.Flag)
-                        {
-                            var loginTrue = _sqlResult.GetRows<LoginTrue>("USR", cmd, sql, "GetStoreLogin");
-                            if(loginTrue.Count == 0)
-                                return new Response { Message = $"Error", Result = null };
-                            return new Response { Result = loginTrue, Message = "Ok" };
-                        }
-                        var login = _sqlResult.GetRows<Login>("USR", cmd, sql, "GetStoreLogin");
-                        if(login.Count == 0)
-                            return new Response { Message = $"Error", Result = null };
-                        return new Response { Result = login, Message = "Ok" };
-                        
+                        loginTrue = _sqlResult.GetRow<LoginTrue>("USR", cmd, sql, "GetStoreLogin");
+                        if(loginTrue is null)
+                            return new Response { Message = $"Error", Result = null };                        
                     }
+
+                    using (SqlCommand cmd = new SqlCommand("dbo.spGetHeadersDTC", sql))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.Add("@UserId", SqlDbType.Int).Value = loginTrue.UserId;
+
+                        loginList = _sqlResult.GetRows<Login>("USR", cmd, sql, "GetStoreLogin");
+                        if(loginList.Count == 0)
+                            return new Response { Message = $"Error", Result = null };                        
+                    }
+                    return new Response{
+                        Result = new LoginValido{LoginList = loginList, LoginTrue = loginTrue },
+                        Message = "Ok"
+                    };
                 }
             }
             catch (SqlException ex)
@@ -131,6 +138,8 @@
         {
             try
             {
+                LoginTrue loginTrue;
+                List<Cookie> cookies;
                 using (SqlConnection sql = new SqlConnection(_connectionString))
                 {
                     using (SqlCommand cmd = new SqlCommand("dbo.sp_Login", sql))
@@ -138,17 +147,28 @@
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.Add("@NombreUsuario", SqlDbType.NVarChar).Value = loginUserInfo.Username;
                         cmd.Parameters.Add("@Contraseña", SqlDbType.NVarChar).Value = loginUserInfo.Password;
-                        cmd.Parameters.Add("@Flag", SqlDbType.Bit).Value = loginUserInfo.Flag;
-                        var cookie = _sqlResult.GetRows<Cookie>("USR", cmd, sql, "GetStoreLoginCookie");
-                        if(cookie.Count == 0)
+
+                        loginTrue = _sqlResult.GetRow<LoginTrue>("USR", cmd, sql, "GetStoreLoginCookie");
+                        if(loginTrue is null)
                             return new Response { Message = $"Error", Result = null };
-                        var token = BuildToken(cookie[0].UserId);
-                        var cookieToken  = new CookieToken{
-                            Cookie = cookie,
-                            UserToken = token
-                        };
-                        return new Response { Result = cookieToken, Message = "Ok" }; 
                     }
+
+                    using (SqlCommand cmd = new SqlCommand("dbo.spGetHeadersDTC", sql))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.Add("@UserId", SqlDbType.Int).Value = loginTrue.UserId;
+
+                        cookies = _sqlResult.GetRows<Cookie>("USR", cmd, sql, "GetStoreLogin");
+                        if(cookies is null)
+                            return new Response { Message = $"Error", Result = null };                        
+                    }
+
+                    var token = BuildToken(loginTrue.UserId);
+                    return new Response{
+                        Result = new CookieToken{LoginTrue = loginTrue, Cookie = cookies, UserToken = token },
+                        Message = "Ok"
+                    };
+                    
                 }
             }
             catch (SqlException ex)
