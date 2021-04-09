@@ -36,8 +36,8 @@
         }
         #endregion
 
-        [HttpGet("{clavePlaza}/{refNum}/{inicialRef}")]
-        public IActionResult GetPDF(string clavePlaza, string refNum, string inicialRef)
+        [HttpGet("{clavePlaza}/{refNum}/{adminId}")]
+        public IActionResult GetPDF(string clavePlaza, string refNum, int adminId)
         {
             //TODO If getstore is null on
             var get = _db.SearchReference(clavePlaza, refNum);
@@ -46,7 +46,7 @@
             else
             {
                 
-                var dataSet = _db.GetStorePDF(clavePlaza, refNum, inicialRef);
+                var dataSet = _db.GetStorePDF(clavePlaza, refNum, adminId);
                 if (dataSet.Tables[0].Rows.Count == 0 || dataSet.Tables[1].Rows.Count == 0 || dataSet.Tables[2].Rows.Count == 0 || dataSet.Tables[3].Rows.Count == 0)
                     return NotFound("GetStorePdf retorna tabla vacía");
                 //0 = Nuevo, 1 = Firmado, 2 = Almacén
@@ -187,15 +187,15 @@
             }
         }
 
-        [HttpGet("RefrescarArchivo/{clavePlaza}/{referenceNumber}")]
-        public IActionResult RefrescarArchivo(string clavePlaza, string referenceNumber)
+        [HttpGet("RefrescarArchivo/{clavePlaza}/{referenceNumber}/{adminId}")]
+        public IActionResult RefrescarArchivo(string clavePlaza, string referenceNumber, int adminId)
         {
             string path = $@"{this._disk}:\{this._folder}\{clavePlaza}\DTC\{referenceNumber}\DTC-{referenceNumber}-Finalizado.pdf";
             try
             {
                 if (System.IO.File.Exists(path))
                 {
-                    var dataSet = _db.GetStorePDF(clavePlaza, referenceNumber, clavePlaza);
+                    var dataSet = _db.GetStorePDF(clavePlaza, referenceNumber, adminId);
                     if (dataSet.Tables[0].Rows.Count == 0 || dataSet.Tables[1].Rows.Count == 0 || dataSet.Tables[2].Rows.Count == 0 || dataSet.Tables[3].Rows.Count == 0)
                         return NotFound("GetStorePdf retorna tabla vacía");
                     PdfCreation pdf = new PdfCreation(clavePlaza, dataSet.Tables[0], dataSet.Tables[1], dataSet.Tables[2], dataSet.Tables[3], referenceNumber, new ApiLogger());
@@ -212,8 +212,8 @@
             }
         }
 
-        [HttpGet("GetPdfFirmado/{clavePlaza}/{referenceNumber}")]
-        public IActionResult GetPdfFirmado(string clavePlaza, string referenceNumber)
+        [HttpGet("GetPdfFirmado/{clavePlaza}/{referenceNumber}/{adminId}")]
+        public IActionResult GetPdfFirmado(string clavePlaza, string referenceNumber, int adminId)
         {
 
             string path = $@"{this._disk}:\{this._folder}\{clavePlaza}\DTC\{referenceNumber}\DTC-{referenceNumber}-Finalizado.pdf";
@@ -222,7 +222,7 @@
                 if (System.IO.File.Exists(path))
                     System.IO.File.Delete(path);
 
-                var dataSet = _db.GetStorePDF(clavePlaza, referenceNumber, clavePlaza);
+                var dataSet = _db.GetStorePDF(clavePlaza, referenceNumber, adminId);
                 if (dataSet.Tables[0].Rows.Count == 0 || dataSet.Tables[1].Rows.Count == 0 || dataSet.Tables[2].Rows.Count == 0 || dataSet.Tables[3].Rows.Count == 0)
                     return NotFound("GetStorePdf retorna tabla vacía");
                 PdfCreation pdf = new PdfCreation(clavePlaza, dataSet.Tables[0], dataSet.Tables[1], dataSet.Tables[2], dataSet.Tables[3], referenceNumber, new ApiLogger());
@@ -237,15 +237,15 @@
             }
         }
         
-        [HttpGet("FirmarReporte/{clavePlaza}/{refNum}/{inicialRef}")]
-        public IActionResult FirmarReporte(string clavePlaza, string refNum, string inicialRef)
+        [HttpGet("FirmarReporte/{clavePlaza}/{refNum}/{adminId}")]
+        public IActionResult FirmarReporte(string clavePlaza, string refNum, int adminId)
         {
             var get = _db.FirmarReporte(clavePlaza, refNum);
             if (get.SqlResult == null)
                 return NotFound(get);
             else
             {
-                var dataSet = _db.GetStorePDF(clavePlaza, refNum, inicialRef);
+                var dataSet = _db.GetStorePDF(clavePlaza, refNum, adminId);
                 if (dataSet.Tables[0].Rows.Count == 0 || dataSet.Tables[1].Rows.Count == 0 || dataSet.Tables[2].Rows.Count == 0 || dataSet.Tables[3].Rows.Count == 0)
                     return NotFound("GetStorePdf retorna tabla vacía");
                 PdfCreation pdf = new PdfCreation(clavePlaza, dataSet.Tables[0], dataSet.Tables[1], dataSet.Tables[2], dataSet.Tables[3], refNum, new ApiLogger());
@@ -255,15 +255,15 @@
             }
         }
 
-        [HttpGet("ReporteAlmacen/{clavePlaza}/{refNum}/{inicialRef}")]
-        public IActionResult ReporteAlmacen(string clavePlaza, string refNum, string inicialRef)
+        [HttpGet("ReporteAlmacen/{clavePlaza}/{refNum}/{adminId}")]
+        public IActionResult ReporteAlmacen(string clavePlaza, string refNum, int adminId)
         {
             var get = _db.SearchReference(clavePlaza, refNum);
             if (get.Result == null)
                 return NotFound(get);
             else
             {
-                var dataSet = _db.GetStorePDF(clavePlaza, refNum, inicialRef);
+                var dataSet = _db.GetStorePDF(clavePlaza, refNum, adminId);
                 if (dataSet.Tables[0].Rows.Count == 0 || dataSet.Tables[1].Rows.Count == 0 || dataSet.Tables[2].Rows.Count == 0 || dataSet.Tables[3].Rows.Count == 0)
                     return NotFound("GetStorePdf retorna tabla vacía");
                 //0 = Nuevo, 1 = Firmado, 2 = Almacén

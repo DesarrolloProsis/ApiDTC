@@ -189,7 +189,7 @@
         }
 
 
-        public DataSet GetStorePDF(string clavePlaza, string numeroReferencia, string inicialRef)
+        public DataSet GetStorePDF(string clavePlaza, string numeroReferencia, int adminId)
         {
             try
             {
@@ -203,7 +203,7 @@
 
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.Add("@ReferenceNumber", SqlDbType.NVarChar).Value = numeroReferencia;
-                        cmd.Parameters.Add("@SquareId", SqlDbType.NVarChar).Value = inicialRef;
+                        cmd.Parameters.Add("@AdminId", SqlDbType.Int).Value = adminId;
 
                         sql.Open();
                         sqlDataAdapter = new SqlDataAdapter(cmd);
