@@ -120,7 +120,7 @@ namespace ApiDTC.Services
                     doc.Add(TablaObservaciones());
 
                     //PRUEBA IMÁGENES, CAMBIAR RUTA
-                    /*string directoryImgs = Path.Combine(directory, "DiagnosticoFallaImgs");
+                    string directoryImgs = Path.Combine(directory, "FichaTecnicaAtencionImgs");
                     string[] fotos = new string[4];
                     if(Directory.Exists(directoryImgs))
                     {
@@ -131,7 +131,7 @@ namespace ApiDTC.Services
                             if(img.Contains("temp"))
                                 File.Delete(img);
                         }
-                    }*/
+                    }
                     
                     PdfContentByte cb = writer.DirectContent;
                     PdfPTable tablaFirmas = TablaFirmas();
