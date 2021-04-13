@@ -12,9 +12,9 @@ namespace ApiDTC.Data
 
         public string Lanes { get; set; }
 
-        public string FailureNumber { get; set; }
+        public string FailuerNumber { get; set; }
 
-        public string SinisterNumber { get; set; }
+        public string SiniesterNumber { get; set; }
 
         public string Validacion { get; set; }
     }
