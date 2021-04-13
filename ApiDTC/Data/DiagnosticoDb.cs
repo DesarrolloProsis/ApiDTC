@@ -1,5 +1,6 @@
 namespace ApiDTC.Data
 {
+    using System;
     using System.Data;
     using System.Data.SqlClient;
     using ApiDTC.Models;
@@ -102,6 +103,27 @@ namespace ApiDTC.Data
             catch(SqlException ex)
             {
                 _apiLogger.WriteLog(clavePlaza, ex, "FichaTecnicaDb: InsertFichaTecnicaIntervencionLane", 1);
+                return new Response { Message = $"Error: {ex.Message}", Result = null };
+            }
+        }
+
+        public Response GetDiagnosticos(string clavePlaza, int userId)
+        {
+            try
+            {
+                using (SqlConnection sql = new SqlConnection(_connectionString))
+                {
+                    using (SqlCommand cmd = new SqlCommand("[dbo].[spGetDiagnosisSheetView]", sql))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.Add("@Iduser", SqlDbType.Int).Value = userId;
+                        return _sqlResult.GetList<DiagnosisSheetView>(clavePlaza, cmd, sql, "GetDiagnosticos");
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                _apiLogger.WriteLog(clavePlaza, ex, "DiagnosticoDb: GetDiagnosticoInfo", 1);
                 return new Response { Message = $"Error: {ex.Message}", Result = null };
             }
         }

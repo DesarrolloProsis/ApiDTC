@@ -116,6 +116,15 @@
             return Ok(get);
         } 
 
+        [HttpGet("GetBitacoras/{clavePlaza}/{userId}")]
+        public ActionResult<Response> GetBitacoras(string clavePlaza, int userId)
+        {
+            var get = _db.GetDiagnosticos(clavePlaza, userId);
+            if(get.Result == null)
+                return NotFound(get);
+            return Ok(get);
+        }
+
         [HttpPost("InsertDiagnosticoDeFalla/{clavePlaza}")]
         public ActionResult<Response> InsertDiagnosticoDeFalla(string clavePlaza, [FromBody] DiagnosticoDeFalla diagnosticoDeFalla)
         {
