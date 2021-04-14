@@ -91,9 +91,11 @@
                         filename = $"ReporteFotográficoSellado-{referenceNumber}.pdf";
                         if (System.IO.File.Exists(Path.Combine(path, filename)))
                             System.IO.File.Delete(Path.Combine(path, filename));
-                        var fs = new FileStream(Path.Combine(path, filename), FileMode.Create);
-                        file.CopyTo(fs);
-                        fs.Close();
+                        using (FileStream fs = new FileStream(Path.Combine(path, filename), FileMode.Create))
+                        {
+                            file.CopyTo(fs);
+                            fs.Close();
+                        }
                         return Ok(path);
                     }
                     catch (IOException ex)
@@ -127,27 +129,29 @@
                         numberOfImages += 1;
                         filename = $"{reportNumber}_MantenimientoPreventivoImgs_{numberOfImages}{image.FileName.Substring(image.FileName.LastIndexOf('.'))}";
                     }
-                    var fs = new FileStream(Path.Combine(dir, filename), FileMode.Create);
-                    image.CopyTo(fs);
-                    fs.Close();
-
-                    FileInfo fi = new FileInfo(Path.Combine(dir, filename));
-                    if(fi.Length > 1000000)
+                    using (FileStream fs = new FileStream(Path.Combine(dir, filename), FileMode.Create))
                     {
-                        string temporal = Path.Combine(dir, filename) + "_temp";
-                        using(var imgOrigin = Image.Load(Path.Combine(dir, filename)))
+                        image.CopyTo(fs);
+                        fs.Close();
+
+                        FileInfo fi = new FileInfo(Path.Combine(dir, filename));
+                        if(fi.Length > 1000000)
                         {
-                            var jpegOptions = new JpegOptions(){
-                                CompressionType = Aspose.Imaging.FileFormats.Jpeg.JpegCompressionMode.Progressive
-                            };
-                            imgOrigin.Save(Path.Combine(dir, temporal), jpegOptions);
-                        }
-                        if(System.IO.File.Exists(Path.Combine(dir, filename)))
-                        {
-                            //Se borra archivo grande
-                            System.IO.File.Delete(Path.Combine(dir, filename));
-                            //Archivo temporal actualiza su nombre al real
-                            System.IO.File.Move(Path.Combine(dir, temporal), Path.Combine(dir, filename));
+                            string temporal = Path.Combine(dir, filename) + "_temp";
+                            using(var imgOrigin = Image.Load(Path.Combine(dir, filename)))
+                            {
+                                var jpegOptions = new JpegOptions(){
+                                    CompressionType = Aspose.Imaging.FileFormats.Jpeg.JpegCompressionMode.Progressive
+                                };
+                                imgOrigin.Save(Path.Combine(dir, temporal), jpegOptions);
+                            }
+                            if(System.IO.File.Exists(Path.Combine(dir, filename)))
+                            {
+                                //Se borra archivo grande
+                                System.IO.File.Delete(Path.Combine(dir, filename));
+                                //Archivo temporal actualiza su nombre al real
+                                System.IO.File.Move(Path.Combine(dir, temporal), Path.Combine(dir, filename));
+                            }
                         }
                     }
                     return Ok(Path.Combine(dir, filename));
@@ -271,9 +275,11 @@
                         filename = $"DTC-{referenceNumber}-EquipoNuevoSellado.pdf";
                         if (System.IO.File.Exists(Path.Combine(path, filename)))
                             System.IO.File.Delete(Path.Combine(path, filename));
-                        var fs = new FileStream(Path.Combine(path, filename), FileMode.Create);
-                        file.CopyTo(fs);
-                        fs.Close();
+                        using (FileStream fs = new FileStream(Path.Combine(path, filename), FileMode.Create))
+                        {
+                            file.CopyTo(fs);
+                            fs.Close();
+                        }
                         return Ok(path);
                     }
                     catch (IOException ex)
@@ -333,9 +339,12 @@
                         filename = $"DTC-{referenceNumber}-EquipoDañadoSellado.pdf";
                         if (System.IO.File.Exists(Path.Combine(path, filename)))
                             System.IO.File.Delete(Path.Combine(path, filename));
-                        var fs = new FileStream(Path.Combine(path, filename), FileMode.Create);
-                        file.CopyTo(fs);
-                        fs.Close();
+                        
+                        using(FileStream fs = new FileStream(Path.Combine(path, filename), FileMode.Create))
+                        {
+                            file.CopyTo(fs);
+                            fs.Close();
+                        }
                         return Ok(path);
                     }
                     catch (IOException ex)
