@@ -196,13 +196,13 @@
                             {
                                 DtcView = dtcView
                             };
-                            string path = $@"{disk}:\{folder}\{clavePlaza}\DTC\{dtcView.ReferenceNumber}\DTC-{dtcView.ReferenceNumber}-Sellado.pdf";
+                            string path = $@"{disk}:\{folder}\{dtcView.ReferenceNumber.Split('-')[0].ToUpper()}\DTC\{dtcView.ReferenceNumber}\DTC-{dtcView.ReferenceNumber}-Sellado.pdf";
                             if (System.IO.File.Exists((path)))
                                 viewInfo.PdfExists = true;
                             else
                                 viewInfo.PdfExists = false;
 
-                            string directoy = $@"{disk}:\{folder}\{clavePlaza.ToUpper()}\DTC\{dtcView.ReferenceNumber}\EquipoDañadoImgs";
+                            string directoy = $@"{disk}:\{folder}\{dtcView.ReferenceNumber.Split('-')[0].ToUpper()}\DTC\{dtcView.ReferenceNumber}\EquipoDañadoImgs";
                             List<string> dtcImages = new List<string>();
                             if(Directory.Exists(directoy))
                             {
