@@ -95,8 +95,8 @@
             }
         }
 
-        [HttpPost("PdfSellado/{clavePlaza}/{referenceNumber}")]
-        public ActionResult<Response> PdfSellado(string clavePlaza, [FromForm(Name = "file")] IFormFile file, string referenceNumber)
+        [HttpPost("PdfSellado/{clavePlaza}/{referenceNumber}/{bandera}")]
+        public ActionResult<Response> PdfSellado(string clavePlaza, [FromForm(Name = "file")] IFormFile file, string referenceNumber, bool bandera)
         {
             if(file.Length > 0 || file != null)
             {
@@ -113,10 +113,15 @@
                         var fs = new FileStream(Path.Combine(path, filename), FileMode.Create);
                         file.CopyTo(fs);
                         fs.Close();
-                        var get = _db.SelladoReporte(clavePlaza, referenceNumber);
-                        if (get.SqlResult == null)
-                            return NotFound(get);
-                        return Ok(path);
+                        if(bandera)
+                        {
+                            var get = _db.SelladoReporte(clavePlaza, referenceNumber);
+                            if (get.SqlResult == null)
+                                return NotFound(get);
+                            return Ok(path);
+                        }
+                        else
+                            return Ok(Path.Combine(path,filename));
                     }
                     catch (IOException ex)
                     {
