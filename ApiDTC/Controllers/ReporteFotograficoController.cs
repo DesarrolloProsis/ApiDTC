@@ -109,7 +109,6 @@
             return NotFound();
         }
 
-        
         [HttpPost("MantenimientoPreventivo/Images/{clavePlaza}/{reportNumber}")]
         public ActionResult<Response> InsertImageNuevo(string clavePlaza, [FromForm(Name = "image")] IFormFile image, string reportNumber, int semana)
         {
