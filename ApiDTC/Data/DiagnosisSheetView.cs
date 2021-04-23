@@ -19,5 +19,11 @@ namespace ApiDTC.Data
         public string Validacion { get; set; }
 
         public string SquareId { get; set; }
+
+        public string CauseFailure { get; set; }
+
+        public string FailureDescription { get; set; }
+
+        public string FailureDiagnosis { get; set; }
     }
 }
