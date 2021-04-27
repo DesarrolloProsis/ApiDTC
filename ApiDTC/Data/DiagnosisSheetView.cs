@@ -25,5 +25,11 @@ namespace ApiDTC.Data
         public string FailureDescription { get; set; }
 
         public string FailureDiagnosis { get; set; }
+
+        public string Start { get; set; }
+
+        public string End { get; set; }
+
+        public int AdminSquareId { get; set;}
     }
 }
