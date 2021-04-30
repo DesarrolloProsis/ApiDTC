@@ -207,6 +207,9 @@
                 var get = _db.InsertCalendarReportData(clavePlaza, calendarReportData, updateFlag);
                 if (get.Result == null)
                     return NotFound(get); 
+                else{
+                    return Ok(get);
+                }
             }
             return BadRequest(ModelState);
         }

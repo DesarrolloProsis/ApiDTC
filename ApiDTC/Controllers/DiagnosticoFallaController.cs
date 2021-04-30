@@ -147,8 +147,7 @@
                 var get = _db.InsertFichaTecnicaIntervencionLane(clavePlaza, fichaTecnicaIntervencionLane);
                 if (get.Result == null)
                     return BadRequest(get);
-                else
-                    return Ok(get);
+                return Ok(get);
             }
             return BadRequest(ModelState);
         }
