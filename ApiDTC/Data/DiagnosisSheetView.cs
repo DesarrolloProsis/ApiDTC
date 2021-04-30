@@ -30,6 +30,12 @@ namespace ApiDTC.Data
 
         public string End { get; set; }
 
-        public int AdminSquareId { get; set;}
+        public int AdminSquareId { get; set; }
+
+        public string Intervention { get; set; }
+
+        public string FaultDescription { get; set; }
+
+        public int TypeFaultId { get; set; }
     }
 }
