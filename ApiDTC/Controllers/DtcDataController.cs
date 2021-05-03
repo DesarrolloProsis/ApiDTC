@@ -163,6 +163,7 @@
             return Ok(get);
         }
 
+        [HttpGet("GetReferencesLog")]
         public ActionResult<Response> GetReferencesLog()
         {
             var get = _db.GetReferencesLog();
