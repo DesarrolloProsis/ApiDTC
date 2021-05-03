@@ -49,8 +49,7 @@
             var get = _db.GetDTC(clavePlaza, IdUser, SquareCatalog, this._disk, this._folder);
             if(get.Result == null)
                 return NotFound(get);
-            else
-                return Ok(get);
+            return Ok(get);
         }
 
         [HttpGet("Open/{clavePlaza}/{IdUser}/{SquareCatalog}")]
@@ -59,8 +58,7 @@
             var get = _db.GetDTC(clavePlaza, IdUser, SquareCatalog, this._disk, this._folder);
             if (get.Result == null)
                 return NotFound(get);
-            else
-                return Ok(get);
+            return Ok(get);
         }
 
         [HttpGet("TableForm/{clavePlaza}/{refNum}")]
@@ -69,8 +67,7 @@
             var get = _db.GetTableForm(clavePlaza, refNum);
             if (get.Result == null)
                 return NotFound(get);
-            else
-                return Ok(get);
+            return Ok(get);
         }
 
         [HttpGet("EditInfo/{clavePlaza}/{refNum}")]
@@ -79,8 +76,7 @@
             var get = _db.EditReferece(clavePlaza, refNum);
             if (get.Result == null)
                 return NotFound(get);
-            else
-                return Ok(get);
+            return Ok(get);
         }
 
         [HttpGet("EditInfo/Open/{clavePlaza}/{refNum}")]
@@ -89,8 +85,7 @@
             var get = _db.EditRefereceOpen(clavePlaza, refNum);
             if (get.Result == null)
                 return NotFound(get);
-            else
-                return Ok(get);
+            return Ok(get);
         }
 
         [HttpGet("BuscarReferencia/{clavePlaza}/{refNum}")]
@@ -99,8 +94,7 @@
             var get = _db.GetReferenceNumber(clavePlaza, refNum);
             if(get.Result == null)
                 return NotFound(get);
-            else
-                return Ok(get);
+            return Ok(get);
         }
 
         [HttpGet("InvalidReferenceNumbers/{clavePlaza}")]
@@ -109,8 +103,7 @@
             var get = _db.GetInvalidNumbers(clavePlaza);
             if(get.Result == null)
                 return NotFound(get);
-            else
-                return Ok(get);
+            return Ok(get);
         }
 
         [HttpGet("InventoryComponentsList/{clavePlaza}/{squareCatalog}")]
@@ -119,8 +112,7 @@
             var get = _db.GetComponentsInventoryList(clavePlaza, squareCatalog);
             if (get.Result == null)
                 return NotFound(get);
-            else
-                return Ok(get);
+            return Ok(get);
         }
 
         [HttpPost("{clavePlaza}")]
@@ -131,8 +123,7 @@
                 var get = _db.GetStoredDtcData(clavePlaza, dtcData);
                 if(get.SqlResult == null)
                     return NotFound(get);
-                else
-                    return StatusCode(201, get);    
+                return StatusCode(201, get);    
             }
             return BadRequest(ModelState);
         }
@@ -145,8 +136,7 @@
                 var delete = _db.DeleteDtcData(clavePlaza, referenceNumber, userId);
                 if (delete.SqlResult == null)
                     return NotFound(delete);
-                else
-                    return Ok(delete);
+                return Ok(delete);
             }
             return BadRequest(ModelState);
         }
@@ -170,8 +160,15 @@
             var get = _db.GetDTCHeaderEdit(clavePlaza, ReferenceNumber);
             if (get.Result == null)
                 return NotFound(get);
-            else
-                return Ok(get);
+            return Ok(get);
+        }
+
+        public ActionResult<Response> GetReferencesLog()
+        {
+            var get = _db.GetReferencesLog();
+            if(get.Result == null)
+                return NotFound();
+            return Ok();
         }
         #endregion
         
