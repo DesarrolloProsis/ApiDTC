@@ -169,7 +169,7 @@
             var get = _db.GetReferencesLog();
             if(get.Result == null)
                 return NotFound();
-            return Ok();
+            return Ok(get);
         }
         #endregion
         
