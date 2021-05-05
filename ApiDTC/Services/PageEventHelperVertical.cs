@@ -119,7 +119,7 @@ namespace ApiDTC.Services
             cb.ShowText(text);
             cb.EndText();
 
-            cb.AddTemplate(template, pageSize.GetLeft(-30) + len, pageSize.GetBottom(40));
+            cb.AddTemplate(template, pageSize.GetLeft(-30) + len, pageSize.GetBottom(20));
             cb.BeginText();
             cb.SetFontAndSize(bf, 6.5f);
             cb.ShowTextAligned(PdfContentByte.ALIGN_LEFT,

@@ -154,7 +154,6 @@
 
                     doc.Open();
                     doc.Add(TablaEncabezado());
-                    doc.Add(new Phrase(" "));
                     doc.Add(TablaInformacion());
 
                     List<Equipo> equipos = CreacionListaActividades();
@@ -163,11 +162,11 @@
                     PdfContentByte cb = writer.DirectContent;
                     if(_tipo == 2 || _tipo == 7)//Mensual nivel carril y plaza con salto y hasta arriba observaciones
                     {
-                        doc.NewPage();
+                        //doc.NewPage();
                         PdfPTable tablaObservaciones = TablaObservaciones();
-                        tablaObservaciones.WriteSelectedRows(0, -1, 30, 700, cb);
+                        tablaObservaciones.WriteSelectedRows(0, -1, 30, 220, cb);
                         PdfPTable tablaFirmas = TablaFirmas();
-                        tablaFirmas.WriteSelectedRows(0, -1, 30, 625, cb);
+                        tablaFirmas.WriteSelectedRows(0, -1, 30, 165, cb);
                         /*if(_tipo == 2) //Sin salto de página
                         {
 
