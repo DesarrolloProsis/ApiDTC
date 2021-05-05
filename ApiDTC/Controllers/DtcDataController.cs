@@ -16,7 +16,7 @@
 
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class DtcDataController : ControllerBase
     {
         #region Attributes
@@ -169,7 +169,7 @@
             var get = _db.GetReferencesLog();
             if(get.Result == null)
                 return NotFound();
-            return Ok();
+            return Ok(get);
         }
         #endregion
         

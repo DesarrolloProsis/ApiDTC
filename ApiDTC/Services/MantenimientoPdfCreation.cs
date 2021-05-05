@@ -165,9 +165,9 @@
                     {
                         doc.NewPage();
                         PdfPTable tablaObservaciones = TablaObservaciones();
-                        tablaObservaciones.WriteSelectedRows(0, -1, 30, 600, cb);
+                        tablaObservaciones.WriteSelectedRows(0, -1, 30, 700, cb);
                         PdfPTable tablaFirmas = TablaFirmas();
-                        tablaFirmas.WriteSelectedRows(0, -1, 30, 525, cb);
+                        tablaFirmas.WriteSelectedRows(0, -1, 30, 625, cb);
                         /*if(_tipo == 2) //Sin salto de página
                         {
 
