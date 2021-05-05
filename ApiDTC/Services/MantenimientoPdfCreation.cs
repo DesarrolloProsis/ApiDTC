@@ -161,10 +161,29 @@
                     TablaDescripcion(doc, equipos);
                     doc.Add(new Phrase("\n\n\n\n\n\n"));
                     PdfContentByte cb = writer.DirectContent;
-                    PdfPTable tablaObservaciones = TablaObservaciones();
-                    tablaObservaciones.WriteSelectedRows(0, -1, 30, 275, cb);
-                    PdfPTable tablaFirmas = TablaFirmas();
-                    tablaFirmas.WriteSelectedRows(0, -1, 30, 200, cb);
+                    if(_tipo == 2 || _tipo == 7)//Mensual nivel carril y plaza con salto y hasta arriba observaciones
+                    {
+                        doc.NewPage();
+                        PdfPTable tablaObservaciones = TablaObservaciones();
+                        tablaObservaciones.WriteSelectedRows(0, -1, 30, 600, cb);
+                        PdfPTable tablaFirmas = TablaFirmas();
+                        tablaFirmas.WriteSelectedRows(0, -1, 30, 525, cb);
+                        /*if(_tipo == 2) //Sin salto de página
+                        {
+
+                        }
+                        else
+                        {
+
+                        }*/
+                    }
+                    else
+                    {
+                        PdfPTable tablaObservaciones = TablaObservaciones();
+                        tablaObservaciones.WriteSelectedRows(0, -1, 30, 275, cb);
+                        PdfPTable tablaFirmas = TablaFirmas();
+                        tablaFirmas.WriteSelectedRows(0, -1, 30, 200, cb);
+                    }
 
                     doc.Close();
                     writer.Close();

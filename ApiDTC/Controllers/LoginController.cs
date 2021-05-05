@@ -47,6 +47,7 @@ namespace ApiDTC.Controllers
         [HttpPost("Cookie")]
         public ActionResult<Response> Cookie([FromBody] UserRefreshToken userRefreshToken)
         {
+            //Forzar con un comentario la actualización de fuente
             var get = _db.GetStoreCookie(userRefreshToken);
             if(get.Result == null)
                 return NotFound(get);
