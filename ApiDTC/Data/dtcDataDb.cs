@@ -147,7 +147,7 @@
                     using (SqlCommand cmd = new SqlCommand("dbo.spGetReferencesLog", sql))
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
-                        return _sqlResult.GetList<Reference>("USR", cmd, sql, "GetReferencesLog");
+                        return _sqlResult.GetList<ReferenceLog>("USR", cmd, sql, "GetReferencesLog");
                     }
                 }
             }
