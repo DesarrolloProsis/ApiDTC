@@ -173,7 +173,7 @@ namespace ApiDTC.Data
         }
 
         //FIXME: Agregar descripcion
-        public String GetReferenceNumberDiagnosis(string clavePlaza, string value)
+        public Response GetReferenceNumberDiagnosis(string clavePlaza, string value)
         {
             try
             {
@@ -182,8 +182,8 @@ namespace ApiDTC.Data
                     using (SqlCommand cmd = new SqlCommand("[dbo].[spGetReferenceNumberDiagnosis]", sql))
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
-                        cmd.Parameters.Add("@ReferenceNumber", SqlDbType.NVarChar).Value = value;
-                        return _sqlResult.GetRow<string>(clavePlaza, cmd, sql, "GetReferenceNumberDiagnosis");
+                        cmd.Parameters.Add("@strReference", SqlDbType.NVarChar).Value = value;
+                        return _sqlResult.GetList<Reference>(clavePlaza, cmd, sql, "GetReferenceNumberDiagnosis");
                     }
                 }
             }
