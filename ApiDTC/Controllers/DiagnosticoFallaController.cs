@@ -152,6 +152,15 @@
             return BadRequest(ModelState);
         }
 
+        [HttpGet("GetReference/{clavePlaza}/{referenceNumber}")]
+        public ActionResult<Response> GetReference(string clavePlaza, string referenceNumber)
+        {
+            var get = _db.GetReferenceNumberDiagnosis(clavePlaza, referenceNumber);
+            if (get == null)
+                return NotFound(get);
+            return Ok(get);
+        }
+
         #region DiagnosticoImages
         [HttpPost("Images/{clavePlaza}/{reportNumber}")]
         public ActionResult<Response> InsertImageNuevo(string clavePlaza, [FromForm(Name = "image")] IFormFile image, string reportNumber)
