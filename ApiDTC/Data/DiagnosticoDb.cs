@@ -171,6 +171,28 @@ namespace ApiDTC.Data
                 return null;
             }
         }
+
+        //FIXME: Agregar descripcion
+        public String GetReferenceNumberDiagnosis(string clavePlaza, string value)
+        {
+            try
+            {
+                using (SqlConnection sql = new SqlConnection(_connectionString))
+                {
+                    using (SqlCommand cmd = new SqlCommand("[dbo].[spGetReferenceNumberDiagnosis]", sql))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.Add("@ReferenceNumber", SqlDbType.NVarChar).Value = value;
+                        return _sqlResult.GetRow<string>(clavePlaza, cmd, sql, "GetReferenceNumberDiagnosis");
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                _apiLogger.WriteLog(clavePlaza, ex, "DiagnosticoDb: GetReferenceNumberDiagnosis", 1);
+                return null;
+            }
+        }
         #endregion
     }
 }
