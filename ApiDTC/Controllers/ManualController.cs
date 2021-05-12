@@ -12,7 +12,7 @@ namespace ApiDTC.Controllers
         [HttpGet("getManual")]
         public async Task<ActionResult> DescargarManual()
         {
-            var filePath = @"C:\Bitacora\Manual_de_usuario_DTC_-_Actualizado.pdf"; // Here, you should validate the request and the existance of the file.
+            var filePath = @"C:\Bitacora\Manual_de_usuario_DTC_-_Actualizado.pdf";
 
             var bytes = await System.IO.File.ReadAllBytesAsync(filePath);
             return File(bytes, "application/pdf", Path.GetFileName(filePath));
