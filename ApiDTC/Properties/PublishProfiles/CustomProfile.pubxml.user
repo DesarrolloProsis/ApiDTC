@@ -6,6 +6,7 @@ edite el archivo MSBuild. Visite https://go.microsoft.com/fwlink/?LinkID=208121 
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <TimeStampOfAssociatedLegacyPublishXmlFile />
-    <_PublishTargetUrl>C:\inetpub\wwwroot\ApiMTTO</_PublishTargetUrl>
+    <_PublishTargetUrl>C:\inetpub\wwwroot\ApiBitacoraDesarrollo</_PublishTargetUrl>
+    <History>False|2021-05-12T16:25:29.8292113Z;</History>
   </PropertyGroup>
 </Project>

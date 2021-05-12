@@ -1,8 +1,10 @@
 ﻿namespace ApiDTC.Controllers
 {
     using System;
+    using System.Threading.Tasks;
     using ApiDTC.Data;
     using ApiDTC.Models;
+    using ApiDTC.Utilities;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Configuration;
 
@@ -82,5 +84,19 @@
             }
             return BadRequest(ModelState);
         }
+
+        [HttpGet("getUserOfPlaza")]
+
+        public GenericResponse<string> GetUsersOfSquare(int IdSquare)
+        {
+            
+            GenericResponse<string> respuesta = new GenericResponse<string>();
+            respuesta.Code = "ok";
+            respuesta.Result = "Aqui van los valores de la respuesta";
+            respuesta.Message = "todo cool";
+
+            return respuesta;
+        }
+
     }
 }
