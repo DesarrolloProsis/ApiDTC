@@ -245,6 +245,16 @@
                 return NotFound(get);
             return Ok(get);
         }
+
+
+        [HttpGet("GetActividadesPreventivo/{clavePlaza}/{userId}/{squareId}/{year}")]
+        public IActionResult getActividadesPreventivo(string clavePlaza, int month, int year, int userId, string squareId)
+        {
+            var dataSet = _db.GetStorePdf(clavePlaza, month, year, userId, squareId == "1Bi" ? squareId + "s" : squareId);
+            if (dataSet.Tables[1].Rows.Count == 0)
+                return NotFound();
+            return Ok(dataSet);
+        }
         #endregion
     }
 }
