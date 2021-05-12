@@ -182,7 +182,7 @@ namespace ApiDTC.Data
                     using (SqlCommand cmd = new SqlCommand("[dbo].[spGetReferenceNumberDiagnosis]", sql))
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
-                        cmd.Parameters.Add("@ReferenceNumber", SqlDbType.NVarChar).Value = value;
+                        cmd.Parameters.Add("@strReference", SqlDbType.NVarChar).Value = value;
                         return _sqlResult.GetList<Reference>(clavePlaza, cmd, sql, "GetReferenceNumberDiagnosis");
                     }
                 }
