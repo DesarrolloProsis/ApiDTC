@@ -1,12 +1,5 @@
-﻿using ApiDTC.Data;
-using ApiDTC.Services;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
+﻿using Microsoft.AspNetCore.Mvc;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace ApiDTC.Controllers
@@ -15,33 +8,15 @@ namespace ApiDTC.Controllers
     [ApiController]
     public class ManualController : ControllerBase
     {
-        //private readonly PdfConsultasDb _db;
 
-        //private readonly ApiLogger _apiLogger;
+        [HttpGet("getManual")]
+        public async Task<ActionResult> DescargarManual()
+        {
+            var filePath = @"C:\Bitacora\Manual_de_usuario_DTC_-_Actualizado.pdf"; // Here, you should validate the request and the existance of the file.
 
-        //private readonly string _disk;
+            var bytes = await System.IO.File.ReadAllBytesAsync(filePath);
+            return File(bytes, "application/pdf", Path.GetFileName(filePath));
+        }
 
-        //private readonly string _folder;
-
-
-        //public ManualController(PdfConsultasDb db, IConfiguration configuration)
-        //{
-        //    this._disk = $@"{Convert.ToString(configuration.GetValue<string>("Path:Disk"))}";
-        //    this._folder = $"{Convert.ToString(configuration.GetValue<string>("Path:Folder"))}";
-        //    this._db = db ?? throw new ArgumentNullException(nameof(db));
-        //    _apiLogger = new ApiLogger();
-        //}
-
-        //[HttpGet("{clavePlaza}/{refNum}/{adminId}")]
-        //public IActionResult GetPDF(string clavePlaza, string refNum, int adminId)
-        //{
-
-
-        //        //0 = Nuevo, 1 = Firmado, 2 = Almacén
-        //      //  PdfCreation pdf = new PdfCreation(clavePlaza, dataSet.Tables[0], dataSet.Tables[1], dataSet.Tables[2], dataSet.Tables[3], refNum, new ApiLogger());
-        //        var pdfResult = pdf.NewPdf($@"{this._disk}:\{this._folder}", 0);
-        //        return File(new FileStream(pdfResult.Result.ToString(), FileMode.Open, FileAccess.Read), "application/pdf");
-            
-        //}
     }
 }
