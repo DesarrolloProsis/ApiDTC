@@ -156,7 +156,7 @@
         public ActionResult<Response> GetReference(string clavePlaza, string referenceNumber)
         {
             var get = _db.GetReferenceNumberDiagnosis(clavePlaza, referenceNumber);
-            if (get == null)
+            if (get.Result == null)
                 return NotFound(get);
             return Ok(get);
         }
