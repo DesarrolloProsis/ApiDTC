@@ -501,7 +501,7 @@ namespace ApiDTC.Data
 
         }
 
-        public DataSet getActividadesPreventivo(string clavePlaza, int userId, string squareId, int year)
+        public Response getActividadesPreventivo(string clavePlaza, int userId, string squareId, int year)
         {
             try
             {
@@ -523,7 +523,11 @@ namespace ApiDTC.Data
 
                         sql.Close();
 
-                        return dataSet;
+                        return new Response
+                        {
+                            Message = "Ok",
+                            Result = dataSet
+                        };
                     }
                 }
             }

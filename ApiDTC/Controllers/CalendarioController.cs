@@ -248,11 +248,11 @@
 
 
         [HttpGet("GetActividadesPreventivo/{clavePlaza}/{userId}/{squareId}/{year}")]
-        public IActionResult getActividadesPreventivo(string clavePlaza, int month, int year, int userId, string squareId)
+        public IActionResult getActividadesPreventivo(string clavePlaza, int userId, string squareId, int year )
         {
-            var dataSet = _db.GetStorePdf(clavePlaza, month, year, userId, squareId == "1Bi" ? squareId + "s" : squareId);
-            if (dataSet.Tables[1].Rows.Count == 0)
-                return NotFound();
+            var dataSet = _db.getActividadesPreventivo(clavePlaza, userId,   squareId == "1Bi" ? squareId + "s" : squareId, year);
+            //if (dataSet.Tables[0].Rows.Count == 0)
+              //  return NotFound();
             return Ok(dataSet);
         }
         #endregion
