@@ -42,6 +42,27 @@
         #endregion
 
         #region Methods
+
+        [HttpPost("GetActividadesUsuario")]
+        public IActionResult GetActividadesUsuario([FromBody] ActividadesUsuario actividadesUsuario)
+        {
+            var get = _db.GetActividadesUsuario("USR", actividadesUsuario);
+            if (get.Result == null)
+                return NotFound(get);
+            else
+                return Ok(get);
+        }
+
+        [HttpPost("GetActividadesFiltroReferencia")]
+        public IActionResult GetActividadesFiltroReferencia([FromBody] ActividadesUsuarioFiltro actividadesUsuarioFiltro)
+        {
+            var get = _db.GetActividadesFiltroReferencia("USR", actividadesUsuarioFiltro);
+            if (get.Result == null)
+                return NotFound(get);
+            else
+                return Ok(get);
+        }
+
         [HttpGet("Mantenimiento/{clavePlaza}/{month}/{year}/{userId}/{squareId}")]
         public IActionResult GetCalendarioMantenimiento(string clavePlaza, int month, int year, int userId, string squareId)
         {

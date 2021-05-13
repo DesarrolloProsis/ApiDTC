@@ -68,6 +68,67 @@ namespace ApiDTC.Data
 
         }
 
+        public Response GetActividadesUsuario(string clavePlaza, ActividadesUsuario actividadesUsuario)
+        {
+            try
+            {
+                using (SqlConnection sql = new SqlConnection(_connectionString))
+                {
+                    using (SqlCommand cmd = new SqlCommand("[dbo].[spCalendarQueryFront]", sql))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.Add("@UserId", SqlDbType.Int).Value = actividadesUsuario.UserId;
+                        cmd.Parameters.Add("@SquareId", SqlDbType.NVarChar).Value = actividadesUsuario.SquareId;
+                        cmd.Parameters.Add("@Year", SqlDbType.Int).Value = actividadesUsuario.Year;
+                        var storedResult =  _sqlResult.GetList<CalendarQueryFront>(clavePlaza, cmd, sql, "GetTechnicalSheet");
+                        if (storedResult.Result is null)
+                            return storedResult;
+
+                        return new Response
+                        {
+                            Message = "Ok",
+                            Result = storedResult.Result
+                        };
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                _apiLogger.WriteLog(clavePlaza, ex, "CalendarioDb: GetActividadesUsuario", 1);
+                return new Response { Message = $"Error: {ex.Message}", Result = null };
+            }
+        }
+
+        public Response GetActividadesFiltroReferencia(string clavePlaza, ActividadesUsuarioFiltro actividadesUsuarioFiltro)
+        {
+            try
+            {
+                using (SqlConnection sql = new SqlConnection(_connectionString))
+                {
+                    using (SqlCommand cmd = new SqlCommand("[dbo].[spCalendarQueryReferenceSearch]", sql))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.Add("@UserId", SqlDbType.Int).Value = actividadesUsuarioFiltro.UserId;
+                        cmd.Parameters.Add("@Reference", SqlDbType.NVarChar).Value = actividadesUsuarioFiltro.ReferenceNumber;
+                        var storedResult =  _sqlResult.GetList<CalendarQueryReferenceSearch>(clavePlaza, cmd, sql, "GetActividadesFiltroReferencia");
+                        if (storedResult.Result is null)
+                            return storedResult;
+
+                        return new Response
+                        {
+                            Message = "Ok",
+                            Result = storedResult.Result
+                        };
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                _apiLogger.WriteLog(clavePlaza, ex, "CalendarioDb: GetActividadesFiltroReferencia", 1);
+                return new Response { Message = $"Error: {ex.Message}", Result = null };
+            }
+        }
+
         public Response InsertActivity(string clavePlaza, ActividadCalendario actividad)
         {
             try
