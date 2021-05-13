@@ -248,7 +248,7 @@
 
 
         [HttpGet("GetActividadesPreventivo/{clavePlaza}/{userId}/{squareId}/{year}")]
-        public ActionResult<Response> getActividadesPreventivo(string clavePlaza, int userId, string squareId, int year )
+        public IActionResult getActividadesPreventivo(string clavePlaza, int userId, string squareId, int year )
         {
             var dataSet = _db.getActividadesPreventivo(clavePlaza, userId,   squareId == "1Bi" ? squareId + "s" : squareId, year);
             //if (dataSet.Tables[0].Rows.Count == 0)
