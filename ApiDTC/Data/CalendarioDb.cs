@@ -514,7 +514,7 @@ namespace ApiDTC.Data
 
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.Add("@UserId", SqlDbType.Int).Value = userId;
-                        cmd.Parameters.Add("@SuqareId", SqlDbType.NVarChar).Value = squareId;
+                        cmd.Parameters.Add("@SquareId", SqlDbType.NVarChar).Value = squareId;
                         cmd.Parameters.Add("@Year", SqlDbType.Int).Value = year;
 
                         sql.Open();
