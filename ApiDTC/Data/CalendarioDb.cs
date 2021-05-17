@@ -561,6 +561,39 @@ namespace ApiDTC.Data
             }
 
         }
+
+        public DataSet getActividadesPreventivo(string clavePlaza, int userId, string squareId, int year)
+        {
+            try
+            {
+                using (SqlConnection sql = new SqlConnection(_connectionString))
+                {
+                    using (SqlCommand cmd = new SqlCommand("spCalendarQueryFront", sql))
+                    {
+                        SqlDataAdapter sqlDataAdapter = new SqlDataAdapter();
+                        DataSet dataSet = new DataSet();
+
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.Add("@UserId", SqlDbType.Int).Value = userId;
+                        cmd.Parameters.Add("@SquareId", SqlDbType.NVarChar).Value = squareId;
+                        cmd.Parameters.Add("@Year", SqlDbType.Int).Value = year;
+
+                        sql.Open();
+                        sqlDataAdapter = new SqlDataAdapter(cmd);
+                        sqlDataAdapter.Fill(dataSet);
+
+                        sql.Close();
+
+                        return dataSet;
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                _apiLogger.WriteLog(clavePlaza, ex, "CalendarioDb: getActividadesPreventivo", 1);
+                return null;
+            }
+        }
         #endregion
     }
 }

@@ -97,6 +97,32 @@
 
             return respuesta;
         }
+        [HttpPost("AddSquareToUser")]
+        public ActionResult<Response> AddSquareToUser([FromBody] UserSquare userInfo)
+        {
+            if (ModelState.IsValid)
+            {
+                var get = _db.AddSquareToUser(userInfo);
+                if (get.Result == null)
+                    return BadRequest();
+                else
+                    return Ok(get);
+            }
+            return BadRequest(ModelState);
+        }
 
+        [HttpPut("ActivateUser/{clavePlaza}/{UserId}")]
+        public ActionResult<Response> ActivateUser(string clavePlaza, int UserId)
+        {
+            if (ModelState.IsValid)
+            {
+                var get = _db.ActivateUser(clavePlaza, UserId);
+                if (get.Result == null)
+                    return BadRequest();
+                else
+                    return Ok(get);
+            }
+            return BadRequest(ModelState);
+        }
     }
 }

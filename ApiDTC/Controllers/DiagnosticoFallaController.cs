@@ -42,7 +42,7 @@
 
         //https://localhost:44358/api/DiagnosticoFalla/TLA/B01/TLA-DF-001-02
         #region Methods
-        
+        //GET DIAGNÓSTICO DE FALLA
         #region PDF
         [HttpGet("{clavePlaza}/{referenceNumber}")]
         public IActionResult GetDiagnosticoFalla(string clavePlaza, string referenceNumber)
@@ -156,7 +156,7 @@
         public ActionResult<Response> GetReference(string clavePlaza, string referenceNumber)
         {
             var get = _db.GetReferenceNumberDiagnosis(clavePlaza, referenceNumber);
-            if (get == null)
+            if (get.Result == null)
                 return NotFound(get);
             return Ok(get);
         }

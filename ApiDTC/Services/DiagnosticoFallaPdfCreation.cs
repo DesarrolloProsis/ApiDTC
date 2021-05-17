@@ -120,7 +120,7 @@ namespace ApiDTC.Services
                     if(Directory.Exists(directoryImgs))
                     {
                         fotos = Directory.GetFiles(directoryImgs);
-                        doc.Add(TablaFotografias(fotos));
+                        doc.Add(TablaFotografias(fotos));//LLAMAR A TABLA FOTOGRAFIAS...
                         foreach (var img in Directory.GetFiles(directoryImgs))
                         {
                             if(img.Contains("temp"))

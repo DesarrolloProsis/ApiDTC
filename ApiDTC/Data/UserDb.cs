@@ -2,6 +2,7 @@
 {
     using ApiDTC.Models;
     using ApiDTC.Services;
+    using ApiDTC.Utilities;
     using Microsoft.Extensions.Configuration;
     using System;
     using System.Data;
@@ -10,23 +11,28 @@
     public class UserDb
     {
         #region Attributes
+
         private readonly string _connectionString;
 
         private readonly SqlResult _sqlResult;
 
         private readonly ApiLogger _apiLogger;
-        #endregion
+
+        #endregion Attributes
 
         #region Constructor
+
         public UserDb(IConfiguration configuration, ApiLogger apiLogger, SqlResult sqlResult)
         {
             _sqlResult = sqlResult;
             _apiLogger = apiLogger;
             _connectionString = configuration.GetConnectionString("defaultConnection");
         }
-        #endregion
+
+        #endregion Constructor
 
         #region Methods
+
         public Response GetInfo(UserKey userKey)
         {
             try
@@ -47,11 +53,11 @@
                 _apiLogger.WriteLog("USR", ex, "UserDb: GetInfo", 1);
                 return new Response { Message = $"Error: {ex.Message}", Result = null };
             }
-            
         }
 
         public Response NewUser(UserInfo userInfo)
         {
+            Response resp = new Response();
             try
             {
                 using (SqlConnection sql = new SqlConnection(_connectionString))
@@ -64,25 +70,39 @@
                         cmd.Parameters.Add("@LastName2", SqlDbType.NVarChar).Value = userInfo.LastName2;
                         cmd.Parameters.Add("@Password", SqlDbType.NVarChar).Value = userInfo.Password;
                         cmd.Parameters.Add("@Rol", SqlDbType.Int).Value = userInfo.Rol;
-                        var reader = _sqlResult.Post("USR", cmd, sql, "NewUser");
-                        if (reader.SqlResult == null)
+                        sql.Open();
+                        var reader = cmd.ExecuteReader();
+                        if (!reader.HasRows)
                         {
-                            return new Response
-                            {
-                                Message = "Fail",
-                                Result = null
-
-                            };
+                            resp.Message = "Fail";
+                            resp.Result = null;
                         }
-                        return new Response
+                        else
                         {
-                            Message = "Ok",
-                            Result = userInfo
-                        };
+                            NuevoUsuario usuarioNuevo = new NuevoUsuario();
+                            while (reader.HasRows)
+                            {
+                                while (reader.Read())
+                                {
+                                    usuarioNuevo.SqlResult = reader.GetString(0);
+                                    usuarioNuevo.SqlMessage = reader.GetString(1);
+                                    usuarioNuevo.UserId = Convert.ToInt32(reader.GetDecimal(2));
+                                    usuarioNuevo.Pass = reader.GetString(3);
+                                    usuarioNuevo.UserName = reader.GetString(4);
+                                }
+                                reader.NextResult();
+                            }
+                            resp.Message = "Ok";
+                            resp.Result = usuarioNuevo;
+                        }
+
+                        sql.Close();
+
+                        return resp;
                     }
                 }
             }
-            catch (SqlException ex)
+            catch (Exception ex)
             {
                 _apiLogger.WriteLog("USR", ex, "UserDb: NewUser", 1);
                 return new Response { Message = $"Error: {ex.Message}", Result = null };
@@ -108,7 +128,6 @@
                             {
                                 Message = "Fail",
                                 Result = null
-
                             };
                         }
                         return new Response
@@ -150,7 +169,6 @@
                             {
                                 Message = "Fail",
                                 Result = null
-
                             };
                         }
                         return new Response
@@ -166,7 +184,6 @@
                 _apiLogger.WriteLog("USR", ex, "UserDb: PutUser", 1);
                 return new Response { Message = $"Error: {ex.Message}", Result = null };
             }
-            
         }
 
         public Response DeleteUser(UserKey userKey)
@@ -186,7 +203,6 @@
                             {
                                 Message = "Fail",
                                 Result = null
-
                             };
                         }
                         return new Response
@@ -203,6 +219,81 @@
                 return new Response { Message = $"Error: {ex.Message}", Result = null };
             }
         }
-        #endregion
+
+        //Método para asignarle plaza  a un usuario
+        public Response AddSquareToUser(UserSquare userSquare)
+        {
+            try
+            {
+                using (SqlConnection sql = new SqlConnection(_connectionString))
+                {
+                        using (SqlCommand cmd = new SqlCommand("dbo.spAddSquareToUser", sql))
+                        {
+                            cmd.CommandType = CommandType.StoredProcedure;
+                            cmd.Parameters.Add("@SquareCatalogId", SqlDbType.NVarChar).Value = userSquare.SquareCatalogId;
+                            cmd.Parameters.Add("@UserId", SqlDbType.Int).Value = userSquare.UserId;
+                        sql.Open();
+                         var reader = cmd.ExecuteScalar();
+
+                        //var storedResult = _sqlResult.Post(userSquare.clavePlaza, cmd, sql, "AddSquareToUser");
+                        //if (storedResult.SqlResult == null)
+                        //    return new Response { Message = "Error al insertar"};
+                        Console.WriteLine(reader);
+                        sql.Close();
+                        }
+                }
+                return new Response
+                {
+                    Message = "Ok",
+                    Result = "Ejecucion Correcta" 
+                };
+            }
+            catch (SqlException ex)
+            {
+                _apiLogger.WriteLog(userSquare.clavePlaza, ex, "UserDb: AddSquareToUser", 1);
+                return new Response { Message = $"Error: {ex.Message}", Result = null };
+            }
+        }
+
+        //Método para activar usuario
+        public Response ActivateUser(string clavePlaza, int UserId)
+        {
+            Response response = new Response();
+            try
+            {
+                using (SqlConnection sql = new SqlConnection(_connectionString))
+                {
+                    using (SqlCommand cmd = new SqlCommand("dbo.spActivateUser", sql))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.Add("@UserId", SqlDbType.Int).Value = UserId;
+                        sql.Open();
+                        var reader = cmd.ExecuteScalar();
+
+                        Console.WriteLine(reader);
+                        sql.Close();
+
+                        if (Convert.ToInt32(reader) == 1)
+                        {
+                            response.Message = "Ok";
+                            response.Result = "Activacion correcta";
+                        }
+                        else
+                        {
+                            response.Message = "Error";
+                            response.Result = "Verifique que el usuario exita";
+                        }
+                    }
+                }
+                return response;
+            }
+            catch (SqlException ex)
+            {
+                _apiLogger.WriteLog(clavePlaza, ex, "UserDb: AddSquareToUser", 1);
+                return new Response { Message = $"Error: {ex.Message}", Result = null };
+            }
+        }
+
+        #endregion Methods
     }
 }
