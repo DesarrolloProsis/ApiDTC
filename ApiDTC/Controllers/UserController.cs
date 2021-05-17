@@ -97,6 +97,24 @@
 
             return respuesta;
         }
+        [HttpPost("AddSquareToUser")]
+        public ActionResult<Response> AddSquareToUser([FromBody] UserSquare userInfo)
+        {
+            if (ModelState.IsValid)
+            {
+                var get = _db.AddSquareToUser(userInfo);
+                if (get.Result == null)
+                    return BadRequest();
+                else
+                    return Ok(get);
+            }
+            return BadRequest(ModelState);
+        }
 
+        [HttpPut("ActivateUser")]
+        public string ActivateUser(int UserId)
+        {
+            return "ActivateUser with Id" + UserId;
+        }
     }
 }

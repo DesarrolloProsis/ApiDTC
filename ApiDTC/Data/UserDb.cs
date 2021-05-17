@@ -220,6 +220,41 @@
             }
         }
 
+        //Método para asignarle plaza  a un usuario
+        public Response AddSquareToUser(UserSquare userSquare)
+        {
+            try
+            {
+                using (SqlConnection sql = new SqlConnection(_connectionString))
+                {
+                        using (SqlCommand cmd = new SqlCommand("dbo.spAddSquareToUser", sql))
+                        {
+                            cmd.CommandType = CommandType.StoredProcedure;
+                            cmd.Parameters.Add("@SquareCatalogId", SqlDbType.NVarChar).Value = userSquare.SquareCatalogId;
+                            cmd.Parameters.Add("@UserId", SqlDbType.Int).Value = userSquare.UserId;
+                        sql.Open();
+                         var reader = cmd.ExecuteScalar();
+
+                        //var storedResult = _sqlResult.Post(userSquare.clavePlaza, cmd, sql, "AddSquareToUser");
+                        //if (storedResult.SqlResult == null)
+                        //    return new Response { Message = "Error al insertar"};
+                        Console.WriteLine(reader);
+                        sql.Close();
+                        }
+                }
+                return new Response
+                {
+                    Message = "Ok",
+                    Result = "Ejecucion Correcta" 
+                };
+            }
+            catch (SqlException ex)
+            {
+                _apiLogger.WriteLog(userSquare.clavePlaza, ex, "UserDb: AddSquareToUser", 1);
+                return new Response { Message = $"Error: {ex.Message}", Result = null };
+            }
+        }
+
         #endregion Methods
     }
 }
