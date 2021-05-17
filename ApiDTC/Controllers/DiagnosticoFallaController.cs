@@ -42,7 +42,7 @@
 
         //https://localhost:44358/api/DiagnosticoFalla/TLA/B01/TLA-DF-001-02
         #region Methods
-        
+        //GET DIAGNÓSTICO DE FALLA
         #region PDF
         [HttpGet("{clavePlaza}/{referenceNumber}")]
         public IActionResult GetDiagnosticoFalla(string clavePlaza, string referenceNumber)

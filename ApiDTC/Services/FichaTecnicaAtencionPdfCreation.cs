@@ -125,7 +125,7 @@ namespace ApiDTC.Services
                     if(Directory.Exists(directoryImgs))
                     {
                         fotos = Directory.GetFiles(directoryImgs);
-
+                        doc.Add(TablaFotografias(fotos));//FIXME: Revisar agregue este metodo codemcm
                         foreach (var img in Directory.GetFiles(directoryImgs))
                         {
                             if(img.Contains("temp"))
