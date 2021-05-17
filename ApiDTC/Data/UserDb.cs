@@ -255,6 +255,45 @@
             }
         }
 
+        //Método para activar usuario
+        public Response ActivateUser(string clavePlaza, int UserId)
+        {
+            Response response = new Response();
+            try
+            {
+                using (SqlConnection sql = new SqlConnection(_connectionString))
+                {
+                    using (SqlCommand cmd = new SqlCommand("dbo.spActivateUser", sql))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.Add("@UserId", SqlDbType.Int).Value = UserId;
+                        sql.Open();
+                        var reader = cmd.ExecuteScalar();
+
+                        Console.WriteLine(reader);
+                        sql.Close();
+
+                        if (Convert.ToInt32(reader) == 1)
+                        {
+                            response.Message = "Ok";
+                            response.Result = "Activacion correcta";
+                        }
+                        else
+                        {
+                            response.Message = "Error";
+                            response.Result = "Verifique que el usuario exita";
+                        }
+                    }
+                }
+                return response;
+            }
+            catch (SqlException ex)
+            {
+                _apiLogger.WriteLog(clavePlaza, ex, "UserDb: AddSquareToUser", 1);
+                return new Response { Message = $"Error: {ex.Message}", Result = null };
+            }
+        }
+
         #endregion Methods
     }
 }

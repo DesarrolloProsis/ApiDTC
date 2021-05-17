@@ -111,10 +111,18 @@
             return BadRequest(ModelState);
         }
 
-        [HttpPut("ActivateUser")]
-        public string ActivateUser(int UserId)
+        [HttpPut("ActivateUser/{clavePlaza}/{UserId}")]
+        public ActionResult<Response> ActivateUser(string clavePlaza, int UserId)
         {
-            return "ActivateUser with Id" + UserId;
+            if (ModelState.IsValid)
+            {
+                var get = _db.ActivateUser(clavePlaza, UserId);
+                if (get.Result == null)
+                    return BadRequest();
+                else
+                    return Ok(get);
+            }
+            return BadRequest(ModelState);
         }
     }
 }
