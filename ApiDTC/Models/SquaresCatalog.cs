@@ -8,6 +8,8 @@
         public string SquareName { get; set; }
         
         public int DelegationId { get; set; }
+        public string ReferenceSquare { get; set; }
+
         #endregion
     }
 }
