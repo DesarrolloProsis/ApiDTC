@@ -45,6 +45,8 @@
         public string SquareId { get; set; }
 
         public int AdminId { get; set; }
+
+        public string DiagnosisReference { get; set; }
         #endregion
     }
 }
