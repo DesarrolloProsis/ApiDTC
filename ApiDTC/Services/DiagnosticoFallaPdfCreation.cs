@@ -404,7 +404,7 @@ namespace ApiDTC.Services
 
                 table.AddCell(colDiagnostico);
                 CeldasVacias(2, table);
-                var textoDiagnostico = SeparacionObservaciones(_diagnosticoDeFallaInfo.DiagnosticoFalla);
+                var textoDiagnostico = SeparacionObservaciones(_diagnosticoDeFallaInfo.DiagnosticoFalla);//FIX
                 int celdasTotalesDiagnostico = 0;
                 foreach (var linea in textoDiagnostico)
                 {
@@ -426,7 +426,7 @@ namespace ApiDTC.Services
                 CeldasVacias(2, table);
                 var textoCausa = SeparacionObservaciones(_diagnosticoDeFallaInfo.CausaFalla);
                 int celdasTotalesCausa = 0;
-                foreach (var linea in textoDiagnostico)
+                foreach (var linea in textoCausa)
                 {
                     celdasTotalesCausa +=1;
                     var celdaLinea = new PdfPCell(new Phrase(Convert.ToString(linea), letraNormalMediana)) { BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, BorderWidthBottom = 1, FixedHeight = 15, HorizontalAlignment = Element.ALIGN_JUSTIFIED, VerticalAlignment = Element.ALIGN_CENTER, Padding = 3, Colspan = 8 };
