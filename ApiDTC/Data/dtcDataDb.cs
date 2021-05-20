@@ -286,7 +286,7 @@
             }
         }
 
-        public SqlResponse DeleteDtcData(string clavePlaza, string referenceNumber, int userId)
+        public SqlResponse DeleteDtcData(string clavePlaza, string referenceNumber, int userId, string Comment)
         {
             try
             {
@@ -297,6 +297,7 @@
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.Add("@referenceNumber", SqlDbType.NVarChar).Value = referenceNumber;
                         cmd.Parameters.Add("@UserId", SqlDbType.Int).Value = userId;
+                        cmd.Parameters.Add("@Comment", SqlDbType.NVarChar).Value = Comment;
                         return _sqlResult.Post(clavePlaza, cmd, sql, "DeleteDtcData");
                     }
                 }
