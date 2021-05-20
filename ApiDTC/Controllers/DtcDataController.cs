@@ -128,12 +128,12 @@
             return BadRequest(ModelState);
         }
         
-        [HttpDelete("Delete/{clavePlaza}/{referenceNumber}/{userId}")]
-        public ActionResult<Response> Delete(string clavePlaza, string referenceNumber, int userId)
+        [HttpDelete("Delete/{clavePlaza}/{referenceNumber}/{userId}/{Comment}")]
+        public ActionResult<Response> Delete(string clavePlaza, string referenceNumber, int userId, string Comment)
         {
             if (ModelState.IsValid)
             {
-                var delete = _db.DeleteDtcData(clavePlaza, referenceNumber, userId);
+                var delete = _db.DeleteDtcData(clavePlaza, referenceNumber, userId, Comment);
                 if (delete.SqlResult == null)
                     return NotFound(delete);
                 return Ok(delete);
