@@ -42,7 +42,19 @@ namespace ApiDTC.Controllers
             if(get.Result == null)
                 return NotFound(get);
             return Ok(get);
-        } 
+        }
+
+        [HttpPut("UpdateFolioFechaInventario/{clavePlaza}/{IdGare}/{NCapufe}/{Fecha}/{Folio}/{IdUsuario}")]
+        public ActionResult<Response> UpdateFolioFechaInventario(string clavePlaza, string IdGare, string NCapufe, string Fecha, string Folio, int IdUsuario)
+        {
+            //string clavePlaza, int IdGare, int NCapufe, string Fecha, string Folio, int IdUsuario
+            var put = _db.UpdateFolioFechaInventario(clavePlaza, IdGare, NCapufe, Fecha, Folio, IdUsuario);
+            if (put.Result == null)
+                return NotFound(put);
+            return Ok(put);
+        }
+
+
         #endregion
     }
 }

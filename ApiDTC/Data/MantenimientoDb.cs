@@ -53,6 +53,44 @@ namespace ApiDTC.Data
                 return new Response { Message = $"Error: {ex.Message}", Result = null };
             }
         }
+
+        public Response UpdateFolioFechaInventario(string clavePlaza, string IdGare, string NCapufe, string Fecha, string Folio, int IdUsuario)
+        {
+            try
+            {
+                //using (SqlConnection sql = new SqlConnection(_connectionString))
+                //{
+                //    using (SqlCommand cmd = new SqlCommand("dbo.spUpdateDTCHeader", sql))
+                //    {
+                //        cmd.CommandType = CommandType.StoredProcedure;
+
+                //        cmd.Parameters.Add("@IdGare", SqlDbType.NVarChar).Value = IdGare;
+                //        cmd.Parameters.Add("@NCapufe", SqlDbType.NVarChar).Value = NCapufe;
+                //        cmd.Parameters.Add("@Fecha", SqlDbType.NVarChar).Value = Fecha;
+                //        cmd.Parameters.Add("@Folio", SqlDbType.NVarChar).Value = Folio;
+                //        cmd.Parameters.Add("@IdUsuario", SqlDbType.Int).Value = IdUsuario;
+                //        var response = _sqlResult.Put(clavePlaza, cmd, sql, "UpdateFolioFechaInventario");
+                //        return new Response
+                //        {
+                //            Message = response.SqlMessage,
+                //            Result = response.SqlResult
+                //        };
+                //    }
+                //}
+                return new Response
+                {
+                    Message = "ok",
+                    Result = "ok"
+                };
+            }
+            catch (SqlException ex)
+            {
+                _apiLogger.WriteLog(clavePlaza, ex, "MantenimientoDb: UpdateFolioFechaInventario", 1);
+                return new Response { Message = $"Error: {ex.Message}", Result = null };
+            }
+        }
+
+
         #endregion
     }
 }
