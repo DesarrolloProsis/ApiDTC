@@ -24,6 +24,7 @@
         private readonly string _ubicacion;
 
         private readonly string _referenceNumber;
+        string directoryImageDiagnostico;   //las fotos del diagnostico son las mismas que en reporte equipo dañado
         #endregion
 
         #region Pdf Configuration
@@ -61,9 +62,25 @@
         //https://localhost:44358/api/ReporteFotografico/Reporte/JOR/B01
         #region Methods
 
+
+        public string GetFolderDF(string references)
+        {
+            string folderDT = "";
+            foreach (char c in references)
+            {
+                Console.WriteLine(c.ToString());
+                folderDT += c;
+                if (c == '-')
+                {
+                    folderDT += "DF-";
+                }
+            }
+            return folderDT + "\\";
+        }
         public Response NewPdf(string folder)
         {
             string directory, filename, path;
+            
             if (_tipo == 1)
                 directory = $@"{folder}\{_clavePlaza.ToUpper()}\Reportes\{_referenceNumber}";
             else
@@ -81,7 +98,12 @@
                 filename = $@"DTC-{_referenceNumber}-EquipoNuevo.pdf";
             else
                 filename = $@"DTC-{_referenceNumber}-EquipoDañado.pdf";
-
+            if(_tipo== 3)
+            {
+                //usar el _referenceNumber para crear la estructura con DT
+                string folderDT= this.GetFolderDF(_referenceNumber);
+                directoryImageDiagnostico = $@"{folder}\{_clavePlaza.ToUpper()}\Reportes\"+folderDT;
+            }
             path = Path.Combine(directory, filename);
 
             //File in use
@@ -140,7 +162,7 @@
 
                     doc.Open();
 
-
+                    //codemcm: Agregar fotos aqui!!!
                     doc.Add(TablaEncabezado());
                     doc.Add(TablaInformacion());
                     string directoryImgs;
@@ -149,7 +171,7 @@
                     else if (_tipo == 2)
                         directoryImgs = Path.Combine(directory, "EquipoNuevoImgs");
                     else
-                        directoryImgs = Path.Combine(directory, "EquipoDañadoImgs");
+                        directoryImgs = Path.Combine(directoryImageDiagnostico, "DiagnosticoFallaImgs");//Misma carpeta que Diagnostico
                     if(Directory.Exists(directoryImgs))
                     {
                         var files = Directory.GetFiles(directoryImgs);

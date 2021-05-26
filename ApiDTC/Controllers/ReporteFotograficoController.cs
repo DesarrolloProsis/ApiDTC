@@ -236,6 +236,8 @@
                 var dataSet = _db.GetStorePDF(clavePlaza, referenceNumber);
                 if (dataSet.Tables[0].Rows.Count == 0)
                     return NotFound("GetStoredPdf retorna tabla vacía");
+                //2 equipo nuevo
+                //3 equipo dañado
                 ReporteFotograficoPdfCreation pdf = new ReporteFotograficoPdfCreation(clavePlaza, dataSet.Tables[0], new ApiLogger(), 2, referenceNumber, ubicacion);
                 var pdfResult = pdf.NewPdf($@"{this._disk}:\{this._folder}");
                 if (pdfResult.Result == null)
@@ -292,7 +294,7 @@
             return NotFound();
         }
 
-
+        //REPORTE FOTOGRAFICO DE EQUIPO DAÑADO
         [HttpGet("Dañado/{clavePlaza}/{ubicacion}/{referenceNumber}")]
         public IActionResult GetReporteEquipoDañado(string clavePlaza, string ubicacion, string referenceNumber)
         {
