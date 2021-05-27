@@ -62,21 +62,6 @@
         //https://localhost:44358/api/ReporteFotografico/Reporte/JOR/B01
         #region Methods
 
-
-        public string GetFolderDF(string references)
-        {
-            string folderDT = "";
-            foreach (char c in references)
-            {
-                Console.WriteLine(c.ToString());
-                folderDT += c;
-                if (c == '-')
-                {
-                    folderDT += "DF-";
-                }
-            }
-            return folderDT + "\\";
-        }
         public Response NewPdf(string folder)
         {
             string directory, filename, path;
@@ -101,8 +86,7 @@
             if(_tipo== 3)
             {
                 //usar el _referenceNumber para crear la estructura con DT
-                string folderDT= this.GetFolderDF(_referenceNumber);
-                directoryImageDiagnostico = $@"{folder}\{_clavePlaza.ToUpper()}\Reportes\"+folderDT;
+                directoryImageDiagnostico = $@"{folder}\{_clavePlaza.ToUpper()}\Reportes\" + _tableHeader.Rows[0]["DiagnosisReference"]+"\\";
             }
             path = Path.Combine(directory, filename);
 

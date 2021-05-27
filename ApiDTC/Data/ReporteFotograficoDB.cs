@@ -33,6 +33,7 @@
             {
                 using (SqlConnection sql = new SqlConnection(_connectionString))
                 {
+                    //spPhotoReport DEBE TRAER EL DIAGNOSTICO 
                     using (SqlCommand cmd = new SqlCommand("dbo.spPhotoReport", sql))
                     {
                         SqlDataAdapter sqlDataAdapter = new SqlDataAdapter();
