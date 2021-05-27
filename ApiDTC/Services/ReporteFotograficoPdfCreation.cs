@@ -428,7 +428,7 @@
                 var colNoReporte = new PdfPCell(new Phrase(valorReporte, letraNormalChica)) { BorderWidthBottom = 1, BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_BOTTOM, Padding = 2, Colspan = 2 };
 
                 //TODO cambiar valor de fecha en Reporte fotográfico según el stored de Alex
-                string valorFecha = _tipo == 1 ? Convert.ToString(_tableHeader.Rows[0]["Fecha"]).Substring(0, 10) : "01/01/2021 ";
+                string valorFecha = Convert.ToString(_tableHeader.Rows[0]["Fecha"]).Substring(0, 10);
 
 
                 table.AddCell(colTextoNoReporte);
@@ -454,7 +454,7 @@
                 table.AddCell(plazaDeCobro);
                 CeldasVacias(2, table);
                 //TODO poner la hora inicio del stored de Alex en reporte fotográfico equipo nuevo y dañado
-                string valorHoraInicio = _tipo == 1 ? Convert.ToString(_tableHeader.Rows[0]["Inicio"]) : "12:00";
+                string valorHoraInicio =  Convert.ToString(_tableHeader.Rows[0]["Inicio"]);
                 var inicioDateTime = Convert.ToDateTime(valorHoraInicio);
                 string conversionInicio = inicioDateTime.ToString("hh:mm tt", CultureInfo.CurrentCulture);
                 var colTextoHoraInicio = new PdfPCell(new Phrase("Hora INICIO: ", letraoNegritaChica)) { Border = 0, HorizontalAlignment = Element.ALIGN_RIGHT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 4 };
@@ -476,7 +476,7 @@
                 table.AddCell(colUbicacion);
                 table.AddCell(ubicacion);
                 CeldasVacias(2, table);
-                string valorHoraFin = _tipo == 1 ? Convert.ToString(_tableHeader.Rows[0]["Fin"]) : "13:00";
+                string valorHoraFin =  Convert.ToString(_tableHeader.Rows[0]["Fin"]);
                 var finDateTime = Convert.ToDateTime(valorHoraFin);
                 string conversionFin = finDateTime.ToString("hh:mm tt", CultureInfo.CurrentCulture);
                 var colTextoHoraFin = new PdfPCell(new Phrase("Hora FIN: ", letraoNegritaChica)) { Border = 0, HorizontalAlignment = Element.ALIGN_RIGHT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 4 };
@@ -507,6 +507,17 @@
                 table.AddCell(capufe);
                 CeldasVacias(2, table);
 
+                //No. De Ciniestro
+                if (_tipo == 3)
+                {
+                    var colSiniestro = new PdfPCell(new Phrase("No De Siniestro: ", letraoNegritaChica)) { Border = 0, HorizontalAlignment = Element.ALIGN_RIGHT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 4, Colspan = 3 };
+                    string valorColSiniestro = Convert.ToString(_tableHeader.Rows[0]["NumeroSinisestro"]);
+                    var siniestro = new PdfPCell(new Phrase(valorColSiniestro, letraNormalChica)) { BorderWidthBottom = 1, BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_BOTTOM, Padding = 2, Colspan = 3 };
+
+                    table.AddCell(colSiniestro);
+                    table.AddCell(siniestro);
+                    CeldasVacias(2, table);
+                }
 
                 return table;
             }
