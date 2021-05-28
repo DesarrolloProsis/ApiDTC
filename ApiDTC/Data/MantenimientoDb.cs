@@ -58,30 +58,25 @@ namespace ApiDTC.Data
         {
             try
             {
-                //using (SqlConnection sql = new SqlConnection(_connectionString))
-                //{
-                //    using (SqlCommand cmd = new SqlCommand("dbo.spUpdateDTCHeader", sql))
-                //    {
-                //        cmd.CommandType = CommandType.StoredProcedure;
-
-                //        cmd.Parameters.Add("@IdGare", SqlDbType.NVarChar).Value = IdGare;
-                //        cmd.Parameters.Add("@NCapufe", SqlDbType.NVarChar).Value = NCapufe;
-                //        cmd.Parameters.Add("@Fecha", SqlDbType.NVarChar).Value = Fecha;
-                //        cmd.Parameters.Add("@Folio", SqlDbType.NVarChar).Value = Folio;
-                //        cmd.Parameters.Add("@IdUsuario", SqlDbType.Int).Value = IdUsuario;
-                //        var response = _sqlResult.Put(clavePlaza, cmd, sql, "UpdateFolioFechaInventario");
-                //        return new Response
-                //        {
-                //            Message = response.SqlMessage,
-                //            Result = response.SqlResult
-                //        };
-                //    }
-                //}
-                return new Response
+                using (SqlConnection sql = new SqlConnection(_connectionString))
                 {
-                    Message = "ok",
-                    Result = "ok"
-                };
+                    using (SqlCommand cmd = new SqlCommand("dbo.spUpdateInventoryMonthly", sql))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+
+                        cmd.Parameters.Add("@IdGare", SqlDbType.NVarChar).Value = IdGare;
+                        cmd.Parameters.Add("@NCapufe", SqlDbType.NVarChar).Value = NCapufe;
+                        cmd.Parameters.Add("@Fecha", SqlDbType.Date).Value = Fecha;
+                        cmd.Parameters.Add("@Folio", SqlDbType.NVarChar).Value = Folio;
+                        cmd.Parameters.Add("@IdUsuario", SqlDbType.Int).Value = IdUsuario;
+                        var response = _sqlResult.Put(clavePlaza, cmd, sql, "UpdateFolioFechaInventario");
+                        return new Response
+                        {
+                            Message = response.SqlMessage,
+                            Result = response.SqlResult
+                        };
+                    }
+                }
             }
             catch (SqlException ex)
             {

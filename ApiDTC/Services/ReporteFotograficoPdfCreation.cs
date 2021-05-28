@@ -491,10 +491,21 @@
                 table.AddCell(capufe);
                 CeldasVacias(2, table);
 
-                //No. De Ciniestro
+                //No. De Siniestro
+                //if (_tipo == 2)
+                //{
+                //    var colSiniestro = new PdfPCell(new Phrase("No De Siniestro: ", letraoNegritaChica)) { Border = 0, HorizontalAlignment = Element.ALIGN_RIGHT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 4, Colspan = 3 };
+                //    string valorColSiniestro = Convert.ToString(_tableHeader.Rows[0]["NumeroSinisestro"]);
+                //    var siniestro = new PdfPCell(new Phrase(valorColSiniestro, letraNormalChica)) { BorderWidthBottom = 1, BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_BOTTOM, Padding = 2, Colspan = 3 };
+
+                //    table.AddCell(colSiniestro);
+                //    table.AddCell(siniestro);
+                //    CeldasVacias(2, table);
+                //}
+                //No. De Oficio
                 if (_tipo == 3)
                 {
-                    var colSiniestro = new PdfPCell(new Phrase("No De Siniestro: ", letraoNegritaChica)) { Border = 0, HorizontalAlignment = Element.ALIGN_RIGHT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 4, Colspan = 3 };
+                    var colSiniestro = new PdfPCell(new Phrase("No De Oficio: ", letraoNegritaChica)) { Border = 0, HorizontalAlignment = Element.ALIGN_RIGHT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 4, Colspan = 3 };
                     string valorColSiniestro = Convert.ToString(_tableHeader.Rows[0]["NumeroSinisestro"]);
                     var siniestro = new PdfPCell(new Phrase(valorColSiniestro, letraNormalChica)) { BorderWidthBottom = 1, BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_BOTTOM, Padding = 2, Colspan = 3 };
 
