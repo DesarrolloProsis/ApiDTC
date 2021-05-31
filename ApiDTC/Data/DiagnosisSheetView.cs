@@ -16,7 +16,8 @@ namespace ApiDTC.Data
 
         public string SiniesterNumber { get; set; }
 
-        public bool ValidacionFichaTecnica { get; set; }
+        //public bool ValidacionFichaTecnica { get; set; }
+        public bool Validacion { get; set; }
 
         public string SquareId { get; set; }
 
@@ -37,7 +38,7 @@ namespace ApiDTC.Data
         public string FaultDescription { get; set; }
 
         public int TypeFaultId { get; set; }
-        public bool ValidacionDTC { get; set; }
-        public string ReferenceDTC { get; set; }
+        //public bool ValidacionDTC { get; set; }
+        //public string ReferenceDTC { get; set; }
     }
 }
