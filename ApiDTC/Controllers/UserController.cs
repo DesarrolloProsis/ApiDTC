@@ -97,6 +97,7 @@
 
             return respuesta;
         }
+        //Agregar plaza
         [HttpPost("AddSquareToUser")]
         public ActionResult<Response> AddSquareToUser([FromBody] UserSquare userInfo)
         {
@@ -110,7 +111,7 @@
             }
             return BadRequest(ModelState);
         }
-
+        //Activar Usuario
         [HttpPut("ActivateUser/{clavePlaza}/{UserId}")]
         public ActionResult<Response> ActivateUser(string clavePlaza, int UserId)
         {
