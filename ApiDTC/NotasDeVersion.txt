@@ -1,0 +1,3 @@
+27 mayo
+Los cambios de codemcmrama se integran a master
+El ultimo cambio registrado, fue el commit de UpdateInventario
