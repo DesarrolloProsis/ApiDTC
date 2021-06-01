@@ -505,8 +505,21 @@
                 //No. De Oficio
                 if (_tipo == 3)
                 {
-                    var colSiniestro = new PdfPCell(new Phrase("No De Oficio: ", letraoNegritaChica)) { Border = 0, HorizontalAlignment = Element.ALIGN_RIGHT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 4, Colspan = 3 };
-                    string valorColSiniestro = Convert.ToString(_tableHeader.Rows[0]["NumeroSinisestro"]);
+                    //1 Operacion
+                    //2 Siniestro
+                    //3 Fin de vida util
+                    string nameColumn="data";
+                    if(Convert.ToInt32(_tableHeader.Rows[0]["TypeFaultId"]) ==2 )
+                    {
+                        nameColumn = "No. Siniestro";
+                    }
+                    else if(Convert.ToInt32(_tableHeader.Rows[0]["TypeFaultId"]) == 3)
+                    {
+                        nameColumn = "Oficio";
+                    }
+                        
+                    var colSiniestro = new PdfPCell(new Phrase(nameColumn, letraoNegritaChica)) { Border = 0, HorizontalAlignment = Element.ALIGN_RIGHT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 4, Colspan = 3 };
+                    string valorColSiniestro = Convert.ToString(_tableHeader.Rows[0]["TypeFaultId"]);
                     var siniestro = new PdfPCell(new Phrase(valorColSiniestro, letraNormalChica)) { BorderWidthBottom = 1, BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_BOTTOM, Padding = 2, Colspan = 3 };
 
                     table.AddCell(colSiniestro);
