@@ -44,7 +44,7 @@ namespace ApiDTC.Controllers
             return Ok(get);
         }
 
-        [HttpPost("UpdateFolioFechaInventario/{clavePlaza}/{IdGare}/{NCapufe}/{Fecha}/{Folio}/{IdUsuario}")]
+        [HttpPut("UpdateFolioFechaInventario/{clavePlaza}/{IdGare}/{NCapufe}/{Fecha}/{Folio}/{IdUsuario}")]
         public ActionResult<Response> UpdateFolioFechaInventario(string clavePlaza, string IdGare, string NCapufe, string Fecha, string Folio, int IdUsuario)
         {
             //string clavePlaza, int IdGare, int NCapufe, string Fecha, string Folio, int IdUsuario
