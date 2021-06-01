@@ -282,6 +282,19 @@
         }
 
         //Borrar Diagnostico
+        [AllowAnonymous]
+        [HttpPost("BorraDiagnosticoFull/{clavePlaza}/{ReferenceNumber}/{UserId}/{Comment}")]
+        public ActionResult<Response> BorraDiagnosticoFull(string clavePlaza, string ReferenceNumber, int UserId, string Comment)
+        {
+            if (ModelState.IsValid)
+            {
+                var get = _db.BorraDiagnosticoFull(clavePlaza, ReferenceNumber, UserId, Comment);
+                if (get.Result == null)
+                    return BadRequest(get);
+                return Ok(get);
+            }
+            return BadRequest(ModelState);
+        }
         #endregion
         #endregion
     }
