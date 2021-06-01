@@ -25,7 +25,7 @@ namespace ApiDTC.Models
         public string End { get; set; }
 
         [Required]
-        [StringLength(20)]
+        [StringLength(30)]
         public string SinisterNumber { get; set; }
 
         [Required]
