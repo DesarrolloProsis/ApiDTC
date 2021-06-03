@@ -283,12 +283,12 @@
 
         //Borrar Diagnostico
         [AllowAnonymous]
-        [HttpPost("BorraDiagnosticoFull/{clavePlaza}/{ReferenceNumber}/{UserId}/{Comment}")]
-        public ActionResult<Response> BorraDiagnosticoFull(string clavePlaza, string ReferenceNumber, int UserId, string Comment)
+        [HttpPost("BorraDiagnosticoFull/{clavePlaza}/{ReferenceNumber}/{UserId}/{Comment}/{ReferenceDTC}")]
+        public ActionResult<Response> BorraDiagnosticoFull(string clavePlaza, string ReferenceNumber, int UserId, string Comment, string ReferenceDTC)
         {
             if (ModelState.IsValid)
             {
-                var get = _db.BorraDiagnosticoFull(clavePlaza, ReferenceNumber, UserId, Comment);
+                var get = _db.BorraDiagnosticoFull(clavePlaza, ReferenceNumber, UserId, Comment, ReferenceDTC);
                 if (get.Result == null)
                     return BadRequest(get);
                 return Ok(get);

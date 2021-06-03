@@ -196,7 +196,7 @@ namespace ApiDTC.Data
 
         //Borrado Full
 
-        public Response BorraDiagnosticoFull(string clavePlaza, string ReferenceNumber, int UserId, string Comment)
+        public Response BorraDiagnosticoFull(string clavePlaza, string ReferenceNumber, int UserId, string Comment, string ReferenceDTC)
         {
             try
             {
