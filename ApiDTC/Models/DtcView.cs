@@ -41,6 +41,8 @@
         public string ReferenceSquare { get; set; }
 
         public int UserId { get; set; }
+        public int TypeFaultId { get; set; }
+        public string TechnicalSheetReferences { get; set; }
 
     }
 }
