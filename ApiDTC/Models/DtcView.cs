@@ -42,7 +42,7 @@
 
         public int UserId { get; set; }
         public int TypeFaultId { get; set; }
-        public string TechnicalSheetReferences { get; set; }
+        public string TechnicalSheetReference { get; set; }
 
     }
 }
