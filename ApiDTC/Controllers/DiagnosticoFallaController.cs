@@ -290,10 +290,38 @@
             {
                 var get = _db.BorraDiagnosticoFull(clavePlaza, ReferenceNumber, UserId, Comment, ReferenceDTC);
                 if (get.Result == null)
+                {
                     return BadRequest(get);
-                return Ok(get);
+                }
+                else
+                {
+                    borraArchivosDiagnostico(clavePlaza, ReferenceNumber, ReferenceDTC);
+                    return Ok(get);
+                }
+                    
+                
             }
             return BadRequest(ModelState);
+        }
+
+
+        public void borraArchivosDiagnostico(string clavePlaza,  string ReferenceNumber, string ReferenceDTC)
+        {
+            //try
+            //{
+            //    string path = $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\Reportes\{reportNumber}\DiagnosticoFallaImgs\{fileName}";
+            //    if (!System.IO.File.Exists(path))
+            //        return NotFound(path);
+            //    System.IO.File.Delete(path);
+            //    if (Directory.GetFiles($@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\Reportes\{reportNumber}\DiagnosticoFallaImgs").Length == 0)
+            //        Directory.Delete($@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\Reportes\{reportNumber}\DiagnosticoFallaImgs");
+            //    return Ok(path);
+            //}
+            //catch (IOException ex)
+            //{
+            //    _apiLogger.WriteLog(clavePlaza, ex, "DiagnosticoFallaController: DeleteDiagnosticoImg", 2);
+            //    return NotFound(ex.ToString());
+            //}
         }
         #endregion
         #endregion
