@@ -45,9 +45,8 @@ namespace ApiDTC.Data
                         cmd.Parameters.Add("@UserId", SqlDbType.Int).Value = actividad.UserId;                            
                         cmd.Parameters.Add("@Month", SqlDbType.Int).Value = actividad.Month;
                         cmd.Parameters.Add("@Year", SqlDbType.Int).Value = actividad.Year;
-                        
                         cmd.Parameters.Add("@Comment", SqlDbType.NVarChar).Value = actividad.Comment;
-                        
+                        cmd.Parameters.Add("@AdminId", SqlDbType.Int).Value = actividad.AdminId;
                         var storedResult = _sqlResult.Post(clavePlaza, cmd, sql, "InsertComent");
                         if (storedResult.SqlResult == null)
                             return new Response { Message = "No se pudo insertar comentario", Result = null };

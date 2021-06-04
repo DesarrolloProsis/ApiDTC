@@ -19,5 +19,6 @@ namespace ApiDTC.Models
         public string SquareId { get; set; }
 
         public int Year { get; set; }
+        public int AdminId { get; set; }
     }
 }
