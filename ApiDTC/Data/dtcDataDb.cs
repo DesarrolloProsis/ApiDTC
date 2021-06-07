@@ -159,6 +159,26 @@
             }
         }
 
+        public Response GetReferencesLogDetails()
+        {
+            try
+            {
+                using (SqlConnection sql = new SqlConnection(_connectionString))
+                {
+                    using (SqlCommand cmd = new SqlCommand("dbo.spGetReferencesLogDetails", sql))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        return _sqlResult.GetList<ReferenceLogDetail>("USR", cmd, sql, "spGetReferencesLogDetails");
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                _apiLogger.WriteLog("USR", ex, "DtcDataDb: GetReferencesLog", 1);
+                return new Response { Message = $"Error: {ex.Message}", Result = null };
+            }
+        }
+
         public Response GetComponentsInventoryList(string clavePlaza, string squareId)
         {
             try

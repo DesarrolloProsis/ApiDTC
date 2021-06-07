@@ -171,8 +171,17 @@
                 return NotFound();
             return Ok(get);
         }
+
+        [HttpGet("GetReferencesLogDetail")]
+        public ActionResult<Response> GetReferencesLogDetail()
+        {
+            var get = _db.GetReferencesLogDetails();
+            if (get.Result == null)
+                return NotFound();
+            return Ok(get);
+        }
         #endregion
-        
+
         #region Equipo Dañado
         [HttpPost("EquipoDañado/Images/{clavePlaza}/{referenceNumber}")]
         public ActionResult<Response> InsertImageDaniado(string clavePlaza, [FromForm(Name = "image")] IFormFile image,  string referenceNumber)
