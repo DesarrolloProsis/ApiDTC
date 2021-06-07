@@ -282,7 +282,7 @@
         }
 
         //Borrar Diagnostico
-        [AllowAnonymous]
+        //[AllowAnonymous]
         [HttpPost("BorraDiagnosticoFull/{clavePlaza}/{ReferenceNumber}/{UserId}/{Comment}/{ReferenceDTC}")]
         public ActionResult<Response> BorraDiagnosticoFull(string clavePlaza, string ReferenceNumber, int UserId, string Comment, string ReferenceDTC)
         {
@@ -304,24 +304,77 @@
             return BadRequest(ModelState);
         }
 
-
+        //[AllowAnonymous]
+        //[HttpPost("BorraFoldersFull/{clavePlaza}/{ReferenceNumber}/{ReferenceDTC}")]
         public void borraArchivosDiagnostico(string clavePlaza,  string ReferenceNumber, string ReferenceDTC)
         {
-            //try
-            //{
-            //    string path = $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\Reportes\{reportNumber}\DiagnosticoFallaImgs\{fileName}";
-            //    if (!System.IO.File.Exists(path))
-            //        return NotFound(path);
-            //    System.IO.File.Delete(path);
-            //    if (Directory.GetFiles($@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\Reportes\{reportNumber}\DiagnosticoFallaImgs").Length == 0)
-            //        Directory.Delete($@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\Reportes\{reportNumber}\DiagnosticoFallaImgs");
-            //    return Ok(path);
-            //}
-            //catch (IOException ex)
-            //{
-            //    _apiLogger.WriteLog(clavePlaza, ex, "DiagnosticoFallaController: DeleteDiagnosticoImg", 2);
-            //    return NotFound(ex.ToString());
-            //}
+            try
+            {
+                string fechaDel = armaFecha();
+                string pathReporte = $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\Reportes\{ReferenceNumber}";
+                string pathDTC = $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\DTC\{ReferenceDTC}";
+                if (crearEstructuraDel())
+                {
+                    if (checkIfExist(pathReporte))
+                    {
+                        string pathReporteDel = $@"{this._disk}:\{this._folder}\borrado\Reportes\{ReferenceNumber}-" + armaFecha();
+                        Directory.Move(pathReporte, pathReporteDel);
+                    }
+                    if (checkIfExist(pathDTC) && !ReferenceDTC.Equals("--"))
+                    {
+                        string pathDTCDel = $@"{this._disk}:\{this._folder}\borrado\DTC\{ReferenceDTC}-" + armaFecha();
+                        Directory.Move(pathDTC, pathDTCDel);
+                    }
+                }
+
+                Console.WriteLine(pathReporte + "--"+ pathDTC);
+            }
+            catch (IOException ex)
+            {
+                Console.WriteLine(ex);
+            }
+        }
+
+        public string armaFecha()
+        {
+            string fechaBorrado = DateTime.Now.ToString().Replace(" ", "");
+            fechaBorrado=fechaBorrado.Replace("/", "");
+            fechaBorrado = fechaBorrado.Replace(":", "");
+            return fechaBorrado;
+        }
+
+        public bool checkIfExist(string ruta)
+        {
+            if (Directory.Exists(ruta))
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public bool crearEstructuraDel()
+        {
+            string pathBorraReporte = $@"{this._disk}:\{this._folder}\borrado\Reportes";
+            string pathBorraDTC = $@"{this._disk}:\{this._folder}\borrado\DTC";
+            bool canCreate = false;
+            if(Directory.Exists(pathBorraReporte)){
+                canCreate = true;
+            }
+            else
+            {
+                DirectoryInfo di = Directory.CreateDirectory(pathBorraReporte);
+                canCreate = true;
+            }
+            if (Directory.Exists(pathBorraDTC))
+            {
+                canCreate = true;
+            }
+            else
+            {
+                DirectoryInfo di = Directory.CreateDirectory(pathBorraDTC);
+                canCreate = true;
+            }
+            return canCreate;
         }
         #endregion
         #endregion
