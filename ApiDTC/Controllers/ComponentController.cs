@@ -129,6 +129,16 @@
             return Ok(put);
 
         }
+
+        [HttpPost("updateInventory/{clavePlaza}/{Reference}")]
+        public ActionResult<Response> UpdateInventory(string clavePlaza, string Reference)
+        {
+            var put = _db.UpdateInventory(clavePlaza, Reference);
+            if (put.SqlResult == null)
+                return NotFound(put);
+            return Ok(put);
+
+        }
         #endregion
     }
 }

@@ -403,6 +403,27 @@
             
         }
 
+
+        public SqlResponse UpdateInventory(string clavePlaza, string Reference)
+        {
+            try
+            {
+                using (SqlConnection sql = new SqlConnection(_connectionString))
+                {
+                    using (SqlCommand cmd = new SqlCommand("dbo.spUpdateRequestedFromInventory", sql))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.Add("@Reference", SqlDbType.NVarChar).Value = Reference;
+                        return _sqlResult.Post(clavePlaza, cmd, sql, "ComponentDb");
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                _apiLogger.WriteLog(clavePlaza, ex, "ComponentDb: UpdateInventory", 1);
+                return new SqlResponse { SqlMessage = ex.Message, SqlResult = null };
+            }
+        }
         #endregion
     }
 }
