@@ -172,10 +172,10 @@
             return Ok(get);
         }
 
-        [HttpGet("GetReferencesLogDetail")]
-        public ActionResult<Response> GetReferencesLogDetail()
+        [HttpGet("GetReferencesLogDetail/{ReferenceNumber}")]
+        public ActionResult<Response> GetReferencesLogDetail(string ReferenceNumber)
         {
-            var get = _db.GetReferencesLogDetails();
+            var get = _db.GetReferencesLogDetails(ReferenceNumber);
             if (get.Result == null)
                 return NotFound();
             return Ok(get);

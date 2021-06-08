@@ -159,7 +159,7 @@
             }
         }
 
-        public Response GetReferencesLogDetails()
+        public Response GetReferencesLogDetails(string referenceNumber)
         {
             try
             {
@@ -168,13 +168,14 @@
                     using (SqlCommand cmd = new SqlCommand("dbo.spGetReferencesLogDetails", sql))
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.Add("@ReferenceNumber", SqlDbType.NVarChar).Value = referenceNumber;
                         return _sqlResult.GetList<ReferenceLogDetail>("USR", cmd, sql, "spGetReferencesLogDetails");
                     }
                 }
             }
             catch (SqlException ex)
             {
-                _apiLogger.WriteLog("USR", ex, "DtcDataDb: GetReferencesLog", 1);
+                _apiLogger.WriteLog("USR", ex, "DtcDataDb: GetReferencesLogDetails", 1);
                 return new Response { Message = $"Error: {ex.Message}", Result = null };
             }
         }
