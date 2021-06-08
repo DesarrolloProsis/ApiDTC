@@ -193,6 +193,40 @@ namespace ApiDTC.Data
                 return null;
             }
         }
+
+        //Borrado Full
+
+        public Response BorraDiagnosticoFull(string clavePlaza, string ReferenceNumber, int UserId, string Comment, string ReferenceDTC)
+        {
+            try
+            {
+                using (SqlConnection sql = new SqlConnection(_connectionString))
+                {
+                    using (SqlCommand cmd = new SqlCommand("dbo.spDeleteDiagnosisFull", sql))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.Add("@ReferenceNumber", SqlDbType.NVarChar).Value = ReferenceNumber;
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.Add("@UserId", SqlDbType.Int).Value = UserId;
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.Add("@Comment", SqlDbType.NVarChar).Value = Comment;
+                        var storedResult = _sqlResult.Post(clavePlaza, cmd, sql, "InsertFichaTecnicaIntervencionLane");
+                        if (storedResult.SqlResult == null)
+                            return new Response { Message = "Error: " + storedResult.SqlMessage, Result = null };
+                    }
+                }
+                return new Response
+                {
+                    Message = "Ok",
+                    Result = ""
+                };
+            }
+            catch (SqlException ex)
+            {
+                _apiLogger.WriteLog(clavePlaza, ex, "Diagnostico: BorraDiagnosticoFull", 1);
+                return new Response { Message = $"Error: {ex.Message}", Result = null };
+            }
+        }
         #endregion
     }
 }

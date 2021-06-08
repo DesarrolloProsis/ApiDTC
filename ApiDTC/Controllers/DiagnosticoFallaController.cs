@@ -280,6 +280,102 @@
                 return NotFound(ex.ToString());
             }
         }
+
+        //Borrar Diagnostico
+        //[AllowAnonymous]
+        [HttpPost("BorraDiagnosticoFull/{clavePlaza}/{ReferenceNumber}/{UserId}/{Comment}/{ReferenceDTC}")]
+        public ActionResult<Response> BorraDiagnosticoFull(string clavePlaza, string ReferenceNumber, int UserId, string Comment, string ReferenceDTC)
+        {
+            if (ModelState.IsValid)
+            {
+                var get = _db.BorraDiagnosticoFull(clavePlaza, ReferenceNumber, UserId, Comment, ReferenceDTC);
+                if (get.Result == null)
+                {
+                    return BadRequest(get);
+                }
+                else
+                {
+                    borraArchivosDiagnostico(clavePlaza, ReferenceNumber, ReferenceDTC);
+                    return Ok(get);
+                }
+                    
+                
+            }
+            return BadRequest(ModelState);
+        }
+
+        //[AllowAnonymous]
+        //[HttpPost("BorraFoldersFull/{clavePlaza}/{ReferenceNumber}/{ReferenceDTC}")]
+        public void borraArchivosDiagnostico(string clavePlaza,  string ReferenceNumber, string ReferenceDTC)
+        {
+            try
+            {
+                string fechaDel = armaFecha();
+                string pathReporte = $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\Reportes\{ReferenceNumber}";
+                string pathDTC = $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\DTC\{ReferenceDTC}";
+                if (crearEstructuraDel())
+                {
+                    if (checkIfExist(pathReporte))
+                    {
+                        string pathReporteDel = $@"{this._disk}:\{this._folder}\borrado\Reportes\{ReferenceNumber}-" + armaFecha();
+                        Directory.Move(pathReporte, pathReporteDel);
+                    }
+                    if (checkIfExist(pathDTC) && !ReferenceDTC.Equals("--"))
+                    {
+                        string pathDTCDel = $@"{this._disk}:\{this._folder}\borrado\DTC\{ReferenceDTC}-" + armaFecha();
+                        Directory.Move(pathDTC, pathDTCDel);
+                    }
+                }
+
+                Console.WriteLine(pathReporte + "--"+ pathDTC);
+            }
+            catch (IOException ex)
+            {
+                Console.WriteLine(ex);
+            }
+        }
+
+        public string armaFecha()
+        {
+            string fechaBorrado = DateTime.Now.ToString().Replace(" ", "");
+            fechaBorrado=fechaBorrado.Replace("/", "");
+            fechaBorrado = fechaBorrado.Replace(":", "");
+            return fechaBorrado;
+        }
+
+        public bool checkIfExist(string ruta)
+        {
+            if (Directory.Exists(ruta))
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public bool crearEstructuraDel()
+        {
+            string pathBorraReporte = $@"{this._disk}:\{this._folder}\borrado\Reportes";
+            string pathBorraDTC = $@"{this._disk}:\{this._folder}\borrado\DTC";
+            bool canCreate = false;
+            if(Directory.Exists(pathBorraReporte)){
+                canCreate = true;
+            }
+            else
+            {
+                DirectoryInfo di = Directory.CreateDirectory(pathBorraReporte);
+                canCreate = true;
+            }
+            if (Directory.Exists(pathBorraDTC))
+            {
+                canCreate = true;
+            }
+            else
+            {
+                DirectoryInfo di = Directory.CreateDirectory(pathBorraDTC);
+                canCreate = true;
+            }
+            return canCreate;
+        }
         #endregion
         #endregion
     }
