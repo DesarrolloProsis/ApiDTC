@@ -130,10 +130,10 @@
 
         }
 
-        [HttpPost("updateInventory/{clavePlaza}/{Reference}")]
-        public ActionResult<Response> UpdateInventory(string clavePlaza, string Reference)
+        [HttpPost("updateInventory/{clavePlaza}/{Reference}/{UserId}")]
+        public ActionResult<Response> UpdateInventory(string clavePlaza, string Reference, int UserId)
         {
-            var put = _db.UpdateInventory(clavePlaza, Reference);
+            var put = _db.UpdateInventory(clavePlaza, Reference, UserId);
             if (put.SqlResult == null)
                 return NotFound(put);
             return Ok(put);

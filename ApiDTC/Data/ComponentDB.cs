@@ -404,7 +404,7 @@
         }
 
 
-        public SqlResponse UpdateInventory(string clavePlaza, string Reference)
+        public SqlResponse UpdateInventory(string clavePlaza, string Reference, int userId )
         {
             try
             {
@@ -414,6 +414,7 @@
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.Add("@Reference", SqlDbType.NVarChar).Value = Reference;
+                        cmd.Parameters.Add("@UserId", SqlDbType.Int).Value = userId;
                         return _sqlResult.Post(clavePlaza, cmd, sql, "ComponentDb");
                     }
                 }
