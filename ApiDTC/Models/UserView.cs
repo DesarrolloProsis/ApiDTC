@@ -17,6 +17,7 @@
         public int RollId { get; set; }
 
         public string Mail { get; set; }
+        public string Plazas { get; set; }
     }
 }
 
