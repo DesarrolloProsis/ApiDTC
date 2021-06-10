@@ -1,11 +1,9 @@
 ﻿namespace ApiDTC.Controllers
 {
     using System;
-    using System.Collections.Generic;
     using System.IO;
-    using System.Linq;
-    using System.Threading.Tasks;
     using ApiDTC.Data;
+    using ApiDTC.Models;
     using ApiDTC.Services;
     using Microsoft.AspNetCore.Authentication.JwtBearer;
     using Microsoft.AspNetCore.Authorization;
@@ -58,6 +56,39 @@
                 _apiLogger.WriteLog(clavePlaza, ex, "MantenimientoPdf: GetMantenimiento", 2);
                 return NotFound(ex.ToString());
             }
+        }
+
+        [AllowAnonymous]
+        [HttpPost("CalendarioEscaneado/{clavePlaza}/{_noReporte}")]
+        public ActionResult<Response> SubirTablaActividadesMantenimiento([FromForm(Name = "file")] IFormFile file, string clavePlaza, string _noReporte)
+        {
+
+            if (file.Length > 0 || file != null)
+            {
+                if (file.FileName.EndsWith(".pdf") || file.FileName.EndsWith(".PDF"))
+                {
+                    string path = $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\Reportes\{_noReporte}\";
+                    string filename = $"{_noReporte}-Escaneado.pdf";
+                    try
+                    {
+                        if (!Directory.Exists(path))
+                            Directory.CreateDirectory(path);
+                        if (System.IO.File.Exists(Path.Combine(path, filename)))
+                            System.IO.File.Delete(Path.Combine(path, filename));
+                        var fs = new FileStream(Path.Combine(path, filename), FileMode.Create);
+                        file.CopyTo(fs);
+                        fs.Close();
+                        return Ok(path);
+                    }
+                    catch (IOException ex)
+                    {
+                        _apiLogger.WriteLog(clavePlaza, ex, "Mantenimiento: SubirTablaActividadesMantenimiento", 2);
+                        return NotFound(ex.ToString());
+                    }
+                }
+                return NotFound("Ingresa un archivo pdf");
+            }
+            return NotFound();
         }
         #endregion
     }
