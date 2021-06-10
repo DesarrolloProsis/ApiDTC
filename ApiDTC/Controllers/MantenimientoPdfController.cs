@@ -58,7 +58,6 @@
             }
         }
 
-        [AllowAnonymous]
         [HttpPost("TablaActEscaneado/{clavePlaza}/{_noReporte}")]
         public ActionResult<Response> SubirPDFTablaActividadesMantenimiento([FromForm(Name = "file")] IFormFile file, string clavePlaza, string _noReporte)
         {
@@ -90,7 +89,6 @@
             }
             return NotFound();
         }
-        [AllowAnonymous]
         [HttpGet("TablaActEscaneado/{clavePlaza}/{_noReporte}")]
         public ActionResult GetPDFTablaActividadesMantenimiento(string clavePlaza, string _noReporte)
         {
