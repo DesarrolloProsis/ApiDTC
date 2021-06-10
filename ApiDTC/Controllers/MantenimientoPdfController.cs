@@ -59,8 +59,8 @@
         }
 
         [AllowAnonymous]
-        [HttpPost("CalendarioEscaneado/{clavePlaza}/{_noReporte}")]
-        public ActionResult<Response> SubirTablaActividadesMantenimiento([FromForm(Name = "file")] IFormFile file, string clavePlaza, string _noReporte)
+        [HttpPost("TablaActEscaneado/{clavePlaza}/{_noReporte}")]
+        public ActionResult<Response> SubirPDFTablaActividadesMantenimiento([FromForm(Name = "file")] IFormFile file, string clavePlaza, string _noReporte)
         {
 
             if (file.Length > 0 || file != null)
@@ -89,6 +89,24 @@
                 return NotFound("Ingresa un archivo pdf");
             }
             return NotFound();
+        }
+        [AllowAnonymous]
+        [HttpGet("TablaActEscaneado/{clavePlaza}/{_noReporte}")]
+        public ActionResult GetPDFTablaActividadesMantenimiento(string clavePlaza, string _noReporte)
+        {
+
+            string path = $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\Reportes\{_noReporte}\{_noReporte}-Escaneado.pdf";
+            try
+            {
+                if (!System.IO.File.Exists(path))
+                    return NotFound(path);
+                return File(new FileStream(path, FileMode.Open, FileAccess.Read), "application/pdf");
+            }
+            catch (IOException ex)
+            {
+                _apiLogger.WriteLog(clavePlaza, ex, "CalendarioController: GetPdfSellado", 2);
+                return NotFound(ex.ToString());
+            }
         }
         #endregion
     }
