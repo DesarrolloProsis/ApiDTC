@@ -300,6 +300,15 @@
                 return NotFound(ex.ToString());
             }
         }
+
+        [HttpPut("UpdateFechaDtc/{clavePlaza}")]
+        public ActionResult<Response> UpdateFechaDtc(string clavePlaza, [FromBody] DtcFechas dtcData)
+        {
+            var get = _db.UpdateFechasDTC(clavePlaza, dtcData);
+            if (get.Result == null)
+                return NotFound();
+            return Ok(get);
+        }
         #endregion
 
         #region Equipo Nuevo

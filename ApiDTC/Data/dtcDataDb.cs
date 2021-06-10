@@ -490,6 +490,37 @@
                 return new Response { Message = $"Error: {ex.Message}", Result = null };
             }
         }
+
+        public Response UpdateFechasDTC(string clavePlaza, DtcFechas dtcHeader)
+        {
+            try
+            {
+                using (SqlConnection sql = new SqlConnection(_connectionString))
+                {
+                    using (SqlCommand cmd = new SqlCommand("dbo.spUpdateDTCDates", sql))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+
+                        cmd.Parameters.Add("@Reference", SqlDbType.NVarChar).Value = dtcHeader.Reference;
+                        cmd.Parameters.Add("@SinisterDate", SqlDbType.Date).Value = dtcHeader.SinisterDate;
+                        cmd.Parameters.Add("@FailureDate", SqlDbType.Date).Value = dtcHeader.FailureDate;
+                        cmd.Parameters.Add("@ShippingDate", SqlDbType.Date).Value = dtcHeader.ShippingDate;
+                        cmd.Parameters.Add("@ElaborationDate", SqlDbType.Date).Value = dtcHeader.ElaborationDate;
+                        var response = _sqlResult.Put(clavePlaza, cmd, sql, "dtcDataBd: UpdateFechasDTC");
+                        return new Response
+                        {
+                            Message = response.SqlMessage,
+                            Result = response.SqlResult
+                        };
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                _apiLogger.WriteLog(clavePlaza, ex, "DtcDataDb: UpdateFechasDTC", 1);
+                return new Response { Message = $"Error: {ex.Message}", Result = null };
+            }
+        }
         #endregion
     }
 }
