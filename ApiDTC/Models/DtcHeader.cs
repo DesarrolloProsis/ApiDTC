@@ -8,7 +8,7 @@
         [StringLength(30)]
         public string ReferenceNumber { get; set; }
 
-        [StringLength(20)]
+        [StringLength(30)]
         public string NumSiniestro { get; set; }
 
         [StringLength(20)]
