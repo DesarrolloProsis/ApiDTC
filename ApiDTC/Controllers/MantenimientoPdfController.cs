@@ -58,16 +58,16 @@
             }
         }
 
-        [HttpPost("TablaActEscaneado/{clavePlaza}/{_noReporte}")]
-        public ActionResult<Response> SubirPDFTablaActividadesMantenimiento([FromForm(Name = "file")] IFormFile file, string clavePlaza, string _noReporte)
+        [HttpPost("TablaActEscaneado/{clavePlaza}/{reference}")]
+        public ActionResult<Response> SubirPDFTablaActividadesMantenimiento([FromForm(Name = "file")] IFormFile file, string clavePlaza, string reference)
         {
 
             if (file.Length > 0 || file != null)
             {
                 if (file.FileName.EndsWith(".pdf") || file.FileName.EndsWith(".PDF"))
                 {
-                    string path = $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\Reportes\{_noReporte}\";
-                    string filename = $"{_noReporte}-Escaneado.pdf";
+                    string path = $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\Reportes\{reference}\";
+                    string filename = $"{reference}-Escaneado.pdf";
                     try
                     {
                         if (!Directory.Exists(path))
@@ -89,11 +89,11 @@
             }
             return NotFound();
         }
-        [HttpGet("TablaActEscaneado/{clavePlaza}/{_noReporte}")]
-        public ActionResult GetPDFTablaActividadesMantenimiento(string clavePlaza, string _noReporte)
+        [HttpGet("TablaActEscaneado/{clavePlaza}/{reference}")]
+        public ActionResult GetPDFTablaActividadesMantenimiento(string clavePlaza, string reference)
         {
 
-            string path = $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\Reportes\{_noReporte}\{_noReporte}-Escaneado.pdf";
+            string path = $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\Reportes\{reference}\{reference}-Escaneado.pdf";
             try
             {
                 if (!System.IO.File.Exists(path))
