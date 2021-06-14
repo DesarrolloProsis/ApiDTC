@@ -5,8 +5,6 @@ namespace ApiDTC.Models
 
     public class DiagnosticoDeFalla
     {
-        [Required]
-        [StringLength(30)]
         public string ReferenceNumber { get; set; }
 
         [Required]
@@ -24,8 +22,6 @@ namespace ApiDTC.Models
         [StringLength(30)]
         public string End { get; set; }
 
-        [Required]
-        [StringLength(30)]
         public string SinisterNumber { get; set; }
 
         [Required]
