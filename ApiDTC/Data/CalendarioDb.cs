@@ -79,6 +79,7 @@ namespace ApiDTC.Data
                         cmd.Parameters.Add("@UserId", SqlDbType.Int).Value = actividadesUsuario.UserId;
                         cmd.Parameters.Add("@SquareId", SqlDbType.NVarChar).Value = actividadesUsuario.SquareId;
                         cmd.Parameters.Add("@Year", SqlDbType.Int).Value = actividadesUsuario.Year;
+                        cmd.Parameters.Add("@Month", SqlDbType.Int).Value = actividadesUsuario.Month;
                         var storedResult =  _sqlResult.GetList<CalendarQueryFront>(clavePlaza, cmd, sql, "GetTechnicalSheet");
                         if (storedResult.Result is null)
                             return storedResult;

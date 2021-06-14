@@ -11,10 +11,11 @@ namespace ApiDTC.Models
         public int UserId { get; set; }
 
         public string SquareId { get; set; }
+        public int Year { get; set; }
 
         public int Month { get; set; }
 
-        public int Year { get; set; }
+        
 
     }
 }
