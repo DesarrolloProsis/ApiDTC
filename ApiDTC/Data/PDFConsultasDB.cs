@@ -67,17 +67,19 @@
             }
         }
 
-        public Response AutorizadoGmmp(string clavePlaza, string referenceNumber)
+        public Response AutorizadoGmmp(string clavePlaza, string referenceNumber, int UserId)
         {
             try
             {
                 using (SqlConnection sql = new SqlConnection(_connectionString))
                 {
-                    using (SqlCommand cmd = new SqlCommand("spUpdateStatusDTC", sql))
+                    using (SqlCommand cmd = new SqlCommand("spUpdateDTCStatusLog", sql))
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.Add("@ReferenceNumber", SqlDbType.NVarChar).Value = referenceNumber;
                         cmd.Parameters.Add("@status", SqlDbType.Int).Value = 4;
+                        cmd.Parameters.Add("@UserId", SqlDbType.Int).Value = UserId;
+                        cmd.Parameters.Add("@Comment", SqlDbType.NVarChar).Value = "--";
                         var result = _sqlResult.Put(clavePlaza, cmd, sql, "AutorizadoGmmp");
                         return new Response
                         {

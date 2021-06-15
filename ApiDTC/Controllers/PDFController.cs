@@ -165,10 +165,10 @@
             return BadRequest(ModelState);
         }
 
-        [HttpGet("Autorizado/{clavePlaza}/{referenceNumber}")]
-        public ActionResult<Response> PdfAutorizado(string clavePlaza, string referenceNumber)
+        [HttpGet("Autorizado/{clavePlaza}/{referenceNumber}/{UserId}")]
+        public ActionResult<Response> PdfAutorizado(string clavePlaza, string referenceNumber, int UserId)
         {
-            var get = _db.AutorizadoGmmp(clavePlaza, referenceNumber);
+            var get = _db.AutorizadoGmmp(clavePlaza, referenceNumber, UserId);
             if (get.Result == null)
                 return NotFound(get);
             return Ok(get);
