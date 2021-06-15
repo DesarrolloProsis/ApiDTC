@@ -77,7 +77,7 @@
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.Add("@ReferenceNumber", SqlDbType.NVarChar).Value = referenceNumber;
-                        cmd.Parameters.Add("@status", SqlDbType.Int).Value = 4;
+                        cmd.Parameters.Add("@StatusId", SqlDbType.Int).Value = 4;
                         cmd.Parameters.Add("@UserId", SqlDbType.Int).Value = UserId;
                         cmd.Parameters.Add("@Comment", SqlDbType.NVarChar).Value = "--";
                         var result = _sqlResult.Put(clavePlaza, cmd, sql, "AutorizadoGmmp");
