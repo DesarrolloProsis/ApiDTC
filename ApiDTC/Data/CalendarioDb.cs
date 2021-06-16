@@ -9,6 +9,7 @@ namespace ApiDTC.Data
     using System.Collections.Generic;
     using System.Data;
     using System.Data.SqlClient;
+    using System.IO;
     using System.Linq;
     using System.Threading.Tasks;
 
@@ -67,7 +68,7 @@ namespace ApiDTC.Data
 
         }
 
-        public Response GetActividadesUsuario(string clavePlaza, ActividadesUsuario actividadesUsuario)
+        public Response GetActividadesUsuario(string clavePlaza, ActividadesUsuario actividadesUsuario, string disk, string folder)
         {
             try
             {
@@ -80,15 +81,38 @@ namespace ApiDTC.Data
                         cmd.Parameters.Add("@SquareId", SqlDbType.NVarChar).Value = actividadesUsuario.SquareId;
                         cmd.Parameters.Add("@Year", SqlDbType.Int).Value = actividadesUsuario.Year;
                         cmd.Parameters.Add("@Month", SqlDbType.Int).Value = actividadesUsuario.Month;
-                        var storedResult =  _sqlResult.GetList<CalendarQueryFront>(clavePlaza, cmd, sql, "GetTechnicalSheet");
-                        if (storedResult.Result is null)
-                            return storedResult;
+                        var storedResult =  _sqlResult.GetRows<CalendarQueryFront>(clavePlaza, cmd, sql, "GetTechnicalSheet");
 
+                        ////
+                        List<CalendarQueryFrontInfo> dtcViewInfo = new List<CalendarQueryFrontInfo>();
+
+                        foreach (var dtcView in storedResult)
+                        {
+                            CalendarQueryFrontInfo viewInfo = new CalendarQueryFrontInfo
+                            {
+                                CalendarQueryFront = dtcView
+                            };
+                            //D:\BitacoraDesarrollo\TLA\Reportes\TLA-DF-21146
+                            string path = $@"{disk}:\{folder}\{dtcView.ReferenceNumber.Split('-')[0].ToUpper()}\Reportes\{dtcView.ReferenceNumber}\{dtcView.ReferenceNumber}-Diagnostico.pdf";
+                            if (System.IO.File.Exists((path)))
+                                viewInfo.PdfExists = true;
+                            else
+                                viewInfo.PdfExists = false;
+                            dtcViewInfo.Add(viewInfo);
+                        }
                         return new Response
                         {
-                            Message = "Ok",
-                            Result = storedResult.Result
+                            Result = dtcViewInfo,
+                            Message = "Ok"
                         };
+
+
+                        ///
+                        //return new Response
+                        //{
+                        //    Message = "Ok",
+                        //    Result = storedResult.Result
+                        //};
                     }
                 }
             }

@@ -46,7 +46,7 @@
         [HttpPost("GetActividadesUsuario")]
         public IActionResult GetActividadesUsuario([FromBody] ActividadesUsuario actividadesUsuario)
         {
-            var get = _db.GetActividadesUsuario("USR", actividadesUsuario);
+            var get = _db.GetActividadesUsuario("USR", actividadesUsuario, this._disk, this._folder);
             if (get.Result == null)
                 return NotFound(get);
             else
