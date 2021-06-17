@@ -49,5 +49,24 @@ namespace ApiDTC.Data
                 return new SqlResponse { SqlMessage = ex.Message, SqlResult = null };
             }
         }
+        public Response GetListTypeComments(string clavePlaza)
+        {
+            try
+            {
+                using (SqlConnection sql = new SqlConnection(_connectionString))
+                {
+                    using (SqlCommand cmd = new SqlCommand("dbo.spGetTypeComments", sql))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        return _sqlResult.GetList<CommentType>(clavePlaza, cmd, sql, "GetListTypeComments");
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                _apiLogger.WriteLog(clavePlaza, ex, "GetListComments: GetListTypeComments", 1);
+                return new Response { Message = $"Error: {ex.Message}", Result = null };
+            }
+        }
     }
 }

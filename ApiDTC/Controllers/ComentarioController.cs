@@ -40,5 +40,14 @@ namespace ApiDTC.Controllers
             return BadRequest(ModelState);
         }
 
+        [HttpGet("comment/{clavePlaza}/")]
+        public ActionResult<Response> listTypeComment(string clavePlaza)
+        {
+            var get = _db.GetListTypeComments(clavePlaza);
+            if (get.Result == null)
+                return NotFound(get);
+            return Ok(get);
+        }
+
     }
 }
