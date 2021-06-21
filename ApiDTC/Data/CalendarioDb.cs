@@ -90,7 +90,14 @@ namespace ApiDTC.Data
                         {
                             CalendarQueryFrontInfo viewInfo = new CalendarQueryFrontInfo
                             {
-                                CalendarQueryFront = dtcView
+                                CapufeLaneNum= dtcView.CapufeLaneNum,
+                                IdGare= dtcView.IdGare,
+                                Day= dtcView.Day,
+                                FrequencyId= dtcView.FrequencyId,
+                                DateStamp= dtcView.DateStamp,
+                                CalendarId= dtcView.CalendarId,
+                                StatusMaintenance = dtcView.StatusMaintenance,
+                                ReferenceNumber = dtcView.ReferenceNumber,
                             };
                             //D:\BitacoraDesarrollo\TLA\Reportes\TLA-DF-21146
                             string path = $@"{disk}:\{folder}\{dtcView.ReferenceNumber.Split('-')[0].ToUpper()}\Reportes\{dtcView.ReferenceNumber}\{dtcView.ReferenceNumber}-Diagnostico.pdf";
