@@ -101,7 +101,7 @@ namespace ApiDTC.Data
                                 ReferenceNumber = dtcView.ReferenceNumber,
                             };
                             //D:\BitacoraDesarrollo\TLA\Reportes\TLA-DF-21146
-                            string path = $@"{disk}:\{folder}\{dtcView.ReferenceNumber.Split('-')[0].ToUpper()}\Reportes\{dtcView.ReferenceNumber}\{dtcView.ReferenceNumber}-Diagnostico.pdf";
+                            string path = $@"{disk}:\{folder}\{dtcView.ReferenceNumber.Split('-')[0].ToUpper()}\Reportes\{dtcView.ReferenceNumber}\{dtcView.ReferenceNumber}-Escaneado.pdf";
                             if (System.IO.File.Exists((path)))
                                 viewInfo.PdfExists = true;
                             else
@@ -591,7 +591,7 @@ namespace ApiDTC.Data
                                 ReferenceNumber = dtcView.ReferenceNumber
                             };
                             //D:\BitacoraDesarrollo\TLA\Reportes\TLA-DF-21146
-                            string path = $@"{disk}:\{folder}\{dtcView.ReferenceNumber.Split('-')[0].ToUpper()}\Reportes\{dtcView.ReferenceNumber}\{dtcView.ReferenceNumber}-Diagnostico.pdf";
+                            string path = $@"{disk}:\{folder}\{dtcView.ReferenceNumber.Split('-')[0].ToUpper()}\Reportes\{dtcView.ReferenceNumber}\{dtcView.ReferenceNumber}-Escaneado.pdf";
                             if (System.IO.File.Exists((path)))
                                 viewInfo.PdfExists = true;
                             else
