@@ -90,7 +90,8 @@ namespace ApiDTC.Data
                         {
                             CalendarQueryFrontInfo viewInfo = new CalendarQueryFrontInfo
                             {
-                                CapufeLaneNum= dtcView.CapufeLaneNum,
+                                Lane = dtcView.Lane,
+                                CapufeLaneNum = dtcView.CapufeLaneNum,
                                 IdGare= dtcView.IdGare,
                                 Day= dtcView.Day,
                                 FrequencyId= dtcView.FrequencyId,
@@ -579,6 +580,7 @@ namespace ApiDTC.Data
                         {
                             CalendarQueryFrontInfo viewInfo = new CalendarQueryFrontInfo
                             {
+                                Lane= dtcView.Lane,
                                 CapufeLaneNum = dtcView.CapufeLaneNum,
                                 IdGare = dtcView.IdGare,
                                 Day = dtcView.Day,
@@ -586,7 +588,7 @@ namespace ApiDTC.Data
                                 DateStamp = dtcView.DateStamp,
                                 CalendarId = dtcView.CalendarId,
                                 StatusMaintenance = dtcView.StatusMaintenance,
-                                ReferenceNumber = dtcView.ReferenceNumber,
+                                ReferenceNumber = dtcView.ReferenceNumber
                             };
                             //D:\BitacoraDesarrollo\TLA\Reportes\TLA-DF-21146
                             string path = $@"{disk}:\{folder}\{dtcView.ReferenceNumber.Split('-')[0].ToUpper()}\Reportes\{dtcView.ReferenceNumber}\{dtcView.ReferenceNumber}-Diagnostico.pdf";
