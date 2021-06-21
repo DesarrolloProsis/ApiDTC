@@ -68,7 +68,7 @@ namespace ApiDTC.Data
 
         }
 
-        public Response GetActividadesUsuario(string clavePlaza, ActividadesUsuario actividadesUsuario, string disk, string folder)
+        public Response GetActividadesUsuario(string clavePlaza, ActividadesUsuario actividadesUsuario, string disk, string folder)//
         {
             try
             {
@@ -557,7 +557,7 @@ namespace ApiDTC.Data
             }
         }
 
-        public Response GetActivity(string clavePlaza, ActividadMesYear actividad)
+        public Response GetActivity(string clavePlaza, ActividadMesYear actividad, string disk, string folder)//---- ---------- ------------ ------------- ---------   ----------
         {
             try
             {
@@ -571,16 +571,37 @@ namespace ApiDTC.Data
                         cmd.Parameters.Add("@Month", SqlDbType.Int).Value = actividad.Month;
                         cmd.Parameters.Add("@Year", SqlDbType.Int).Value = actividad.Year;
                         
-                        var storedResult = _sqlResult.GetList<CalendarQuery>(clavePlaza, cmd, sql, "GetActivity");
+                        var storedResult = _sqlResult.GetRows<CalendarQuery>(clavePlaza, cmd, sql, "GetActivity");
 
-                        if(storedResult.Result == null)
-                            return new Response { Result = null, Message = storedResult.Message };
+                        List<CalendarQueryFrontInfo> dtcViewInfo = new List<CalendarQueryFrontInfo>();
+
+                        foreach (var dtcView in storedResult)
+                        {
+                            CalendarQueryFrontInfo viewInfo = new CalendarQueryFrontInfo
+                            {
+                                CapufeLaneNum = dtcView.CapufeLaneNum,
+                                IdGare = dtcView.IdGare,
+                                Day = dtcView.Day,
+                                FrequencyId = dtcView.FrequencyId,
+                                DateStamp = dtcView.DateStamp,
+                                CalendarId = dtcView.CalendarId,
+                                StatusMaintenance = dtcView.StatusMaintenance,
+                                ReferenceNumber = dtcView.ReferenceNumber,
+                            };
+                            //D:\BitacoraDesarrollo\TLA\Reportes\TLA-DF-21146
+                            string path = $@"{disk}:\{folder}\{dtcView.ReferenceNumber.Split('-')[0].ToUpper()}\Reportes\{dtcView.ReferenceNumber}\{dtcView.ReferenceNumber}-Diagnostico.pdf";
+                            if (System.IO.File.Exists((path)))
+                                viewInfo.PdfExists = true;
+                            else
+                                viewInfo.PdfExists = false;
+                            dtcViewInfo.Add(viewInfo);
+                        }
                         return new Response
                         {
-                            Message = "Ok",
-                            Result = storedResult.Result
+                            Result = dtcViewInfo,
+                            Message = "Ok"
                         };
-                 
+
                     }
                 }
              

@@ -185,11 +185,11 @@
         }
 
         [HttpPost("ActividadMesYear/{clavePlaza}")]
-        public ActionResult<Response> GetActividad(string clavePlaza, [FromBody] ActividadMesYear infoActividad)
+        public ActionResult<Response> GetActividad(string clavePlaza, [FromBody] ActividadMesYear infoActividad)//
         {
             if (ModelState.IsValid)
             {
-                var get = _db.GetActivity(clavePlaza, infoActividad);
+                var get = _db.GetActivity(clavePlaza, infoActividad, this._disk, this._folder);
                 if (get.Result == null)
                     return BadRequest(get);
                 else
