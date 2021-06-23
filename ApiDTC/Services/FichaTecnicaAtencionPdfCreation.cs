@@ -135,7 +135,7 @@ namespace ApiDTC.Services
                     
                     PdfContentByte cb = writer.DirectContent;
                     PdfPTable tablaFirmas = TablaFirmas();
-                    tablaFirmas.WriteSelectedRows(0, -1, 30, 200, cb);
+                    tablaFirmas.WriteSelectedRows(0, -1, 30, 150, cb);
                     doc.Close();
                     writer.Close();
                     byte[] content = myMemoryStream.ToArray();
