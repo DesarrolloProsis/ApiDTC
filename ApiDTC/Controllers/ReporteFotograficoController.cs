@@ -137,13 +137,14 @@
                         if(fi.Length > 1000000)
                         {
                             string temporal = Path.Combine(dir, filename) + "_temp";
-                            using(var imgOrigin = Image.Load(Path.Combine(dir, filename)))
-                            {
-                                var jpegOptions = new JpegOptions(){
-                                    CompressionType = Aspose.Imaging.FileFormats.Jpeg.JpegCompressionMode.Progressive
-                                };
-                                imgOrigin.Save(Path.Combine(dir, temporal), jpegOptions);
-                            }
+                            this.VaryQualityLevel(Path.Combine(dir, filename), temporal);
+                            //using(var imgOrigin = Image.Load(Path.Combine(dir, filename)))
+                            //{
+                            //    var jpegOptions = new JpegOptions(){
+                            //        CompressionType = Aspose.Imaging.FileFormats.Jpeg.JpegCompressionMode.Progressive
+                            //    };
+                            //    imgOrigin.Save(Path.Combine(dir, temporal), jpegOptions);
+                            //}
                             if(System.IO.File.Exists(Path.Combine(dir, filename)))
                             {
                                 //Se borra archivo grande
@@ -163,6 +164,35 @@
             }
             else
                 return NotFound("Insert another image");
+        }
+        public void VaryQualityLevel(string fileName, string fileTemporal)
+        {
+            // Get a bitmap.
+            System.Drawing.Bitmap bmp1 = new System.Drawing.Bitmap(fileName);
+            ImageCodecInfo jgpEncoder = GetEncoder(ImageFormat.Jpeg);
+            System.Drawing.Imaging.Encoder myEncoder =
+                System.Drawing.Imaging.Encoder.Quality;
+            EncoderParameters myEncoderParameters = new EncoderParameters(1);
+            EncoderParameter myEncoderParameter = new EncoderParameter(myEncoder,
+                50L);
+            myEncoderParameters.Param[0] = myEncoderParameter;
+            bmp1.Save(fileTemporal, jgpEncoder,
+                myEncoderParameters);
+            bmp1.Dispose();
+
+        }
+
+        private ImageCodecInfo GetEncoder(ImageFormat format)
+        {
+            ImageCodecInfo[] codecs = ImageCodecInfo.GetImageDecoders();
+            foreach (ImageCodecInfo codec in codecs)
+            {
+                if (codec.FormatID == format.Guid)
+                {
+                    return codec;
+                }
+            }
+            return null;
         }
 
         [AllowAnonymous]
