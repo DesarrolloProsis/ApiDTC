@@ -49,5 +49,14 @@ namespace ApiDTC.Controllers
             return Ok(get);
         }
 
+        [HttpGet("ListarComentario")]
+        public ActionResult<Response> GetAllComments(string clavePlaza)
+        {
+            var get = _db.GetAllComments();
+            if (get.Result == null)
+                return NotFound(get);
+            return Ok(get);
+        }
+
     }
 }
