@@ -256,7 +256,19 @@
                             }
                             
                             viewInfo.Paths = dtcImages;
-                            
+                            //IMAGENES DEL DIAGNOSTICO DE FALLA
+                            string directoyDF = $@"{disk}:\{folder}\{dtcView.ReferenceNumber.Split('-')[0].ToUpper()}\Reportes\{dtcView.TechnicalSheetReference}\DiagnosticoFallaImgs";
+                            List<string> DFImages = new List<string>();
+                            if (Directory.Exists(directoyDF))
+                            {
+                                if (Directory.GetFiles(directoyDF) != null)
+                                {
+                                    foreach (var item in Directory.GetFiles(directoyDF))
+                                        DFImages.Add(item);
+                                }
+                            }
+                            viewInfo.PathImagesDF = DFImages;
+                            //DF
                             dtcViewInfo.Add(viewInfo);
                         }
                         return new Response
