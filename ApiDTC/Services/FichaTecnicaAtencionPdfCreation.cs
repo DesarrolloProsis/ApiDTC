@@ -119,8 +119,17 @@ namespace ApiDTC.Services
                     doc.Add(TablaTipoFalla());
                     doc.Add(TablaObservaciones());
 
-                    //PRUEBA IMÁGENES, CAMBIAR RUTA
-                    string directoryImgs = Path.Combine(directory, "FichaTecnicaAtencionImgs");
+                    //PRUEBA IMÁGENES, CAMBIAR RUTA por la carpeta de DiagnosticoFallaImgs cuando  _fichaTecnicaInfo.TipoFalloId sea 2 o 3 codemcm
+                    string directoryImgs = "";
+                   
+                    if (_fichaTecnicaInfo.TipoFalloId==2 || _fichaTecnicaInfo.TipoFalloId == 3)
+                    {
+                        directoryImgs = Path.Combine(directory, "DiagnosticoFallaImgs");
+                    }
+                    else
+                    {
+                        directoryImgs = Path.Combine(directory, "FichaTecnicaAtencionImgs");
+                    }
                     string[] fotos = new string[4];
                     if(Directory.Exists(directoryImgs))
                     {
@@ -368,10 +377,10 @@ namespace ApiDTC.Services
 
                 var colCuadroOperacion = new PdfPCell(new Phrase((_fichaTecnicaInfo.TipoFalloId == 1) ? "X" : " ", letraNormalMediana)) { BorderWidthBottom = 1, BorderWidthTop = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, Padding = 2, Rowspan = 2 };
                 var colTextoOperacion = new PdfPCell(new Phrase("POR OPERACIÓN", letraoNegritaMediana)) { Border = 0, HorizontalAlignment = Element.ALIGN_LEFT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 5, Rowspan = 2 };
-
+                //2 POR SINIESTRO
                 var colCuadroSiniestro = new PdfPCell(new Phrase((_fichaTecnicaInfo.TipoFalloId == 2) ? "X" : " ", letraNormalMediana)) { BorderWidthBottom = 1, BorderWidthTop = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, Padding = 2, Rowspan = 2 };
                 var colTextoSiniestro = new PdfPCell(new Phrase("POR SINIESTRO", letraoNegritaMediana)) { Border = 0, HorizontalAlignment = Element.ALIGN_LEFT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 5, Rowspan = 2 };
-
+                //3 VIDA UTIL
                 var colCuadroVidaUtil = new PdfPCell(new Phrase((_fichaTecnicaInfo.TipoFalloId == 3) ? "X" : " ", letraNormalMediana)) { BorderWidthBottom = 1, BorderWidthTop = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, Padding = 2, Rowspan = 2 };
                 var colTextoVidaUtil = new PdfPCell(new Phrase("POR FIN DE VIDA UTIL", letraoNegritaMediana)) { Border = 0, HorizontalAlignment = Element.ALIGN_LEFT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 5, Rowspan = 2 };
 
