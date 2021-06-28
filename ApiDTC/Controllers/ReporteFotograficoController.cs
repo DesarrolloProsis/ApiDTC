@@ -134,18 +134,18 @@
                         fs.Close();
 
                         FileInfo fi = new FileInfo(Path.Combine(dir, filename));
-                        if(fi.Length > 1000000)
+                        if (fi.Length > 1000000)
                         {
                             string temporal = Path.Combine(dir, filename) + "_temp";
-                            this.VaryQualityLevel(Path.Combine(dir, filename), temporal);
-                            //using(var imgOrigin = Image.Load(Path.Combine(dir, filename)))
-                            //{
-                            //    var jpegOptions = new JpegOptions(){
-                            //        CompressionType = Aspose.Imaging.FileFormats.Jpeg.JpegCompressionMode.Progressive
-                            //    };
-                            //    imgOrigin.Save(Path.Combine(dir, temporal), jpegOptions);
-                            //}
-                            if(System.IO.File.Exists(Path.Combine(dir, filename)))
+                            using (var imgOrigin = Image.Load(Path.Combine(dir, filename)))
+                            {
+                                var jpegOptions = new JpegOptions()
+                                {
+                                    CompressionType = Aspose.Imaging.FileFormats.Jpeg.JpegCompressionMode.Progressive
+                                };
+                                imgOrigin.Save(Path.Combine(dir, temporal), jpegOptions);
+                            }
+                            if (System.IO.File.Exists(Path.Combine(dir, filename)))
                             {
                                 //Se borra archivo grande
                                 System.IO.File.Delete(Path.Combine(dir, filename));
@@ -160,7 +160,7 @@
                 {
                     _apiLogger.WriteLog(clavePlaza, ex, "ReporteFotograficoController: InsertImage", 2);
                     return NotFound(ex.ToString());
-                }                
+                }
             }
             else
                 return NotFound("Insert another image");
