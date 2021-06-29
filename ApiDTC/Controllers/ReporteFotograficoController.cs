@@ -116,11 +116,16 @@
             {
                 int numberOfImages;
                 string dir = $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\Reportes\{reportNumber}\Imgs";
+                string dirFull = $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\Reportes\{reportNumber}\ImgsFullSize";
                 string filename;
                 try
                 {
                     if (!Directory.Exists(dir))
                         Directory.CreateDirectory(dir);
+
+                    if (!Directory.Exists(dirFull))
+                        Directory.CreateDirectory(dirFull);
+
                     numberOfImages = Directory.GetFiles(dir).Length + 1;
                     filename = $"{reportNumber}_MantenimientoPreventivoImgs_{numberOfImages}{image.FileName.Substring(image.FileName.LastIndexOf('.'))}";
                     while (System.IO.File.Exists(Path.Combine(dir, filename)))
@@ -128,6 +133,17 @@
                         numberOfImages += 1;
                         filename = $"{reportNumber}_MantenimientoPreventivoImgs_{numberOfImages}{image.FileName.Substring(image.FileName.LastIndexOf('.'))}";
                     }
+
+                    //full
+                    using (FileStream fs = new FileStream(Path.Combine(dirFull, filename), FileMode.Create))
+                    {
+                        image.CopyTo(fs);
+                        fs.Close();
+                        //if (fi.Length > 1000000)
+                        //{
+                        //}
+                    }
+                    //full
                     using (FileStream fs = new FileStream(Path.Combine(dir, filename), FileMode.Create))
                     {
                         image.CopyTo(fs);
