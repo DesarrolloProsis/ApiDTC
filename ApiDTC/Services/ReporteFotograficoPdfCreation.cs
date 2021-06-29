@@ -3,6 +3,8 @@
     using ApiDTC.Models;
     using iTextSharp.text;
     using iTextSharp.text.pdf;
+    using Spire.Pdf;
+    using Spire.Pdf.Graphics;
     using System;
     using System.Collections.Generic;
     using System.Data;
@@ -214,6 +216,7 @@
                     {
                         fs.Write(content, 0, (int)content.Length);
                     }
+
                 }
             }
             catch (IOException ex)
@@ -233,7 +236,6 @@
                 Result = path
             };
         }
-
         public void CeldasVacias(int numeroCeldas, PdfPTable table)
         {
             for (int i = 0; i < numeroCeldas; i++)

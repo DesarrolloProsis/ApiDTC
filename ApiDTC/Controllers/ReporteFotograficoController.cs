@@ -134,25 +134,26 @@
                         fs.Close();
 
                         FileInfo fi = new FileInfo(Path.Combine(dir, filename));
-                        if (fi.Length > 1000000)
-                        {
+                        //if (fi.Length > 1000000)
+                        //{
                             string temporal = Path.Combine(dir, filename) + "_temp";
-                            using (var imgOrigin = Image.Load(Path.Combine(dir, filename)))
-                            {
-                                var jpegOptions = new JpegOptions()
-                                {
-                                    CompressionType = Aspose.Imaging.FileFormats.Jpeg.JpegCompressionMode.Progressive
-                                };
-                                imgOrigin.Save(Path.Combine(dir, temporal), jpegOptions);
-                            }
-                            if (System.IO.File.Exists(Path.Combine(dir, filename)))
+                        //using (var imgOrigin = Image.Load(Path.Combine(dir, filename)))
+                        //{
+                        //    var jpegOptions = new JpegOptions()
+                        //    {
+                        //        CompressionType = Aspose.Imaging.FileFormats.Jpeg.JpegCompressionMode.Progressive
+                        //    };
+                        //    imgOrigin.Save(Path.Combine(dir, temporal), jpegOptions);
+                        //}
+                        this.VaryQualityLevel(Path.Combine(dir, filename), temporal);
+                        if (System.IO.File.Exists(Path.Combine(dir, filename)))
                             {
                                 //Se borra archivo grande
                                 System.IO.File.Delete(Path.Combine(dir, filename));
                                 //Archivo temporal actualiza su nombre al real
                                 System.IO.File.Move(Path.Combine(dir, temporal), Path.Combine(dir, filename));
                             }
-                        }
+                        //}
                     }
                     return Ok(Path.Combine(dir, filename));
                 }
@@ -174,11 +175,13 @@
                 System.Drawing.Imaging.Encoder.Quality;
             EncoderParameters myEncoderParameters = new EncoderParameters(1);
             EncoderParameter myEncoderParameter = new EncoderParameter(myEncoder,
-                50L);
+                100L);
             myEncoderParameters.Param[0] = myEncoderParameter;
-            bmp1.Save(fileTemporal, jgpEncoder,
+            System.Drawing.Bitmap bmp2 = new System.Drawing.Bitmap(bmp1,   300, 300);
+            bmp2.Save(fileTemporal, jgpEncoder,
                 myEncoderParameters);
             bmp1.Dispose();
+            
 
         }
 
