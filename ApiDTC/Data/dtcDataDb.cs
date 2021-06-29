@@ -264,7 +264,7 @@
                                 if (Directory.GetFiles(directoyDF) != null)
                                 {
                                     foreach (var item in Directory.GetFiles(directoyDF))
-                                        DFImages.Add(item);
+                                        DFImages.Add(item.Substring(item.LastIndexOf('\\') + 1));
                                 }
                             }
                             viewInfo.PathImagesDF = DFImages;
