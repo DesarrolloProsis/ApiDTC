@@ -106,10 +106,11 @@
             return Ok(get);
         }
 
-        [HttpGet("InventoryComponentsList/{clavePlaza}/{squareCatalog}")]
-        public ActionResult<Response> GetComponentsInventoryList(string clavePlaza, string squareCatalog)
+        [HttpGet("InventoryComponentsList/{clavePlaza}/{squareId}/{CapufeNum}/{IdGare}")]
+        public ActionResult<Response> GetComponentsInventoryList(string clavePlaza, string squareId, string CapufeNum, string IdGare)
         {
-            var get = _db.GetComponentsInventoryList(clavePlaza, squareCatalog);
+            //string clavePlaza, string squareId, string CapufeNum, string IdGare
+            var get = _db.GetComponentsInventoryList(clavePlaza, squareId, CapufeNum, IdGare);
             if (get.Result == null)
                 return NotFound(get);
             return Ok(get);

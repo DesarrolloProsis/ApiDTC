@@ -180,17 +180,30 @@
             }
         }
 
-        public Response GetComponentsInventoryList(string clavePlaza, string squareId)
+        public Response GetComponentsInventoryList(string clavePlaza, string squareId, string CapufeNum, string IdGare)
         {
             try
             {
                 using (SqlConnection sql = new SqlConnection(_connectionString))
                 {
-                    SqlCommand cmd = new SqlCommand("select b.Lane, a.Component, a.SerialNumber, cast(a.InstalationDate as nvarchar) InstallationDate, cast(a.MaintenanceDate as nvarchar) MaintenanceDate, MaintenanceFolio, TableFolio " +
-                        "from SquareInventory a join LanesCatalog b on (a.CapufeLaneNum = b.CapufeLaneNum and a.IdGare = b.IdGare) " +
-                        "join SquaresCatalog c on b.SquareCatalogId = c.SquareCatalogId " +
-                        $"where c.SquareCatalogId = '{squareId}'", sql);
-                    return _sqlResult.GetList<ComponentsInventoryList>(clavePlaza, cmd, sql, "GetComponentsInventoryList");
+                    //SqlCommand cmd = new SqlCommand("select b.Lane, a.Component, a.SerialNumber, cast(a.InstalationDate as nvarchar) InstallationDate, cast(a.MaintenanceDate as nvarchar) MaintenanceDate, MaintenanceFolio, TableFolio " +
+                    //    "from SquareInventory a join LanesCatalog b on (a.CapufeLaneNum = b.CapufeLaneNum and a.IdGare = b.IdGare) " +
+                    //    "join SquaresCatalog c on b.SquareCatalogId = c.SquareCatalogId " +
+                    //    $"where c.SquareCatalogId = '{squareId}'", sql);
+                    //return _sqlResult.GetList<ComponentsInventoryList>(clavePlaza, cmd, sql, "GetComponentsInventoryList");
+
+                    //alter procedure spGetInventory
+                    //@strSquareId nvarchar(5),
+                    //@strCapufeNum nvarchar(5),
+                    //@strIdGare nvarchar(5)
+                    using (SqlCommand cmd = new SqlCommand("dbo.spGetInventory", sql))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.Add("@strSquareId", SqlDbType.NVarChar).Value = squareId;
+                        cmd.Parameters.Add("@strCapufeNum", SqlDbType.NVarChar).Value = CapufeNum;
+                        cmd.Parameters.Add("@strIdGare", SqlDbType.NVarChar).Value = IdGare;
+                        return _sqlResult.GetList<ComponentsInventoryList>("USR", cmd, sql, "spGetInventory");
+                    }
                 }
             }
             catch (SqlException ex)

@@ -20,5 +20,7 @@ namespace ApiDTC.Models
         public string MaintenanceFolio { get; set; }
         
         public int TableFolio { get; set; }
+        public bool VitalComponent { get; set; }
+        public int ComponentsRelationShip { get; set; }
     }
 }
