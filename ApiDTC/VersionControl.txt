@@ -4,3 +4,8 @@ Control de cambios
 commit: comment change images df to ft 
 Ubicación: Desarrollo/Productivo 30 de Junio
 
+---
+commit: INVENTARIO spGetInventory
+Ubicacion: Desarrollo
+
+
