@@ -591,7 +591,16 @@ namespace ApiDTC.Services
             var col10 = new PdfPCell(new Phrase(Convert.ToString(_tableHeader.Rows[0]["Position"]), letraNormalChica)) { Border = 0 };
 
             var col11 = new PdfPCell(new Phrase("No. Siniestro", letraNormalChica)) { Border = 0 };
-            var col12 = new PdfPCell(new Phrase(Convert.ToString(_tableDTCData.Rows[0]["SinisterNumber"]), letraoNegritaChicaEncabezado)) { Border = 0 };
+            string NSiniestro = "";
+            if(Convert.ToString(_tableDTCData.Rows[0]["SinisterNumber"]).Equals("") || Convert.ToString(_tableDTCData.Rows[0]["SinisterNumber"]).Equals(null))
+            {
+                NSiniestro = "SIN NÚMERO DE SINIESTRO";
+            }
+            else
+            {
+                NSiniestro = Convert.ToString(_tableDTCData.Rows[0]["SinisterNumber"]);
+            }
+            var col12 = new PdfPCell(new Phrase(NSiniestro, letraoNegritaChicaEncabezado)) { Border = 0 };
 
             var col13 = new PdfPCell(new Phrase("No. Reporte", letraNormalChica)) { Border = 0 };
             var col14 = new PdfPCell(new Phrase(Convert.ToString(_tableDTCData.Rows[0]["ReportNumber"]), letraoNegritaChicaEncabezado)) { Border = 0 };
