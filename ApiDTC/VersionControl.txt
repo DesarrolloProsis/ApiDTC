@@ -1,6 +1,11 @@
 Control de cambios
 
 
+
+
+commit: Brand, Model on SP spGetInventory    30-06-2021
+Ubicacion: Desarrollo
+
 commit: comment change images df to ft 
 Ubicación: Desarrollo/Productivo 30 de Junio
 

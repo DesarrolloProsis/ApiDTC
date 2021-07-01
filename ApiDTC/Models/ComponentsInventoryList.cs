@@ -10,6 +10,8 @@ namespace ApiDTC.Models
         public string Lane { get; set; }
 
         public string Component { get; set; }
+        public string Brand { get; set; }
+        public string Model { get; set; }
 
         public string SerialNumber { get; set; }
 
