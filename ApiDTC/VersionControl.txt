@@ -9,3 +9,5 @@ commit: INVENTARIO spGetInventory
 Ubicacion: Desarrollo
 
 
+commit: Comment DiagnosticoFalla
+Ubicacion: Desarrollo/Productivo
