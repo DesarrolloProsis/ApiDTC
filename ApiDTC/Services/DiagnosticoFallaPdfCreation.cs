@@ -329,7 +329,7 @@ namespace ApiDTC.Services
 
                 //Folio falla
                 var colFolioFalla = new PdfPCell(new Phrase("Folio de FALLA:", letraoNegritaMediana)) { Border = 0, HorizontalAlignment = Element.ALIGN_RIGHT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 5, Colspan = 3 };
-
+                //_diagnosticoDeFallaInfo.FolioFalla
                 var falla = new PdfPCell(new Phrase(_diagnosticoDeFallaInfo.FolioFalla, letraNormalMedianaRoja)) { BorderWidthBottom = 1, BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_BOTTOM, Padding = 2, Colspan = 4 };
 
 
@@ -338,8 +338,18 @@ namespace ApiDTC.Services
                 CeldasVacias(1, table);
 
                 var colNoSiniestro = new PdfPCell(new Phrase("No. de SINIESTRO:", letraoNegritaMediana)) { Border = 0, HorizontalAlignment = Element.ALIGN_RIGHT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 5, Colspan = 3 };
-
-                var siniestro = new PdfPCell(new Phrase(_diagnosticoDeFallaInfo.NumeroSiniestro, letraNormalMedianaRoja)) { BorderWidthBottom = 1, BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_BOTTOM, Padding = 2, Colspan = 4 };
+                //_diagnosticoDeFallaInfo.NumeroSiniestro
+                string NumSin = "";
+                if(_diagnosticoDeFallaInfo.NumeroSiniestro== null || _diagnosticoDeFallaInfo.NumeroSiniestro.Equals(""))
+                {
+                    NumSin = "SIN NÚMERO DE SINIESTRO";
+                }
+                else
+                {
+                    NumSin = _diagnosticoDeFallaInfo.NumeroSiniestro;
+                }
+                
+                var siniestro = new PdfPCell(new Phrase(NumSin, letraNormalMedianaRoja)) { BorderWidthBottom = 1, BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_BOTTOM, Padding = 2, Colspan = 4 };
 
 
                 table.AddCell(colNoSiniestro);
