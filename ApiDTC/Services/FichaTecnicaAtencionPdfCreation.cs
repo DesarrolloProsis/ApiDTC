@@ -122,14 +122,14 @@ namespace ApiDTC.Services
                     //PRUEBA IMÁGENES, CAMBIAR RUTA por la carpeta de DiagnosticoFallaImgs cuando  _fichaTecnicaInfo.TipoFalloId sea 2 o 3 codemcm
                     string directoryImgs = "";
 
-                    //if (_fichaTecnicaInfo.TipoFalloId == 2 || _fichaTecnicaInfo.TipoFalloId == 3)//DESCOMENTAR ESTE CAMBIO... CODEMCM
-                    //{
-                    //    directoryImgs = Path.Combine(directory, "DiagnosticoFallaImgs");
-                    //}
-                    //else
-                    //{
+                    if (_fichaTecnicaInfo.TipoFalloId == 2 || _fichaTecnicaInfo.TipoFalloId == 3)//DESCOMENTAR ESTE CAMBIO... CODEMCM
+                    {
+                        directoryImgs = Path.Combine(directory, "DiagnosticoFallaImgs");
+                    }
+                    else
+                    {
                         directoryImgs = Path.Combine(directory, "FichaTecnicaAtencionImgs");
-                    //}
+                    }
                     string[] fotos = new string[4];
                     if(Directory.Exists(directoryImgs))
                     {
