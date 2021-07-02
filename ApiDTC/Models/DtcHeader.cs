@@ -11,7 +11,7 @@
         [StringLength(30)]
         public string NumSiniestro { get; set; }
 
-        [StringLength(20)]
+        [StringLength(30)]
         public string NumReporte { get; set; }
 
         [StringLength(60)]
@@ -20,10 +20,10 @@
         [Required]
         public int TipoDescripcion { get; set; }
 
-        [StringLength(300)]
+        [StringLength(400)]
         public string Observaciones { get; set; }
 
-        [StringLength(300)]
+        [StringLength(400)]
         public string Diagnostico { get; set; }
     }
 }
