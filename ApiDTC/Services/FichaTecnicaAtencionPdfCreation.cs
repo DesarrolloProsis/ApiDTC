@@ -334,9 +334,13 @@ namespace ApiDTC.Services
                 table.AddCell(falla);
                 CeldasVacias(1, table);
 
-                var colNoSiniestro = new PdfPCell(new Phrase("Folio de SINIESTRO:", letraoNegritaMediana)) { Border = 0, HorizontalAlignment = Element.ALIGN_RIGHT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 5, Colspan = 3 };
-
-                var siniestro = new PdfPCell(new Phrase(_fichaTecnicaInfo.NumeroSiniestro, letraNormalMedianaRoja)) { BorderWidthBottom = 1, BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_BOTTOM, Padding = 2, Colspan = 4 };
+                var colNoSiniestro = new PdfPCell(new Phrase("Número de SINIESTRO:", letraoNegritaMediana)) { Border = 0, HorizontalAlignment = Element.ALIGN_RIGHT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 5, Colspan = 3 };
+                string nSiniestro = "";
+                if(_fichaTecnicaInfo.NumeroSiniestro.Equals(null) || _fichaTecnicaInfo.NumeroSiniestro.Equals(""))
+                {
+                    nSiniestro = "Sin número de siniestro";
+                }
+                var siniestro = new PdfPCell(new Phrase(nSiniestro, letraNormalMedianaRoja)) { BorderWidthBottom = 1, BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_BOTTOM, Padding = 2, Colspan = 4 };
 
 
                 table.AddCell(colNoSiniestro);
