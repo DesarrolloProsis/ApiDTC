@@ -282,6 +282,18 @@
                             }
                             viewInfo.PathImagesDF = DFImages;
                             //DF
+                            //IMAGENES DE LA FICHA TECNICA DE ATENCION
+                            string directoyFA = $@"{disk}:\{folder}\{dtcView.ReferenceNumber.Split('-')[0].ToUpper()}\Reportes\{dtcView.TechnicalSheetReference}\FichaTecnicaAtencionImgs";
+                            List<string> FAImages = new List<string>();
+                            if (Directory.Exists(directoyFA))
+                            {
+                                if (Directory.GetFiles(directoyFA) != null)
+                                {
+                                    foreach (var item in Directory.GetFiles(directoyFA))
+                                        FAImages.Add(item.Substring(item.LastIndexOf('\\') + 1));
+                                }
+                            }
+                            viewInfo.PathImagesFAtencion = FAImages;
                             dtcViewInfo.Add(viewInfo);
                         }
                         return new Response

@@ -11,5 +11,6 @@ namespace ApiDTC.Models
 
         public bool PdfExists { get; set; }
         public List<string> PathImagesDF { get; set; }
+        public List<string> PathImagesFAtencion { get; set; }
     }
 }
