@@ -546,6 +546,34 @@
                 return new Response { Message = $"Error: {ex.Message}", Result = null };
             }
         }
+
+        public Response UpdateDTCDFReference(string clavePlaza, string DtcReference, string DiagnosisReference)
+        {
+            try
+            {
+                using (SqlConnection sql = new SqlConnection(_connectionString))
+                {
+                    using (SqlCommand cmd = new SqlCommand("dbo.spUpdateDTCReferenceFromDiagnosis", sql))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.Add("@strDTCRefenrence", SqlDbType.NVarChar).Value = DtcReference;
+                        cmd.Parameters.Add("@strDiagnosisReference", SqlDbType.NVarChar).Value = DiagnosisReference;
+
+                        var response= _sqlResult.Put(clavePlaza, cmd, sql, "spUpdateDTCReferenceFromDiagnosis");
+                        return new Response
+                        {
+                            Message = response.SqlMessage,
+                            Result = response.SqlResult
+                        };
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                _apiLogger.WriteLog(clavePlaza, ex, "DtcDataDb: UpdateFechasDTC", 1);
+                return new Response { Message = $"Error: {ex.Message}", Result = null };
+            }
+        }
         #endregion
     }
 }

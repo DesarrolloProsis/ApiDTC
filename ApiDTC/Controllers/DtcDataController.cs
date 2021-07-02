@@ -310,6 +310,14 @@
                 return NotFound();
             return Ok(get);
         }
+        [HttpPut("UpdateDtcDFReference/{clavePlaza}/{DtcReference}/{DiagnosisReference}")]
+        public ActionResult<Response> UpdateDTCReference(string clavePlaza, string DtcReference, string DiagnosisReference)
+        {
+            var get = _db.UpdateDTCDFReference(clavePlaza, DtcReference, DiagnosisReference);
+            if (get.Result == null)
+                return NotFound();
+            return Ok(get);
+        }
         #endregion
 
         #region Equipo Nuevo
