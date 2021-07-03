@@ -342,7 +342,7 @@ namespace ApiDTC.Services
                 string NumSin = "";
                 if(_diagnosticoDeFallaInfo.NumeroSiniestro== null || _diagnosticoDeFallaInfo.NumeroSiniestro.Equals(""))
                 {
-                    NumSin = "SIN NÚMERO DE SINIESTRO";
+                    NumSin = "Sin Número de Siniestro";
                 }
                 else
                 {
