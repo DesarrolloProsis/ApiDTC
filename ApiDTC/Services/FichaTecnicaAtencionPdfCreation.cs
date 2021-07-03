@@ -334,7 +334,7 @@ namespace ApiDTC.Services
                 table.AddCell(falla);
                 CeldasVacias(1, table);
 
-                var colNoSiniestro = new PdfPCell(new Phrase("Número de SINIESTRO:", letraoNegritaMediana)) { Border = 0, HorizontalAlignment = Element.ALIGN_RIGHT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 5, Colspan = 3 };
+                var colNoSiniestro = new PdfPCell(new Phrase("No. de SINIESTRO:", letraoNegritaMediana)) { Border = 0, HorizontalAlignment = Element.ALIGN_RIGHT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 5, Colspan = 3 };
                 string nSiniestro = "";
                 if(_fichaTecnicaInfo.NumeroSiniestro.Equals(null) || _fichaTecnicaInfo.NumeroSiniestro.Equals(""))
                 {
