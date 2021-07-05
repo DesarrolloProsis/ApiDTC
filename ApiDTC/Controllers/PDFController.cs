@@ -277,5 +277,83 @@
                 return File(new FileStream(pdfResult.Result.ToString(), FileMode.Open, FileAccess.Read), "application/pdf");
             }
         }
+
+        [HttpPost("TablaActEscaneado/{clavePlaza}/{reference}/{Tipo}")]
+        public ActionResult<Response> SubirPDFEscaneadoGenerico([FromForm(Name = "file")] IFormFile file, string clavePlaza, string reference, int Tipo)
+        {
+            /*
+             * 1 - TLA-DF-21181-06-Diagnostico
+             * 2 - TLA-DF-21181-06-FichaTecnica
+             */
+            string filename = "";
+            if (file.Length > 0 || file != null)
+            {
+                if (file.FileName.EndsWith(".pdf") || file.FileName.EndsWith(".PDF"))
+                {
+                    string path = $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\Reportes\{reference}\";
+                    if (Tipo == 1)
+                    {
+                        filename = $"{reference}-Diagnostico-Escaneado.pdf";
+                    }
+                    else
+                    {
+                        if (Tipo == 2)
+                        {
+                            filename = $"{reference}-FichaTecnica-Escaneado.pdf";
+                        }
+                    }
+                    try
+                    {
+                        if (!Directory.Exists(path))
+                            Directory.CreateDirectory(path);
+                        if (System.IO.File.Exists(Path.Combine(path, filename)))
+                            System.IO.File.Delete(Path.Combine(path, filename));
+                        var fs = new FileStream(Path.Combine(path, filename), FileMode.Create);
+                        file.CopyTo(fs);
+                        fs.Close();
+                        return Ok(path);
+                    }
+                    catch (IOException ex)
+                    {
+                        _apiLogger.WriteLog(clavePlaza, ex, "Mantenimiento: SubirPDFEscaneadoGenerico", 2);
+                        return NotFound(ex.ToString());
+                    }
+                }
+                return NotFound("Ingresa un archivo pdf");
+            }
+            return NotFound();
+        }
+
+        [HttpGet("GetPdfGenerico/{clavePlaza}/{reference}/{Tipo}")]
+        public IActionResult GetPdfGenerico(string clavePlaza, string reference, int Tipo)
+        {
+            /*
+             * 1 - TLA-DF-21181-06-Diagnostico
+             * 2 - TLA-DF-21181-06-FichaTecnica
+             */
+            string path="";
+            if (Tipo == 1)
+            {
+                path = $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\Reportes\{reference}-Diagnostico-Escaneado.pdf";
+            }
+            else
+            {
+                if (Tipo == 2)
+                {
+                    path = $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\Reportes\{reference}-FichaTecnica-Escaneado.pdf";
+                }
+            }
+            try
+            {
+                if (!System.IO.File.Exists(path))
+                    return NotFound(path);
+                return File(new FileStream(path, FileMode.Open, FileAccess.Read), "application/pdf");
+            }
+            catch (IOException ex)
+            {
+                _apiLogger.WriteLog(clavePlaza, ex, "PDFController: GetPdfGenerico", 2);
+                return NotFound(ex.ToString());
+            }
+        }
     }
 }
