@@ -293,13 +293,13 @@
                     string path = $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\Reportes\{reference}\";
                     if (Tipo == 1)
                     {
-                        filename = $"{reference}-Diagnostico-Escaneado.pdf";
+                        filename = $"{reference}-DiagnosticoSellado.pdf";
                     }
                     else
                     {
                         if (Tipo == 2)
                         {
-                            filename = $"{reference}-FichaTecnica-Escaneado.pdf";
+                            filename = $"{reference}-FichaTecnicaSellado.pdf";
                         }
                     }
                     try
@@ -334,13 +334,13 @@
             string path="";
             if (Tipo == 1)
             {
-                path = $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\Reportes\{reference}-Diagnostico-Escaneado.pdf";
+                path = $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\Reportes\{reference}-DiagnosticoSellado.pdf";
             }
             else
             {
                 if (Tipo == 2)
                 {
-                    path = $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\Reportes\{reference}-FichaTecnica-Escaneado.pdf";
+                    path = $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\Reportes\{reference}-FichaTecnicaSellado.pdf";
                 }
             }
             try
