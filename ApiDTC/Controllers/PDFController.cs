@@ -334,13 +334,13 @@
             string path="";
             if (Tipo == 1)
             {
-                path = $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\Reportes\{reference}-DiagnosticoSellado.pdf";
+                path = $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\Reportes\{reference}\{reference}-DiagnosticoSellado.pdf";
             }
             else
             {
                 if (Tipo == 2)
                 {
-                    path = $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\Reportes\{reference}-FichaTecnicaSellado.pdf";
+                    path = $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\Reportes\{reference}\{reference}-FichaTecnicaSellado.pdf";
                 }
             }
             try
