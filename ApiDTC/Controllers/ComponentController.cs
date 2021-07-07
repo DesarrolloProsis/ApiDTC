@@ -139,6 +139,15 @@
             return Ok(put);
 
         }
+        
+        [HttpGet("ReporteComponente/")]
+        public ActionResult<Response> GetReporteComponent()
+        {
+            var get = _db.GetReporteComponente("ReporteComponentes");
+            if (get.Result == null)
+                return NotFound(get);
+            return Ok(get);
+        }
         #endregion
     }
 }

@@ -425,6 +425,24 @@
                 return new SqlResponse { SqlMessage = ex.Message, SqlResult = null };
             }
         }
+
+        public Response GetReporteComponente(string clavePlaza)
+        {
+            try
+            {
+                using (SqlConnection sql = new SqlConnection(_connectionString))
+                {
+                    SqlCommand cmd = new SqlCommand($"select * from v_CompnentesRequeridos", sql);
+                    return _sqlResult.GetList<ReporteComponente>(clavePlaza, cmd, sql, "GetReporteComponente");
+                }
+            }
+            catch (SqlException ex)
+            {
+                _apiLogger.WriteLog(clavePlaza, ex, "ComponentDB: GetReporteComponente", 1);
+                return new Response { Message = $"Error: {ex.Message}", Result = null };
+            }
+
+        }
         #endregion
     }
 }
