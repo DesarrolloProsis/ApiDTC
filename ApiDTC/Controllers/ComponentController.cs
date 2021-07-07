@@ -214,21 +214,14 @@ namespace ApiDTC.Controllers
                 }
             }
 
-            //if (get.Result == null)
-            //    return NotFound(get);
-            //Console.WriteLine(this._disk);
-            //this.GetReporteComponentExcel();
+
         }
-        [AllowAnonymous]
         [HttpGet("ComponentStock/{DelegationId}")]
         public ActionResult<Response> GetListComponentStock(int DelegationId)
         {
             var get = _db.GetListComponentStock(DelegationId);
             if (get.Result == null)
                 return NotFound(get);
-            //Console.WriteLine(this._disk);
-            //this.GetReporteComponentExcel();
-
             return Ok(get);
         }
         #endregion
