@@ -219,37 +219,18 @@ namespace ApiDTC.Controllers
             //Console.WriteLine(this._disk);
             //this.GetReporteComponentExcel();
         }
+        [AllowAnonymous]
+        [HttpGet("ComponentStock/{DelegationId}")]
+        public ActionResult<Response> GetListComponentStock(int DelegationId)
+        {
+            var get = _db.GetListComponentStock(DelegationId);
+            if (get.Result == null)
+                return NotFound(get);
+            //Console.WriteLine(this._disk);
+            //this.GetReporteComponentExcel();
+
+            return Ok(get);
+        }
         #endregion
     }
 }
-/*
-
-    using (MemoryStream stream = new MemoryStream())
-    {
-        var workbook = new XLWorkbook();
-
-        var SheetNames = new List<string>() { "15-16", "16-17", "17-18", "18-19", "19-20" };
-
-        foreach (var sheetname in SheetNames)
-        {
-            var worksheet = workbook.Worksheets.Add(sheetname);
-
-            worksheet.Cell("A1").Value = sheetname;
-        }
-
-        workbook.SaveAs(stream);
-        stream.Seek(0, SeekOrigin.Begin);
-
-        return this.File(
-            fileContents: stream.ToArray(), 
-            contentType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", 
-
-            // By setting a file download name the framework will
-            // automatically add the attachment Content-Disposition header
-            fileDownloadName: "ERSheet.xlsx"
-        );
-    } 
-
-
-
- * */

@@ -488,6 +488,27 @@
                 return null;
             }
         }
+
+        public Response GetListComponentStock(int DelegationId)
+        {
+            try
+            {
+                using (SqlConnection sql = new SqlConnection(_connectionString))
+                {
+                    using (SqlCommand cmd = new SqlCommand("dbo.spGetComponentStock", sql))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.Add("@DelegationId", SqlDbType.Int).Value = DelegationId;
+                        return _sqlResult.GetList<ComponenteStock>("ComponentStock", cmd, sql, "spGetComponentStock");
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                _apiLogger.WriteLog("GetListComponentStock", ex, "ComponentDb: GetListComponentStock", 1);
+                return new Response { Message = $"Error: {ex.Message}", Result = null };
+            }
+        }
         #endregion
     }
 }
