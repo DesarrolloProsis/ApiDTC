@@ -8,6 +8,7 @@
     using System.Data.SqlClient;
     using System.Linq;
     using ApiDTC.Services;
+    using ClosedXML.Excel;
 
     public class ComponentDb
     {
@@ -432,8 +433,11 @@
             {
                 using (SqlConnection sql = new SqlConnection(_connectionString))
                 {
-                    SqlCommand cmd = new SqlCommand($"select * from v_CompnentesRequeridos", sql);
-                    return _sqlResult.GetList<ReporteComponente>(clavePlaza, cmd, sql, "GetReporteComponente");
+                    SqlCommand cmd = new SqlCommand($"SELECT Plaza, Carril, Componente, Cantidad, Precio, Solicitante, TipoDTC, Referencia  from v_CompnentesRequeridos", sql);
+                    //this.CrearExcel();
+                    var lista= _sqlResult.GetList<ReporteComponente>(clavePlaza, cmd, sql, "GetReporteComponente");
+                    
+                    return lista;
                 }
             }
             catch (SqlException ex)
@@ -442,6 +446,47 @@
                 return new Response { Message = $"Error: {ex.Message}", Result = null };
             }
 
+        }
+
+
+        public XLWorkbook CrearExcel(List<ReporteComponente> lista)
+        {
+            try
+            {
+                using (var workbook = new XLWorkbook())
+                {
+                    int fila = 2;
+                    var worksheet = workbook.Worksheets.Add("Sample Sheet");
+                    var ws = workbook.Worksheets.Add("Inserting Rows");
+                    ws.Cell(1, 1).Value = "Plaza";
+                    ws.Cell(1, 2).Value = "Carril";
+                    ws.Cell(1, 3).Value = "Componente";
+                    ws.Cell(1, 4).Value = "Cantidad";
+                    ws.Cell(1, 5).Value = "Precio";
+                    ws.Cell(1, 6).Value = "Solicitante";
+                    ws.Cell(1, 7).Value = "TipoDTC";
+                    ws.Cell(1, 8).Value = "Referencia";
+                    foreach (ReporteComponente item in lista)
+                    {
+                            ws.Cell(fila,1).Value = item.Plaza;
+                            ws.Cell(fila, 2).Value = item.Carril;
+                            ws.Cell(fila, 3).Value = item.Componente;
+                            ws.Cell(fila, 4).Value = item.Cantidad;
+                            ws.Cell(fila, 5).Value = item.Precio;
+                            ws.Cell(fila, 6).Value = item.Solicitante;
+                            ws.Cell(fila, 7).Value = item.TipoDTC;
+                            ws.Cell(fila, 8).Value = item.Referencia;
+                        fila++;
+
+                    }
+                    workbook.SaveAs("D:\\HelloWorld.xlsx");
+                    return workbook;
+                }
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
         }
         #endregion
     }

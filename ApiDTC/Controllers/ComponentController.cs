@@ -1,13 +1,18 @@
-﻿namespace ApiDTC.Controllers
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Net.Http;
+using System.Threading.Tasks;
+using ApiDTC.Data;
+using ApiDTC.Models;
+using ClosedXML.Excel;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+
+namespace ApiDTC.Controllers
 {
-    using System;
-    using System.Collections.Generic;
-    using ApiDTC.Data;
-    using ApiDTC.Models;
-    using Microsoft.AspNetCore.Authentication.JwtBearer;
-    using Microsoft.AspNetCore.Authorization;
-    using Microsoft.AspNetCore.Mvc;
-    
     [Route("api/[controller]")]
     [ApiController]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
@@ -15,12 +20,18 @@
     {
         #region Attributes
         private readonly ComponentDb _db;
+        private readonly string _disk;
+
+        private readonly string _folder;
         #endregion
-        
+
         #region Constructor
-        public ComponentController(ComponentDb db)
+        public ComponentController(ComponentDb db, IConfiguration configuration)
         {
+            this._disk = $@"{Convert.ToString(configuration.GetValue<string>("Path:Disk"))}";
+            this._folder = $"{Convert.ToString(configuration.GetValue<string>("Path:Folder"))}";
             this._db = db ?? throw new ArgumentNullException(nameof(db));
+
         }
         #endregion
 
@@ -139,15 +150,108 @@
             return Ok(put);
 
         }
-        
+        [AllowAnonymous]
         [HttpGet("ReporteComponente/")]
         public ActionResult<Response> GetReporteComponent()
         {
             var get = _db.GetReporteComponente("ReporteComponentes");
             if (get.Result == null)
                 return NotFound(get);
+            Console.WriteLine(this._disk);
+            //this.GetReporteComponentExcel();
+            
             return Ok(get);
+        }
+
+        [AllowAnonymous]
+        [HttpGet("DescargarExcel/")]
+        public IActionResult GetReporteComponentExcel()
+        {
+            var get = _db.GetReporteComponente("ReporteComponentes");
+            if (get.Result == null)
+            {
+                return null;
+            }
+            else
+            {
+                List<ReporteComponente> lista = (List<ReporteComponente>)get.Result;
+                try
+                {
+                    using (var workbook = new XLWorkbook())
+                    {
+                        int fila = 2;
+                        var ws = workbook.Worksheets.Add("Lista");
+                        ws.Cell(1, 1).Value = "Plaza";
+                        ws.Cell(1, 2).Value = "Carril";
+                        ws.Cell(1, 3).Value = "Componente";
+                        ws.Cell(1, 4).Value = "Cantidad";
+                        ws.Cell(1, 5).Value = "Precio";
+                        ws.Cell(1, 6).Value = "Solicitante";
+                        ws.Cell(1, 7).Value = "TipoDTC";
+                        ws.Cell(1, 8).Value = "Referencia";
+                        foreach (ReporteComponente item in lista)
+                        {
+                            ws.Cell(fila, 1).Value = item.Plaza;
+                            ws.Cell(fila, 2).Value = item.Carril;
+                            ws.Cell(fila, 3).Value = item.Componente;
+                            ws.Cell(fila, 4).Value = item.Cantidad;
+                            ws.Cell(fila, 5).Value = item.Precio;
+                            ws.Cell(fila, 6).Value = item.Solicitante;
+                            ws.Cell(fila, 7).Value = item.TipoDTC;
+                            ws.Cell(fila, 8).Value = item.Referencia;
+                            fila++;
+
+                        }
+                        workbook.SaveAs("D:\\HelloWorld.xlsx");
+
+
+                        //return File(new FileStream("D:\\HelloWorld.xlsx", FileMode.Open, FileAccess.Read), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+                        byte[] bytes = System.IO.File.ReadAllBytes("D:\\HelloWorld.xlsx");
+                        return File(bytes, System.Net.Mime.MediaTypeNames.Application.Octet, "ReporteComponentes.xlsx");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    return null;
+                }
+            }
+
+            //if (get.Result == null)
+            //    return NotFound(get);
+            //Console.WriteLine(this._disk);
+            //this.GetReporteComponentExcel();
         }
         #endregion
     }
 }
+/*
+
+    using (MemoryStream stream = new MemoryStream())
+    {
+        var workbook = new XLWorkbook();
+
+        var SheetNames = new List<string>() { "15-16", "16-17", "17-18", "18-19", "19-20" };
+
+        foreach (var sheetname in SheetNames)
+        {
+            var worksheet = workbook.Worksheets.Add(sheetname);
+
+            worksheet.Cell("A1").Value = sheetname;
+        }
+
+        workbook.SaveAs(stream);
+        stream.Seek(0, SeekOrigin.Begin);
+
+        return this.File(
+            fileContents: stream.ToArray(), 
+            contentType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", 
+
+            // By setting a file download name the framework will
+            // automatically add the attachment Content-Disposition header
+            fileDownloadName: "ERSheet.xlsx"
+        );
+    } 
+
+
+
+ * */
