@@ -150,7 +150,6 @@ namespace ApiDTC.Controllers
             return Ok(put);
 
         }
-        [AllowAnonymous]
         [HttpGet("ReporteComponente/")]
         public ActionResult<Response> GetReporteComponent()
         {
@@ -163,7 +162,6 @@ namespace ApiDTC.Controllers
             return Ok(get);
         }
 
-        [AllowAnonymous]
         [HttpGet("DescargarExcel/")]
         public IActionResult GetReporteComponentExcel()
         {
