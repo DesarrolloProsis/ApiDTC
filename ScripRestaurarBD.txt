@@ -1,0 +1,57 @@
+
+restore filelistonly from disk = 'C:\Baks\18\Full-25042021.bak'
+restore headeronly from disk = 'C:\Baks\18\Full-25042021.bak'
+
+
+--levanta completo Base
+use master
+restore database demo from disk = 'C:\Baks\18\Full-25042021.bak'
+with 
+move 'ProsisDTC' to 'C:\Program Files\Microsoft SQL Server\MSSQL15.MSSQLSERVER\MSSQL\DATA\demo.mdf',
+move 'ProsisDTC_log' to 'C:\Program Files\Microsoft SQL Server\MSSQL15.MSSQLSERVER\MSSQL\DATA\demo_log.ldf',
+norecovery,REPLACE,file = 1
+;
+
+--Diferencial
+use master
+restore database demo from disk = 'C:\Baks\18\Full-25042021.bak'
+with 
+move 'ProsisDTC' to 'C:\Program Files\Microsoft SQL Server\MSSQL15.MSSQLSERVER\MSSQL\DATA\demo.mdf',
+move 'ProsisDTC_log' to 'C:\Program Files\Microsoft SQL Server\MSSQL15.MSSQLSERVER\MSSQL\DATA\demo_log.ldf',
+norecovery,REPLACE,file = 4
+;
+
+
+-- logs
+use master
+restore log demo from disk = 'C:\Baks\18\LOG-28042021.TRN'
+with
+move 'ProsisDTC' to 'C:\Program Files\Microsoft SQL Server\MSSQL15.MSSQLSERVER\MSSQL\DATA\demo.mdf',
+move 'ProsisDTC_log' to 'C:\Program Files\Microsoft SQL Server\MSSQL15.MSSQLSERVER\MSSQL\DATA\demo_log.ldf',
+file = 1,replace, --stopat = 'Jun 30, 2021 10:00 AM',
+norecovery
+
+
+use master
+restore log demo from disk = 'C:\Baks\18\LOG-28042021.TRN'
+with 
+move 'ProsisDTC' to 'C:\Program Files\Microsoft SQL Server\MSSQL15.MSSQLSERVER\MSSQL\DATA\demo.mdf',
+move 'ProsisDTC_log' to 'C:\Program Files\Microsoft SQL Server\MSSQL15.MSSQLSERVER\MSSQL\DATA\demo_log.ldf',
+file = 2,replace, --stopat = 'Jun 30, 2021 10:00 AM',
+norecovery
+
+use master
+restore log demo from disk = 'C:\Baks\18\LOG-28042021.TRN'
+with 
+move 'ProsisDTC' to 'C:\Program Files\Microsoft SQL Server\MSSQL15.MSSQLSERVER\MSSQL\DATA\demo.mdf',
+move 'ProsisDTC_log' to 'C:\Program Files\Microsoft SQL Server\MSSQL15.MSSQLSERVER\MSSQL\DATA\demo_log.ldf',
+file = 3, replace,stopat = 'Apr 28, 2021 10:00 AM',
+recovery
+
+
+
+
+
+
+
+select * from [dbo].[SessionsLog] order by [DateStart] desc
