@@ -318,6 +318,15 @@
                 return NotFound();
             return Ok(get);
         }
+        [AllowAnonymous]
+        [HttpGet("GetDTCNoSellado/")]
+        public ActionResult<Response> GetListDTCNoSellados(int DelegationId)
+        {
+            var get = _db.GetListDTCNoSellados();
+            if (get.Result == null)
+                return NotFound(get);
+            return Ok(get);
+        }
         #endregion
 
         #region Equipo Nuevo

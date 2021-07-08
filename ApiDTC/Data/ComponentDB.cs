@@ -448,47 +448,6 @@
 
         }
 
-
-        public XLWorkbook CrearExcel(List<ReporteComponente> lista)
-        {
-            try
-            {
-                using (var workbook = new XLWorkbook())
-                {
-                    int fila = 2;
-                    var worksheet = workbook.Worksheets.Add("Sample Sheet");
-                    var ws = workbook.Worksheets.Add("Inserting Rows");
-                    ws.Cell(1, 1).Value = "Plaza";
-                    ws.Cell(1, 2).Value = "Carril";
-                    ws.Cell(1, 3).Value = "Componente";
-                    ws.Cell(1, 4).Value = "Cantidad";
-                    ws.Cell(1, 5).Value = "Precio";
-                    ws.Cell(1, 6).Value = "Solicitante";
-                    ws.Cell(1, 7).Value = "TipoDTC";
-                    ws.Cell(1, 8).Value = "Referencia";
-                    foreach (ReporteComponente item in lista)
-                    {
-                            ws.Cell(fila,1).Value = item.Plaza;
-                            ws.Cell(fila, 2).Value = item.Carril;
-                            ws.Cell(fila, 3).Value = item.Componente;
-                            ws.Cell(fila, 4).Value = item.Cantidad;
-                            ws.Cell(fila, 5).Value = item.Precio;
-                            ws.Cell(fila, 6).Value = item.Solicitante;
-                            ws.Cell(fila, 7).Value = item.TipoDTC;
-                            ws.Cell(fila, 8).Value = item.Referencia;
-                        fila++;
-
-                    }
-                    workbook.SaveAs("D:\\HelloWorld.xlsx");
-                    return workbook;
-                }
-            }
-            catch (Exception ex)
-            {
-                return null;
-            }
-        }
-
         public Response GetListComponentStock(int DelegationId)
         {
             try

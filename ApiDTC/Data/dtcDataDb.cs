@@ -586,6 +586,26 @@
                 return new Response { Message = $"Error: {ex.Message}", Result = null };
             }
         }
+
+        public Response GetListDTCNoSellados()
+        {
+            try
+            {
+
+                using (SqlConnection sql = new SqlConnection(_connectionString))
+                {
+                    using (SqlCommand cmd = new SqlCommand("SELECT * FROM v_DTCSellados", sql))
+                    {
+                        return _sqlResult.GetList<DTCNoSellado>("GetListDTCNoSellados", cmd, sql, "GetListDTCNoSellados");
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                _apiLogger.WriteLog("GetListComponentStock", ex, "dtcDataSb: GetListDTCNoSellados", 1);
+                return new Response { Message = $"Error: {ex.Message}", Result = null };
+            }
+        }
         #endregion
     }
 }
