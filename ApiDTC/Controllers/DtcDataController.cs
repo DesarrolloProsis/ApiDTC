@@ -318,7 +318,6 @@
                 return NotFound();
             return Ok(get);
         }
-        [AllowAnonymous]
         [HttpGet("GetDTCNoSellado/")]
         public ActionResult<Response> GetListDTCNoSellados(int DelegationId)
         {
