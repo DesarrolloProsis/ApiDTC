@@ -139,9 +139,6 @@
                     {
                         image.CopyTo(fs);
                         fs.Close();
-                        //if (fi.Length > 1000000)
-                        //{
-                        //}
                     }
                     //full
                     using (FileStream fs = new FileStream(Path.Combine(dir, filename), FileMode.Create))
@@ -150,17 +147,7 @@
                         fs.Close();
 
                         FileInfo fi = new FileInfo(Path.Combine(dir, filename));
-                        //if (fi.Length > 1000000)
-                        //{
                             string temporal = Path.Combine(dir, filename) + "_temp";
-                        //using (var imgOrigin = Image.Load(Path.Combine(dir, filename)))
-                        //{
-                        //    var jpegOptions = new JpegOptions()
-                        //    {
-                        //        CompressionType = Aspose.Imaging.FileFormats.Jpeg.JpegCompressionMode.Progressive
-                        //    };
-                        //    imgOrigin.Save(Path.Combine(dir, temporal), jpegOptions);
-                        //}
                         this.VaryQualityLevel(Path.Combine(dir, filename), temporal);
                         if (System.IO.File.Exists(Path.Combine(dir, filename)))
                             {
@@ -169,7 +156,6 @@
                                 //Archivo temporal actualiza su nombre al real
                                 System.IO.File.Move(Path.Combine(dir, temporal), Path.Combine(dir, filename));
                             }
-                        //}
                     }
                     return Ok(Path.Combine(dir, filename));
                 }

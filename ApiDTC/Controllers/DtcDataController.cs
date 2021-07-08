@@ -8,6 +8,7 @@
     using ApiDTC.Services;
     using Aspose.Imaging;
     using Aspose.Imaging.ImageOptions;
+    using ClosedXML.Excel;
     using Microsoft.AspNetCore.Authentication.JwtBearer;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Http;
@@ -325,6 +326,52 @@
             if (get.Result == null)
                 return NotFound(get);
             return Ok(get);
+        }
+
+        [AllowAnonymous]
+        [HttpGet("DescargarExcelDTCNoSellado/")]
+        public IActionResult GetListDTCNoSellados()
+        {
+            var get = _db.GetListDTCNoSellados();
+            if (get.Result == null)
+            {
+                return null;
+            }
+            else
+            {
+                List<DTCNoSellado> lista = (List<DTCNoSellado>)get.Result;
+                try
+                {
+                    using (var workbook = new XLWorkbook())
+                    {
+                        int fila = 2;
+                        var ws = workbook.Worksheets.Add("Lista");
+                        ws.Cell(1, 1).Value = "ReferenceNumber";
+                        ws.Cell(1, 2).Value = "StatusId";
+                        ws.Cell(1, 3).Value = "FechaIngreso";
+                        foreach (DTCNoSellado item in lista)
+                        {
+                            ws.Cell(fila, 1).Value = item.ReferenceNumber;
+                            ws.Cell(fila, 2).Value = item.StatusId;
+                            ws.Cell(fila, 3).Value = item.FechaIngreso;
+                            fila++;
+
+                        }
+                        workbook.SaveAs("D:\\LDTCNoSellado.xlsx");
+
+
+                        //return File(new FileStream("D:\\HelloWorld.xlsx", FileMode.Open, FileAccess.Read), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+                        byte[] bytes = System.IO.File.ReadAllBytes("D:\\LDTCNoSellado.xlsx");
+                        return File(bytes, System.Net.Mime.MediaTypeNames.Application.Octet, "LDTCNoSellado.xlsx");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    return null;
+                }
+            }
+
+
         }
         #endregion
 
