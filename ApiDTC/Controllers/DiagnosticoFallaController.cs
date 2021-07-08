@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Drawing.Imaging;
     using System.IO;
     using ApiDTC.Data;
     using ApiDTC.Models;
@@ -23,7 +24,7 @@
         private readonly DiagnosticoDb _db;
 
         private readonly ApiLogger _apiLogger;
-        
+
         private readonly string _disk;
 
         private readonly string _folder;
@@ -32,7 +33,7 @@
         #region Constructor
         public DiagnosticoFallaController(DiagnosticoDb db, IConfiguration configuration)
         {
-            
+
             this._db = db ?? throw new ArgumentNullException(nameof(db));
             this._disk = $@"{Convert.ToString(configuration.GetValue<string>("Path:Disk"))}";
             this._folder = $"{Convert.ToString(configuration.GetValue<string>("Path:Folder"))}";
@@ -50,7 +51,7 @@
             try
             {
                 var getInfoPdf = _db.GetDiagnosticoInfoPdf(clavePlaza, referenceNumber);
-                if(getInfoPdf == null)
+                if (getInfoPdf == null)
                     return NotFound();
                 DiagnosticoFallaPdfCreation pdf = new DiagnosticoFallaPdfCreation(clavePlaza, getInfoPdf, new ApiLogger());
                 var pdfResult = pdf.NewPdf($@"{this._disk}:\{this._folder}");
@@ -62,14 +63,14 @@
             {
                 _apiLogger.WriteLog(clavePlaza, ex, "FichaTecnicaAtencionController: GetFichaTecnicaAtencion", 2);
                 return NotFound(ex.ToString());
-            }   
+            }
         }
 
         [HttpGet("Exists/{clavePlaza}/{referenceNumber}")]
         public ActionResult DiagnosticoFallaExists(string clavePlaza, string referenceNumber)
         {
-            string path =  $@"{this._disk}:\{this._folder}\{clavePlaza}\Reportes\{referenceNumber}\{referenceNumber}-DiagnosticoSellado.pdf";
-            if(System.IO.File.Exists((path)))
+            string path = $@"{this._disk}:\{this._folder}\{clavePlaza}\Reportes\{referenceNumber}\{referenceNumber}-DiagnosticoSellado.pdf";
+            if (System.IO.File.Exists((path)))
                 return Ok();
             return NotFound();
         }
@@ -77,9 +78,9 @@
         [HttpPost("Sellada/{clavePlaza}/{referenceNumber}")]
         public ActionResult<Response> DiagnosticoFallaSellado(string clavePlaza, [FromForm(Name = "file")] IFormFile file, string referenceNumber)
         {
-            if(file.Length > 0 || file != null)
+            if (file.Length > 0 || file != null)
             {
-                if(file.FileName.EndsWith(".pdf") || file.FileName.EndsWith(".PDF"))
+                if (file.FileName.EndsWith(".pdf") || file.FileName.EndsWith(".PDF"))
                 {
                     string path = $@"{this._disk}:\{this._folder}\{clavePlaza}\Reportes\{referenceNumber}", filename;
                     try
@@ -106,21 +107,21 @@
         }
 
         #endregion
-       
-       [HttpGet("GetDiagnosticoInfo/{clavePlaza}/{referenceNumber}")]
+
+        [HttpGet("GetDiagnosticoInfo/{clavePlaza}/{referenceNumber}")]
         public ActionResult<Response> GetBitacora(string clavePlaza, string referenceNumber)
         {
             var get = _db.GetDiagnosticoInfo(clavePlaza, referenceNumber);
-            if(get.Result == null)
+            if (get.Result == null)
                 return NotFound(get);
             return Ok(get);
-        } 
+        }
 
         [HttpGet("GetBitacoras/{clavePlaza}/{userId}")]
         public ActionResult<Response> GetDiagnosticos(string clavePlaza, int userId)
         {
             var get = _db.GetDiagnosticos(clavePlaza, userId);
-            if(get.Result == null)
+            if (get.Result == null)
                 return NotFound(get);
             return Ok(get);
         }
@@ -169,13 +170,18 @@
             {
                 int numberOfImages;
                 string dir = $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\Reportes\{reportNumber}\DiagnosticoFallaImgs";
+                string dirFull = $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\Reportes\{reportNumber}\DiagnosticoFallaImgsFullSize";
                 string filename;
                 try
                 {
                     if (!Directory.Exists(dir))
                         Directory.CreateDirectory(dir);
-                    if(Directory.GetFiles(dir).Length >= 4)
+                    if (!Directory.Exists(dirFull))
+                        Directory.CreateDirectory(dirFull);
+
+                    if (Directory.GetFiles(dir).Length >= 4)
                         return NotFound("Ya existen cuatro imágenes");
+
                     numberOfImages = Directory.GetFiles(dir).Length + 1;
                     filename = $"{reportNumber}_DiagnosticoFallaImgs_{numberOfImages}{image.FileName.Substring(image.FileName.LastIndexOf('.'))}";
                     while (System.IO.File.Exists(Path.Combine(dir, filename)))
@@ -183,30 +189,42 @@
                         numberOfImages += 1;
                         filename = $"{reportNumber}_Image_{numberOfImages}{image.FileName.Substring(image.FileName.LastIndexOf('.'))}";
                     }
+                    //full
+                    using (FileStream fs = new FileStream(Path.Combine(dirFull, filename), FileMode.Create))
+                    {
+                        image.CopyTo(fs);
+                        fs.Close();
+                        //if (fi.Length > 1000000)
+                        //{
+                        //}
+                    }
+                    //full
+
                     using (FileStream fs = new FileStream(Path.Combine(dir, filename), FileMode.Create))
                     {
                         image.CopyTo(fs);
                         fs.Close();
 
                         FileInfo fi = new FileInfo(Path.Combine(dir, filename));
-                        if(fi.Length > 1000000)
+                        //if(fi.Length > 1000000)
+                        //{
+                        string temporal = Path.Combine(dir, filename) + "_temp";
+                        this.VaryQualityLevel(Path.Combine(dir, filename), temporal);
+                        //using(var imgOrigin = Image.Load(Path.Combine(dir, filename)))
+                        //{
+                        //    var jpegOptions = new JpegOptions(){
+                        //        CompressionType = Aspose.Imaging.FileFormats.Jpeg.JpegCompressionMode.Progressive
+                        //    };
+                        //    imgOrigin.Save(Path.Combine(dir, temporal), jpegOptions);
+                        //}
+                        if (System.IO.File.Exists(Path.Combine(dir, filename)))
                         {
-                            string temporal = Path.Combine(dir, filename) + "_temp";
-                            using(var imgOrigin = Image.Load(Path.Combine(dir, filename)))
-                            {
-                                var jpegOptions = new JpegOptions(){
-                                    CompressionType = Aspose.Imaging.FileFormats.Jpeg.JpegCompressionMode.Progressive
-                                };
-                                imgOrigin.Save(Path.Combine(dir, temporal), jpegOptions);
-                            }
-                            if(System.IO.File.Exists(Path.Combine(dir, filename)))
-                            {
-                                //Se borra archivo grande
-                                System.IO.File.Delete(Path.Combine(dir, filename));
-                                //Archivo temporal actualiza su nombre al real
-                                System.IO.File.Move(Path.Combine(dir, temporal), Path.Combine(dir, filename));
-                            }
+                            //Se borra archivo grande
+                            System.IO.File.Delete(Path.Combine(dir, filename));
+                            //Archivo temporal actualiza su nombre al real
+                            System.IO.File.Move(Path.Combine(dir, temporal), Path.Combine(dir, filename));
                         }
+                        //}
                     }
                     return Ok(Path.Combine(dir, filename));
                 }
@@ -219,6 +237,40 @@
             else
                 return NotFound("Insert another image");
         }
+
+        public void VaryQualityLevel(string fileName, string fileTemporal)
+        {
+            // Get a bitmap.
+            System.Drawing.Bitmap bmp1 = new System.Drawing.Bitmap(fileName);
+            ImageCodecInfo jgpEncoder = GetEncoder(ImageFormat.Jpeg);
+            System.Drawing.Imaging.Encoder myEncoder =
+                System.Drawing.Imaging.Encoder.Quality;
+            EncoderParameters myEncoderParameters = new EncoderParameters(1);
+            EncoderParameter myEncoderParameter = new EncoderParameter(myEncoder,
+                100L);
+            myEncoderParameters.Param[0] = myEncoderParameter;
+            System.Drawing.Bitmap bmp2 = new System.Drawing.Bitmap(bmp1, 300, 300);
+            bmp2.Save(fileTemporal, jgpEncoder,
+                myEncoderParameters);
+            bmp1.Dispose();
+
+
+        }
+
+        private ImageCodecInfo GetEncoder(ImageFormat format)
+        {
+            ImageCodecInfo[] codecs = ImageCodecInfo.GetImageDecoders();
+            foreach (ImageCodecInfo codec in codecs)
+            {
+                if (codec.FormatID == format.Guid)
+                {
+                    return codec;
+                }
+            }
+            return null;
+        }
+
+
 
         [AllowAnonymous]
         [HttpGet("Images/{clavePlaza}/{reportNumber}/{fileName}")]
@@ -298,15 +350,15 @@
                     borraArchivosDiagnostico(clavePlaza, ReferenceNumber, ReferenceDTC);
                     return Ok(get);
                 }
-                    
-                
+
+
             }
             return BadRequest(ModelState);
         }
 
         //[AllowAnonymous]
         //[HttpPost("BorraFoldersFull/{clavePlaza}/{ReferenceNumber}/{ReferenceDTC}")]
-        public void borraArchivosDiagnostico(string clavePlaza,  string ReferenceNumber, string ReferenceDTC)
+        public void borraArchivosDiagnostico(string clavePlaza, string ReferenceNumber, string ReferenceDTC)
         {
             try
             {
@@ -327,7 +379,7 @@
                     }
                 }
 
-                Console.WriteLine(pathReporte + "--"+ pathDTC);
+                Console.WriteLine(pathReporte + "--" + pathDTC);
             }
             catch (IOException ex)
             {
@@ -338,7 +390,7 @@
         public string armaFecha()
         {
             string fechaBorrado = DateTime.Now.ToString().Replace(" ", "");
-            fechaBorrado=fechaBorrado.Replace("/", "");
+            fechaBorrado = fechaBorrado.Replace("/", "");
             fechaBorrado = fechaBorrado.Replace(":", "");
             return fechaBorrado;
         }
@@ -357,7 +409,8 @@
             string pathBorraReporte = $@"{this._disk}:\{this._folder}\borrado\Reportes";
             string pathBorraDTC = $@"{this._disk}:\{this._folder}\borrado\DTC";
             bool canCreate = false;
-            if(Directory.Exists(pathBorraReporte)){
+            if (Directory.Exists(pathBorraReporte))
+            {
                 canCreate = true;
             }
             else
