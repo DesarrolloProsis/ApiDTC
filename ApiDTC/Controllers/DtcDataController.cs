@@ -320,7 +320,7 @@
             return Ok(get);
         }
         [HttpGet("GetDTCNoSellado/")]
-        public ActionResult<Response> GetListDTCNoSellados(int DelegationId)
+        public ActionResult<Response> GetListDTCNoSellados()
         {
             var get = _db.GetListDTCNoSellados();
             if (get.Result == null)
@@ -329,7 +329,7 @@
         }
 
         [HttpGet("DescargarExcelDTCNoSellado/")]
-        public IActionResult GetListDTCNoSellados()
+        public IActionResult DescargarExcelDTCNoSellado()
         {
             var get = _db.GetListDTCNoSellados();
             if (get.Result == null)
