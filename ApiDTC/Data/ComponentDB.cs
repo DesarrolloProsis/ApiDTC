@@ -505,6 +505,16 @@
             }
         }
 
+        public SqlResponse DuplicarComponentAdd(string clavePlaza, ComponentIns Componente, int nInserciones)
+        {
+            SqlResponse respuesta=null;
+            for (int i = 0; i < nInserciones; i++)
+            {
+                respuesta= ComponentAdd(clavePlaza, Componente);
+            }
+            return respuesta;
+        }
+
         #endregion
     }
 }

@@ -222,10 +222,10 @@ namespace ApiDTC.Controllers
             return Ok(get);
         }
 
-        [HttpPost("ComponentAdd/{clavePlaza}")]
-        public ActionResult<Response> ComponentAdd(string clavePlaza, [FromBody] ComponentIns Componente)
+        [HttpPost("ComponentAdd/{clavePlaza}/{nInserciones}")]
+        public ActionResult<Response> ComponentAdd(string clavePlaza, int nInserciones, [FromBody] ComponentIns Componente)
         {
-            var put = _db.ComponentAdd(clavePlaza, Componente);
+            var put = _db.DuplicarComponentAdd(clavePlaza, Componente, nInserciones);
             if (put.SqlResult == null)
                 return NotFound(put);
             return Ok(put);
