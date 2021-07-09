@@ -328,7 +328,6 @@
             return Ok(get);
         }
 
-        [AllowAnonymous]
         [HttpGet("DescargarExcelDTCNoSellado/")]
         public IActionResult GetListDTCNoSellados()
         {
