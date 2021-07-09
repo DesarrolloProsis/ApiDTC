@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Net.Http;
-using System.Threading.Tasks;
 using ApiDTC.Data;
 using ApiDTC.Models;
 using ClosedXML.Excel;
@@ -223,6 +220,16 @@ namespace ApiDTC.Controllers
             if (get.Result == null)
                 return NotFound(get);
             return Ok(get);
+        }
+
+        [HttpPost("ComponentAdd/{clavePlaza}")]
+        public ActionResult<Response> ComponentAdd(string clavePlaza, [FromBody] ComponentIns Componente)
+        {
+            var put = _db.ComponentAdd(clavePlaza, Componente);
+            if (put.SqlResult == null)
+                return NotFound(put);
+            return Ok(put);
+
         }
         #endregion
     }

@@ -468,6 +468,43 @@
                 return new Response { Message = $"Error: {ex.Message}", Result = null };
             }
         }
+
+
+        public SqlResponse ComponentAdd(string clavePlaza,ComponentIns Componente)
+        {
+            try
+            {
+                using (SqlConnection sql = new SqlConnection(_connectionString))
+                {
+                    using (SqlCommand cmd = new SqlCommand("dbo.spInsertComponent", sql))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.Add("@CapufeNum", SqlDbType.NVarChar).Value = Componente.CapufeNum;
+                        cmd.Parameters.Add("@IdGare", SqlDbType.NVarChar).Value = Componente.IdGare;
+                        cmd.Parameters.Add("@InventaryNumCapufe", SqlDbType.NVarChar).Value = Componente.InventaryNumCapufe;
+                        cmd.Parameters.Add("@InventaryNumProsis", SqlDbType.NVarChar).Value = Componente.InventaryNumProsis;
+                        cmd.Parameters.Add("@Component", SqlDbType.NVarChar).Value = Componente.Component;
+                        cmd.Parameters.Add("@Model", SqlDbType.NVarChar).Value = Componente.Model;
+                        cmd.Parameters.Add("@SerialNumber", SqlDbType.NVarChar).Value = Componente.SerialNumber;
+                        cmd.Parameters.Add("@InstalationDate", SqlDbType.DateTime).Value = Componente.InstalationDate;
+                        cmd.Parameters.Add("@Observations", SqlDbType.NVarChar).Value = Componente.Observations;
+                        cmd.Parameters.Add("@TypeUbication", SqlDbType.Int).Value = Componente.TypeUbication;
+                        cmd.Parameters.Add("@Brand", SqlDbType.NVarChar).Value = Componente.Brand;
+                        cmd.Parameters.Add("@Replace", SqlDbType.NVarChar).Value = Componente.Replace;
+                        cmd.Parameters.Add("@MaintenanceDate", SqlDbType.DateTime).Value = Componente.MaintenanceDate;
+                        cmd.Parameters.Add("@MaintenanceFolio", SqlDbType.Int).Value = Componente.MaintenanceFolio;
+                        cmd.Parameters.Add("@AttahcedId", SqlDbType.Int).Value = Componente.AttahcedId;
+                        return _sqlResult.Post(clavePlaza, cmd, sql, "ComponentDb");
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                _apiLogger.WriteLog(clavePlaza, ex, "ComponentDb: ComponentAdd", 1);
+                return new SqlResponse { SqlMessage = ex.Message, SqlResult = null };
+            }
+        }
+
         #endregion
     }
 }
