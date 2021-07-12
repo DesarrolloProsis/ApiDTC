@@ -282,11 +282,11 @@ namespace ApiDTC.Services
 
                 var colTextoFecha = new PdfPCell(new Phrase("Fecha:", letraoNegritaMediana)) { Border = 0, HorizontalAlignment = Element.ALIGN_RIGHT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 5 };
                 var fech = _fichaTecnicaInfo.Fecha.ToString("dd-MM-yyyy");
-                var colFecha = new PdfPCell(new Phrase(fech, letraNormalMediana)) { BorderWidthBottom = 1, BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_BOTTOM, Padding = 2 };
+                var colFecha = new PdfPCell(new Phrase(fech, letraNormalMediana)) { BorderWidthBottom = 1, BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_BOTTOM, Padding = 2, Colspan=2 };
 
                 table.AddCell(colTextoNoReporte);
                 table.AddCell(colNoReporte);
-                CeldasVacias(1, table);
+                //CeldasVacias(1, table);
                 table.AddCell(colTextoFecha);
                 table.AddCell(colFecha);
                 CeldasVacias(1, table);
@@ -297,11 +297,11 @@ namespace ApiDTC.Services
 
                 var plazaDeCobro = new PdfPCell(new Phrase(_fichaTecnicaInfo.PlazaCobro, letraNormalMediana)) { BorderWidthBottom = 1, BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_BOTTOM, Padding = 2, Colspan = 3 };
                 var colTextoHoraInicio = new PdfPCell(new Phrase("Fecha/Hora Inicio:", letraoNegritaMediana)) { Border = 0, HorizontalAlignment = Element.ALIGN_RIGHT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 5 };
-                var colHoraInicio = new PdfPCell(new Phrase(_fichaTecnicaInfo.Inicio, letraNormalMediana)) { BorderWidthBottom = 1, BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_BOTTOM, Padding = 2 };
+                var colHoraInicio = new PdfPCell(new Phrase(_fichaTecnicaInfo.Inicio, letraNormalMediana)) { BorderWidthBottom = 1, BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_BOTTOM, Padding = 2, Colspan=2 };
 
                 table.AddCell(colPlazaDeCobro);
                 table.AddCell(plazaDeCobro);
-                CeldasVacias(1, table);
+                //CeldasVacias(1, table);
                 table.AddCell(colTextoHoraInicio);
                 table.AddCell(colHoraInicio);
                 CeldasVacias(1, table);
@@ -313,11 +313,11 @@ namespace ApiDTC.Services
                 var ubicacion = new PdfPCell(new Phrase(_fichaTecnicaInfo.Ubicacion, letraNormalMediana)) { BorderWidthBottom = 1, BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_BOTTOM, Padding = 2, Colspan = 3 };
 
                 var colTextoHoraFin = new PdfPCell(new Phrase("Fecha/Hora Fin:", letraoNegritaMediana)) { Border = 0, HorizontalAlignment = Element.ALIGN_RIGHT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 5 };
-                var colHoraFin = new PdfPCell(new Phrase(Convert.ToString(_fichaTecnicaInfo.Fin), letraNormalMediana)) { BorderWidthBottom = 1, BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_BOTTOM, Padding = 2 };
+                var colHoraFin = new PdfPCell(new Phrase(Convert.ToString(_fichaTecnicaInfo.Fin), letraNormalMediana)) { BorderWidthBottom = 1, BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_BOTTOM, Padding = 2, Colspan=2 };
 
                 table.AddCell(colUbicacion);
                 table.AddCell(ubicacion);
-                CeldasVacias(1, table);
+                //CeldasVacias(1, table);
                 table.AddCell(colTextoHoraFin);
                 table.AddCell(colHoraFin);
                 CeldasVacias(1, table);
