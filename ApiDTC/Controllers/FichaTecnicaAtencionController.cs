@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Drawing.Imaging;
     using System.IO;
     using ApiDTC.Data;
     using ApiDTC.Models;
@@ -138,12 +139,16 @@
             {
                 int numberOfImages;
                 string dir = $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\Reportes\{reportNumber}\FichaTecnicaAtencionImgs";
+                string dirFull = $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\Reportes\{reportNumber}\FichaTecnicaAtencionImgsImgsFullSize";
                 string filename;
                 try
                 {
                     if (!Directory.Exists(dir))
                         Directory.CreateDirectory(dir);
-                    if(Directory.GetFiles(dir).Length >= 4)
+                    if (!Directory.Exists(dirFull))
+                        Directory.CreateDirectory(dirFull);
+
+                    if (Directory.GetFiles(dir).Length >= 4)
                         return NotFound("Ya existen cuatro imágenes");
                     numberOfImages = Directory.GetFiles(dir).Length + 1;
                     filename = $"{reportNumber}_FichaTecnicaAtencionImgs_{numberOfImages}{image.FileName.Substring(image.FileName.LastIndexOf('.'))}";
@@ -152,30 +157,41 @@
                         numberOfImages += 1;
                         filename = $"{reportNumber}_FichaTecnicaAtencionImage_{numberOfImages}{image.FileName.Substring(image.FileName.LastIndexOf('.'))}";
                     }
+                    //full
+                    using (FileStream fs = new FileStream(Path.Combine(dirFull, filename), FileMode.Create))
+                    {
+                        image.CopyTo(fs);
+                        fs.Close();
+                        //if (fi.Length > 1000000)
+                        //{
+                        //}
+                    }
+                    //full
                     using (FileStream fs = new FileStream(Path.Combine(dir, filename), FileMode.Create))
                     {
                         image.CopyTo(fs);
                         fs.Close();
 
                         FileInfo fi = new FileInfo(Path.Combine(dir, filename));
-                        if(fi.Length > 1000000)
-                        {
+                        //if(fi.Length > 1000000)
+                        //{
                             string temporal = Path.Combine(dir, filename) + "_temp";
-                            using(var imgOrigin = Image.Load(Path.Combine(dir, filename)))
-                            {
-                                var jpegOptions = new JpegOptions(){
-                                    CompressionType = Aspose.Imaging.FileFormats.Jpeg.JpegCompressionMode.Progressive
-                                };
-                                imgOrigin.Save(Path.Combine(dir, temporal), jpegOptions);
-                            }
-                            if(System.IO.File.Exists(Path.Combine(dir, filename)))
+                        this.VaryQualityLevel(Path.Combine(dir, filename), temporal);
+                        //using(var imgOrigin = Image.Load(Path.Combine(dir, filename)))
+                        //{
+                        //    var jpegOptions = new JpegOptions(){
+                        //        CompressionType = Aspose.Imaging.FileFormats.Jpeg.JpegCompressionMode.Progressive
+                        //    };
+                        //    imgOrigin.Save(Path.Combine(dir, temporal), jpegOptions);
+                        //}
+                        if (System.IO.File.Exists(Path.Combine(dir, filename)))
                             {
                                 //Se borra archivo grande
                                 System.IO.File.Delete(Path.Combine(dir, filename));
                                 //Archivo temporal actualiza su nombre al real
                                 System.IO.File.Move(Path.Combine(dir, temporal), Path.Combine(dir, filename));
                             }
-                        }
+                        //}
                     }
                     return Ok(Path.Combine(dir, filename));
                 }
@@ -187,6 +203,37 @@
             }
             else
                 return NotFound("Insert another image");
+        }
+        public void VaryQualityLevel(string fileName, string fileTemporal)
+        {
+            // Get a bitmap.
+            System.Drawing.Bitmap bmp1 = new System.Drawing.Bitmap(fileName);
+            ImageCodecInfo jgpEncoder = GetEncoder(ImageFormat.Jpeg);
+            System.Drawing.Imaging.Encoder myEncoder =
+                System.Drawing.Imaging.Encoder.Quality;
+            EncoderParameters myEncoderParameters = new EncoderParameters(1);
+            EncoderParameter myEncoderParameter = new EncoderParameter(myEncoder,
+                100L);
+            myEncoderParameters.Param[0] = myEncoderParameter;
+            System.Drawing.Bitmap bmp2 = new System.Drawing.Bitmap(bmp1, 300, 300);
+            bmp2.Save(fileTemporal, jgpEncoder,
+                myEncoderParameters);
+            bmp1.Dispose();
+
+
+        }
+
+        private ImageCodecInfo GetEncoder(ImageFormat format)
+        {
+            ImageCodecInfo[] codecs = ImageCodecInfo.GetImageDecoders();
+            foreach (ImageCodecInfo codec in codecs)
+            {
+                if (codec.FormatID == format.Guid)
+                {
+                    return codec;
+                }
+            }
+            return null;
         }
 
         [AllowAnonymous]
