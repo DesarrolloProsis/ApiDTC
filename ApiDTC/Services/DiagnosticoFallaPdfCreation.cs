@@ -287,7 +287,11 @@ namespace ApiDTC.Services
 
                 var colTextoFecha = new PdfPCell(new Phrase("Fecha:", letraoNegritaMediana)) { Border = 0, HorizontalAlignment = Element.ALIGN_RIGHT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 5 };
                 var fech = _diagnosticoDeFallaInfo.Fecha.ToString("dd-MM-yyyy");
+<<<<<<< HEAD
                 var colFecha = new PdfPCell(new Phrase(fech, letraNormalMediana)) { BorderWidthBottom = 1, BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_BOTTOM, Padding = 2, Colspan = 2 };//codemcm
+=======
+                var colFecha = new PdfPCell(new Phrase(fech, letraNormalMediana)) { BorderWidthBottom = 1, BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_BOTTOM, Padding = 2 };//codemcm
+>>>>>>> versionjul5
 
                 table.AddCell(colTextoNoReporte);
                 table.AddCell(colNoReporte);
@@ -303,7 +307,11 @@ namespace ApiDTC.Services
                 var plazaDeCobro = new PdfPCell(new Phrase(_diagnosticoDeFallaInfo.PlazaCobro, letraNormalMediana)) { BorderWidthBottom = 1, BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_BOTTOM, Padding = 2, Colspan = 3 };
 
                 var colTextoHoraInicio = new PdfPCell(new Phrase("Fecha/Hora Inicio:", letraoNegritaMediana)) { Border = 0, HorizontalAlignment = Element.ALIGN_RIGHT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 0, PaddingTop = 5 };
+<<<<<<< HEAD
                 var colHoraInicio = new PdfPCell(new Phrase(Convert.ToString(_diagnosticoDeFallaInfo.Inicio), letraNormalMediana)) { BorderWidthBottom = 1, BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_BOTTOM, Padding = 2, PaddingLeft = 0, Colspan = 2 };
+=======
+                var colHoraInicio = new PdfPCell(new Phrase(Convert.ToString(_diagnosticoDeFallaInfo.Inicio), letraNormalMediana)) { BorderWidthBottom = 1, BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_BOTTOM, Padding = 2, PaddingLeft = 0 };
+>>>>>>> versionjul5
 
                 table.AddCell(colPlazaDeCobro);
                 table.AddCell(plazaDeCobro);
@@ -319,7 +327,11 @@ namespace ApiDTC.Services
                 var ubicacion = new PdfPCell(new Phrase(_diagnosticoDeFallaInfo.Ubicacion, letraNormalMediana)) { BorderWidthBottom = 1, BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_BOTTOM, Padding = 2, Colspan = 3 };
 
                 var colTextoHoraFin = new PdfPCell(new Phrase("Fecha/Hora Fin:", letraoNegritaMediana)) { Border = 0, HorizontalAlignment = Element.ALIGN_RIGHT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 0, PaddingTop = 5, PaddingLeft = 0 };
+<<<<<<< HEAD
                 var colHoraFin = new PdfPCell(new Phrase(Convert.ToString(_diagnosticoDeFallaInfo.Fin), letraNormalMediana)) { BorderWidthBottom = 1, BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_BOTTOM, Padding = 2, PaddingLeft = 0, Colspan = 2 };
+=======
+                var colHoraFin = new PdfPCell(new Phrase(Convert.ToString(_diagnosticoDeFallaInfo.Fin), letraNormalMediana)) { BorderWidthBottom = 1, BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_BOTTOM, Padding = 2, PaddingLeft = 0 };
+>>>>>>> versionjul5
 
                 table.AddCell(colUbicacion);
                 table.AddCell(ubicacion);
