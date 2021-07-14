@@ -125,5 +125,21 @@
             }
             return BadRequest(ModelState);
         }
+
+        
+        [HttpGet("UserOfSquare/{SquareId}")]
+        public ActionResult<Response> GetUserOfSquare(string SquareId)
+        {
+            if (ModelState.IsValid)
+            {
+                var get = _db.GetUserOfSquare(SquareId);
+                if (get.Result == null)
+                    return BadRequest(get);
+                else
+                    return Ok(get);
+            }
+            return BadRequest(ModelState);
+        }
+
     }
 }

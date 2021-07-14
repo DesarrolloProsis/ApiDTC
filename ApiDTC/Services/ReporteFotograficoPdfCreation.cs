@@ -3,8 +3,6 @@
     using ApiDTC.Models;
     using iTextSharp.text;
     using iTextSharp.text.pdf;
-    using Spire.Pdf;
-    using Spire.Pdf.Graphics;
     using System;
     using System.Collections.Generic;
     using System.Data;
