@@ -46,9 +46,9 @@
         //TODO mandar si tiene pdf y fotos
         [HttpGet("{clavePlaza}/{IdUser}/{SquareCatalog}")]
         public ActionResult<Response> Get(string clavePlaza, int IdUser, string SquareCatalog)
-        {   
+        {
             var get = _db.GetDTC(clavePlaza, IdUser, SquareCatalog, this._disk, this._folder);
-            if(get.Result == null)
+            if (get.Result == null)
                 return NotFound(get);
             return Ok(get);
         }
@@ -93,7 +93,7 @@
         public ActionResult<Response> GetDtcData(string clavePlaza, string refNum)
         {
             var get = _db.GetReferenceNumber(clavePlaza, refNum);
-            if(get.Result == null)
+            if (get.Result == null)
                 return NotFound(get);
             return Ok(get);
         }
@@ -102,7 +102,7 @@
         public ActionResult<Response> GetInvalidReferenceNumbers(string clavePlaza)
         {
             var get = _db.GetInvalidNumbers(clavePlaza);
-            if(get.Result == null)
+            if (get.Result == null)
                 return NotFound(get);
             return Ok(get);
         }
@@ -120,16 +120,16 @@
         [HttpPost("{clavePlaza}")]
         public ActionResult<Response> Post(string clavePlaza, [FromBody] DtcData dtcData)
         {
-            if(ModelState.IsValid)
+            if (ModelState.IsValid)
             {
                 var get = _db.GetStoredDtcData(clavePlaza, dtcData);
-                if(get.SqlResult == null)
+                if (get.SqlResult == null)
                     return NotFound(get);
-                return StatusCode(201, get);    
+                return StatusCode(201, get);
             }
             return BadRequest(ModelState);
         }
-        
+
         [HttpDelete("Delete/{clavePlaza}/{referenceNumber}/{userId}/{Comment}")]
         public ActionResult<Response> Delete(string clavePlaza, string referenceNumber, int userId, string Comment)
         {
@@ -157,7 +157,7 @@
         }
 
         [HttpGet("{clavePlaza}/{ReferenceNumber}")]
-        public ActionResult<Response> GetHeaderEdit (string clavePlaza, string ReferenceNumber)
+        public ActionResult<Response> GetHeaderEdit(string clavePlaza, string ReferenceNumber)
         {
             var get = _db.GetDTCHeaderEdit(clavePlaza, ReferenceNumber);
             if (get.Result == null)
@@ -169,7 +169,7 @@
         public ActionResult<Response> GetReferencesLog()
         {
             var get = _db.GetReferencesLog();
-            if(get.Result == null)
+            if (get.Result == null)
                 return NotFound();
             return Ok(get);
         }
@@ -186,7 +186,7 @@
 
         #region Equipo Dañado
         [HttpPost("EquipoDañado/Images/{clavePlaza}/{referenceNumber}")]
-        public ActionResult<Response> InsertImageDaniado(string clavePlaza, [FromForm(Name = "image")] IFormFile image,  string referenceNumber)
+        public ActionResult<Response> InsertImageDaniado(string clavePlaza, [FromForm(Name = "image")] IFormFile image, string referenceNumber)
         {
             if (image.Length > 0 || image != null)
             {
@@ -210,17 +210,18 @@
                         fs.Close();
 
                         FileInfo fi = new FileInfo(Path.Combine(dir, filename));
-                        if(fi.Length > 1000000)
+                        if (fi.Length > 1000000)
                         {
                             string temporal = Path.Combine(dir, filename) + "_temp";
-                            using(var imgOrigin = Image.Load(Path.Combine(dir, filename)))
+                            using (var imgOrigin = Image.Load(Path.Combine(dir, filename)))
                             {
-                                var jpegOptions = new JpegOptions(){
+                                var jpegOptions = new JpegOptions()
+                                {
                                     CompressionType = Aspose.Imaging.FileFormats.Jpeg.JpegCompressionMode.Progressive
                                 };
                                 imgOrigin.Save(Path.Combine(dir, temporal), jpegOptions);
                             }
-                            if(System.IO.File.Exists(Path.Combine(dir, filename)))
+                            if (System.IO.File.Exists(Path.Combine(dir, filename)))
                             {
                                 //Se borra archivo grande
                                 System.IO.File.Delete(Path.Combine(dir, filename));
@@ -229,7 +230,7 @@
                             }
                         }
                     }
-                    
+
                     return Ok(Path.Combine(dir, filename));
                 }
                 catch (IOException ex)
@@ -400,17 +401,18 @@
                         fs.Close();
 
                         FileInfo fi = new FileInfo(Path.Combine(dir, filename));
-                        if(fi.Length > 1000000)
+                        if (fi.Length > 1000000)
                         {
                             string temporal = Path.Combine(dir, filename) + "_temp";
-                            using(var imgOrigin = Image.Load(Path.Combine(dir, filename)))
+                            using (var imgOrigin = Image.Load(Path.Combine(dir, filename)))
                             {
-                                var jpegOptions = new JpegOptions(){
+                                var jpegOptions = new JpegOptions()
+                                {
                                     CompressionType = Aspose.Imaging.FileFormats.Jpeg.JpegCompressionMode.Progressive
                                 };
                                 imgOrigin.Save(Path.Combine(dir, temporal), jpegOptions);
                             }
-                            if(System.IO.File.Exists(Path.Combine(dir, filename)))
+                            if (System.IO.File.Exists(Path.Combine(dir, filename)))
                             {
                                 //Se borra archivo grande
                                 System.IO.File.Delete(Path.Combine(dir, filename));
@@ -490,6 +492,19 @@
                 _apiLogger.WriteLog(clavePlaza, ex, "DtcDataController: DeleteEquipoNuevoImg", 2);
                 return NotFound(ex.ToString());
             }
+        }
+
+        [HttpPut("UpdateUserIdOfDTC/{ClavePlaza}/{userId}/{referenceNumberDTC}/{referenceNumberDiagnostic}")]
+        public ActionResult<Response> UpdateUserIdOfDTC(string ClavePlaza, int userId, string referenceNumberDTC, string referenceNumberDiagnostic)
+        {
+            if (ModelState.IsValid)
+            {
+                var put = _db.UpdateUserIdOfDTC(ClavePlaza, userId, referenceNumberDTC, referenceNumberDiagnostic);
+                if (put.Result == null)
+                    return NotFound(put);
+                return Ok(put);
+            }
+            return BadRequest();
         }
         #endregion
         #endregion

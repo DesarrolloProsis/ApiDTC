@@ -245,7 +245,7 @@
 
                         List<DtcViewInfo> dtcViewInfo = new List<DtcViewInfo>();
 
-                        foreach(var dtcView in dtcViewList)
+                        foreach (var dtcView in dtcViewList)
                         {
                             DtcViewInfo viewInfo = new DtcViewInfo
                             {
@@ -259,15 +259,15 @@
 
                             string directoy = $@"{disk}:\{folder}\{dtcView.ReferenceNumber.Split('-')[0].ToUpper()}\DTC\{dtcView.ReferenceNumber}\EquipoDañadoImgs";
                             List<string> dtcImages = new List<string>();
-                            if(Directory.Exists(directoy))
+                            if (Directory.Exists(directoy))
                             {
                                 if (Directory.GetFiles(directoy) != null)
                                 {
-                                foreach (var item in Directory.GetFiles(directoy))
-                                    dtcImages.Add(item.Substring(item.LastIndexOf('\\') + 1));
+                                    foreach (var item in Directory.GetFiles(directoy))
+                                        dtcImages.Add(item.Substring(item.LastIndexOf('\\') + 1));
                                 }
                             }
-                            
+
                             viewInfo.Paths = dtcImages;
                             //IMAGENES DEL DIAGNOSTICO DE FALLA
                             string directoyDF = $@"{disk}:\{folder}\{dtcView.ReferenceNumber.Split('-')[0].ToUpper()}\Reportes\{dtcView.TechnicalSheetReference}\DiagnosticoFallaImgs";
@@ -301,7 +301,7 @@
                             Result = dtcViewInfo,
                             Message = "Ok"
                         };
-                        
+
                     }
                 }
                 catch (SqlException ex)
@@ -571,7 +571,7 @@
                         cmd.Parameters.Add("@strDTCRefenrence", SqlDbType.NVarChar).Value = DtcReference;
                         cmd.Parameters.Add("@strDiagnosisReference", SqlDbType.NVarChar).Value = DiagnosisReference;
 
-                        var response= _sqlResult.Put(clavePlaza, cmd, sql, "spUpdateDTCReferenceFromDiagnosis");
+                        var response = _sqlResult.Put(clavePlaza, cmd, sql, "spUpdateDTCReferenceFromDiagnosis");
                         return new Response
                         {
                             Message = response.SqlMessage,
@@ -603,6 +603,35 @@
             catch (SqlException ex)
             {
                 _apiLogger.WriteLog("GetListComponentStock", ex, "dtcDataSb: GetListDTCNoSellados", 1);
+                return new Response { Message = $"Error: {ex.Message}", Result = null };
+            }
+        }
+
+        public Response UpdateUserIdOfDTC(string clavePlaza, int userId, string referenceNumberDTC, string referenceNumberDiagnostic)
+        {
+            try
+            {
+                using (SqlConnection sql = new SqlConnection(_connectionString))
+                {
+                    using (SqlCommand cmd = new SqlCommand("dbo.spUpdateUserIdOfDTC", sql))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+
+                        cmd.Parameters.Add("@userId", SqlDbType.Int).Value = userId;
+                        cmd.Parameters.Add("@referenceNumberDTC", SqlDbType.NVarChar).Value = referenceNumberDTC;
+                        cmd.Parameters.Add("@referenceNumberDiagnostic", SqlDbType.NVarChar).Value = referenceNumberDiagnostic;
+                        var response = _sqlResult.Put(clavePlaza, cmd, sql, "spUpdateUserIdOfDTC");
+                        return new Response
+                        {
+                            Message = response.SqlMessage,
+                            Result = response.SqlResult
+                        };
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                _apiLogger.WriteLog(clavePlaza, ex, "DtcDataDb: UpdateUserIdOfDTC", 1);
                 return new Response { Message = $"Error: {ex.Message}", Result = null };
             }
         }
