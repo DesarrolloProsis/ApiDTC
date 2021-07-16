@@ -232,14 +232,14 @@
                             cmd.CommandType = CommandType.StoredProcedure;
                             cmd.Parameters.Add("@SquareCatalogId", SqlDbType.NVarChar).Value = userSquare.SquareCatalogId;
                             cmd.Parameters.Add("@UserId", SqlDbType.Int).Value = userSquare.UserId;
-                        sql.Open();
-                         var reader = cmd.ExecuteScalar();
+                            sql.Open();
+                            var reader = cmd.ExecuteScalar();
 
-                        //var storedResult = _sqlResult.Post(userSquare.clavePlaza, cmd, sql, "AddSquareToUser");
-                        //if (storedResult.SqlResult == null)
-                        //    return new Response { Message = "Error al insertar"};
-                        Console.WriteLine(reader);
-                        sql.Close();
+                            //var storedResult = _sqlResult.Post(userSquare.clavePlaza, cmd, sql, "AddSquareToUser");
+                            //if (storedResult.SqlResult == null)
+                            //    return new Response { Message = "Error al insertar"};
+                            Console.WriteLine(reader);
+                            sql.Close();
                         }
                 }
                 return new Response
