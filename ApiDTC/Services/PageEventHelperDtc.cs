@@ -135,6 +135,9 @@ namespace ApiDTC.Services
                 cb.ShowText(Title);
                 cb.EndText();
             }
+            document.Add(tablaEncabezado());
+            document.Add(tablaSiniestro());
+            document.Add(tablaSiniestroMore());
             if (HeaderLeft + HeaderRight != string.Empty)
             {
                 PdfPTable HeaderTable = new PdfPTable(2);
@@ -196,6 +199,74 @@ namespace ApiDTC.Services
             template.EndText();
         }
 
+        private IElement tablaFinal(int op)
+        {
+            var tablaFinal = new PdfPTable(new float[] { 40f, 7f, 34f, 7f, 26f }) { WidthPercentage = 100f };
+
+            
+            var innerTable = new PdfPTable(1);
+            var colAutorizacion = new PdfPCell(new Phrase("AUTORIZACIÓN TÉCNICA Y COMERCIAL", letraNormalChica)) { HorizontalAlignment = Element.ALIGN_CENTER, Border = 0, Padding = 2 };
+            PdfPCell colFirma;
+            if(op != 0)
+            {
+                iTextSharp.text.Image firma = iTextSharp.text.Image.GetInstance($@"{System.Environment.CurrentDirectory}\Media\firma.png");
+                firma.ScaleAbsolute(35f, 40f);
+                colFirma = new PdfPCell(firma) { HorizontalAlignment = Element.ALIGN_CENTER, Border = 0, Padding = 2 };
+            }
+            else
+                colFirma = new PdfPCell(new Phrase("", letraNormalChica)) { FixedHeight = 20f, HorizontalAlignment = Element.ALIGN_CENTER, Border = 0, Padding = 2 };
+            var colNombreDirector = new PdfPCell(new Phrase("Autorización Comercial Director de Comercialización\nC.P. Hermilia Guzman Añorve", letraNormalChica)) { HorizontalAlignment = Element.ALIGN_CENTER, Border = 0, Padding = 2 };
+            innerTable.AddCell(colAutorizacion);
+            innerTable.AddCell(colFirma);
+            innerTable.AddCell(colNombreDirector);
+
+            var colEmpy4 = new PdfPCell(new Phrase("")) { HorizontalAlignment = Element.ALIGN_LEFT };
+            colEmpy4.Border = 0;
+
+            var colEmpy5 = new PdfPCell(new Phrase("")) { HorizontalAlignment = Element.ALIGN_CENTER };
+            colEmpy5.Border = 0;
+
+            var colEmpy6 = new PdfPCell(new Phrase("")) { HorizontalAlignment = Element.ALIGN_LEFT };
+            colEmpy6.Border = 0;
+
+            var administradorLine = new Chunk(Convert.ToString(_tableHeader.Rows[0]["AdminName"]), letraNormalMedianaSub);
+            var administrador = new Chunk("Administrador Plaza de Cobro\n" + Convert.ToString(_tableHeader.Rows[0]["AdminMail"]), letraNormalMediana);
+
+            var colAdministrador = new PdfPCell(new Phrase(administradorLine)) { HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_BOTTOM };            
+            colAdministrador.Border = 0;
+
+
+            var colEmpy7 = new PdfPCell(new Phrase("")) { HorizontalAlignment = Element.ALIGN_LEFT };
+            colEmpy7.Border = 0;
+
+            var colEmpy8 = new PdfPCell(new Phrase("")) { HorizontalAlignment = Element.ALIGN_CENTER };
+            colEmpy8.Border = 0;
+
+            var colEmpy9 = new PdfPCell(new Phrase("")) { HorizontalAlignment = Element.ALIGN_LEFT };
+            colEmpy9.Border = 0;
+
+            var colEmpy10 = new PdfPCell(new Phrase("")) { HorizontalAlignment = Element.ALIGN_LEFT };
+            colEmpy10.Border = 0;
+
+            var colAdministradorSinLinea = new PdfPCell(new Phrase(administrador)) { HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_BOTTOM };
+            colAdministradorSinLinea.Border = 0;
+
+            var tablaInterna = new PdfPCell();
+            tablaInterna.AddElement(innerTable);
+
+            tablaFinal.AddCell(tablaInterna);
+            tablaFinal.AddCell(colEmpy4);
+            tablaFinal.AddCell(colEmpy5);
+            tablaFinal.AddCell(colEmpy6);
+            tablaFinal.AddCell(colAdministrador);
+            tablaFinal.AddCell(colEmpy7);
+            tablaFinal.AddCell(colEmpy8);
+            tablaFinal.AddCell(colEmpy9);
+            tablaFinal.AddCell(colEmpy10);
+            tablaFinal.AddCell(colAdministradorSinLinea);
+            return tablaFinal;
+        }
+
         private IElement tablaEncabezado()
         {
             iTextSharp.text.Image logo = iTextSharp.text.Image.GetInstance($@"{System.Environment.CurrentDirectory}\Media\prosis-logo.jpg");
@@ -214,6 +285,13 @@ namespace ApiDTC.Services
             tablaEncabezado.AddCell(col1);
             tablaEncabezado.AddCell(col2);
             tablaEncabezado.AddCell(col3);
+            var colVacia = new PdfPCell(new Phrase("", letraNormalChica)) { Border = 0 };
+            tablaEncabezado.AddCell(colVacia);
+            tablaEncabezado.AddCell(colVacia);
+            tablaEncabezado.AddCell(colVacia);
+            tablaEncabezado.AddCell(colVacia);
+            tablaEncabezado.AddCell(colVacia);
+            tablaEncabezado.AddCell(colVacia);
             return tablaEncabezado;
         }
 
@@ -378,7 +456,23 @@ namespace ApiDTC.Services
             tablaSiniestroMore.AddCell(col46);
             tablaSiniestroMore.AddCell(col47);
             tablaSiniestroMore.AddCell(col48);
-
+            var colvacia = new PdfPCell(new Phrase("", letraNormalChica)) { Border = 0 };
+            tablaSiniestroMore.AddCell(colvacia);
+            tablaSiniestroMore.AddCell(colvacia);
+            tablaSiniestroMore.AddCell(colvacia);
+            tablaSiniestroMore.AddCell(colvacia);
+            tablaSiniestroMore.AddCell(colvacia);
+            tablaSiniestroMore.AddCell(colvacia);
+            tablaSiniestroMore.AddCell(colvacia);
+            tablaSiniestroMore.AddCell(colvacia);
+            tablaSiniestroMore.AddCell(colvacia);
+            tablaSiniestroMore.AddCell(colvacia);
+            tablaSiniestroMore.AddCell(colvacia);
+            tablaSiniestroMore.AddCell(colvacia);
+            tablaSiniestroMore.AddCell(colvacia);
+            tablaSiniestroMore.AddCell(colvacia);
+            tablaSiniestroMore.AddCell(colvacia);
+            tablaSiniestroMore.AddCell(colvacia);
             return tablaSiniestroMore;
         }
 

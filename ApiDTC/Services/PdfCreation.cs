@@ -127,13 +127,13 @@ namespace ApiDTC.Services
                         doc.Add(marcaDeAgua);
                     }
                     
-                    doc.Add(tablaEncabezado());
-                    doc.Add(new Phrase(" "));
-                    doc.Add(new Phrase(" "));
-                    doc.Add(tablaSiniestro());
-                    doc.Add(new Phrase(""));
-                    doc.Add(new Phrase(""));
-                    doc.Add(tablaSiniestroMore());
+                    //doc.Add(tablaEncabezado());
+                    //doc.Add(new Phrase(" "));
+                    //doc.Add(new Phrase(" "));
+                    //doc.Add(tablaSiniestro());
+                    //doc.Add(new Phrase(""));
+                    //doc.Add(new Phrase(""));
+                    //doc.Add(tablaSiniestroMore());
                     doc.Add(new Phrase("EQUIPO DAÑADO", letraoNegritaMediana));
                     doc.Add(tablaEquipoDañado());
                     doc.Add(tablaTituloPropuesto());
