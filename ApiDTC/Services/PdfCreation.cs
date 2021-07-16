@@ -114,7 +114,7 @@ namespace ApiDTC.Services
                     doc.AddAuthor("Prosis");
                     doc.AddTitle("Reporte Correctivo");                    
                     PdfWriter writer = PdfWriter.GetInstance(doc, myMemoryStream);
-                    writer.PageEvent = new PageEventHelper();                   
+                    writer.PageEvent = new PageEventHelperDtc(_tableHeader, _tableDTCData, _refNum);                   
                     writer.Open();
 
                     doc.Open();
