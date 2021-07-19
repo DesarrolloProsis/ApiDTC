@@ -171,25 +171,36 @@
                             {
                                 List<string> primerasFotos = new List<string>();
                                 List<string> restoFotos = new List<string>();
-                                for (int i = 0; i < 20; i++)
+                                if(fotos.Count > 12 && fotos.Count <= 15)
                                 {
-                                    if(fotos.Count - 1 < i)
-                                        break;
-                                    primerasFotos.Add(fotos[i]);
+                                    for (int i = 0; i < 9; i++)
+                                        primerasFotos.Add(fotos[i]);
+                                    for (int i = 9; i < fotos.Count; i++)
+                                        restoFotos.Add(fotos[i]);
                                 }
-                                if(fotos.Count > 20)
+                                else
                                 {
-                                    for (int i = 20; i < fotos.Count; i++)
+                                    for (int i = 0; i < 20; i++)
                                     {
-                                        if(fotos[i] != null)
-                                            restoFotos.Add(fotos[i]);
-                                        else
+                                        if(fotos.Count - 1 < i)
                                             break;
+                                        primerasFotos.Add(fotos[i]);
+                                    }
+                                    if(fotos.Count > 20)
+                                    {
+                                        for (int i = 20; i < fotos.Count; i++)
+                                        {
+                                            if(fotos[i] != null)
+                                                restoFotos.Add(fotos[i]);
+                                            else
+                                                break;
+                                        }
                                     }
                                 }
-
+                                doc.Add(new Paragraph(""));
                                 doc.Add(TablaFotografias(primerasFotos));
                                 doc.NewPage();
+                                doc.Add(new Paragraph(""));
                                 doc.Add(TablaFotografias(restoFotos));
                             }
                             
@@ -289,7 +300,12 @@
             {
                 int cuadros = 0;
                 PdfPTable table;
-                if (rutas.Count <= 4)
+                if (rutas.Count == 9)
+                {
+                    table = new PdfPTable(new float[] { 33.33f, 33.33f, 33.33f }) { WidthPercentage = 100f };
+                    cuadros = 9;
+                }
+                else if (rutas.Count <= 4)
                 {
                     table = new PdfPTable(new float[] { 50f, 50f }) { WidthPercentage = 100f };
                     cuadros = 4;
