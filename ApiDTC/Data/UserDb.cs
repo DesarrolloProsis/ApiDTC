@@ -301,9 +301,10 @@
 
                 using (SqlConnection sql = new SqlConnection(_connectionString))
                 {
-                    using (SqlCommand cmd = new SqlCommand("select d.UserId,  d.UserName + ' ' + d.LastName1 + ' ' + d.LastName2 as Nombre, d.UserName, d.RollId, r.RollDescription from DTCUsers d  join  UserSquare u on d.UserId = u.UserId  join RollsCatalog r on d.RollId = r.RollId where u.SquareCatalogId = '"+ SquareId+ "' and d.RollId not in (7,4,9,10)", sql))
+                    using (SqlCommand cmd = new SqlCommand("dbo.spUserOfSquare", sql))
                     {
-                        return _sqlResult.GetList<UserOfSquare>("GetUserOfSquare", cmd, sql, "GetUserOfSquare");
+                        cmd.Parameters.Add("@squareId", SqlDbType.NVarChar).Value = SquareId;
+                        return _sqlResult.GetList<UserOfSquare>("spUserOfSquare", cmd, sql, "GetUserOfSquare");
                     }
                 }
             }
