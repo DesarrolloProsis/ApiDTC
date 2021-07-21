@@ -366,9 +366,9 @@
                     if (cuadros == 4)
                     {
                         if (img.Width > img.Height)
-                            img.ScaleAbsolute(180f, 140f);
+                            img.ScaleAbsolute(160f, 140f);
                         else
-                            img.ScaleAbsolute(140f, 180f);
+                            img.ScaleAbsolute(140f, 160f);
                     }
                     else if (cuadros == 6)
                     {
