@@ -120,7 +120,7 @@
         [HttpGet("GetBitacoras/{clavePlaza}/{userId}")]
         public ActionResult<Response> GetDiagnosticos(string clavePlaza, int userId)
         {
-            var get = _db.GetDiagnosticos(clavePlaza, userId);
+            var get = _db.GetDiagnosticos(clavePlaza, userId, this._disk, this._folder);
             if (get.Result == null)
                 return NotFound(get);
             return Ok(get);

@@ -1,6 +1,7 @@
 namespace ApiDTC.Data
 {
     using System;
+    using System.Collections.Generic;
     using System.Data;
     using System.Data.SqlClient;
     using ApiDTC.Models;
@@ -107,7 +108,7 @@ namespace ApiDTC.Data
             }
         }
 
-        public Response GetDiagnosticos(string clavePlaza, int userId)
+        public Response GetDiagnosticos(string clavePlaza, int userId, string _disk, string _folder)
         {
             try
             {
@@ -117,7 +118,61 @@ namespace ApiDTC.Data
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.Add("@Iduser", SqlDbType.Int).Value = userId;
-                        return _sqlResult.GetList<DiagnosisSheetView>(clavePlaza, cmd, sql, "GetDiagnosticos");
+                        var listaSheetView = _sqlResult.GetRows<DiagnosisSheetView>(clavePlaza, cmd, sql, "GetDiagnosticos");
+                        
+                        List<DiagnosisSheetViewValid> listDiagnosis = new List<DiagnosisSheetViewValid>();
+
+                        foreach(var objDiagnosis in listaSheetView){
+
+                            // listDiagnosis.Add(new DiagnosisSheetViewValid{                   
+                            //     DiagnosticoSellado = false,
+                            //     FichaSellado = false                                
+                            // });  
+                            DiagnosisSheetViewValid newObjDiagnosis = new DiagnosisSheetViewValid();
+
+                            newObjDiagnosis.ReferenceNumber = objDiagnosis.ReferenceNumber;
+                            newObjDiagnosis.SquareName = objDiagnosis.SquareName;
+                            newObjDiagnosis.DiagnosisDate = objDiagnosis.DiagnosisDate;
+                            newObjDiagnosis.Lanes = objDiagnosis.Lanes;
+                            newObjDiagnosis.FailuerNumber = objDiagnosis.FailuerNumber;
+                            newObjDiagnosis.SiniesterNumber = objDiagnosis.SiniesterNumber;
+                            newObjDiagnosis.ValidacionFichaTecnica = objDiagnosis.ValidacionDTC;
+                            newObjDiagnosis.SquareId = objDiagnosis.SquareId;
+                            newObjDiagnosis.CauseFailure = objDiagnosis.CauseFailure;
+                            newObjDiagnosis.FailureDescription = objDiagnosis.CauseFailure;
+                            newObjDiagnosis.FailureDiagnosis = objDiagnosis.FailureDiagnosis;
+                            newObjDiagnosis.Start = objDiagnosis.Start;
+                            newObjDiagnosis.End = objDiagnosis.End;
+                            newObjDiagnosis.AdminSquareId = objDiagnosis.AdminSquareId;
+                            newObjDiagnosis.Intervention = objDiagnosis.Intervention;
+                            newObjDiagnosis.FaultDescription = objDiagnosis.FaultDescription;
+                            newObjDiagnosis.TypeFaultId = objDiagnosis.TypeFaultId;
+                            newObjDiagnosis.ValidacionDTC = objDiagnosis.ValidacionDTC;
+                            newObjDiagnosis.ReferenceDTC = objDiagnosis.ReferenceDTC;
+                            string ruta = $@"{_disk}:/{_folder}/{objDiagnosis.ReferenceNumber.Split('-')[0]}/Reportes/{objDiagnosis.ReferenceNumber}/{objDiagnosis.ReferenceNumber}";
+                            
+                            if(System.IO.File.Exists(ruta + "-DiagnosticoSellado.pdf")){
+                                newObjDiagnosis.DiagnosticoSellado = true;
+                            }
+                            else{
+                                newObjDiagnosis.DiagnosticoSellado = false;
+                            }
+
+                            if(System.IO.File.Exists(ruta + "-FichaTecnicaSellado.pdf")){
+                                newObjDiagnosis.FichaSellado = true;
+                            }
+                            else{
+                                newObjDiagnosis.FichaSellado = false;
+                            }
+
+                            listDiagnosis.Add(newObjDiagnosis);
+
+                        }      
+                        return new Response{
+                            Message = "ListaShettViewValidada",
+                            Result = listDiagnosis,
+                            Rows = listDiagnosis.Count
+                        };                 
                     }
                 }
             }
