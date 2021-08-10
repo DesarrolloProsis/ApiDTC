@@ -136,7 +136,7 @@ namespace ApiDTC.Data
                             newObjDiagnosis.Lanes = objDiagnosis.Lanes;
                             newObjDiagnosis.FailuerNumber = objDiagnosis.FailuerNumber;
                             newObjDiagnosis.SiniesterNumber = objDiagnosis.SiniesterNumber;
-                            newObjDiagnosis.ValidacionFichaTecnica = objDiagnosis.ValidacionDTC;
+                            newObjDiagnosis.ValidacionFichaTecnica = objDiagnosis.ValidacionFichaTecnica;
                             newObjDiagnosis.SquareId = objDiagnosis.SquareId;
                             newObjDiagnosis.CauseFailure = objDiagnosis.CauseFailure;
                             newObjDiagnosis.FailureDescription = objDiagnosis.CauseFailure;

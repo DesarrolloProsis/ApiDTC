@@ -182,8 +182,7 @@ namespace ApiDTC.Data
                             cmd.Parameters.Add("@Day", SqlDbType.Int).Value = actividad.Day;
                             cmd.Parameters.Add("@Month", SqlDbType.Int).Value = actividad.Month;
                             cmd.Parameters.Add("@Year", SqlDbType.Int).Value = actividad.Year;
-                            cmd.Parameters.Add("@FrequencyId", SqlDbType.Int).Value = actividad.FrequencyId;  
-                                                      
+                            cmd.Parameters.Add("@FrequencyId", SqlDbType.Int).Value = actividad.FrequencyId;                                                        
                             
                             var storedResult = _sqlResult.Post(clavePlaza, cmd, sql, "InsertActivity");
                             if (storedResult.SqlResult == null)
