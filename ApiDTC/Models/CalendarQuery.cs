@@ -23,6 +23,8 @@ namespace ApiDTC.Models
 
         public bool StatusMaintenance { get; set; }
 
+        public int AdminId { get; set; }
+
         public string ReferenceNumber { get; set; }
     }
 }
