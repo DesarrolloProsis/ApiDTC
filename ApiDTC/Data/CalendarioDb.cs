@@ -98,6 +98,7 @@ namespace ApiDTC.Data
                                 DateStamp= dtcView.DateStamp,
                                 CalendarId= dtcView.CalendarId,
                                 StatusMaintenance = dtcView.StatusMaintenance,
+                                AdminId = dtcView.AdminId,
                                 ReferenceNumber = dtcView.ReferenceNumber,
                             };
                             //D:\BitacoraDesarrollo\TLA\Reportes\TLA-DF-21146
@@ -588,6 +589,7 @@ namespace ApiDTC.Data
                                 DateStamp = dtcView.DateStamp,
                                 CalendarId = dtcView.CalendarId,
                                 StatusMaintenance = dtcView.StatusMaintenance,
+                                AdminId = dtcView.AdminId,
                                 ReferenceNumber = dtcView.ReferenceNumber
                             };
                             //D:\BitacoraDesarrollo\TLA\Reportes\TLA-DF-21146

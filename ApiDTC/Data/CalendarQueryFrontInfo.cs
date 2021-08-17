@@ -23,8 +23,10 @@ namespace ApiDTC.Data
         public int CalendarId { get; set; }
 
         public bool StatusMaintenance { get; set; }
+        public int AdminId { get; set; }
 
         public string ReferenceNumber { get; set; }
+
         public bool PdfExists { get; set; }
     }
 }
