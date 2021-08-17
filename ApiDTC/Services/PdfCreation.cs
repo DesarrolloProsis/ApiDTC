@@ -193,7 +193,7 @@ namespace ApiDTC.Services
             }
             else
                 colFirma = new PdfPCell(new Phrase("", letraNormalChica)) { FixedHeight = 20f, HorizontalAlignment = Element.ALIGN_CENTER, Border = 0, Padding = 2 };
-            var colNombreDirector = new PdfPCell(new Phrase("Autorización Comercial Director de Comercialización\nC.P. Hermilia Guzman Añorve", letraNormalChica)) { HorizontalAlignment = Element.ALIGN_CENTER, Border = 0, Padding = 2 };
+            var colNombreDirector = new PdfPCell(new Phrase("Autorización Comercial Asistente Director Comercial\nC.P. L.A.E. Nathalie Aguilar Mejía", letraNormalChica)) { HorizontalAlignment = Element.ALIGN_CENTER, Border = 0, Padding = 2 };
             innerTable.AddCell(colAutorizacion);
             innerTable.AddCell(colFirma);
             innerTable.AddCell(colNombreDirector);
