@@ -99,6 +99,7 @@ namespace ApiDTC.Data
                                 CalendarId= dtcView.CalendarId,
                                 StatusMaintenance = dtcView.StatusMaintenance,
                                 AdminId = dtcView.AdminId,
+                                SquareId = dtcView.SquareId,
                                 ReferenceNumber = dtcView.ReferenceNumber,
                             };
                             //D:\BitacoraDesarrollo\TLA\Reportes\TLA-DF-21146
@@ -589,6 +590,7 @@ namespace ApiDTC.Data
                                 CalendarId = dtcView.CalendarId,
                                 StatusMaintenance = dtcView.StatusMaintenance,
                                 AdminId = dtcView.AdminId,
+                                SquareId = dtcView.SquareId,
                                 ReferenceNumber = dtcView.ReferenceNumber
                             };
                             //D:\BitacoraDesarrollo\TLA\Reportes\TLA-DF-21146
