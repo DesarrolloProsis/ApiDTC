@@ -166,11 +166,12 @@ namespace ApiDTC.Data
         public Response InsertActivity(string clavePlaza, ActividadCalendario actividad)
         {
             try
-            {
+            {    
+                List<string> actividadesNotInsert = new List<string>();
                 using (SqlConnection sql = new SqlConnection(_connectionString)) 
                 { 
-                    //Cambios Emi
-                    int numero_carriles = actividad.CapufeLaneNums.Length == actividad.IdGares.Length ? actividad.CapufeLaneNums.Length : 0;
+                    //Cambios Emi                    
+                    int numero_carriles = actividad.CapufeLaneNums.Length == actividad.IdGares.Length ? actividad.CapufeLaneNums.Length : 0;                    
 
                     for (int i = 0; i < numero_carriles; i++)
                     {
@@ -187,15 +188,16 @@ namespace ApiDTC.Data
                             cmd.Parameters.Add("@FrequencyId", SqlDbType.Int).Value = actividad.FrequencyId;                                                        
                             
                             var storedResult = _sqlResult.Post(clavePlaza, cmd, sql, "InsertActivity");
-                            if (storedResult.SqlResult == null)
-                                return new Response { Message = "No se pudo insertar Actividad en carril" + actividad.CapufeLaneNums[i] + "con idGare" + actividad.IdGares[i], Result = null };
+                            if (storedResult.SqlResult !=  "Insertado"){
+                                actividadesNotInsert.Add(new String(storedResult.SqlMessage.ToCharArray()));                               
+                            }
                         }
                     }    
                 }
                 return new Response
                 {
                     Message = "Ok",
-                    Result = actividad
+                    Result = actividadesNotInsert
                 };
             }
             catch(SqlException ex)

@@ -16,6 +16,8 @@ namespace ApiDTC.Models
 
         public bool VitalComponent { get; set; }
 
+        public int ComponentsStockId { get; set; }
+
 
 
     }

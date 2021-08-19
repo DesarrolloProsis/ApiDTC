@@ -35,10 +35,10 @@ namespace ApiDTC.Controllers
         #region Methods
 
         // GET: api/Component
-        [HttpGet("GetComponetV2/{clavePlaza}/{squareId}/{agreementId}/{attachedId}/{relationShip}/{relationShipPrincipal}")]
-        public ActionResult<Response> GetComponents(string clavePlaza, string squareId, int agreementId, int attachedId, int relationShip, int relationShipPrincipal)
+        [HttpGet("GetComponetV2/{clavePlaza}/{squareId}/{agreementId}/{attachedId}/{relationShip}/{relationShipPrincipal}/{componentsStockId}")]
+        public ActionResult<Response> GetComponents(string clavePlaza, string squareId, int agreementId, int attachedId, int relationShip, int relationShipPrincipal, int componentsStockId)
         {
-            var get = _db.GetComponentDataModificaciones(clavePlaza, squareId, agreementId, attachedId, relationShip, relationShipPrincipal);                            
+            var get = _db.GetComponentDataModificaciones(clavePlaza, squareId, agreementId, attachedId, relationShip, relationShipPrincipal, componentsStockId);                            
             return Ok(get);
         }
 

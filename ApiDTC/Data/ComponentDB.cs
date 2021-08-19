@@ -32,7 +32,7 @@
 
         #region Methods
 
-        public Response GetComponentDataModificaciones(string clavePlaza, string squareId, int agreementId, int attachedId, int relationShip, int relationShipPrincipal)
+        public Response GetComponentDataModificaciones(string clavePlaza, string squareId, int agreementId, int attachedId, int relationShip, int relationShipPrincipal, int componentsStockId)
         {
             try
             {
@@ -46,6 +46,7 @@
                         cmd.Parameters.Add("@AttachedId", SqlDbType.Int).Value = attachedId;
                         cmd.Parameters.Add("@ComponentsRelationship", SqlDbType.Int).Value = relationShip;
                         cmd.Parameters.Add("@MainComponentsRelationship", SqlDbType.Int).Value = relationShipPrincipal;
+                        cmd.Parameters.Add("@ComponentsStockId", SqlDbType.Int).Value = componentsStockId;
 
                         var storedResult = _sqlResult.GetList<Components>(clavePlaza, cmd, sql, "GetComponentDataModificaciones");
                         if (storedResult.Result == null)
@@ -267,8 +268,9 @@
                                     Description = principal.Description,
                                     AttachedId = principal.AttachedId,
                                     ComponentsRelationship = principal.ComponentsRelationship,
-                                    VitalComponent = principal.VitalComponent,
-                                    ComponentsRelationshipId = principal.ComponentsRelationship
+                                    VitalComponent = principal.VitalComponent,                                    
+                                    ComponentsRelationshipId = principal.ComponentsRelationship,
+                                    ComponentsStockId = principal.ComponentsStockId
                                 }
                             };
 
@@ -287,7 +289,8 @@
                                         AttachedId = secundario.AttachedId,
                                         ComponentsRelationship = secundario.ComponentsRelationship,
                                         VitalComponent = secundario.VitalComponent,
-                                        ComponentsRelationshipId = principal.ComponentsRelationship
+                                        ComponentsRelationshipId = principal.ComponentsRelationship,
+                                        ComponentsStockId = secundario.ComponentsStockId
                                     });
                                     componentesProcesados.Add(secundario);
                                 }
