@@ -14,5 +14,7 @@
         public int MainRelationship { get; set; }
 
         public bool VitalComponent { get; set; }
+
+        public int ComponentsStockId { get; set; }
     }
 }
