@@ -212,6 +212,30 @@
                 Expiration = expiration
             };
         }
+        public Response GetSesionLog(int userId, string dateFilter)
+        {
+            try
+            {
+                using (SqlConnection sql = new SqlConnection(_connectionString))
+                {
+                    using (SqlCommand cmd = new SqlCommand("dbo.spLoginSesionLogRol", sql))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.Add("@UserId", SqlDbType.Int).Value = userId;
+                        cmd.Parameters.Add("@DateFilter", SqlDbType.NVarChar).Value = dateFilter;
+
+                        return _sqlResult.GetList<SessionLogUser>("USR", cmd, sql, "GetSesionLog");
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                _apiLogger.WriteLog("INIT", ex, "LoginDb: GetSesionLog", 1);
+                return new Response { Message = $"Error: {ex.Message}", Result = null };
+            }
+
+        }
+
         #endregion
     }
 }
