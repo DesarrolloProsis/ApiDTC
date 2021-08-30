@@ -36,14 +36,12 @@ namespace ApiDTC.Controllers
                 return NotFound(get);
             else
                 return Ok(get);
-        }
-        
+        }        
         [HttpPost("Refresh")]
         public ActionResult<Response> RefreshToken([FromBody] UserRefreshToken userRefreshToken)
         {
             return _db.RefreshToken(userRefreshToken);
         }
-
         [HttpPost("Cookie")]
         public ActionResult<Response> Cookie([FromBody] UserRefreshToken userRefreshToken)
         {
@@ -54,7 +52,6 @@ namespace ApiDTC.Controllers
             else
                 return Ok(get);
         }
-
         [HttpPost("LoginInfo")]
         public ActionResult<Response> LoginInfo([FromBody] UserRefreshToken userRefreshToken)
         {
@@ -63,10 +60,7 @@ namespace ApiDTC.Controllers
                 return NotFound(get);
             else
                 return Ok(get);
-        }
-
-        // GET: api/Login
-        //Regresa técnicos de plaza
+        }                
         [HttpGet("buscarTec/{numPlaza}")]
         public ActionResult<Response> BuscarTec(string numPlaza)
         {
@@ -75,8 +69,7 @@ namespace ApiDTC.Controllers
                 return NotFound(get);
             else
                 return Ok(get);
-        }
-        // GET: api/Login
+        }        
         [HttpGet("buscarHeaderTec/{idTec}")]
         public ActionResult<Response> BuscarHeaderTec(int idTec)
         {
