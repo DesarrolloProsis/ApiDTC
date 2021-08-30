@@ -5,6 +5,7 @@
     public class DtcView
     {
         public string ReferenceNumber { get; set; }
+        public int AdminId { get; set; }
 
         public string SinisterNumber { get; set; }
 

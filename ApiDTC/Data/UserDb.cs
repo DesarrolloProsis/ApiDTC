@@ -303,6 +303,7 @@
                 {
                     using (SqlCommand cmd = new SqlCommand("dbo.spUserOfSquare", sql))
                     {
+                        cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.Add("@squareId", SqlDbType.NVarChar).Value = SquareId;
                         return _sqlResult.GetList<UserOfSquare>("spUserOfSquare", cmd, sql, "GetUserOfSquare");
                     }
