@@ -506,6 +506,16 @@
             }
             return BadRequest();
         }
+
+        [AllowAnonymous]
+        [HttpGet("ListarComentario/{ClavePlaza}")]
+        public ActionResult<Response> GetAllComments(string ClavePlaza)
+        {
+            var get = _db.GetDTCBorrado(ClavePlaza);
+            if (get.Result == null)
+                return NotFound(get);
+            return Ok(get);
+        }
         #endregion
         #endregion
     }
