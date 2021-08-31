@@ -511,10 +511,53 @@
         [HttpGet("ListarDTCBorrado/{ClavePlaza}")]
         public ActionResult<Response> GetDTCBorrado(string ClavePlaza)
         {
+            //var get = _db.GetDTCBorrado(ClavePlaza);
+            //if (get.Result == null)
+            //    return NotFound(get);
+            //return Ok(get);
             var get = _db.GetDTCBorrado(ClavePlaza);
             if (get.Result == null)
-                return NotFound(get);
-            return Ok(get);
+            {
+                return null;
+            }
+            else
+            {
+                List<DTCBorrado> lista = (List<DTCBorrado>)get.Result;
+                try
+                {
+                    using (var workbook = new XLWorkbook())
+                    {
+                        int fila = 2;
+                        var ws = workbook.Worksheets.Add("Lista");
+                        ws.Cell(1, 1).Value = "Numero de referencia";
+                        ws.Cell(1, 2).Value = "Conteos";
+                        ws.Cell(1, 3).Value = "Ultima fecha";
+                        ws.Cell(1, 4).Value = "Usuario";
+                        ws.Cell(1, 5).Value = "Comentario";
+                        foreach (DTCBorrado item in lista)
+                        {
+                            ws.Cell(fila, 1).Value = item.RefereceNumber;
+                            ws.Cell(fila, 2).Value = item.Conteos;
+                            ws.Cell(fila, 3).Value = item.UltimaFecha;
+                            ws.Cell(fila, 4).Value = item.UserName;
+                            ws.Cell(fila, 5).Value = item.Comment;
+                            fila++;
+
+                        }
+                        workbook.SaveAs("D:\\DTCBorrado.xlsx");
+
+
+                        //return File(new FileStream("D:\\HelloWorld.xlsx", FileMode.Open, FileAccess.Read), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+                        byte[] bytes = System.IO.File.ReadAllBytes("D:\\DTCBorrado.xlsx");
+                        return File(bytes, System.Net.Mime.MediaTypeNames.Application.Octet, "DTCBorrado.xlsx");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    return null;
+                }
+            }
+
         }
         #endregion
         #endregion
