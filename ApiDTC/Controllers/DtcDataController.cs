@@ -369,9 +369,47 @@
                 {
                     return null;
                 }
+            }            
+        }
+        
+        [HttpGet("DescargarExcelBorradosDTC/")]
+        public IActionResult DescargarExcelBorradosDTC()
+        {
+            var get = _db.GetReferencesLog();
+            if (get.Result == null)
+            {
+                return null;
             }
-
-
+            else
+            {
+                List<ReferenceLog> lista = (List<ReferenceLog>)get.Result;
+                try
+                {
+                    using (var workbook = new XLWorkbook())
+                    {
+                        int fila = 2;
+                        var ws = workbook.Worksheets.Add("Lista");
+                        ws.Cell(1, 1).Value = "Numero Referencia";
+                        ws.Cell(1, 2).Value = "Ultima Fecha";
+                        ws.Cell(1, 3).Value = "Conteos";                                                                                                                        
+                        foreach (ReferenceLog item in lista)
+                        {
+                            ws.Cell(fila, 1).Value = item.RefereceNumber;
+                            ws.Cell(fila, 2).Value = item.UltimaFecha.ToShortDateString();
+                            ws.Cell(fila, 3).Value = item.Conteos;                                                                                                                                            
+                            fila++;
+                        }
+                        workbook.SaveAs("D:\\DtcDeleteLog.xlsx");
+                        //return File(new FileStream("D:\\HelloWorld.xlsx", FileMode.Open, FileAccess.Read), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+                        byte[] bytes = System.IO.File.ReadAllBytes("D:\\DtcDeleteLog.xlsx");
+                        return File(bytes, System.Net.Mime.MediaTypeNames.Application.Octet, "ReporteDtcBorrados.xlsx");
+                    }
+                }
+                catch (Exception)
+                {
+                    return null;
+                }
+            }
         }
         #endregion
 
