@@ -360,6 +360,22 @@
             return NotFound();
         }
 
+        [HttpGet("Dañado/ReporteSellado/{clavePlaza}/{referenceNumber}")]
+        public ActionResult<Response> GetEquipoDañadoSellado(string clavePlaza, string referenceNumber)
+        {
+            string path = $@"{this._disk}:\{this._folder}\{clavePlaza}\DTC\{referenceNumber}\DTC-{referenceNumber}-EquipoDañadoSellado.pdf";
+            try
+            {
+                if (!System.IO.File.Exists(path))
+                    return NotFound(path);
+                return File(new FileStream(path, FileMode.Open, FileAccess.Read), "application/pdf");
+            }
+            catch (IOException ex)
+            {
+                _apiLogger.WriteLog(clavePlaza, ex, "PDFController: GetPdfFotograficoSellado", 2);
+                return NotFound(ex.ToString());
+            }
+        }
         [HttpPost("Dañado/ReporteSellado/{clavePlaza}/{referenceNumber}")]
         public ActionResult<Response> EquipoDañadoSellado(string clavePlaza, [FromForm(Name = "file")] IFormFile file, string referenceNumber)
         {
@@ -393,6 +409,7 @@
             }
             return NotFound();
         }
+
         #endregion
         
         #endregion
