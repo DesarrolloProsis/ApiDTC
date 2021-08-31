@@ -7,7 +7,7 @@ namespace ApiDTC.Models
 {
     public class DTCBorrado
     {
-        public string ReferenceNumber { get; set; }
+        public string RefereceNumber { get; set; }
         public int Conteos { get; set; }
         public DateTime UltimaFecha { get; set; }
         public string UserName { get; set; }

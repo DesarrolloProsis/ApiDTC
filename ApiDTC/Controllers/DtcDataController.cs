@@ -508,8 +508,8 @@
         }
 
         [AllowAnonymous]
-        [HttpGet("ListarComentario/{ClavePlaza}")]
-        public ActionResult<Response> GetAllComments(string ClavePlaza)
+        [HttpGet("ListarDTCBorrado/{ClavePlaza}")]
+        public ActionResult<Response> GetDTCBorrado(string ClavePlaza)
         {
             var get = _db.GetDTCBorrado(ClavePlaza);
             if (get.Result == null)
