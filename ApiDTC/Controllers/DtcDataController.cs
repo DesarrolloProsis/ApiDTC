@@ -402,7 +402,7 @@
                         workbook.SaveAs("D:\\DtcDeleteLog.xlsx");
                         //return File(new FileStream("D:\\HelloWorld.xlsx", FileMode.Open, FileAccess.Read), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
                         byte[] bytes = System.IO.File.ReadAllBytes("D:\\DtcDeleteLog.xlsx");
-                        return File(bytes, System.Net.Mime.MediaTypeNames.Application.Octet, "ReporteDtcBorrados.xlsx");
+                        return File(bytes, System.Net.Mime.MediaTypeNames.Application.Octet, "DtcDeleteLog.xlsx");
                     }
                 }
                 catch (Exception)
