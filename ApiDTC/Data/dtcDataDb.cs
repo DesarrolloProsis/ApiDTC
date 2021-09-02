@@ -257,6 +257,14 @@
                             else
                                 viewInfo.PdfExists = false;
 
+                        
+                            //Validacion ReporteFotografico Sellado
+                            string pathFotograficoSellado = $@"{disk}:\{folder}\{dtcView.ReferenceNumber.Split('-')[0].ToUpper()}\DTC\{dtcView.ReferenceNumber}\DTC-{dtcView.ReferenceNumber}-EquipoDañadoSellado.pdf";
+                            if (System.IO.File.Exists((pathFotograficoSellado)))
+                                viewInfo.PdfFotograficoSellado = true;
+                            else
+                                viewInfo.PdfFotograficoSellado = false;
+
                             string directoy = $@"{disk}:\{folder}\{dtcView.ReferenceNumber.Split('-')[0].ToUpper()}\DTC\{dtcView.ReferenceNumber}\EquipoDañadoImgs";
                             List<string> dtcImages = new List<string>();
                             if (Directory.Exists(directoy))
