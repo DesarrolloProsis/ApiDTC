@@ -186,7 +186,7 @@
             }
         }
 
-        public Response DeleteUser(UserKey userKey)
+        public Response RevokeUser(UserKey userKey, bool nuevoStatus)
         {
             try
             {
@@ -196,7 +196,8 @@
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.Add("@User", SqlDbType.Int).Value = userKey.Id;
-                        var reader = _sqlResult.Post("USR", cmd, sql, "DeleteUser");
+                        cmd.Parameters.Add("@StatusNew", SqlDbType.Bit).Value = nuevoStatus;
+                        var reader = _sqlResult.Post("USR", cmd, sql, "RevokeUser");
                         if (reader.SqlResult == null)
                         {
                             return new Response

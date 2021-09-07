@@ -76,7 +76,20 @@
         {
             if (ModelState.IsValid)
             {
-                var delete = _db.DeleteUser(userKey);
+                var delete = _db.RevokeUser(userKey, false);
+                if (delete.Result == null)
+                    return NotFound(delete);
+                else
+                    return Ok(delete);
+            }
+            return BadRequest(ModelState);
+        }
+        [HttpPut("active")]
+        public ActionResult<Response> ActivarUser([FromBody] UserKey userKey)
+        {
+            if (ModelState.IsValid)
+            {
+                var delete = _db.RevokeUser(userKey, true);
                 if (delete.Result == null)
                     return NotFound(delete);
                 else
