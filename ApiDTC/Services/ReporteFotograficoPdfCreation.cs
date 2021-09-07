@@ -159,57 +159,103 @@
                     if(Directory.Exists(directoryImgs))
                     {
                         var files = Directory.GetFiles(directoryImgs);
-                        if(files.Length != 0)
+                        if (files.Length != 0)
                         {
                             List<string> fotos = new List<string>();
                             foreach (var file in files)
                                 fotos.Add(file);
-                            
+                            int i = 0;
+                            List<string> fotosEnPagina = new List<string>();
+
                             if (fotos.Count <= 12)
                                 doc.Add(TablaFotografias(fotos));
                             else
                             {
-                                List<string> primerasFotos = new List<string>();
-                                List<string> restoFotos = new List<string>();
-                                if(fotos.Count > 12 && fotos.Count <= 15)
+                                while (i < fotos.Count)
                                 {
-                                    for (int i = 0; i < 9; i++)
-                                        primerasFotos.Add(fotos[i]);
-                                    for (int i = 9; i < fotos.Count; i++)
-                                        restoFotos.Add(fotos[i]);
+                                    fotosEnPagina.Add(fotos[i]);
+                                    if ( (i+1) % 12 == 0 && i > 0)
+                                    {
+                                        doc.NewPage();
+                                        doc.Add(new Paragraph(""));
+                                        doc.Add(TablaFotografias(fotosEnPagina));
+                                        fotosEnPagina.Clear();
+                                    }
+                                    i++;
                                 }
-                                else
+                                if ( (i+1) % 12 != 0)
                                 {
-                                    for (int i = 0; i < 20; i++)
-                                    {
-                                        if(fotos.Count - 1 < i)
-                                            break;
-                                        primerasFotos.Add(fotos[i]);
-                                    }
-                                    if(fotos.Count > 20)
-                                    {
-                                        for (int i = 20; i < fotos.Count; i++)
-                                        {
-                                            if(fotos[i] != null)
-                                                restoFotos.Add(fotos[i]);
-                                            else
-                                                break;
-                                        }
-                                    }
+                                    doc.NewPage();
+                                    doc.Add(new Paragraph(""));
+                                    doc.Add(TablaFotografias(fotosEnPagina));
+                                    fotosEnPagina.Clear();
                                 }
-                                doc.Add(new Paragraph(""));
-                                doc.Add(TablaFotografias(primerasFotos));
-                                doc.NewPage();
-                                doc.Add(new Paragraph(""));
-                                doc.Add(TablaFotografias(restoFotos));
-                            }
-                            
-                            foreach (var img in Directory.GetFiles(directoryImgs))
-                            {
-                                if(img.Contains("temp"))
-                                    File.Delete(img);
                             }
                         }
+                        
+                        foreach (var img in Directory.GetFiles(directoryImgs))
+                        
+                        {
+                        
+                            if(img.Contains("temp"))
+                        
+                                File.Delete(img);
+                        
+                        }
+                        //        List<string> primerasFotos = new List<string>();
+                        //        List<string> restoFotos = new List<string>();
+                        //        List<string> restoFotos2 = new List<string>();
+                        //        //if(fotos.Count > 12 && fotos.Count <= 15)
+                        //        //{
+                        //        //    for (int i = 0; i < 9; i++)
+                        //        //        primerasFotos.Add(fotos[i]);
+                        //        //    for (int i = 9; i < fotos.Count; i++)
+                        //        //        restoFotos.Add(fotos[i]);
+                        //        //}
+                        //        //else
+                        //        //{
+                        //            for (int i = 0; i <= 12; i++)
+                        //            {
+                        //                if(fotos.Count - 1 < i)
+                        //                    break;
+                        //                primerasFotos.Add(fotos[i]);
+                        //            }
+                        //            if(fotos.Count > 12 && fotos.Count <= 24)
+                        //            {
+                        //                for (int i = 12; i < fotos.Count; i++)
+                        //                {
+                        //                    if(fotos[i] != null)
+                        //                        restoFotos.Add(fotos[i]);
+                        //                    else
+                        //                    {
+                        //                        break;
+                        //                    }
+                        //                }
+                        //                doc.NewPage();
+                        //                doc.Add(new Paragraph(""));
+                        //                doc.Add(TablaFotografias(restoFotos));
+                        //            }
+                        //            else
+                        //            {
+                        //                for (int i = 24; i < fotos.Count; i++)
+                        //                {
+                        //                    if (fotos[i] != null)
+                        //                        restoFotos2.Add(fotos[i]);
+                        //                    else
+                        //                    {
+                        //                        break;
+                        //                    }
+                        //                }
+                        //                doc.NewPage();
+                        //                doc.Add(new Paragraph(""));
+                        //                doc.Add(TablaFotografias(restoFotos2));
+                        //            }
+                        //        //}
+                        //        doc.Add(new Paragraph(""));
+                        //        doc.Add(TablaFotografias(primerasFotos));
+                        //    }
+                            
+                        //}
                     }
                     PdfContentByte cb = writer.DirectContent;
                     PdfPTable tablaObservaciones = TablaObservaciones();
@@ -320,21 +366,21 @@
                     table = new PdfPTable(new float[] { 25f, 25f, 25f, 25f }) { WidthPercentage = 100f };
                     cuadros = 12;
                 }
-                else if (rutas.Count > 12 && rutas.Count <= 16)
+                else //if (rutas.Count > 12 && rutas.Count <= 16)
                 {
-                    table = new PdfPTable(new float[] { 25f, 25f, 25f, 25f }) { WidthPercentage = 100f };
-                    cuadros = 16;
+                    table = new PdfPTable(new float[] { 33.33f, 33.33f, 33.33f, 33.33f }) { WidthPercentage = 100f };
+                    cuadros = 12;
                 }
-                else if (rutas.Count > 16 && rutas.Count <= 20)
-                {
-                    table = new PdfPTable(new float[] { 25f, 25f, 25f, 25f }) { WidthPercentage = 100f };
-                    cuadros = 20;
-                }
-                else
-                {
-                    table = new PdfPTable(new float[] { 25f, 25f, 25f, 25f }) { WidthPercentage = 100f };
-                    cuadros = 20;
-                }
+                //else if (rutas.Count > 16 && rutas.Count <= 20)
+                //{
+                //    table = new PdfPTable(new float[] { 25f, 25f, 25f, 25f }) { WidthPercentage = 100f };
+                //    cuadros = 20;
+                //}
+                //else
+                //{
+                //    table = new PdfPTable(new float[] { 25f, 25f, 25f, 25f }) { WidthPercentage = 100f };
+                //    cuadros = 20;
+                //}
 
                 foreach (var foto in rutas)
                 {
@@ -370,7 +416,7 @@
                         else
                             img.ScaleAbsolute(140f, 160f);
                     }
-                    else if (cuadros == 6)
+                    else if (cuadros == 6 || cuadros > 12)
                     {
                         if (img.Width > img.Height)
                             img.ScaleAbsolute(130f, 140f);
@@ -394,7 +440,7 @@
 
                     if (cuadros == 4)
                         logo.ScaleAbsolute(170f, 130f);
-                    else if (cuadros == 6)
+                    else if (cuadros == 6 || cuadros > 12)
                         logo.ScaleAbsolute(120f, 130f);
                     else 
                         logo.ScaleAbsolute(100f, 110f);
