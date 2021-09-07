@@ -168,26 +168,32 @@
                             List<string> fotosEnPagina = new List<string>();
 
                             if (fotos.Count <= 12)
-                                doc.Add(TablaFotografias(fotos));
+                                doc.Add(TablaFotografias(fotos, 1));
                             else
                             {
                                 while (i < fotos.Count)
                                 {
                                     fotosEnPagina.Add(fotos[i]);
-                                    if ( (i+1) % 12 == 0 && i > 0)
+
+                                    if (i == 11)
+                                    {
+                                        doc.Add(TablaFotografias(fotosEnPagina, 1));
+                                        fotosEnPagina.Clear();
+                                    }
+                                    if ( (i+1) % 12 == 0 && i > 12)
                                     {
                                         doc.NewPage();
                                         doc.Add(new Paragraph(""));
-                                        doc.Add(TablaFotografias(fotosEnPagina));
+                                        doc.Add(TablaFotografias(fotosEnPagina, 2));
                                         fotosEnPagina.Clear();
                                     }
                                     i++;
                                 }
-                                if ( (i+1) % 12 != 0)
+                                if ( i % 12 != 0)
                                 {
                                     doc.NewPage();
                                     doc.Add(new Paragraph(""));
-                                    doc.Add(TablaFotografias(fotosEnPagina));
+                                    doc.Add(TablaFotografias(fotosEnPagina, 3));
                                     fotosEnPagina.Clear();
                                 }
                             }
@@ -339,7 +345,7 @@
 
         }
 
-        private IElement TablaFotografias(List<string> rutas)
+        private IElement TablaFotografias(List<string> rutas, int pagina)
         {
 
             try
@@ -409,27 +415,7 @@
                     if(!File.Exists(fotoTemporal))
                         imageReview.Save(fotoTemporal);
                     Image img = Image.GetInstance(fotoTemporal);
-                    if (cuadros == 4)
-                    {
-                        if (img.Width > img.Height)
-                            img.ScaleAbsolute(160f, 140f);
-                        else
-                            img.ScaleAbsolute(140f, 160f);
-                    }
-                    else if (cuadros == 6 || cuadros > 12)
-                    {
-                        if (img.Width > img.Height)
-                            img.ScaleAbsolute(130f, 140f);
-                        else
-                            img.ScaleAbsolute(140f, 130f);
-                    }
-                    else 
-                    {
-                        if (img.Width > img.Height)
-                            img.ScaleAbsolute(100f, 110f);
-                        else
-                            img.ScaleAbsolute(110f, 100f);
-                    }
+                    PlantillasImagenes(img, cuadros);
                     PdfPCell colFoto = new PdfPCell(img) { Border = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_MIDDLE, Padding = 2 };
                     table.AddCell(colFoto);
                 }
@@ -437,13 +423,7 @@
                 {
                     Image logo = Image.GetInstance($@"{System.Environment.CurrentDirectory}\Media\sinImagen.png");
                     logo.ScaleAbsolute(90f, 110f);
-
-                    if (cuadros == 4)
-                        logo.ScaleAbsolute(170f, 130f);
-                    else if (cuadros == 6 || cuadros > 12)
-                        logo.ScaleAbsolute(120f, 130f);
-                    else 
-                        logo.ScaleAbsolute(100f, 110f);
+                    PlantillasImagenes(logo, cuadros);
                     PdfPCell colLogo = new PdfPCell(logo) { Border = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_MIDDLE, Padding = 2 };
                     table.AddCell(colLogo);
                 }
@@ -459,6 +439,36 @@
                 _apiLogger.WriteLog(_clavePlaza, ex, "ReporteFotograficoPdfCreation: TablaFotografias", 3);
                 return null;
             }
+        }
+
+        private IElement PlantillasImagenes(Image img, int cuadros)
+        {
+        //Caso 1: Primera pagina con observaciones
+            if (cuadros == 4)
+            {
+                if (img.Width > img.Height)
+                    img.ScaleAbsolute(160f, 140f);
+                else
+                    img.ScaleAbsolute(140f, 160f);
+            }
+            else if (cuadros == 6)
+            {
+                if (img.Width > img.Height)
+                    img.ScaleAbsolute(130f, 140f);
+                else
+                    img.ScaleAbsolute(140f, 130f);
+            }
+            else
+            {
+                if (img.Width > img.Height)
+                    img.ScaleAbsolute(100f, 110f);
+                else
+                    img.ScaleAbsolute(110f, 100f);
+            }
+        //Caso 2: Primera pagina sin observaciones
+        //Caso 3: Pagina intermedia
+        //Caso 4: Ultima pagina
+            return null;
         }
 
         private IElement TablaInformacion()
