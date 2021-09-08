@@ -212,20 +212,20 @@
                 Expiration = expiration
             };
         }
-        public Response GetSesionLog(int userId, string dateFilter)
+        public Response GetSesionLog(int userId, string nameFilter, string dateFilter, int pagina, int registros)
         {
             try
             {
                 using (SqlConnection sql = new SqlConnection(_connectionString))
                 {
-                    using (SqlCommand cmd = new SqlCommand("dbo.spLoginSesionLogRol", sql))
-                    {
-                        cmd.CommandType = CommandType.StoredProcedure;
-                        cmd.Parameters.Add("@UserId", SqlDbType.Int).Value = userId;
-                        cmd.Parameters.Add("@DateFilter", SqlDbType.NVarChar).Value = dateFilter;
+                    SqlCommand cmd = new SqlCommand("dbo.spLoginSesionLogRol", sql);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    AddNullSPParameter(ref cmd, "@DateFilter", SqlDbType.NVarChar, dateFilter);
+                    AddNullSPParameter(ref cmd, "@DateFilter", SqlDbType.NVarChar, dateFilter);
+                    //cmd.Parameters.Add("@UserId", SqlDbType.Int).Value = userId;
+                    //cmd.Parameters.Add("@DateFilter", SqlDbType.NVarChar).Value = dateFilter;
 
-                        return _sqlResult.GetList<SessionLogUser>("USR", cmd, sql, "GetSesionLog");
-                    }
+                    return _sqlResult.GetList<SessionLogUser>("USR", cmd, sql, "GetSesionLog");                    
                 }
             }
             catch (SqlException ex)
@@ -234,6 +234,14 @@
                 return new Response { Message = $"Error: {ex.Message}", Result = null };
             }
 
+        }
+
+        private void AddNullSPParameter<T>(ref SqlCommand SqlCmd, string Name, SqlDbType dbType, T value)
+        {
+            if (value is null)
+                SqlCmd.Parameters.Add(Name, dbType).Value = DBNull.Value;
+            else
+                SqlCmd.Parameters.Add(Name, dbType).Value = value;
         }
 
         #endregion
