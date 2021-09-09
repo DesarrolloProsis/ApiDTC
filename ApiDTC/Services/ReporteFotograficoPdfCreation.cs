@@ -6,7 +6,6 @@
     using System;
     using System.Collections.Generic;
     using System.Data;
-    using System.Globalization;
     using System.IO;
 
     public class ReporteFotograficoPdfCreation
@@ -65,7 +64,7 @@
         public Response NewPdf(string folder)
         {
             string directory, filename, path;
-            
+
             if (_tipo == 1)
                 directory = $@"{folder}\{_clavePlaza.ToUpper()}\Reportes\{_referenceNumber}";
             else
@@ -83,10 +82,10 @@
                 filename = $@"DTC-{_referenceNumber}-EquipoNuevo.pdf";
             else
                 filename = $@"DTC-{_referenceNumber}-EquipoDañado.pdf";
-            if(_tipo== 3)
+            if (_tipo == 3)
             {
                 //usar el _referenceNumber para crear la estructura con DT
-                directoryImageDiagnostico = $@"{folder}\{_clavePlaza.ToUpper()}\Reportes\" + _tableHeader.Rows[0]["DiagnosisReference"]+"\\";
+                directoryImageDiagnostico = $@"{folder}\{_clavePlaza.ToUpper()}\Reportes\" + _tableHeader.Rows[0]["DiagnosisReference"] + "\\";
             }
             path = Path.Combine(directory, filename);
 
@@ -156,7 +155,7 @@
                         directoryImgs = Path.Combine(directory, "EquipoNuevoImgs");
                     else
                         directoryImgs = Path.Combine(directoryImageDiagnostico, "DiagnosticoFallaImgs");//Misma carpeta que Diagnostico
-                    if(Directory.Exists(directoryImgs))
+                    if (Directory.Exists(directoryImgs))
                     {
                         var files = Directory.GetFiles(directoryImgs);
                         if (files.Length != 0)
@@ -166,9 +165,15 @@
                                 fotos.Add(file);
                             int i = 0;
                             List<string> fotosEnPagina = new List<string>();
+                            PdfPTable table = new PdfPTable(new float[] { 100f }) { WidthPercentage = 100f };
+                            var celdaVacia = new PdfPCell() { Border = 0, Padding = 40};
+                            int pagina;
 
                             if (fotos.Count <= 12)
-                                doc.Add(TablaFotografias(fotos, 1));
+                            {
+                                pagina = 1;
+                                doc.Add(TablaFotografias(fotos, pagina));
+                            }
                             else
                             {
                                 while (i < fotos.Count)
@@ -177,36 +182,48 @@
 
                                     if (i == 11)
                                     {
-                                        doc.Add(TablaFotografias(fotosEnPagina, 1));
+                                        pagina = 2;
+                                        table.AddCell(celdaVacia);
+                                        doc.Add(table);
+                                        doc.Add(TablaFotografias(fotosEnPagina, pagina));
                                         fotosEnPagina.Clear();
                                     }
-                                    if ( (i+1) % 12 == 0 && i > 12)
+                                    if ((i + 1) % 12 == 0 && i > 12)
                                     {
                                         doc.NewPage();
-                                        doc.Add(new Paragraph(""));
-                                        doc.Add(TablaFotografias(fotosEnPagina, 2));
+                                        if (i == fotos.Count)
+                                            pagina = 4;
+                                        else
+                                        {
+                                            pagina = 3;
+                                            table.AddCell(celdaVacia);
+                                            doc.Add(table);
+                                        }
+                                        doc.Add(TablaFotografias(fotosEnPagina, pagina));
                                         fotosEnPagina.Clear();
                                     }
                                     i++;
                                 }
-                                if ( i % 12 != 0)
+                                if (i % 12 != 0)
                                 {
+                                    pagina = 4;
                                     doc.NewPage();
-                                    doc.Add(new Paragraph(""));
-                                    doc.Add(TablaFotografias(fotosEnPagina, 3));
+                                    table.AddCell(celdaVacia);
+                                    doc.Add(new Paragraph(" "));
+                                    doc.Add(TablaFotografias(fotosEnPagina, pagina));
                                     fotosEnPagina.Clear();
                                 }
                             }
                         }
-                        
+
                         foreach (var img in Directory.GetFiles(directoryImgs))
-                        
+
                         {
-                        
-                            if(img.Contains("temp"))
-                        
+
+                            if (img.Contains("temp"))
+
                                 File.Delete(img);
-                        
+
                         }
                         //        List<string> primerasFotos = new List<string>();
                         //        List<string> restoFotos = new List<string>();
@@ -260,7 +277,7 @@
                         //        doc.Add(new Paragraph(""));
                         //        doc.Add(TablaFotografias(primerasFotos));
                         //    }
-                            
+
                         //}
                     }
                     PdfContentByte cb = writer.DirectContent;
@@ -367,14 +384,14 @@
                     table = new PdfPTable(new float[] { 33.33f, 33.33f, 33.33f }) { WidthPercentage = 100f };
                     cuadros = 6;
                 }
-                else if (rutas.Count > 6 && rutas.Count <= 12)
-                {
-                    table = new PdfPTable(new float[] { 25f, 25f, 25f, 25f }) { WidthPercentage = 100f };
-                    cuadros = 12;
-                }
+                //else if (rutas.Count > 6 && rutas.Count <= 12)
+                //{
+                //    table = new PdfPTable(new float[] { 25f, 25f, 25f, 25f }) { WidthPercentage = 100f };
+                //    cuadros = 12;
+                //}
                 else //if (rutas.Count > 12 && rutas.Count <= 16)
                 {
-                    table = new PdfPTable(new float[] { 33.33f, 33.33f, 33.33f, 33.33f }) { WidthPercentage = 100f };
+                    table = new PdfPTable(new float[] { 25f, 25f, 25f, 25f }) { WidthPercentage = 100f };
                     cuadros = 12;
                 }
                 //else if (rutas.Count > 16 && rutas.Count <= 20)
@@ -391,7 +408,7 @@
                 foreach (var foto in rutas)
                 {
                     //Si procesa un archivo temporal que no se eliminó
-                    if(foto.Contains("-temp"))
+                    if (foto.Contains("-temp"))
                     {
                         File.Delete(foto);
                         continue;
@@ -400,22 +417,22 @@
                     string fotoTemporal = foto.Substring(0, foto.LastIndexOf('.')) + "-temp.jpg";
                     foreach (var prop in imageReview.PropertyItems)
                     {
-                        if(prop.Id == 0x0112)
+                        if (prop.Id == 0x0112)
                         {
                             int orientationValue = imageReview.GetPropertyItem(prop.Id).Value[0];
                             System.Drawing.RotateFlipType rotateFlipType = GetOrientationToFlipType(orientationValue);
                             imageReview.RotateFlip(rotateFlipType);
                             imageReview.RemovePropertyItem(0x0112);
-                            if(!File.Exists(fotoTemporal))
+                            if (!File.Exists(fotoTemporal))
                                 File.Delete(fotoTemporal);
                             imageReview.Save(fotoTemporal);
                             break;
                         }
                     }
-                    if(!File.Exists(fotoTemporal))
+                    if (!File.Exists(fotoTemporal))
                         imageReview.Save(fotoTemporal);
                     Image img = Image.GetInstance(fotoTemporal);
-                    PlantillasImagenes(img, cuadros);
+                    PlantillasImagenes(img, cuadros, pagina);
                     PdfPCell colFoto = new PdfPCell(img) { Border = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_MIDDLE, Padding = 2 };
                     table.AddCell(colFoto);
                 }
@@ -423,7 +440,7 @@
                 {
                     Image logo = Image.GetInstance($@"{System.Environment.CurrentDirectory}\Media\sinImagen.png");
                     logo.ScaleAbsolute(90f, 110f);
-                    PlantillasImagenes(logo, cuadros);
+                    PlantillasImagenes(logo, cuadros, pagina);
                     PdfPCell colLogo = new PdfPCell(logo) { Border = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_MIDDLE, Padding = 2 };
                     table.AddCell(colLogo);
                 }
@@ -441,33 +458,107 @@
             }
         }
 
-        private IElement PlantillasImagenes(Image img, int cuadros)
+        private IElement PlantillasImagenes(Image img, int cuadros, int pagina)
         {
-        //Caso 1: Primera pagina con observaciones
-            if (cuadros == 4)
+            //Caso 1: Primera pagina con observaciones
+            switch (pagina)
             {
-                if (img.Width > img.Height)
-                    img.ScaleAbsolute(160f, 140f);
-                else
-                    img.ScaleAbsolute(140f, 160f);
+                case 1:
+                    if (cuadros == 4)
+                    {
+                        if (img.Width > img.Height)
+                            img.ScaleAbsolute(160f, 140f);
+                        else
+                            img.ScaleAbsolute(140f, 160f);
+                    }
+                    else if (cuadros == 6)
+                    {
+                        if (img.Width > img.Height)
+                            img.ScaleAbsolute(130f, 140f);
+                        else
+                            img.ScaleAbsolute(140f, 130f);
+                    }
+                    else
+                    {
+                        if (img.Width > img.Height)
+                            img.ScaleAbsolute(100f, 110f);
+                        else
+                            img.ScaleAbsolute(110f, 100f);
+                    }
+                    break;
+                //Caso 2: Primera pagina sin observaciones
+                case 2:
+                    if (cuadros == 4)
+                    {
+                        if (img.Width > img.Height)
+                            img.ScaleAbsolute(160f, 140f);
+                        else
+                            img.ScaleAbsolute(140f, 160f);
+                    }
+                    else if (cuadros == 6)
+                    {
+                        if (img.Width > img.Height)
+                            img.ScaleAbsolute(130f, 140f);
+                        else
+                            img.ScaleAbsolute(140f, 130f);
+                    }
+                    else
+                    {
+                        if (img.Width > img.Height)
+                            img.ScaleAbsolute(130f, 140f);
+                        else
+                            img.ScaleAbsolute(140f, 130f);
+                    }
+                    break;
+                //Caso 3: Pagina intermedia
+                case 3:
+                    if (cuadros == 4)
+                    {
+                        if (img.Width > img.Height)
+                            img.ScaleAbsolute(160f, 140f);
+                        else
+                            img.ScaleAbsolute(140f, 160f);
+                    }
+                    else if (cuadros == 6)
+                    {
+                        if (img.Width > img.Height)
+                            img.ScaleAbsolute(130f, 140f);
+                        else
+                            img.ScaleAbsolute(140f, 130f);
+                    }
+                    else
+                    {
+                        if (img.Width > img.Height)
+                            img.ScaleAbsolute(130f, 140f);
+                        else
+                            img.ScaleAbsolute(140f, 130f);
+                    }
+                    break;
+                //Caso 4: Ultima pagina
+                case 4:
+                    if (cuadros == 4)
+                    {
+                        if (img.Width > img.Height)
+                            img.ScaleAbsolute(160f, 140f);
+                        else
+                            img.ScaleAbsolute(140f, 160f);
+                    }
+                    else if (cuadros == 6)
+                    {
+                        if (img.Width > img.Height)
+                            img.ScaleAbsolute(130f, 140f);
+                        else
+                            img.ScaleAbsolute(140f, 130f);
+                    }
+                    else
+                    {
+                        if (img.Width > img.Height)
+                            img.ScaleAbsolute(130f, 140f);
+                        else
+                            img.ScaleAbsolute(140f, 130f);
+                    }
+                    break;
             }
-            else if (cuadros == 6)
-            {
-                if (img.Width > img.Height)
-                    img.ScaleAbsolute(130f, 140f);
-                else
-                    img.ScaleAbsolute(140f, 130f);
-            }
-            else
-            {
-                if (img.Width > img.Height)
-                    img.ScaleAbsolute(100f, 110f);
-                else
-                    img.ScaleAbsolute(110f, 100f);
-            }
-        //Caso 2: Primera pagina sin observaciones
-        //Caso 3: Pagina intermedia
-        //Caso 4: Ultima pagina
             return null;
         }
 
@@ -510,7 +601,7 @@
                 table.AddCell(plazaDeCobro);
                 CeldasVacias(2, table);
                 //TODO poner la hora inicio del stored de Alex en reporte fotográfico equipo nuevo y dañado
-                string valorHoraInicio =  Convert.ToString(_tableHeader.Rows[0]["Inicio"]);
+                string valorHoraInicio = Convert.ToString(_tableHeader.Rows[0]["Inicio"]);
                 //var inicioDateTime = Convert.ToDateTime(valorHoraInicio);
                 //string conversionInicio = inicioDateTime.ToString("hh:mm tt", CultureInfo.CurrentCulture);
                 var colTextoHoraInicio = new PdfPCell(new Phrase("Hora INICIO: ", letraoNegritaChica)) { Border = 0, HorizontalAlignment = Element.ALIGN_RIGHT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 4 };
@@ -532,7 +623,7 @@
                 table.AddCell(colUbicacion);
                 table.AddCell(ubicacion);
                 CeldasVacias(2, table);
-                string valorHoraFin =  Convert.ToString(_tableHeader.Rows[0]["Fin"]);
+                string valorHoraFin = Convert.ToString(_tableHeader.Rows[0]["Fin"]);
                 //var finDateTime = Convert.ToDateTime(valorHoraFin);
                 //string conversionFin = finDateTime.ToString("hh:mm tt", CultureInfo.CurrentCulture);
                 var colTextoHoraFin = new PdfPCell(new Phrase("Hora FIN: ", letraoNegritaChica)) { Border = 0, HorizontalAlignment = Element.ALIGN_RIGHT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 4 };
@@ -580,16 +671,16 @@
                     //1 Operacion
                     //2 Siniestro
                     //3 Fin de vida util
-                    string nameColumn="data";
-                    if(Convert.ToInt32(_tableHeader.Rows[0]["TypeFaultId"]) ==2 )
+                    string nameColumn = "data";
+                    if (Convert.ToInt32(_tableHeader.Rows[0]["TypeFaultId"]) == 2)
                     {
                         nameColumn = "No. Siniestro";
                     }
-                    else if(Convert.ToInt32(_tableHeader.Rows[0]["TypeFaultId"]) == 3)
+                    else if (Convert.ToInt32(_tableHeader.Rows[0]["TypeFaultId"]) == 3)
                     {
                         nameColumn = "Oficio";
                     }
-                        
+
                     var colSiniestro = new PdfPCell(new Phrase(nameColumn, letraoNegritaChica)) { Border = 0, HorizontalAlignment = Element.ALIGN_RIGHT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 4, Colspan = 3 };
                     string valorColSiniestro = Convert.ToString(_tableHeader.Rows[0]["NumeroSiniestro"]);
                     var siniestro = new PdfPCell(new Phrase(valorColSiniestro, letraNormalChica)) { BorderWidthBottom = 1, BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_BOTTOM, Padding = 2, Colspan = 3 };
@@ -658,7 +749,7 @@
         private List<string> SeparacionObservaciones(string observaciones)
         {
             List<string> lineaObservaciones = new List<string>();
-            if(observaciones.Length <= 100)
+            if (observaciones.Length <= 100)
             {
                 lineaObservaciones.Add(observaciones);
                 return lineaObservaciones;
@@ -667,16 +758,16 @@
             string linea = string.Empty;
             for (int i = 0; i < observaciones.Length; i++)
             {
-                if(observaciones[i].Equals(',') || observaciones[i].Equals('.') || observaciones[i].Equals('.') || observaciones[i].Equals(':'))
+                if (observaciones[i].Equals(',') || observaciones[i].Equals('.') || observaciones[i].Equals('.') || observaciones[i].Equals(':'))
                 {
-                    if(i < observaciones.Length - 1 && !observaciones[i + 1].Equals(' '))
+                    if (i < observaciones.Length - 1 && !observaciones[i + 1].Equals(' '))
                     {
                         linea += $"{observaciones[i]} ";
                         continue;
                     }
                 }
                 linea += observaciones[i];
-                if(linea.Length >= 100)
+                if (linea.Length >= 100)
                 {
                     lineaObservaciones.Add(linea);
                     linea = string.Empty;
