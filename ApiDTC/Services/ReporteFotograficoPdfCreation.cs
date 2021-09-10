@@ -560,7 +560,7 @@
                 string valorHoraInicio = Convert.ToString(_tableHeader.Rows[0]["Inicio"]);
                 //var inicioDateTime = Convert.ToDateTime(valorHoraInicio);
                 //string conversionInicio = inicioDateTime.ToString("hh:mm tt", CultureInfo.CurrentCulture);
-                var colTextoHoraInicio = new PdfPCell(new Phrase("Hora INICIO: ", letraoNegritaChica)) { Border = 0, HorizontalAlignment = Element.ALIGN_RIGHT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 5 };
+                var colTextoHoraInicio = new PdfPCell(new Phrase("Hora de inicio: ", letraoNegritaChica)) { Border = 0, HorizontalAlignment = Element.ALIGN_RIGHT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 5 };
                 var colHoraInicio = new PdfPCell(new Phrase(valorHoraInicio, letraNormalChica)) { BorderWidthBottom = 1, BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_BOTTOM, Padding = 2, Colspan = 2 };
 
                 table.AddCell(colTextoHoraInicio);
@@ -578,11 +578,11 @@
                 //TODO actualizar hora fin con el stored de Alex
                 table.AddCell(colUbicacion);
                 table.AddCell(ubicacion);
-                CeldasVacias(2, table);
+                //CeldasVacias(2, table);
                 string valorHoraFin =  Convert.ToString(_tableHeader.Rows[0]["Fin"]);
                 //var finDateTime = Convert.ToDateTime(valorHoraFin);
                 //string conversionFin = finDateTime.ToString("hh:mm tt", CultureInfo.CurrentCulture);
-                var colTextoHoraFin = new PdfPCell(new Phrase("Hora FIN: ", letraoNegritaChica)) { Border = 0, HorizontalAlignment = Element.ALIGN_RIGHT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 5 };
+                var colTextoHoraFin = new PdfPCell(new Phrase("Hora de fin: ", letraoNegritaChica)) { Border = 0, HorizontalAlignment = Element.ALIGN_RIGHT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 5 };
                 var colHoraFin = new PdfPCell(new Phrase(valorHoraFin, letraNormalChica)) { BorderWidthBottom = 1, BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_BOTTOM, Padding = 2, Colspan = 2 };
 
                 table.AddCell(colTextoHoraFin);
