@@ -704,7 +704,7 @@
         private List<string> SeparacionObservaciones(string observaciones)
         {
             List<string> lineaObservaciones = new List<string>();
-            if (observaciones.Length <= 100)
+            if(observaciones.Length <= 85)
             {
                 lineaObservaciones.Add(observaciones);
                 return lineaObservaciones;
@@ -722,7 +722,7 @@
                     }
                 }
                 linea += observaciones[i];
-                if (linea.Length >= 100)
+                if(linea.Length >= 85 && observaciones[i].Equals(' '))
                 {
                     lineaObservaciones.Add(linea);
                     linea = string.Empty;
