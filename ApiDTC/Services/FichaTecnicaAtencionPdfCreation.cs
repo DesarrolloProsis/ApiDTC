@@ -293,10 +293,10 @@ namespace ApiDTC.Services
 
                 //Plaza de cobro
 
-                var colPlazaDeCobro = new PdfPCell(new Phrase("Plaza de Cobro:", letraoNegritaMediana)) { Border = 0, HorizontalAlignment = Element.ALIGN_RIGHT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 5 };
+                var colPlazaDeCobro = new PdfPCell(new Phrase("Plaza de Cobro:", letraoNegritaMediana)) { Border = 0, HorizontalAlignment = Element.ALIGN_RIGHT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 5};
 
                 var plazaDeCobro = new PdfPCell(new Phrase(_fichaTecnicaInfo.PlazaCobro, letraNormalMediana)) { BorderWidthBottom = 1, BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_BOTTOM, Padding = 2, Colspan = 3 };
-                var colTextoHoraInicio = new PdfPCell(new Phrase("Fecha/Hora Inicio:", letraoNegritaMediana)) { Border = 0, HorizontalAlignment = Element.ALIGN_RIGHT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 5 };
+                var colTextoHoraInicio = new PdfPCell(new Phrase("Fecha/Hora Inicio:", letraoNegritaMediana)) { Border = 0, HorizontalAlignment = Element.ALIGN_RIGHT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 0, PaddingTop = 5 };
                 var colHoraInicio = new PdfPCell(new Phrase(_fichaTecnicaInfo.Inicio, letraNormalMediana)) { BorderWidthBottom = 1, BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_BOTTOM, Padding = 2, Colspan=2 };
 
                 table.AddCell(colPlazaDeCobro);
