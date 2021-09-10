@@ -163,15 +163,20 @@
                             List<string> fotos = new List<string>();
                             foreach (var file in files)
                                 fotos.Add(file);
-                            int i = 0;
+
                             List<string> fotosEnPagina = new List<string>();
                             PdfPTable table = new PdfPTable(new float[] { 100f }) { WidthPercentage = 100f };
-                            var celdaVacia = new PdfPCell() { Border = 0, Padding = 40};
+                            PdfPTable table2 = new PdfPTable(new float[] { 100f }) { WidthPercentage = 100f };
+                            var celdaVacia = new PdfPCell() { Border = 0, Padding = 35f};
+                            var celdaVacia2 = new PdfPCell() { Border = 0, Padding = 7f };
                             int pagina;
+                            int i = 0;
 
                             if (fotos.Count <= 12)
                             {
                                 pagina = 1;
+                                table.AddCell(celdaVacia2);
+                                doc.Add(table);
                                 doc.Add(TablaFotografias(fotos, pagina));
                             }
                             else
@@ -191,13 +196,17 @@
                                     if ((i + 1) % 12 == 0 && i > 12)
                                     {
                                         doc.NewPage();
-                                        if (i == fotos.Count)
+                                        if ((i + 1) == fotos.Count)
+                                        {
                                             pagina = 4;
+                                            table2.AddCell(celdaVacia);
+                                            doc.Add(table2);
+                                        }
                                         else
                                         {
-                                            pagina = 3;
                                             table.AddCell(celdaVacia);
                                             doc.Add(table);
+                                            pagina = 3;
                                         }
                                         doc.Add(TablaFotografias(fotosEnPagina, pagina));
                                         fotosEnPagina.Clear();
@@ -208,8 +217,8 @@
                                 {
                                     pagina = 4;
                                     doc.NewPage();
-                                    table.AddCell(celdaVacia);
-                                    doc.Add(new Paragraph(" "));
+                                    table2.AddCell(celdaVacia2);
+                                    doc.Add(table2);
                                     doc.Add(TablaFotografias(fotosEnPagina, pagina));
                                     fotosEnPagina.Clear();
                                 }
@@ -225,60 +234,6 @@
                                 File.Delete(img);
 
                         }
-                        //        List<string> primerasFotos = new List<string>();
-                        //        List<string> restoFotos = new List<string>();
-                        //        List<string> restoFotos2 = new List<string>();
-                        //        //if(fotos.Count > 12 && fotos.Count <= 15)
-                        //        //{
-                        //        //    for (int i = 0; i < 9; i++)
-                        //        //        primerasFotos.Add(fotos[i]);
-                        //        //    for (int i = 9; i < fotos.Count; i++)
-                        //        //        restoFotos.Add(fotos[i]);
-                        //        //}
-                        //        //else
-                        //        //{
-                        //            for (int i = 0; i <= 12; i++)
-                        //            {
-                        //                if(fotos.Count - 1 < i)
-                        //                    break;
-                        //                primerasFotos.Add(fotos[i]);
-                        //            }
-                        //            if(fotos.Count > 12 && fotos.Count <= 24)
-                        //            {
-                        //                for (int i = 12; i < fotos.Count; i++)
-                        //                {
-                        //                    if(fotos[i] != null)
-                        //                        restoFotos.Add(fotos[i]);
-                        //                    else
-                        //                    {
-                        //                        break;
-                        //                    }
-                        //                }
-                        //                doc.NewPage();
-                        //                doc.Add(new Paragraph(""));
-                        //                doc.Add(TablaFotografias(restoFotos));
-                        //            }
-                        //            else
-                        //            {
-                        //                for (int i = 24; i < fotos.Count; i++)
-                        //                {
-                        //                    if (fotos[i] != null)
-                        //                        restoFotos2.Add(fotos[i]);
-                        //                    else
-                        //                    {
-                        //                        break;
-                        //                    }
-                        //                }
-                        //                doc.NewPage();
-                        //                doc.Add(new Paragraph(""));
-                        //                doc.Add(TablaFotografias(restoFotos2));
-                        //            }
-                        //        //}
-                        //        doc.Add(new Paragraph(""));
-                        //        doc.Add(TablaFotografias(primerasFotos));
-                        //    }
-
-                        //}
                     }
                     PdfContentByte cb = writer.DirectContent;
                     PdfPTable tablaObservaciones = TablaObservaciones();
@@ -505,9 +460,9 @@
                     else
                     {
                         if (img.Width > img.Height)
-                            img.ScaleAbsolute(130f, 140f);
+                            img.ScaleAbsolute(100f, 110f);
                         else
-                            img.ScaleAbsolute(140f, 130f);
+                            img.ScaleAbsolute(110f, 100f);
                     }
                     break;
                 //Caso 3: Pagina intermedia
@@ -517,7 +472,7 @@
                         if (img.Width > img.Height)
                             img.ScaleAbsolute(160f, 140f);
                         else
-                            img.ScaleAbsolute(140f, 160f);
+                            img.ScaleAbsolute(150f, 170f);
                     }
                     else if (cuadros == 6)
                     {
@@ -529,9 +484,9 @@
                     else
                     {
                         if (img.Width > img.Height)
-                            img.ScaleAbsolute(130f, 140f);
+                            img.ScaleAbsolute(100f, 110f);
                         else
-                            img.ScaleAbsolute(140f, 130f);
+                            img.ScaleAbsolute(110f, 100f);
                     }
                     break;
                 //Caso 4: Ultima pagina
@@ -553,9 +508,9 @@
                     else
                     {
                         if (img.Width > img.Height)
-                            img.ScaleAbsolute(130f, 140f);
+                            img.ScaleAbsolute(100f, 110f);
                         else
-                            img.ScaleAbsolute(140f, 130f);
+                            img.ScaleAbsolute(110f, 100f);
                     }
                     break;
             }
