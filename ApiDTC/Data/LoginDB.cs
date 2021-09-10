@@ -11,6 +11,7 @@
     using Microsoft.IdentityModel.Tokens;
     using System;
     using System.Collections.Generic;
+    using System.Linq;
 
     public class LoginDb
     {
@@ -212,20 +213,47 @@
                 Expiration = expiration
             };
         }
-        public Response GetSesionLog(int userId, string dateFilter)
+        public Response GetSesionLog(int userId, int pagina, int registros, string nameFilter, string dateFilter)
         {
             try
             {
                 using (SqlConnection sql = new SqlConnection(_connectionString))
                 {
-                    using (SqlCommand cmd = new SqlCommand("dbo.spLoginSesionLogRol", sql))
-                    {
-                        cmd.CommandType = CommandType.StoredProcedure;
-                        cmd.Parameters.Add("@UserId", SqlDbType.Int).Value = userId;
-                        cmd.Parameters.Add("@DateFilter", SqlDbType.NVarChar).Value = dateFilter;
+                    SqlCommand cmd = new SqlCommand("dbo.spLoginSesionLogRol", sql);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.Add("@UserId", SqlDbType.Int).Value = userId;
+                    cmd.Parameters.Add("@NumPagina", SqlDbType.Int).Value = pagina;
+                    cmd.Parameters.Add("@RegistroXPagina", SqlDbType.Int).Value = registros;                    
+                    AddNullSPParameter(ref cmd, "@DateFilter", SqlDbType.NVarChar, dateFilter);
+                    AddNullSPParameter(ref cmd, "@NameFilter", SqlDbType.NVarChar, dateFilter);
 
-                        return _sqlResult.GetList<SessionLogUser>("USR", cmd, sql, "GetSesionLog");
+                    var ListaSesiones = _sqlResult.GetRows<SessionLogUser>("USR", cmd, sql, "GetSesionLog");
+
+                    if(ListaSesiones.Count == 0){
+                        return new Response {
+                            Message = "Bad",
+                            Result = null
+                        };
                     }
+
+                    List<InfoTable> RowSesion = ListaSesiones.Select(item => new InfoTable{
+                        FIlaIndex = item.FIlaIndex,
+                        Name = item.Name,
+                        RollDescription = item.RollDescription,
+                        DateStart = item.DateStart
+                    }).ToList();
+
+                    PaginacionSesionLog NewPaginaSesion = new PaginacionSesionLog();
+                    var totalRegistros = (ListaSesiones[0].FIlaIndex + ListaSesiones[0].FilaIndexAsc) - 1;    
+                    decimal totalPag = Convert.ToDecimal((totalRegistros * 1.0) / (registros * 1.0));
+                    NewPaginaSesion.NumeroPaginas = (int)Math.Ceiling(totalPag);
+                    NewPaginaSesion.PaginaActual = pagina;
+                    NewPaginaSesion.RowSesionLog = RowSesion;
+                    
+                    return new Response {
+                        Message = "Ok",
+                        Result = NewPaginaSesion
+                    };                                                            
                 }
             }
             catch (SqlException ex)
@@ -234,6 +262,14 @@
                 return new Response { Message = $"Error: {ex.Message}", Result = null };
             }
 
+        }
+
+        private void AddNullSPParameter<T>(ref SqlCommand SqlCmd, string Name, SqlDbType dbType, T value)
+        {            
+            if (value ==  null)
+                SqlCmd.Parameters.Add(Name, dbType).Value = DBNull.Value;
+            else
+                SqlCmd.Parameters.Add(Name, dbType).Value = value;
         }
 
         #endregion

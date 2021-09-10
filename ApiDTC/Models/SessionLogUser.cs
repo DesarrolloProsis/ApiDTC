@@ -7,7 +7,9 @@ namespace ApiDTC.Models
 {
     public class SessionLogUser
     {
-        public string UserName { get; set; }
+        public Int64 FIlaIndex { get; set; }
+        
+        public Int64  FilaIndexAsc { get; set; }
 
         public string Name { get; set; }
 
