@@ -293,10 +293,10 @@ namespace ApiDTC.Services
 
                 //Plaza de cobro
 
-                var colPlazaDeCobro = new PdfPCell(new Phrase("Plaza de Cobro:", letraoNegritaMediana)) { Border = 0, HorizontalAlignment = Element.ALIGN_RIGHT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 5 };
+                var colPlazaDeCobro = new PdfPCell(new Phrase("Plaza de Cobro:", letraoNegritaMediana)) { Border = 0, HorizontalAlignment = Element.ALIGN_RIGHT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 5};
 
                 var plazaDeCobro = new PdfPCell(new Phrase(_fichaTecnicaInfo.PlazaCobro, letraNormalMediana)) { BorderWidthBottom = 1, BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_BOTTOM, Padding = 2, Colspan = 3 };
-                var colTextoHoraInicio = new PdfPCell(new Phrase("Fecha/Hora Inicio:", letraoNegritaMediana)) { Border = 0, HorizontalAlignment = Element.ALIGN_RIGHT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 5 };
+                var colTextoHoraInicio = new PdfPCell(new Phrase("Fecha/Hora Inicio:", letraoNegritaMediana)) { Border = 0, HorizontalAlignment = Element.ALIGN_RIGHT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 0, PaddingTop = 5 };
                 var colHoraInicio = new PdfPCell(new Phrase(_fichaTecnicaInfo.Inicio, letraNormalMediana)) { BorderWidthBottom = 1, BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_BOTTOM, Padding = 2, Colspan=2 };
 
                 table.AddCell(colPlazaDeCobro);
@@ -606,7 +606,7 @@ namespace ApiDTC.Services
         private List<string> SeparacionObservaciones(string observaciones)
         {
             List<string> lineaObservaciones = new List<string>();
-            if (observaciones.Length <= 100)
+            if (observaciones.Length <= 85)
             {
                 lineaObservaciones.Add(observaciones);
                 return lineaObservaciones;
@@ -624,7 +624,7 @@ namespace ApiDTC.Services
                     }
                 }
                 linea += observaciones[i];
-                if (linea.Length >= 100)
+                if (linea.Length >= 85 && observaciones[i].Equals(' '))
                 {
                     lineaObservaciones.Add(linea);
                     linea = string.Empty;

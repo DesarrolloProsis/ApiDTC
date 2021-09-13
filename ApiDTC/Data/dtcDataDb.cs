@@ -643,6 +643,26 @@
                 return new Response { Message = $"Error: {ex.Message}", Result = null };
             }
         }
+
+        public Response GetDTCBorrado( string ClavePlaza)
+        {
+            try
+            {
+                using (SqlConnection sql = new SqlConnection(_connectionString))
+                {
+                    using (SqlCommand cmd = new SqlCommand("dbo.spGetReferencesLog", sql))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        return _sqlResult.GetList<DTCBorrado>(ClavePlaza, cmd, sql, "GetDTCBorrado");
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                _apiLogger.WriteLog(ClavePlaza, ex, "DtcDataDb: GetDTCBorrado", 1);
+                return new Response { Message = $"Error: {ex.Message}", Result = null };
+            }
+        }
         #endregion
     }
 }

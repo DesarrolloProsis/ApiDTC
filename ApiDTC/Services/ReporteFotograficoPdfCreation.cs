@@ -6,7 +6,6 @@
     using System;
     using System.Collections.Generic;
     using System.Data;
-    using System.Globalization;
     using System.IO;
 
     public class ReporteFotograficoPdfCreation
@@ -65,7 +64,7 @@
         public Response NewPdf(string folder)
         {
             string directory, filename, path;
-            
+
             if (_tipo == 1)
                 directory = $@"{folder}\{_clavePlaza.ToUpper()}\Reportes\{_referenceNumber}";
             else
@@ -83,10 +82,10 @@
                 filename = $@"DTC-{_referenceNumber}-EquipoNuevo.pdf";
             else
                 filename = $@"DTC-{_referenceNumber}-EquipoDañado.pdf";
-            if(_tipo== 3)
+            if (_tipo == 3)
             {
                 //usar el _referenceNumber para crear la estructura con DT
-                directoryImageDiagnostico = $@"{folder}\{_clavePlaza.ToUpper()}\Reportes\" + _tableHeader.Rows[0]["DiagnosisReference"]+"\\";
+                directoryImageDiagnostico = $@"{folder}\{_clavePlaza.ToUpper()}\Reportes\" + _tableHeader.Rows[0]["DiagnosisReference"] + "\\";
             }
             path = Path.Combine(directory, filename);
 
@@ -156,59 +155,84 @@
                         directoryImgs = Path.Combine(directory, "EquipoNuevoImgs");
                     else
                         directoryImgs = Path.Combine(directoryImageDiagnostico, "DiagnosticoFallaImgs");//Misma carpeta que Diagnostico
-                    if(Directory.Exists(directoryImgs))
+                    if (Directory.Exists(directoryImgs))
                     {
                         var files = Directory.GetFiles(directoryImgs);
-                        if(files.Length != 0)
+                        if (files.Length != 0)
                         {
                             List<string> fotos = new List<string>();
                             foreach (var file in files)
                                 fotos.Add(file);
-                            
+
+                            List<string> fotosEnPagina = new List<string>();
+                            PdfPTable table = new PdfPTable(new float[] { 100f }) { WidthPercentage = 100f };
+                            PdfPTable table2 = new PdfPTable(new float[] { 100f }) { WidthPercentage = 100f };
+                            var celdaVacia = new PdfPCell() { Border = 0, Padding = 35f};
+                            var celdaVacia2 = new PdfPCell() { Border = 0, Padding = 7f };
+                            int pagina;
+                            int i = 0;
+
                             if (fotos.Count <= 12)
-                                doc.Add(TablaFotografias(fotos));
+                            {
+                                pagina = 1;
+                                table.AddCell(celdaVacia2);
+                                doc.Add(table);
+                                doc.Add(TablaFotografias(fotos, pagina));
+                            }
                             else
                             {
-                                List<string> primerasFotos = new List<string>();
-                                List<string> restoFotos = new List<string>();
-                                if(fotos.Count > 12 && fotos.Count <= 15)
+                                while (i < fotos.Count)
                                 {
-                                    for (int i = 0; i < 9; i++)
-                                        primerasFotos.Add(fotos[i]);
-                                    for (int i = 9; i < fotos.Count; i++)
-                                        restoFotos.Add(fotos[i]);
-                                }
-                                else
-                                {
-                                    for (int i = 0; i < 20; i++)
+                                    fotosEnPagina.Add(fotos[i]);
+
+                                    if (i == 11)
                                     {
-                                        if(fotos.Count - 1 < i)
-                                            break;
-                                        primerasFotos.Add(fotos[i]);
+                                        pagina = 2;
+                                        table.AddCell(celdaVacia);
+                                        doc.Add(table);
+                                        doc.Add(TablaFotografias(fotosEnPagina, pagina));
+                                        fotosEnPagina.Clear();
                                     }
-                                    if(fotos.Count > 20)
+                                    if ((i + 1) % 12 == 0 && i > 12)
                                     {
-                                        for (int i = 20; i < fotos.Count; i++)
+                                        doc.NewPage();
+                                        if ((i + 1) == fotos.Count)
                                         {
-                                            if(fotos[i] != null)
-                                                restoFotos.Add(fotos[i]);
-                                            else
-                                                break;
+                                            pagina = 4;
+                                            table2.AddCell(celdaVacia);
+                                            doc.Add(table2);
                                         }
+                                        else
+                                        {
+                                            table.AddCell(celdaVacia);
+                                            doc.Add(table);
+                                            pagina = 3;
+                                        }
+                                        doc.Add(TablaFotografias(fotosEnPagina, pagina));
+                                        fotosEnPagina.Clear();
                                     }
+                                    i++;
                                 }
-                                doc.Add(new Paragraph(""));
-                                doc.Add(TablaFotografias(primerasFotos));
-                                doc.NewPage();
-                                doc.Add(new Paragraph(""));
-                                doc.Add(TablaFotografias(restoFotos));
+                                if (i % 12 != 0)
+                                {
+                                    pagina = 4;
+                                    doc.NewPage();
+                                    table2.AddCell(celdaVacia2);
+                                    doc.Add(table2);
+                                    doc.Add(TablaFotografias(fotosEnPagina, pagina));
+                                    fotosEnPagina.Clear();
+                                }
                             }
-                            
-                            foreach (var img in Directory.GetFiles(directoryImgs))
-                            {
-                                if(img.Contains("temp"))
-                                    File.Delete(img);
-                            }
+                        }
+
+                        foreach (var img in Directory.GetFiles(directoryImgs))
+
+                        {
+
+                            if (img.Contains("temp"))
+
+                                File.Delete(img);
+
                         }
                     }
                     PdfContentByte cb = writer.DirectContent;
@@ -293,7 +317,7 @@
 
         }
 
-        private IElement TablaFotografias(List<string> rutas)
+        private IElement TablaFotografias(List<string> rutas, int pagina)
         {
 
             try
@@ -315,31 +339,31 @@
                     table = new PdfPTable(new float[] { 33.33f, 33.33f, 33.33f }) { WidthPercentage = 100f };
                     cuadros = 6;
                 }
-                else if (rutas.Count > 6 && rutas.Count <= 12)
+                //else if (rutas.Count > 6 && rutas.Count <= 12)
+                //{
+                //    table = new PdfPTable(new float[] { 25f, 25f, 25f, 25f }) { WidthPercentage = 100f };
+                //    cuadros = 12;
+                //}
+                else //if (rutas.Count > 12 && rutas.Count <= 16)
                 {
                     table = new PdfPTable(new float[] { 25f, 25f, 25f, 25f }) { WidthPercentage = 100f };
                     cuadros = 12;
                 }
-                else if (rutas.Count > 12 && rutas.Count <= 16)
-                {
-                    table = new PdfPTable(new float[] { 25f, 25f, 25f, 25f }) { WidthPercentage = 100f };
-                    cuadros = 16;
-                }
-                else if (rutas.Count > 16 && rutas.Count <= 20)
-                {
-                    table = new PdfPTable(new float[] { 25f, 25f, 25f, 25f }) { WidthPercentage = 100f };
-                    cuadros = 20;
-                }
-                else
-                {
-                    table = new PdfPTable(new float[] { 25f, 25f, 25f, 25f }) { WidthPercentage = 100f };
-                    cuadros = 20;
-                }
+                //else if (rutas.Count > 16 && rutas.Count <= 20)
+                //{
+                //    table = new PdfPTable(new float[] { 25f, 25f, 25f, 25f }) { WidthPercentage = 100f };
+                //    cuadros = 20;
+                //}
+                //else
+                //{
+                //    table = new PdfPTable(new float[] { 25f, 25f, 25f, 25f }) { WidthPercentage = 100f };
+                //    cuadros = 20;
+                //}
 
                 foreach (var foto in rutas)
                 {
                     //Si procesa un archivo temporal que no se eliminó
-                    if(foto.Contains("-temp"))
+                    if (foto.Contains("-temp"))
                     {
                         File.Delete(foto);
                         continue;
@@ -348,42 +372,22 @@
                     string fotoTemporal = foto.Substring(0, foto.LastIndexOf('.')) + "-temp.jpg";
                     foreach (var prop in imageReview.PropertyItems)
                     {
-                        if(prop.Id == 0x0112)
+                        if (prop.Id == 0x0112)
                         {
                             int orientationValue = imageReview.GetPropertyItem(prop.Id).Value[0];
                             System.Drawing.RotateFlipType rotateFlipType = GetOrientationToFlipType(orientationValue);
                             imageReview.RotateFlip(rotateFlipType);
                             imageReview.RemovePropertyItem(0x0112);
-                            if(!File.Exists(fotoTemporal))
+                            if (!File.Exists(fotoTemporal))
                                 File.Delete(fotoTemporal);
                             imageReview.Save(fotoTemporal);
                             break;
                         }
                     }
-                    if(!File.Exists(fotoTemporal))
+                    if (!File.Exists(fotoTemporal))
                         imageReview.Save(fotoTemporal);
                     Image img = Image.GetInstance(fotoTemporal);
-                    if (cuadros == 4)
-                    {
-                        if (img.Width > img.Height)
-                            img.ScaleAbsolute(160f, 140f);
-                        else
-                            img.ScaleAbsolute(140f, 160f);
-                    }
-                    else if (cuadros == 6)
-                    {
-                        if (img.Width > img.Height)
-                            img.ScaleAbsolute(130f, 140f);
-                        else
-                            img.ScaleAbsolute(140f, 130f);
-                    }
-                    else 
-                    {
-                        if (img.Width > img.Height)
-                            img.ScaleAbsolute(100f, 110f);
-                        else
-                            img.ScaleAbsolute(110f, 100f);
-                    }
+                    PlantillasImagenes(img, cuadros, pagina);
                     PdfPCell colFoto = new PdfPCell(img) { Border = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_MIDDLE, Padding = 2 };
                     table.AddCell(colFoto);
                 }
@@ -391,13 +395,7 @@
                 {
                     Image logo = Image.GetInstance($@"{System.Environment.CurrentDirectory}\Media\sinImagen.png");
                     logo.ScaleAbsolute(90f, 110f);
-
-                    if (cuadros == 4)
-                        logo.ScaleAbsolute(170f, 130f);
-                    else if (cuadros == 6)
-                        logo.ScaleAbsolute(120f, 130f);
-                    else 
-                        logo.ScaleAbsolute(100f, 110f);
+                    PlantillasImagenes(logo, cuadros, pagina);
                     PdfPCell colLogo = new PdfPCell(logo) { Border = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_MIDDLE, Padding = 2 };
                     table.AddCell(colLogo);
                 }
@@ -415,17 +413,122 @@
             }
         }
 
+        private IElement PlantillasImagenes(Image img, int cuadros, int pagina)
+        {
+            //Caso 1: Primera pagina con observaciones
+            switch (pagina)
+            {
+                case 1:
+                    if (cuadros == 4)
+                    {
+                        if (img.Width > img.Height)
+                            img.ScaleAbsolute(160f, 140f);
+                        else
+                            img.ScaleAbsolute(140f, 160f);
+                    }
+                    else if (cuadros == 6)
+                    {
+                        if (img.Width > img.Height)
+                            img.ScaleAbsolute(130f, 140f);
+                        else
+                            img.ScaleAbsolute(140f, 130f);
+                    }
+                    else
+                    {
+                        if (img.Width > img.Height)
+                            img.ScaleAbsolute(100f, 110f);
+                        else
+                            img.ScaleAbsolute(110f, 100f);
+                    }
+                    break;
+                //Caso 2: Primera pagina sin observaciones
+                case 2:
+                    if (cuadros == 4)
+                    {
+                        if (img.Width > img.Height)
+                            img.ScaleAbsolute(160f, 140f);
+                        else
+                            img.ScaleAbsolute(140f, 160f);
+                    }
+                    else if (cuadros == 6)
+                    {
+                        if (img.Width > img.Height)
+                            img.ScaleAbsolute(130f, 140f);
+                        else
+                            img.ScaleAbsolute(140f, 130f);
+                    }
+                    else
+                    {
+                        if (img.Width > img.Height)
+                            img.ScaleAbsolute(100f, 110f);
+                        else
+                            img.ScaleAbsolute(110f, 100f);
+                    }
+                    break;
+                //Caso 3: Pagina intermedia
+                case 3:
+                    if (cuadros == 4)
+                    {
+                        if (img.Width > img.Height)
+                            img.ScaleAbsolute(160f, 140f);
+                        else
+                            img.ScaleAbsolute(150f, 170f);
+                    }
+                    else if (cuadros == 6)
+                    {
+                        if (img.Width > img.Height)
+                            img.ScaleAbsolute(130f, 140f);
+                        else
+                            img.ScaleAbsolute(140f, 130f);
+                    }
+                    else
+                    {
+                        if (img.Width > img.Height)
+                            img.ScaleAbsolute(100f, 110f);
+                        else
+                            img.ScaleAbsolute(110f, 100f);
+                    }
+                    break;
+                //Caso 4: Ultima pagina
+                case 4:
+                    if (cuadros == 4)
+                    {
+                        if (img.Width > img.Height)
+                            img.ScaleAbsolute(160f, 140f);
+                        else
+                            img.ScaleAbsolute(140f, 160f);
+                    }
+                    else if (cuadros == 6)
+                    {
+                        if (img.Width > img.Height)
+                            img.ScaleAbsolute(130f, 140f);
+                        else
+                            img.ScaleAbsolute(140f, 130f);
+                    }
+                    else
+                    {
+                        if (img.Width > img.Height)
+                            img.ScaleAbsolute(100f, 110f);
+                        else
+                            img.ScaleAbsolute(110f, 100f);
+                    }
+                    break;
+            }
+            return null;
+        }
+
         private IElement TablaInformacion()
         {
             try
             {
                 PdfPTable table = new PdfPTable(new float[] { 12.5f, 12.5f, 12.5f, 12.5f, 12.5f, 12.5f, 12.5f, 12.5f }) { WidthPercentage = 100f };
+                CeldasVacias(8, table);
                 var celdaVacia = new PdfPCell() { Border = 0 };
 
-                var colTextoNoReporte = new PdfPCell(new Phrase("No. de Reporte: ", letraoNegritaChica)) { Border = 0, HorizontalAlignment = Element.ALIGN_RIGHT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 4 };
+                var colTextoNoReporte = new PdfPCell(new Phrase("No. de Reporte: ", letraoNegritaChica)) { Border = 0, HorizontalAlignment = Element.ALIGN_RIGHT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 5 };
 
                 string valorReporte = _tipo == 1 ? Convert.ToString(_tableHeader.Rows[0]["NumeroReporte"]) : Convert.ToString(_tableHeader.Rows[0]["Referencia"]);
-                var colNoReporte = new PdfPCell(new Phrase(valorReporte, letraNormalChica)) { BorderWidthBottom = 1, BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_BOTTOM, Padding = 2, Colspan = 2 };
+                var colNoReporte = new PdfPCell(new Phrase(valorReporte, letraNormalChica)) { BorderWidthBottom = 1, BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_BOTTOM, Padding = 2, Colspan = 3 };
 
                 //TODO cambiar valor de fecha en Reporte fotográfico según el stored de Alex
                 string valorFecha = Convert.ToString(_tableHeader.Rows[0]["Fecha"]).Substring(0, 10);
@@ -433,32 +536,32 @@
 
                 table.AddCell(colTextoNoReporte);
                 table.AddCell(colNoReporte);
-                CeldasVacias(2, table);
-                var colTextoFecha = new PdfPCell(new Phrase("Fecha: ", letraoNegritaChica)) { Border = 0, HorizontalAlignment = Element.ALIGN_RIGHT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 4 };
-                var colFecha = new PdfPCell(new Phrase(valorFecha, letraNormalChica)) { BorderWidthBottom = 1, BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_BOTTOM, Padding = 2 };
+                //CeldasVacias(2, table);
+                var colTextoFecha = new PdfPCell(new Phrase("Fecha: ", letraoNegritaChica)) { Border = 0, HorizontalAlignment = Element.ALIGN_RIGHT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 5 };
+                var colFecha = new PdfPCell(new Phrase(valorFecha, letraNormalChica)) { BorderWidthBottom = 1, BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_BOTTOM, Padding = 2, Colspan = 2 };
                 table.AddCell(colTextoFecha);
                 table.AddCell(colFecha);
                 CeldasVacias(1, table);
 
                 //Plaza de cobro
 
-                var colPlazaDeCobro = new PdfPCell(new Phrase("Plaza de Cobro: ", letraoNegritaChica)) { Border = 0, HorizontalAlignment = Element.ALIGN_RIGHT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 4 };
+                var colPlazaDeCobro = new PdfPCell(new Phrase("Plaza de Cobro: ", letraoNegritaChica)) { Border = 0, HorizontalAlignment = Element.ALIGN_RIGHT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 5 };
 
                 string valorPlaza = _tipo == 1 ? Convert.ToString(_tableHeader.Rows[0]["Plaza"]) : Convert.ToString(_tableHeader.Rows[0]["Plaza"]);
-                var plazaDeCobro = new PdfPCell(new Phrase(valorPlaza, letraNormalChica)) { BorderWidthBottom = 1, BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_BOTTOM, Padding = 2, Colspan = 2 };
+                var plazaDeCobro = new PdfPCell(new Phrase(valorPlaza, letraNormalChica)) { BorderWidthBottom = 1, BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_BOTTOM, Padding = 2, Colspan = 3 };
 
 
 
 
                 table.AddCell(colPlazaDeCobro);
                 table.AddCell(plazaDeCobro);
-                CeldasVacias(2, table);
+                //CeldasVacias(2, table);
                 //TODO poner la hora inicio del stored de Alex en reporte fotográfico equipo nuevo y dañado
-                string valorHoraInicio =  Convert.ToString(_tableHeader.Rows[0]["Inicio"]);
+                string valorHoraInicio = Convert.ToString(_tableHeader.Rows[0]["Inicio"]);
                 //var inicioDateTime = Convert.ToDateTime(valorHoraInicio);
                 //string conversionInicio = inicioDateTime.ToString("hh:mm tt", CultureInfo.CurrentCulture);
-                var colTextoHoraInicio = new PdfPCell(new Phrase("Hora INICIO: ", letraoNegritaChica)) { Border = 0, HorizontalAlignment = Element.ALIGN_RIGHT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 4 };
-                var colHoraInicio = new PdfPCell(new Phrase(valorHoraInicio, letraNormalChica)) { BorderWidthBottom = 1, BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_BOTTOM, Padding = 2 };
+                var colTextoHoraInicio = new PdfPCell(new Phrase("Hora de inicio: ", letraoNegritaChica)) { Border = 0, HorizontalAlignment = Element.ALIGN_RIGHT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 5 };
+                var colHoraInicio = new PdfPCell(new Phrase(valorHoraInicio, letraNormalChica)) { BorderWidthBottom = 1, BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_BOTTOM, Padding = 2, Colspan = 2 };
 
                 table.AddCell(colTextoHoraInicio);
                 table.AddCell(colHoraInicio);
@@ -467,26 +570,27 @@
                 //Ubicación
 
                 string valorUbicacion = _tipo == 1 ? _ubicacion : Convert.ToString(_tableHeader.Rows[0]["Ubicacion"]);
-                var colUbicacion = new PdfPCell(new Phrase("Ubicación: ", letraoNegritaChica)) { Border = 0, HorizontalAlignment = Element.ALIGN_RIGHT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 4 };
+                var colUbicacion = new PdfPCell(new Phrase("Ubicación: ", letraoNegritaChica)) { Border = 0, HorizontalAlignment = Element.ALIGN_RIGHT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 5 };
 
-                var ubicacion = new PdfPCell(new Phrase(valorUbicacion, letraNormalChica)) { BorderWidthBottom = 1, BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_BOTTOM, Padding = 2, Colspan = 2 };
+                var ubicacion = new PdfPCell(new Phrase(valorUbicacion, letraNormalChica)) { BorderWidthBottom = 1, BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_BOTTOM, Padding = 2, Colspan = 3 };
 
 
                 //TODO actualizar hora fin con el stored de Alex
                 table.AddCell(colUbicacion);
                 table.AddCell(ubicacion);
-                CeldasVacias(2, table);
+                //CeldasVacias(2, table);
                 string valorHoraFin =  Convert.ToString(_tableHeader.Rows[0]["Fin"]);
                 //var finDateTime = Convert.ToDateTime(valorHoraFin);
                 //string conversionFin = finDateTime.ToString("hh:mm tt", CultureInfo.CurrentCulture);
-                var colTextoHoraFin = new PdfPCell(new Phrase("Hora FIN: ", letraoNegritaChica)) { Border = 0, HorizontalAlignment = Element.ALIGN_RIGHT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 4 };
-                var colHoraFin = new PdfPCell(new Phrase(valorHoraFin, letraNormalChica)) { BorderWidthBottom = 1, BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_BOTTOM, Padding = 2 };
+                var colTextoHoraFin = new PdfPCell(new Phrase("Hora de fin: ", letraoNegritaChica)) { Border = 0, HorizontalAlignment = Element.ALIGN_RIGHT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 5 };
+                var colHoraFin = new PdfPCell(new Phrase(valorHoraFin, letraNormalChica)) { BorderWidthBottom = 1, BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_BOTTOM, Padding = 2, Colspan = 2 };
 
                 table.AddCell(colTextoHoraFin);
                 table.AddCell(colHoraFin);
 
                 CeldasVacias(1, table);
 
+                CeldasVacias(8, table);
                 //Técnico
                 var colTecnico = new PdfPCell(new Phrase("Técnico Responsable PROSIS: ", letraoNegritaChica)) { Border = 0, HorizontalAlignment = Element.ALIGN_RIGHT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 4, Colspan = 3 };
                 string valorTecnicoProsis = _tipo == 1 ? Convert.ToString(_tableHeader.Rows[0]["TecnicoProsis"]) : Convert.ToString(_tableHeader.Rows[0]["Tecnico"]);
@@ -524,16 +628,16 @@
                     //1 Operacion
                     //2 Siniestro
                     //3 Fin de vida util
-                    string nameColumn="data";
-                    if(Convert.ToInt32(_tableHeader.Rows[0]["TypeFaultId"]) ==2 )
+                    string nameColumn = "data";
+                    if (Convert.ToInt32(_tableHeader.Rows[0]["TypeFaultId"]) == 2)
                     {
                         nameColumn = "No. Siniestro";
                     }
-                    else if(Convert.ToInt32(_tableHeader.Rows[0]["TypeFaultId"]) == 3)
+                    else if (Convert.ToInt32(_tableHeader.Rows[0]["TypeFaultId"]) == 3)
                     {
                         nameColumn = "Oficio";
                     }
-                        
+
                     var colSiniestro = new PdfPCell(new Phrase(nameColumn, letraoNegritaChica)) { Border = 0, HorizontalAlignment = Element.ALIGN_RIGHT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 4, Colspan = 3 };
                     string valorColSiniestro = Convert.ToString(_tableHeader.Rows[0]["NumeroSiniestro"]);
                     var siniestro = new PdfPCell(new Phrase(valorColSiniestro, letraNormalChica)) { BorderWidthBottom = 1, BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_BOTTOM, Padding = 2, Colspan = 3 };
@@ -602,7 +706,7 @@
         private List<string> SeparacionObservaciones(string observaciones)
         {
             List<string> lineaObservaciones = new List<string>();
-            if(observaciones.Length <= 100)
+            if(observaciones.Length <= 85)
             {
                 lineaObservaciones.Add(observaciones);
                 return lineaObservaciones;
@@ -611,16 +715,16 @@
             string linea = string.Empty;
             for (int i = 0; i < observaciones.Length; i++)
             {
-                if(observaciones[i].Equals(',') || observaciones[i].Equals('.') || observaciones[i].Equals('.') || observaciones[i].Equals(':'))
+                if (observaciones[i].Equals(',') || observaciones[i].Equals('.') || observaciones[i].Equals('.') || observaciones[i].Equals(':'))
                 {
-                    if(i < observaciones.Length - 1 && !observaciones[i + 1].Equals(' '))
+                    if (i < observaciones.Length - 1 && !observaciones[i + 1].Equals(' '))
                     {
                         linea += $"{observaciones[i]} ";
                         continue;
                     }
                 }
                 linea += observaciones[i];
-                if(linea.Length >= 100)
+                if(linea.Length >= 85 && observaciones[i].Equals(' '))
                 {
                     lineaObservaciones.Add(linea);
                     linea = string.Empty;
