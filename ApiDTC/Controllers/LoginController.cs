@@ -79,10 +79,13 @@ namespace ApiDTC.Controllers
             else
                 return Ok(get);
         }
-        [HttpGet("SesionLog/{userId}/{pagina}/{registros}/{nameFilter?}/{dateFilter?}")]
+        [HttpGet("SesionLog/{userId}/{pagina}/{registros}/{nameFilter?}/{dateFilter?}")]                
         public ActionResult<Response> GetSessionLog(int userId, int pagina, int registros, string nameFilter = null, string dateFilter = null)
         {
-           var get = _db.GetSesionLog(userId, pagina, registros, nameFilter, dateFilter);
+            var _nameFlterValid = nameFilter != "null" ? nameFilter : null;
+            var _dateFilterValid = dateFilter != "null" ? dateFilter : null;
+
+            var get = _db.GetSesionLog(userId, pagina, registros, _nameFlterValid, _dateFilterValid);
            if (get.Result == null)
                 return NotFound(get);
            else

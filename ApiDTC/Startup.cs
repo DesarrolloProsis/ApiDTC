@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ApiDTC.Data;
 using ApiDTC.Services;
+using ApiDTC.Utilities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -60,7 +61,7 @@ namespace ApiDTC
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JWT:key"])),
                     ClockSkew = TimeSpan.Zero
                 });
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);        
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

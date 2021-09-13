@@ -225,11 +225,11 @@
                     cmd.Parameters.Add("@NumPagina", SqlDbType.Int).Value = pagina;
                     cmd.Parameters.Add("@RegistroXPagina", SqlDbType.Int).Value = registros;                    
                     AddNullSPParameter(ref cmd, "@DateFilter", SqlDbType.NVarChar, dateFilter);
-                    AddNullSPParameter(ref cmd, "@NameFilter", SqlDbType.NVarChar, dateFilter);
+                    AddNullSPParameter(ref cmd, "@NameFilter", SqlDbType.NVarChar, nameFilter);
 
                     var ListaSesiones = _sqlResult.GetRows<SessionLogUser>("USR", cmd, sql, "GetSesionLog");
 
-                    if(ListaSesiones.Count == 0){
+                    if(ListaSesiones == null || ListaSesiones.Count() == 0){
                         return new Response {
                             Message = "Bad",
                             Result = null
