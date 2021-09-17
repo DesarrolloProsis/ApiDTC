@@ -7,6 +7,7 @@
     using System;
     using System.Data;
     using System.Data.SqlClient;
+    using System.Collections.Generic;
 
     public class UserDb
     {
@@ -313,6 +314,47 @@
             catch (SqlException ex)
             {
                 _apiLogger.WriteLog("GetListComponentStock", ex, "userDbDataSb: GetUserOfSquare", 1);
+                return new Response { Message = $"Error: {ex.Message}", Result = null };
+            }
+        }
+
+        public Response InsertActivity(string clavePlaza, SquareUpdate actividad)
+        {
+            try
+            {
+                List<string> actividadesNotInsert = new List<string>();
+                using (SqlConnection sql = new SqlConnection(_connectionString))
+                {
+                    
+                    int numero_carriles = actividad.CapufeLaneNums.Length == actividad.IdGares.Length ? actividad.CapufeLaneNums.Length : 0;
+
+                    for (int i = 0; i < numero_carriles; i++)
+                    {
+                        using (SqlCommand cmd = new SqlCommand("dbo.spUpdateSquareCatalogOfUser", sql))
+                        {
+                            cmd.CommandType = CommandType.StoredProcedure;
+                            cmd.Parameters.Add("@IdGare", SqlDbType.NVarChar).Value = actividad.IdGares[i];
+                            cmd.Parameters.Add("@SquareId", SqlDbType.NVarChar).Value = actividad.SquareId == "1Bi" ? actividad.SquareId + "s" : actividad.SquareId;
+                            cmd.Parameters.Add("@UserId", SqlDbType.Int).Value = actividad.UserId;
+
+
+                            var storedResult = _sqlResult.Post(clavePlaza, cmd, sql, "InsertActivity");
+                            if (storedResult.SqlResult != "Insertado")
+                            {
+                                actividadesNotInsert.Add(new String(storedResult.SqlMessage.ToCharArray()));
+                            }
+                        }
+                    }
+                }
+                return new Response
+                {
+                    Message = "Ok",
+                    Result = actividadesNotInsert
+                };
+            }
+            catch (SqlException ex)
+            {
+                _apiLogger.WriteLog(clavePlaza, ex, "CalendarioDb: InsertActivity", 1);
                 return new Response { Message = $"Error: {ex.Message}", Result = null };
             }
         }

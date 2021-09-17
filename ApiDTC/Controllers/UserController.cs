@@ -154,5 +154,19 @@
             return BadRequest(ModelState);
         }
 
+        [HttpPost("Actividad/{clavePlaza}")]
+        public ActionResult<Response> Post(string clavePlaza, [FromBody] SquareUpdate actividad)
+        {
+            if (ModelState.IsValid)
+            {
+                var get = _db.InsertActivity(clavePlaza, actividad);
+                if (get.Result == null)
+                    return BadRequest(get);
+                else
+                    return Ok(get);
+            }
+            return BadRequest(ModelState);
+        }
+
     }
 }
