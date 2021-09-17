@@ -330,7 +330,7 @@
 
                     for(int i = 0; i < numero_plazas; i++)
                     {
-                        using (SqlCommand cmd = new SqlCommand("dbo.UpdateSquareCatalogOfUser", sql))
+                        using (SqlCommand cmd = new SqlCommand("dbo.spUpdateSquareCatalogOfUser", sql))
                         {
                             cmd.CommandType = CommandType.StoredProcedure;
                             cmd.Parameters.Add("@flag", SqlDbType.NVarChar).Value = PlazaUsuario.flag;
