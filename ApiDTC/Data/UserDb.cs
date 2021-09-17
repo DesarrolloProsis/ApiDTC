@@ -318,38 +318,37 @@
             }
         }
 
-        public Response InsertActivity(string clavePlaza, SquareUpdate actividad)
+        public Response UpdateSquares(string clavePlaza, SquareUpdate PlazaUsuario)
         {
             try
             {
-                List<string> actividadesNotInsert = new List<string>();
+                List<string> PlazasNoInsertOrDelete = new List<string>();
                 using (SqlConnection sql = new SqlConnection(_connectionString))
                 {
-                    
-                    int numero_carriles = actividad.CapufeLaneNums.Length == actividad.IdGares.Length ? actividad.CapufeLaneNums.Length : 0;
 
-                    for (int i = 0; i < numero_carriles; i++)
+                    int numero_plazas = PlazaUsuario.SquareId.Length;
+
+                    for(int i = 0; i < numero_plazas; i++)
                     {
-                        using (SqlCommand cmd = new SqlCommand("dbo.spUpdateSquareCatalogOfUser", sql))
+                        using (SqlCommand cmd = new SqlCommand("dbo.UpdateSquareCatalogOfUser", sql))
                         {
                             cmd.CommandType = CommandType.StoredProcedure;
-                            cmd.Parameters.Add("@IdGare", SqlDbType.NVarChar).Value = actividad.IdGares[i];
-                            cmd.Parameters.Add("@SquareId", SqlDbType.NVarChar).Value = actividad.SquareId == "1Bi" ? actividad.SquareId + "s" : actividad.SquareId;
-                            cmd.Parameters.Add("@UserId", SqlDbType.Int).Value = actividad.UserId;
+                            cmd.Parameters.Add("@flag", SqlDbType.NVarChar).Value = PlazaUsuario.flag;
+                            cmd.Parameters.Add("@SquareId", SqlDbType.NVarChar).Value = PlazaUsuario.SquareId[i]; //== "1Bi" ? actividad.SquareId + "s" : actividad.SquareId;
+                            cmd.Parameters.Add("@UserId", SqlDbType.Int).Value = PlazaUsuario.UserId;
 
 
                             var storedResult = _sqlResult.Post(clavePlaza, cmd, sql, "InsertActivity");
-                            if (storedResult.SqlResult != "Insertado")
-                            {
-                                actividadesNotInsert.Add(new String(storedResult.SqlMessage.ToCharArray()));
-                            }
+                            PlazasNoInsertOrDelete.Add(new String(storedResult.SqlMessage.ToCharArray()));
+
+                                
                         }
                     }
                 }
                 return new Response
                 {
                     Message = "Ok",
-                    Result = actividadesNotInsert
+                    Result = PlazasNoInsertOrDelete
                 };
             }
             catch (SqlException ex)

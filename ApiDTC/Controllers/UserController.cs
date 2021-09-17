@@ -102,7 +102,7 @@
 
         public GenericResponse<string> GetUsersOfSquare(int IdSquare)
         {
-            
+
             GenericResponse<string> respuesta = new GenericResponse<string>();
             respuesta.Code = "ok";
             respuesta.Result = "Aqui van los valores de la respuesta";
@@ -139,7 +139,7 @@
             return BadRequest(ModelState);
         }
 
-        
+
         [HttpGet("UserOfSquare/{SquareId}")]
         public ActionResult<Response> GetUserOfSquare(string SquareId)
         {
@@ -154,15 +154,15 @@
             return BadRequest(ModelState);
         }
 
-        [HttpPost("Actividad/{clavePlaza}")]
-        public ActionResult<Response> Post(string clavePlaza, [FromBody] SquareUpdate actividad)
+        [HttpPost("SquareOfUserUpdate/{clavePlaza}")]
+        public ActionResult<Response> Post(string clavePlaza, [FromBody] SquareUpdate PlazaUsuario)
         {
             if (ModelState.IsValid)
             {
-                var get = _db.InsertActivity(clavePlaza, actividad);
+                var get = _db.UpdateSquares(clavePlaza, PlazaUsuario);
                 if (get.Result == null)
                     return BadRequest(get);
-                else
+
                     return Ok(get);
             }
             return BadRequest(ModelState);
