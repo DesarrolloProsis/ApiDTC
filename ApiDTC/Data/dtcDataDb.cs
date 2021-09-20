@@ -9,6 +9,7 @@
     using System.Collections.Generic;
     using System.Data.SqlTypes;
     using System.IO;
+    using ApiDTC.Models.Logs;
 
     public class DtcDataDb
     {
@@ -615,7 +616,7 @@
             }
         }
 
-        public Response UpdateUserIdOfDTC(string clavePlaza, int userId, string referenceNumberDTC, string referenceNumberDiagnostic)
+        public Response UpdateUserIdOfDTC(string clavePlaza, DTCUserChangeLog infoUpdate)
         {
             try
             {
@@ -625,9 +626,11 @@
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
 
-                        cmd.Parameters.Add("@userId", SqlDbType.Int).Value = userId;
-                        cmd.Parameters.Add("@referenceNumberDTC", SqlDbType.NVarChar).Value = referenceNumberDTC;
-                        cmd.Parameters.Add("@referenceNumberDiagnostic", SqlDbType.NVarChar).Value = referenceNumberDiagnostic;
+                        cmd.Parameters.Add("@userId", SqlDbType.Int).Value = infoUpdate.UserId;
+                        cmd.Parameters.Add("@referenceNumberDTC", SqlDbType.NVarChar).Value = infoUpdate.ReferenceNumberDTC;
+                        cmd.Parameters.Add("@referenceNumberDiagnostic", SqlDbType.NVarChar).Value = infoUpdate.ReferenceNumberDiagnostic;
+                        cmd.Parameters.Add("@referenceNumberDiagnostic", SqlDbType.NVarChar).Value = infoUpdate.ReferenceNumberDiagnostic;
+                        cmd.Parameters.Add("@Comment", SqlDbType.NVarChar).Value = infoUpdate.Comment;
                         var response = _sqlResult.Put(clavePlaza, cmd, sql, "spUpdateUserIdOfDTC");
                         return new Response
                         {

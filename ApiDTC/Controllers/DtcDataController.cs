@@ -5,6 +5,7 @@
     using System.IO;
     using ApiDTC.Data;
     using ApiDTC.Models;
+    using ApiDTC.Models.Logs;
     using ApiDTC.Services;
     using Aspose.Imaging;
     using Aspose.Imaging.ImageOptions;
@@ -532,12 +533,12 @@
             }
         }
 
-        [HttpPut("UpdateUserIdOfDTC/{ClavePlaza}/{userId}/{referenceNumberDTC}/{referenceNumberDiagnostic}")]
-        public ActionResult<Response> UpdateUserIdOfDTC(string ClavePlaza, int userId, string referenceNumberDTC, string referenceNumberDiagnostic)
+        [HttpPut("UpdateUserIdOfDTC/{ClavePlaza}")]
+        public ActionResult<Response> UpdateUserIdOfDTC(string ClavePlaza, [FromBody] DTCUserChangeLog infoUpdate)
         {
             if (ModelState.IsValid)
             {
-                var put = _db.UpdateUserIdOfDTC(ClavePlaza, userId, referenceNumberDTC, referenceNumberDiagnostic);
+                var put = _db.UpdateUserIdOfDTC(ClavePlaza, infoUpdate);
                 if (put.Result == null)
                     return NotFound(put);
                 return Ok(put);
