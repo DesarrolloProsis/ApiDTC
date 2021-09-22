@@ -628,8 +628,7 @@
 
                         cmd.Parameters.Add("@userId", SqlDbType.Int).Value = infoUpdate.UserId;
                         cmd.Parameters.Add("@referenceNumberDTC", SqlDbType.NVarChar).Value = infoUpdate.ReferenceNumberDTC;
-                        cmd.Parameters.Add("@referenceNumberDiagnostic", SqlDbType.NVarChar).Value = infoUpdate.ReferenceNumberDiagnostic;
-                        cmd.Parameters.Add("@referenceNumberDiagnostic", SqlDbType.NVarChar).Value = infoUpdate.ReferenceNumberDiagnostic;
+                        cmd.Parameters.Add("@referenceNumberDiagnostic", SqlDbType.NVarChar).Value = infoUpdate.ReferenceNumberDiagnostic;                        
                         cmd.Parameters.Add("@Comment", SqlDbType.NVarChar).Value = infoUpdate.Comment;
                         var response = _sqlResult.Put(clavePlaza, cmd, sql, "spUpdateUserIdOfDTC");
                         return new Response
