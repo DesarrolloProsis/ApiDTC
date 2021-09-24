@@ -107,7 +107,7 @@ namespace ApiDTC.Services
                     
 
                     PdfWriter writer = PdfWriter.GetInstance(doc, myMemoryStream);
-                    writer.PageEvent = new PageEventHelperVertical();
+                    writer.PageEvent = new PageEventHelperVerticalCAPUFE();
                     writer.Open();
 
                     doc.Open();
@@ -153,16 +153,20 @@ namespace ApiDTC.Services
         {
             try
             {
-                iTextSharp.text.Image logo = iTextSharp.text.Image.GetInstance($@"{System.Environment.CurrentDirectory}\Media\prosis-logo.jpg");
-                logo.ScalePercent(10f);
+                iTextSharp.text.Image logo_capufe = iTextSharp.text.Image.GetInstance($@"{System.Environment.CurrentDirectory}\Media\logo-capufe.png");
+                logo_capufe.ScalePercent(5f);
+
+                iTextSharp.text.Image logo_comunicaciones = iTextSharp.text.Image.GetInstance($@"{System.Environment.CurrentDirectory}\Media\logo-comunicaciones.png");
+                logo_comunicaciones.ScalePercent(20f);
 
                 //Encabezado
                 PdfPTable table = new PdfPTable(new float[] { 16.67f, 16.67f, 16.67f, 16.67f, 16.67f, 16.67f }) { WidthPercentage = 100f };
 
                 var celdaVacia = new PdfPCell() { Border = 0 };
-                PdfPCell colLogo = new PdfPCell(logo) { Border = 0, HorizontalAlignment = Element.ALIGN_LEFT, VerticalAlignment = Element.ALIGN_MIDDLE };
+                PdfPCell colLogo = new PdfPCell(logo_capufe) { Border = 0, HorizontalAlignment = Element.ALIGN_LEFT, VerticalAlignment = Element.ALIGN_MIDDLE };
+                PdfPCell colComunicaciones = new PdfPCell(logo_comunicaciones) { Border = 0, HorizontalAlignment = Element.ALIGN_RIGHT, VerticalAlignment = Element.ALIGN_MIDDLE };
                 CeldasVacias(1, table);
-                table.AddCell(colLogo);
+                table.AddCell(colComunicaciones);
                 CeldasVacias(1, table);
                 table.AddCell(colLogo);
                 CeldasVacias(8, table);
