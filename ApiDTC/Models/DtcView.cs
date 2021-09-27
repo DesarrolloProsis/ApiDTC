@@ -7,6 +7,8 @@
         public string ReferenceNumber { get; set; }
         public int AdminId { get; set; }
 
+        public string UserName { get; set; }
+
         public string SinisterNumber { get; set; }
 
         public string ReportNumber { get; set; }
