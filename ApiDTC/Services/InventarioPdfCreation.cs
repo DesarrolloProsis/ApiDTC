@@ -13,6 +13,16 @@ namespace ApiDTC.Services
     public class InventarioPdfCreation
     {
         #region Attributes
+        private readonly DataTable _Informacion;
+
+        private readonly DataTable _Piso;
+
+        private readonly DataTable _Carril;
+
+        private readonly DataTable _Cabina;
+
+        private readonly DataTable _CSPT;
+
         private readonly DataTable _Administracion;
 
         private readonly DataTable _Telematica;
@@ -47,8 +57,13 @@ namespace ApiDTC.Services
 
         #region Constructors
 
-        public InventarioPdfCreation(string clavePlaza, DataTable Administracion, DataTable Telematica, ApiLogger apiLogger)
+        public InventarioPdfCreation(string clavePlaza,DataTable Informacion, DataTable Administracion, DataTable Telematica, DataTable Carril, DataTable Cabina, DataTable Piso, DataTable CSTP, ApiLogger apiLogger)
         {
+            _Informacion = Informacion;
+            _Carril = Carril;
+            _CSPT = CSTP;
+            _Piso = Piso;
+            _Cabina = Cabina;
             _clavePlaza = clavePlaza;
             _apiLogger = apiLogger;
             _Administracion = Administracion;
@@ -115,7 +130,7 @@ namespace ApiDTC.Services
                     
 
                     PdfWriter writer = PdfWriter.GetInstance(doc, myMemoryStream);
-                    writer.PageEvent = new PageEventHelperVerticalCAPUFE();
+                    writer.PageEvent = new PageEventHelperVerticalCAPUFE(_Informacion);
                     writer.Open();
                     doc.Open();
 
@@ -125,6 +140,8 @@ namespace ApiDTC.Services
                    
                     doc.Add(TablaInformacion(_Administracion, "Administracion"));
                     doc.Add(TablaInformacion(_Telematica, "Telematica"));
+                    tableSort(_Carril, doc);
+                    //doc.Add(TablaInformacion(_Carril, "Carril"));
                     doc.Close();
                     writer.Close();
                     byte[] content = myMemoryStream.ToArray();
@@ -242,14 +259,116 @@ namespace ApiDTC.Services
         //    }
 
         //}
+        private IElement tableSort(DataTable Equipamiento, Document doc)
+        {
+            PdfPTable tablaCuerpo_1 = new PdfPTable(new float[] { 30f, 20f, 10f, 10f, 30f }) { WidthPercentage = 100f };
+            PdfPTable tablaCuerpo_2 = new PdfPTable(new float[] { 30f, 20f, 10f, 10f, 30f }) { WidthPercentage = 100f };
+            PdfPTable tablaCuerpo_3 = new PdfPTable(new float[] { 30f, 20f, 10f, 10f, 30f }) { WidthPercentage = 100f };
+            
+            var tablaCarril = new DataTable();
+            tablaCarril = Equipamiento.Clone();
 
+
+            foreach (DataRow carril in _Informacion.Rows)
+            {
+                foreach (DataRow Fila in Equipamiento.Rows)
+                {
+                    if(Equals(carril["Lane"], Fila["Carril"]))
+                        tablaCarril.ImportRow(Fila);
+                }
+
+                var tablaEquipamientoEncabezado_1 = new PdfPCell(new Phrase("Equipamiento de Carril", letraoNegritaChica)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, Padding = 3, BackgroundColor = BaseColor.Yellow, Colspan = 5 };
+                tablaCuerpo_1.AddCell(tablaEquipamientoEncabezado_1);
+
+                var tablaEquipamientoEncabezado_2 = new PdfPCell(new Phrase("Equipamiento de Cabina", letraoNegritaChica)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, Padding = 3, BackgroundColor = BaseColor.Yellow, Colspan = 5 };
+                tablaCuerpo_2.AddCell(tablaEquipamientoEncabezado_2);
+
+                var tablaEquipamientoEncabezado_3 = new PdfPCell(new Phrase("Equipamiento de Piso", letraoNegritaChica)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, Padding = 3, BackgroundColor = BaseColor.Yellow, Colspan = 5 };
+                tablaCuerpo_3.AddCell(tablaEquipamientoEncabezado_3);
+
+                int numeroDeFilas = tablaCarril.Rows.Count;
+                
+
+                for (int i = 0; i < numeroDeFilas ; i++)
+                {
+                    if (tablaCarril.Rows[i]["Ubicacion"].Equals(1))
+                    {
+                        
+
+                        var Descripcion = new PdfPCell(new Phrase(tablaCarril.Rows[i]["Descripcion"].ToString(), letritasMini)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_LEFT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 3 };
+                        var MarcaModelo = new PdfPCell(new Phrase(tablaCarril.Rows[i]["Marca/Modelo"].ToString(), letritasMini)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_LEFT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 3 };
+                        var Serie = new PdfPCell(new Phrase(tablaCarril.Rows[i]["No. de Serie"].ToString(), letritasMini)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_LEFT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 3 };
+                        var Inventario = new PdfPCell(new Phrase(tablaCarril.Rows[i]["No. de Inventario"].ToString(), letritasMini)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_LEFT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 3 };
+                        var Observaciones = new PdfPCell(new Phrase(tablaCarril.Rows[i]["Observciones"].ToString(), letritasMini)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_LEFT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 3 };
+
+                        tablaCuerpo_1.AddCell(Descripcion);
+                        tablaCuerpo_1.AddCell(MarcaModelo);
+                        tablaCuerpo_1.AddCell(Serie);
+                        tablaCuerpo_1.AddCell(Inventario);
+                        tablaCuerpo_1.AddCell(Observaciones);
+                    }
+
+                    else if (tablaCarril.Rows[i]["Ubicacion"].Equals(2))
+                    {
+              
+
+                        var Descripcion = new PdfPCell(new Phrase(tablaCarril.Rows[i]["Descripcion"].ToString(), letritasMini)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_LEFT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 3 };
+                        var MarcaModelo = new PdfPCell(new Phrase(tablaCarril.Rows[i]["Marca/Modelo"].ToString(), letritasMini)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_LEFT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 3 };
+                        var Serie = new PdfPCell(new Phrase(tablaCarril.Rows[i]["No. de Serie"].ToString(), letritasMini)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_LEFT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 3 };
+                        var Inventario = new PdfPCell(new Phrase(tablaCarril.Rows[i]["No. de Inventario"].ToString(), letritasMini)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_LEFT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 3 };
+                        var Observaciones = new PdfPCell(new Phrase(tablaCarril.Rows[i]["Observciones"].ToString(), letritasMini)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_LEFT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 3 };
+
+                        tablaCuerpo_2.AddCell(Descripcion);
+                        tablaCuerpo_2.AddCell(MarcaModelo);
+                        tablaCuerpo_2.AddCell(Serie);
+                        tablaCuerpo_2.AddCell(Inventario);
+                        tablaCuerpo_2.AddCell(Observaciones);
+
+                    }
+                    else if (tablaCarril.Rows[i]["Ubicacion"].Equals(3))
+                    {
+                     
+
+                        var Descripcion = new PdfPCell(new Phrase(tablaCarril.Rows[i]["Descripcion"].ToString(), letritasMini)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_LEFT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 3 };
+                        var MarcaModelo = new PdfPCell(new Phrase(tablaCarril.Rows[i]["Marca/Modelo"].ToString(), letritasMini)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_LEFT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 3 };
+                        var Serie = new PdfPCell(new Phrase(tablaCarril.Rows[i]["No. de Serie"].ToString(), letritasMini)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_LEFT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 3 };
+                        var Inventario = new PdfPCell(new Phrase(tablaCarril.Rows[i]["No. de Inventario"].ToString(), letritasMini)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_LEFT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 3 };
+                        var Observaciones = new PdfPCell(new Phrase(tablaCarril.Rows[i]["Observciones"].ToString(), letritasMini)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_LEFT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 3 };
+
+                        tablaCuerpo_3.AddCell(Descripcion);
+                        tablaCuerpo_3.AddCell(MarcaModelo);
+                        tablaCuerpo_3.AddCell(Serie);
+                        tablaCuerpo_3.AddCell(Inventario);
+                        tablaCuerpo_3.AddCell(Observaciones);
+                    }
+                    
+
+                }
+
+                doc.Add(tablaCuerpo_1);
+                tablaCuerpo_1.DeleteBodyRows();
+
+                doc.Add(tablaCuerpo_2);
+                tablaCuerpo_2.DeleteBodyRows();
+
+                doc.Add(tablaCuerpo_3);
+                tablaCuerpo_3.DeleteBodyRows();
+
+                doc.NewPage();
+                tablaCarril.Clear();
+                
+            }
+
+            return null;
+        }
         private IElement TablaInformacion(DataTable Equipamiento, string Nombre)
+        
         {
             try
             {
-                PdfPTable table = new PdfPTable(new float[] { 30f, 20f, 10f, 10f, 30f }) { WidthPercentage = 100f };
+                PdfPTable tablaCuerpo = new PdfPTable(new float[] { 30f, 20f, 10f, 10f, 30f }) { WidthPercentage = 100f };
                 var tablaEquipamiento = new PdfPCell(new Phrase("Equipamiento de " + Nombre, letraoNegritaChica)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, Padding = 3, BackgroundColor = BaseColor.Yellow, Colspan = 5 };
-                table.AddCell(tablaEquipamiento);
+                tablaCuerpo.AddCell(tablaEquipamiento);
 
                 foreach (DataRow item in Equipamiento.Rows)
                 {
@@ -259,15 +378,15 @@ namespace ApiDTC.Services
                     var Inventario = new PdfPCell(new Phrase(item["No. de Inventario"].ToString(), letritasMini)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_LEFT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 3 };
                     var Observaciones = new PdfPCell(new Phrase(item["Observciones"].ToString(), letritasMini)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_LEFT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 3 };
 
-                    table.AddCell(Descripcion);
-                    table.AddCell(MarcaModelo);
-                    table.AddCell(Serie);
-                    table.AddCell(Inventario);
-                    table.AddCell(Observaciones);
+                    tablaCuerpo.AddCell(Descripcion);
+                    tablaCuerpo.AddCell(MarcaModelo);
+                    tablaCuerpo.AddCell(Serie);
+                    tablaCuerpo.AddCell(Inventario);
+                    tablaCuerpo.AddCell(Observaciones);
 
                 }
 
-                return table;
+                return tablaCuerpo;
             }
             catch (PdfException ex)
             {

@@ -51,7 +51,7 @@ namespace ApiDTC.Controllers
                 var dataSet = _db.GetStorePDF(clavePlaza);
                 if (dataSet.Tables[0].Rows.Count == 0 || dataSet.Tables[1].Rows.Count == 0)
                     return NotFound("GetStorePdf retorna tabla vacía");
-                InventarioPdfCreation pdf = new InventarioPdfCreation(clavePlaza, dataSet.Tables[0], dataSet.Tables[1], new ApiLogger());
+                InventarioPdfCreation pdf = new InventarioPdfCreation(clavePlaza, dataSet.Tables[0], dataSet.Tables[1], dataSet.Tables[2], dataSet.Tables[3], dataSet.Tables[4], dataSet.Tables[5], dataSet.Tables[6], new ApiLogger());
                 var pdfResult = pdf.NewPdf($@"{this._disk}:\{this._folder}");
                 if (pdfResult.Result == null)
                     return NotFound(pdfResult.Message);

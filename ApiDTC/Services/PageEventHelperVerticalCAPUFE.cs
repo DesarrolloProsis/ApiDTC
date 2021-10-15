@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Hosting.Internal;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -11,6 +12,8 @@ namespace ApiDTC.Services
 {
     public class PageEventHelperVerticalCAPUFE : PdfPageEventHelper
     {
+        private readonly DataTable _Informacion;
+        //private readonly DataTable _Administracion;
         // This is the contentbyte object of the writer
         PdfContentByte cb;
         // we will put the final number of pages in a template
@@ -69,6 +72,13 @@ namespace ApiDTC.Services
         public static iTextSharp.text.Font letraNormalMediana = new iTextSharp.text.Font(NormalMediana, 9f, iTextSharp.text.Font.NORMAL, BaseColor.Black);
         public static iTextSharp.text.Font letraNormalChica = new iTextSharp.text.Font(NormalChica, 8f, iTextSharp.text.Font.NORMAL, BaseColor.Black);
         public static iTextSharp.text.Font letritasMini = new iTextSharp.text.Font(fuenteMini, 6f, iTextSharp.text.Font.NORMAL, BaseColor.Black);
+
+        public PageEventHelperVerticalCAPUFE(DataTable informacion)
+        {
+            //_Administracion = administracion;
+            _Informacion = informacion;
+
+        }
         #endregion
         // we override the onOpenDocument method
         public override void OnOpenDocument(PdfWriter writer, Document document)
@@ -158,31 +168,31 @@ namespace ApiDTC.Services
             table.AddCell(new PdfPCell() { Border = 0 });
             document.Add(table);
 
+//Encabezado primera pagina 
 
             if (pageN == 1)
             {
-                PdfPTable table3 = new PdfPTable(new float[] { 16.67f, 16.67f, 16.67f, 16.67f, 16.67f, 16.67f }) { WidthPercentage = 100f };
+                PdfPTable tablaEncabezado = new PdfPTable(new float[] { 16.67f, 16.67f, 16.67f, 16.67f, 16.67f, 16.67f }) { WidthPercentage = 100f };
 
 
 
                 var colTitulo = new PdfPCell(new Phrase("ANEXO 1.13 FORMATO PARA EL INFORME DE INVENTARIO DE EQUIPOS Y COMPONENTES DE PEAJE AL INICIAR LA VIGENCIA DE LOS SERVICIOS", letraoNegritaChica)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, Padding = 3, Colspan = 6 };
-                table3.AddCell(colTitulo);
+                tablaEncabezado.AddCell(colTitulo);
 
-                CeldasVacias(5, table3);
+                CeldasVacias(5, tablaEncabezado);
                 var colFecha = new PdfPCell(new Phrase("Fecha: 01/01/2021", letraNormalChica)) { Border = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, Padding = 3 };
-                table3.AddCell(colFecha);
+                tablaEncabezado.AddCell(colFecha);
 
                 
-                document.Add(table3);
+                document.Add(tablaEncabezado);
             }
 
             PdfPTable table4 = new PdfPTable(new float[] { 50f, 50f}) { WidthPercentage = 100f };
 
             
             var colPlaza = new PdfPCell(new Phrase("PLAZA DE COBRO: No. 004", letraNormalChica)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 0, HorizontalAlignment = Element.ALIGN_RIGHT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 3, PaddingRight =5 };
-            var colNombre = new PdfPCell(new Phrase("Nombre: TEPOTZOTLÁN", letraNormalChica)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 0, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_LEFT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 3, PaddingLeft = 5 };
-            //var colCarril = new PdfPCell(new Phrase("Carril: B18 MULTIMODAL", letraNormalChica)) { Border = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, Padding = 3 };
-
+            var colNombre = new PdfPCell(new Phrase("Nombre: "+ _Informacion.Rows[0]["Nombre"], letraNormalChica)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 0, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_LEFT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 3, PaddingLeft = 5 };
+            //var colCarril = new PdfPCell(new Phrase("Carril: "+_Informacion.Select("LANE"), letraNormalChica)) { Border = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, Padding = 3 };
             table4.AddCell(colPlaza);
             table4.AddCell(colNombre);
             //table4.AddCell(colCarril);
