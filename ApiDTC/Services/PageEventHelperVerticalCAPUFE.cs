@@ -12,6 +12,8 @@ namespace ApiDTC.Services
 {
     public class PageEventHelperVerticalCAPUFE : PdfPageEventHelper
     {
+        //private readonly string _carril;
+        
         private readonly DataTable _Informacion;
         //private readonly DataTable _Administracion;
         // This is the contentbyte object of the writer
@@ -73,10 +75,11 @@ namespace ApiDTC.Services
         public static iTextSharp.text.Font letraNormalChica = new iTextSharp.text.Font(NormalChica, 8f, iTextSharp.text.Font.NORMAL, BaseColor.Black);
         public static iTextSharp.text.Font letritasMini = new iTextSharp.text.Font(fuenteMini, 6f, iTextSharp.text.Font.NORMAL, BaseColor.Black);
 
-        public PageEventHelperVerticalCAPUFE(DataTable informacion)
+        public PageEventHelperVerticalCAPUFE(DataTable informacion)//, string carril)
         {
             //_Administracion = administracion;
             _Informacion = informacion;
+          //  _carril = carril;
 
         }
         #endregion
@@ -118,6 +121,10 @@ namespace ApiDTC.Services
             document.Add(table4);
 
         }
+        public override void OnChapter(PdfWriter writer, Document document, float paragraphPosition, Paragraph title)
+        {
+            base.OnChapter(writer, document, paragraphPosition, title);
+        }
 
         public void CeldasVacias(int numeroCeldas, PdfPTable table)
         {
@@ -129,7 +136,8 @@ namespace ApiDTC.Services
             base.OnStartPage(writer, document);
             Rectangle pageSize = document.PageSize;
             int pageN = writer.PageNumber;
-            Paragraph paragraph = new Paragraph("");
+            //Paragraph paragraph = new Paragraph("");
+            Chapter chapter = new Chapter(0);
 
             if (Title != string.Empty)
             {
@@ -192,13 +200,14 @@ namespace ApiDTC.Services
             
             var colPlaza = new PdfPCell(new Phrase("PLAZA DE COBRO: No. 004", letraNormalChica)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 0, HorizontalAlignment = Element.ALIGN_RIGHT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 3, PaddingRight =5 };
             var colNombre = new PdfPCell(new Phrase("Nombre: "+ _Informacion.Rows[0]["Nombre"], letraNormalChica)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 0, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_LEFT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 3, PaddingLeft = 5 };
-            //var colCarril = new PdfPCell(new Phrase("Carril: "+_Informacion.Select("LANE"), letraNormalChica)) { Border = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, Padding = 3 };
+            //var colCarril = new PdfPCell(new Phrase("Carril: "+_carril, letraNormalChica)) { Border = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, Padding = 3 };
             table4.AddCell(colPlaza);
             table4.AddCell(colNombre);
             //table4.AddCell(colCarril);
             document.Add(table4);
 
-            document.Add(paragraph);
+            document.Add(chapter);
+            //document.Add(paragraph);
 
             PdfPTable table2 = new PdfPTable(new float[] { 30f, 20f, 10f, 10f, 30f }) { WidthPercentage = 100f };
 

@@ -170,97 +170,9 @@ namespace ApiDTC.Services
             };
         }
 
-        //public void CeldasVacias(int numeroCeldas, PdfPTable table)
-        //{
-        //    for (int i = 0; i < numeroCeldas; i++)
-        //        table.AddCell(new PdfPCell() { Border = 0 });
-        //}
-
-        //private IElement TablaEncabezado()
-        //{
-        //    try
-        //    {
-
-        //        PdfPTable table = new PdfPTable(new float[] { 16.67f, 16.67f, 16.67f, 16.67f, 16.67f, 16.67f }) { WidthPercentage = 100f };
-
-
-
-        //        var colTitulo = new PdfPCell(new Phrase("ANEXO 1.13 FORMATO PARA EL INFORME DE INVENTARIO DE EQUIPOS Y COMPONENTES DE PEAJE AL INICIAR LA VIGENCIA DE LOS SERVICIOS", letraoNegritaChica)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, Padding = 3, Colspan = 6 };
-        //        table.AddCell(colTitulo);
-                
-        //        CeldasVacias(5, table);
-        //        var colFecha = new PdfPCell(new Phrase("Fecha: 01/01/2021", letraNormalChica)) { Border = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, Padding = 3 };
-        //        table.AddCell(colFecha);
-
-        //        CeldasVacias(1, table);
-        //        var colPlaza = new PdfPCell(new Phrase("PLAZA DE COBRO: No. 004", letraNormalChica)) { Border = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, Padding = 3 };
-        //        var colNombre = new PdfPCell(new Phrase("Nombre: TEPOTZOTLÁN", letraNormalChica)) { Border = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, Padding = 3 };
-        //        var colCarril = new PdfPCell(new Phrase("Carril: B18 MULTIMODAL", letraNormalChica)) { Border = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, Padding = 3 };
-
-        //        table.AddCell(colPlaza);
-        //        table.AddCell(colNombre);
-        //        table.AddCell(colCarril);
-        //        CeldasVacias(2, table);
-
-        //        return table;
-
-        //    }
-
-        
-        //    catch (PdfException ex)
-        //    {
-        //        _apiLogger.WriteLog(_clavePlaza, ex, "InventarioPdfCreation: TablaEncabezado", 5);
-        //        return null;
-        //    }
-        //    catch(Exception ex)
-        //    {
-        //        _apiLogger.WriteLog(_clavePlaza, ex, "InventarioPdfCreation: TablaEncabezado", 3);
-        //        return null;
-        //    }
-            
-        //}
-
-        //private IElement CeldasPaginaUno()
-        //{
-        //    try
-        //    {
-        //        PdfPTable table2 = new PdfPTable(new float[] { 30f, 20f, 10f, 10f, 30f }) { WidthPercentage = 100f };
-        //        var encabezadoDescripcion = new PdfPCell(new Phrase("Descripción", letraoNegritaChica)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_MIDDLE, VerticalAlignment = Element.ALIGN_CENTER, Padding = 3, BackgroundColor = BaseColor.LightGray };
-        //        //var encabezadoDetalle = new PdfPCell(new Phrase("Detalle", letraoNegritaChica)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_MIDDLE, VerticalAlignment = Element.ALIGN_CENTER, Padding = 3, BackgroundColor = BaseColor.LightGray };
-        //        var encabezadoMarcaModelo = new PdfPCell(new Phrase("Marca/Modelo", letraoNegritaChica)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_MIDDLE, VerticalAlignment = Element.ALIGN_CENTER, Padding = 3, BackgroundColor = BaseColor.LightGray };
-        //        //var encabezadoModelo = new PdfPCell(new Phrase("Modelo", letraoNegritaChica)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_MIDDLE, VerticalAlignment = Element.ALIGN_CENTER, Padding = 3, BackgroundColor = BaseColor.LightGray };
-        //        var encabezadoSerie = new PdfPCell(new Phrase("No. de Serie", letraoNegritaChica)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_MIDDLE, VerticalAlignment = Element.ALIGN_CENTER, Padding = 3, BackgroundColor = BaseColor.LightGray };
-        //        var encabezadoInventario = new PdfPCell(new Phrase("No. de Inventario", letraoNegritaChica)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_MIDDLE, VerticalAlignment = Element.ALIGN_CENTER, Padding = 3, BackgroundColor = BaseColor.LightGray };
-        //        //var encabezadoItem = new PdfPCell(new Phrase("ITEM", letraoNegritaChica)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_MIDDLE, VerticalAlignment = Element.ALIGN_CENTER, Padding = 3, BackgroundColor = BaseColor.LightGray };
-        //        var encabezadoObservaciones = new PdfPCell(new Phrase("Observaciones", letraoNegritaChica)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_MIDDLE, VerticalAlignment = Element.ALIGN_CENTER, Padding = 3, BackgroundColor = BaseColor.LightGray };
-
-
-        //        //table2.AddCell(Equipamiento);
-        //        table2.AddCell(encabezadoDescripcion);
-        //        //table.AddCell(encabezadoDetalle);
-        //        table2.AddCell(encabezadoMarcaModelo);
-        //        //table.AddCell(encabezadoModelo);
-        //        table2.AddCell(encabezadoSerie);
-        //        table2.AddCell(encabezadoInventario);
-        //        //table.AddCell(encabezadoItem);
-        //        table2.AddCell(encabezadoObservaciones);
-
-        //        return table2;
-        //    }
-        //    catch (PdfException ex)
-        //    {
-        //        _apiLogger.WriteLog(_clavePlaza, ex, "InventarioPdfCreation: TablaEncabezado", 5);
-        //        return null;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _apiLogger.WriteLog(_clavePlaza, ex, "InventarioPdfCreation: TablaEncabezado", 3);
-        //        return null;
-        //    }
-
-        //}
         private IElement tableSort(DataTable Equipamiento, Document doc)
         {
+
             PdfPTable tablaCuerpo_1 = new PdfPTable(new float[] { 30f, 20f, 10f, 10f, 30f }) { WidthPercentage = 100f };
             PdfPTable tablaCuerpo_2 = new PdfPTable(new float[] { 30f, 20f, 10f, 10f, 30f }) { WidthPercentage = 100f };
             PdfPTable tablaCuerpo_3 = new PdfPTable(new float[] { 30f, 20f, 10f, 10f, 30f }) { WidthPercentage = 100f };
@@ -287,7 +199,11 @@ namespace ApiDTC.Services
                 tablaCuerpo_3.AddCell(tablaEquipamientoEncabezado_3);
 
                 int numeroDeFilas = tablaCarril.Rows.Count;
-                
+
+                bool contenido_1 = false;
+                bool contenido_2 = false;
+                bool contenido_3 = false;
+
 
                 for (int i = 0; i < numeroDeFilas ; i++)
                 {
@@ -306,6 +222,8 @@ namespace ApiDTC.Services
                         tablaCuerpo_1.AddCell(Serie);
                         tablaCuerpo_1.AddCell(Inventario);
                         tablaCuerpo_1.AddCell(Observaciones);
+
+                        contenido_1 = true;
                     }
 
                     else if (tablaCarril.Rows[i]["Ubicacion"].Equals(2))
@@ -324,6 +242,7 @@ namespace ApiDTC.Services
                         tablaCuerpo_2.AddCell(Inventario);
                         tablaCuerpo_2.AddCell(Observaciones);
 
+                        contenido_2 = true;
                     }
                     else if (tablaCarril.Rows[i]["Ubicacion"].Equals(3))
                     {
@@ -340,22 +259,37 @@ namespace ApiDTC.Services
                         tablaCuerpo_3.AddCell(Serie);
                         tablaCuerpo_3.AddCell(Inventario);
                         tablaCuerpo_3.AddCell(Observaciones);
+
+                        contenido_3 = true;
                     }
                     
 
                 }
 
-                doc.Add(tablaCuerpo_1);
-                tablaCuerpo_1.DeleteBodyRows();
+                if (contenido_1)
+                {
+                    doc.Add(tablaCuerpo_1);
+                }
+                    tablaCuerpo_1.DeleteBodyRows();
 
-                doc.Add(tablaCuerpo_2);
-                tablaCuerpo_2.DeleteBodyRows();
+                if (contenido_2)
+                {
+                    doc.Add(tablaCuerpo_2);
+                }
+                    tablaCuerpo_2.DeleteBodyRows();
 
-                doc.Add(tablaCuerpo_3);
-                tablaCuerpo_3.DeleteBodyRows();
-
+                if (contenido_3)
+                {
+                    doc.Add(tablaCuerpo_3);
+                }
+                    tablaCuerpo_3.DeleteBodyRows();
+                
                 doc.NewPage();
+                //PageEventHelper
+
                 tablaCarril.Clear();
+
+
                 
             }
 
