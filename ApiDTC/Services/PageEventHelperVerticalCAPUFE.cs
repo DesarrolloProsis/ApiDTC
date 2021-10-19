@@ -184,7 +184,7 @@ namespace ApiDTC.Services
                 tablaEncabezado.AddCell(colTitulo);
 
                 CeldasVacias(5, tablaEncabezado);
-                var colFecha = new PdfPCell(new Phrase("Fecha: 01/01/2021", letraNormalChica)) { Border = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, Padding = 3 };
+                var colFecha = new PdfPCell(new Phrase(_Informacion.Rows[0]["Fecha"].ToString(), letraNormalChica)) { Border = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, Padding = 3 };
                 tablaEncabezado.AddCell(colFecha);
 
                 
@@ -193,9 +193,9 @@ namespace ApiDTC.Services
 
             PdfPTable table4 = new PdfPTable(new float[] { 50f, 50f}) { WidthPercentage = 100f };
 
-            var colPlaza = new PdfPCell(new Phrase("PLAZA DE COBRO: "+ _Informacion.Rows[0]["Nombre"], letraNormalChica)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_RIGHT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 3, PaddingRight =5 };
-            var colCarril = new PdfPCell(new Phrase("Carril: "+_carril, letraNormalChica)) { Border = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, Padding = 3 };
-            var colNombre = new PdfPCell(new Phrase("Nombre: "+ _Informacion.Rows[0]["Nombre"], letraNormalChica)) { BorderWidthTop = 1, BorderWidthBottom = 0, BorderWidthLeft = 1, BorderWidthRight = 0, HorizontalAlignment = Element.ALIGN_LEFT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 3, PaddingLeft = 5 };
+            var colPlaza = new PdfPCell(new Phrase("Plaza de Cobro No: "+ _Informacion.Rows[0]["Numero"] + " Nombre " + _Informacion.Rows[0]["Nombre"], letraNormalChica)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, Padding = 3, PaddingRight =5, Colspan = 2 };
+            var colCarril = new PdfPCell(new Phrase("Carril No: "+_carril[1]+_carril[2]+ ", Cuerpo " + _carril[0], letraNormalChica)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, Padding = 3, Colspan = 2 };
+   
             if (String.Equals(_carril, "Plaza"))
             { 
                 table4.AddCell(colPlaza);
@@ -205,7 +205,7 @@ namespace ApiDTC.Services
                 table4.AddCell(colCarril);
             }
             
-            table4.AddCell(colNombre);
+
             //table4.AddCell(colCarril);
             document.Add(table4);
 
