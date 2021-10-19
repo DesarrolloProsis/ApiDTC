@@ -46,6 +46,7 @@ namespace ApiDTC.Services
             set { _HeaderFont = value; }
         }
         private Font _FooterFont;
+
         public Font FooterFont
         {
             get { return _FooterFont; }
