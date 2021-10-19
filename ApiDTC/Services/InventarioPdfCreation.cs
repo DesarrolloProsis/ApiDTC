@@ -324,6 +324,8 @@ namespace ApiDTC.Services
                 }
 
                 PageEventHelperVerticalCAPUFE._carril = carril["Lane"].ToString();
+                if (!Equals(carril["Lane"], "Plaza"))
+                    doc.NewPage();
                 if (contenido_5)
                 {
                     doc.Add(tablaCuerpo_5);
@@ -341,7 +343,6 @@ namespace ApiDTC.Services
                     doc.Add(tablaCuerpo_7);
                 }
                 tablaCuerpo_3.DeleteBodyRows();
-
                 if (contenido_1)
                 {
                     doc.Add(tablaCuerpo_1);
@@ -361,7 +362,6 @@ namespace ApiDTC.Services
                     tablaCuerpo_3.DeleteBodyRows();
                 
                 tablaCarril.Clear();              
-                doc.NewPage();
                 
             }
 
