@@ -115,8 +115,7 @@ namespace ApiDTC.Services
                     
 
                     PdfWriter writer = PdfWriter.GetInstance(doc, myMemoryStream);
-                    writer.PageEvent = new PageEventHelperVerticalCAPUFE(_Informacion, "Plaza");
-                    writer.CompressionLevel = 9;
+                    writer.PageEvent = new PageEventHelperVerticalCAPUFE(_Informacion, "Plaza");                
                     writer.Open();
                     doc.Open();
                    
@@ -307,19 +306,20 @@ namespace ApiDTC.Services
                 {
                     doc.Add(tablaCuerpo_5);
                 }
-                tablaCuerpo_3.DeleteBodyRows();
+                tablaCuerpo_5.DeleteBodyRows();
 
                 if (contenido_6)
                 {
                     doc.Add(tablaCuerpo_6);
                 }
-                tablaCuerpo_3.DeleteBodyRows();
+                tablaCuerpo_6.DeleteBodyRows();
 
                 if (contenido_7)
                 {
                     doc.Add(tablaCuerpo_7);
                 }
-                tablaCuerpo_3.DeleteBodyRows();
+                tablaCuerpo_7.DeleteBodyRows();
+
                 if (contenido_1)
                 {
                     doc.Add(tablaCuerpo_1);
