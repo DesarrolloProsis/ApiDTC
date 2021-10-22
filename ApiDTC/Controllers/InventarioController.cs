@@ -27,13 +27,6 @@ namespace ApiDTC.Controllers
 
         #region Constructor
 
-        //public PDFController(PdfConsultasDb db, IConfiguration configuration)
-        //{
-        //    this._disk = $@"{Convert.ToString(configuration.GetValue<string>("Path:Disk"))}";
-        //    this._folder = $"{Convert.ToString(configuration.GetValue<string>("Path:Folder"))}";
-        //    this._db = db ?? throw new ArgumentNullException(nameof(db));
-        //    _apiLogger = new ApiLogger();
-        //}
         public InventarioController(InventarioDb db, IConfiguration configuration)
         {
             this._disk = $@"{Convert.ToString(configuration.GetValue<string>("Path:Disk"))}";
@@ -51,12 +44,13 @@ namespace ApiDTC.Controllers
                 var dataSet = _db.GetStorePDF(clavePlaza);
                 if (dataSet.Tables[0].Rows.Count == 0 || dataSet.Tables[1].Rows.Count == 0)
                     return NotFound("GetStorePdf retorna tabla vacía");
-                InventarioPdfCreation pdf = new InventarioPdfCreation(clavePlaza, dataSet.Tables[0], dataSet.Tables[1], dataSet.Tables[2], new ApiLogger());
+                InventarioPdfCreation pdf = new InventarioPdfCreation(clavePlaza, dataSet.Tables[0], dataSet.Tables[1], new ApiLogger());
                 var pdfResult = pdf.NewPdf($@"{this._disk}:\{this._folder}");
+                var InPdf = File(new FileStream(pdfResult.Result.ToString(), FileMode.Open, FileAccess.Read), "application/pdf");
+
                 if (pdfResult.Result == null)
                     return NotFound(pdfResult.Message);
-                return File(new FileStream(pdfResult.Result.ToString(), FileMode.Open, FileAccess.Read), "application/pdf");
-
+                return InPdf;
             }
             catch (IOException ex)
             {
