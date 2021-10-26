@@ -46,11 +46,15 @@ namespace ApiDTC.Controllers
                     return NotFound("GetStorePdf retorna tabla vacía");
                 InventarioPdfCreation pdf = new InventarioPdfCreation(clavePlaza, dataSet.Tables[0], dataSet.Tables[1], new ApiLogger());
                 var pdfResult = pdf.NewPdf($@"{this._disk}:\{this._folder}");
-                var InPdf = File(new FileStream(pdfResult.Result.ToString(), FileMode.Open, FileAccess.Read), "application/pdf");
-
                 if (pdfResult.Result == null)
                     return NotFound(pdfResult.Message);
-                return InPdf;
+                return File(new FileStream(pdfResult.Result.ToString(), FileMode.Open, FileAccess.Read), "application/pdf");
+                //var pdfResult = pdf.NewPdf($@"{this._disk}:\{this._folder}");
+                //var InPdf = File(new FileStream(pdfResult.Result.ToString(), FileMode.Open, FileAccess.Read), "application/pdf");
+
+                //if (pdfResult.Result == null)
+                //    return NotFound(pdfResult.Message);
+                //return InPdf;
             }
             catch (IOException ex)
             {
