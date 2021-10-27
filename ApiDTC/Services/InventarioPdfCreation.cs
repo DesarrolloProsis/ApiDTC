@@ -316,11 +316,7 @@ namespace ApiDTC.Services
                 }
                 tablaCuerpo_5.DeleteBodyRows();
 
-                if (contenido_6 && !Equals(carril["Lane"], "Plaza"))
-                {
-                    doc.Add(tablaCuerpo_6);
-                }
-                tablaCuerpo_6.DeleteBodyRows();
+                
 
                 if (contenido_7)
                 {
@@ -345,7 +341,13 @@ namespace ApiDTC.Services
                     doc.Add(tablaCuerpo_3);
                 }
                     tablaCuerpo_3.DeleteBodyRows();
-                
+
+                if (contenido_6 && !Equals(carril["Lane"], "Plaza"))
+                {
+                    doc.Add(tablaCuerpo_6);
+                }
+                tablaCuerpo_6.DeleteBodyRows();
+
                 tablaCarril.Clear();              
                 
             }
