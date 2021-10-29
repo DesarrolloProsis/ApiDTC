@@ -201,7 +201,7 @@ namespace ApiDTC.Services
                 {
                     int Componente = Convert.ToInt32(tablaCarril.Rows[i]["Componente"]);
 
-                    if (tablaCarril.Rows[i]["Ubicacion"].Equals(1))
+                    if (tablaCarril.Rows[i]["Ubicacion"].Equals(1) && (Componente % 100 == 0))
                     {
                         var Descripcion = new PdfPCell(new Phrase(tablaCarril.Rows[i]["Descripcion"].ToString(), letritasMini)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_LEFT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 3 };
                         var MarcaModelo = new PdfPCell(new Phrase(tablaCarril.Rows[i]["Marca/Modelo"].ToString(), letritasMini)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_LEFT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 3 };
@@ -218,7 +218,7 @@ namespace ApiDTC.Services
                         contenido_1 = true;
                     }
 
-                    else if (tablaCarril.Rows[i]["Ubicacion"].Equals(2))
+                    else if (tablaCarril.Rows[i]["Ubicacion"].Equals(2) && (Componente % 100 == 0))
                     {
                         var Descripcion = new PdfPCell(new Phrase(tablaCarril.Rows[i]["Descripcion"].ToString(), letritasMini)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_LEFT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 3 };
                         var MarcaModelo = new PdfPCell(new Phrase(tablaCarril.Rows[i]["Marca/Modelo"].ToString(), letritasMini)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_LEFT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 3 };
@@ -234,7 +234,7 @@ namespace ApiDTC.Services
 
                         contenido_2 = true;
                     }
-                    else if (tablaCarril.Rows[i]["Ubicacion"].Equals(3))
+                    else if (tablaCarril.Rows[i]["Ubicacion"].Equals(3) && (Componente % 100 == 0))
                     {
                         var Descripcion = new PdfPCell(new Phrase(tablaCarril.Rows[i]["Descripcion"].ToString(), letritasMini)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_LEFT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 3 };
                         var MarcaModelo = new PdfPCell(new Phrase(tablaCarril.Rows[i]["Marca/Modelo"].ToString(), letritasMini)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_LEFT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 3 };
@@ -266,7 +266,7 @@ namespace ApiDTC.Services
 
                         contenido_5 = true;
                     }
-                    else if (tablaCarril.Rows[i]["Ubicacion"].Equals(6))
+                    else if (tablaCarril.Rows[i]["Ubicacion"].Equals(6) && (Componente % 100 == 0))
                     {
                         var Descripcion = new PdfPCell(new Phrase(tablaCarril.Rows[i]["Descripcion"].ToString(), letritasMini)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_LEFT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 3 };
                         var MarcaModelo = new PdfPCell(new Phrase(tablaCarril.Rows[i]["Marca/Modelo"].ToString(), letritasMini)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_LEFT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 3 };
@@ -316,8 +316,6 @@ namespace ApiDTC.Services
                 }
                 tablaCuerpo_5.DeleteBodyRows();
 
-                
-
                 if (contenido_7)
                 {
                     doc.Add(tablaCuerpo_7);
@@ -342,13 +340,13 @@ namespace ApiDTC.Services
                 }
                     tablaCuerpo_3.DeleteBodyRows();
 
-                if (contenido_6 && !Equals(carril["Lane"], "Plaza"))
+                if (contenido_6 )
                 {
                     doc.Add(tablaCuerpo_6);
                 }
                 tablaCuerpo_6.DeleteBodyRows();
 
-                tablaCarril.Clear();              
+                tablaCarril.Clear();                   
                 
             }
 
