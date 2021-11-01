@@ -157,6 +157,7 @@ namespace ApiDTC.Services
             PdfPTable tablaCuerpo_5 = new PdfPTable(new float[] { 30f, 20f, 10f, 10f, 30f }) { WidthPercentage = 100f };
             PdfPTable tablaCuerpo_6 = new PdfPTable(new float[] { 30f, 20f, 10f, 10f, 30f }) { WidthPercentage = 100f };
             PdfPTable tablaCuerpo_7 = new PdfPTable(new float[] { 30f, 20f, 10f, 10f, 30f }) { WidthPercentage = 100f };
+            PdfPTable tablaCuerpoVacio = new PdfPTable(new float[] { 30f, 20f, 10f, 10f, 30f }) { WidthPercentage = 100f };
 
             var tablaCarril = new DataTable();
             tablaCarril = Equipamiento.Clone();
@@ -314,10 +315,22 @@ namespace ApiDTC.Services
                 {
                     doc.Add(tablaCuerpo_5);
                 }
+                else if(Equals(carril["Lane"], "Plaza"))
+                {
+                    var tablaEquipamientoEncabezadoVacio = new PdfPCell(new Phrase("Equipamiento Administrativo vacio", letraoNegritaChica)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, Padding = 3, Colspan = 5 };
+                    tablaCuerpo_5.AddCell(tablaEquipamientoEncabezadoVacio);
+                    doc.Add(tablaCuerpo_5);
+                }
                 tablaCuerpo_5.DeleteBodyRows();
 
                 if (contenido_7)
                 {
+                    doc.Add(tablaCuerpo_7);
+                }
+                else if (Equals(carril["Lane"], "Plaza"))
+                {
+                    var tablaEquipamientoEncabezadoVacio = new PdfPCell(new Phrase("Equipamiento de Telematica vacio", letraoNegritaChica)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, Padding = 3, Colspan = 5 };
+                    tablaCuerpo_7.AddCell(tablaEquipamientoEncabezadoVacio);
                     doc.Add(tablaCuerpo_7);
                 }
                 tablaCuerpo_7.DeleteBodyRows();
@@ -326,22 +339,46 @@ namespace ApiDTC.Services
                 {
                     doc.Add(tablaCuerpo_1);
                 }
-                    tablaCuerpo_1.DeleteBodyRows();
+                else if (!Equals(carril["Lane"], "Plaza"))
+                {
+                    var tablaEquipamientoEncabezadoVacio = new PdfPCell(new Phrase("Equipamiento de Carril vacio", letraoNegritaChica)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, Padding = 3, Colspan = 5 };
+                    tablaCuerpo_1.AddCell(tablaEquipamientoEncabezadoVacio);
+                    doc.Add(tablaCuerpo_1);
+                }
+                tablaCuerpo_1.DeleteBodyRows();
 
                 if (contenido_2 && !Equals(carril["Lane"], "Plaza"))
                 {
                     doc.Add(tablaCuerpo_2);
                 }
-                    tablaCuerpo_2.DeleteBodyRows();
+                else if (!Equals(carril["Lane"], "Plaza"))
+                {
+                    var tablaEquipamientoEncabezadoVacio = new PdfPCell(new Phrase("Equipamiento de Cabina vacio", letraoNegritaChica)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, Padding = 3, Colspan = 5 };
+                    tablaCuerpo_2.AddCell(tablaEquipamientoEncabezadoVacio);
+                    doc.Add(tablaCuerpo_2);
+                }
+                tablaCuerpo_2.DeleteBodyRows();
 
                 if (contenido_3 && !Equals(carril["Lane"], "Plaza"))
                 {
                     doc.Add(tablaCuerpo_3);
                 }
-                    tablaCuerpo_3.DeleteBodyRows();
+                else if (!Equals(carril["Lane"], "Plaza"))
+                {
+                    var tablaEquipamientoEncabezadoVacio = new PdfPCell(new Phrase("Equipamiento de Piso vacio", letraoNegritaChica)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, Padding = 3, Colspan = 5 };
+                    tablaCuerpo_3.AddCell(tablaEquipamientoEncabezadoVacio);
+                    doc.Add(tablaCuerpo_3);
+                }
+                tablaCuerpo_3.DeleteBodyRows();
 
                 if (contenido_6 )
                 {
+                    doc.Add(tablaCuerpo_6);
+                }
+                else
+                {
+                    var tablaEquipamientoEncabezadoVacio = new PdfPCell(new Phrase("Equipamiento de CSTP vacio", letraoNegritaChica)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, Padding = 3, Colspan = 5 };
+                    tablaCuerpo_6.AddCell(tablaEquipamientoEncabezadoVacio);
                     doc.Add(tablaCuerpo_6);
                 }
                 tablaCuerpo_6.DeleteBodyRows();
