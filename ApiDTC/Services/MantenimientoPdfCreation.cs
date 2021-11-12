@@ -163,8 +163,9 @@
                     if(_tipo == 2 || _tipo == 7)//Mensual nivel carril y plaza con salto y hasta arriba observaciones
                     {
                         //doc.NewPage();
-                        PdfPTable tablaObservaciones = TablaObservaciones();
-                        tablaObservaciones.WriteSelectedRows(0, -1, 30, 220, cb);
+                        AgregarObservaciones tabla = new AgregarObservaciones(new ApiLogger(), _tableHeader, "Observaciones: ", _clavePlaza);
+                        //PdfPTable tablaObservacione = tabla.TablaObservaciones;
+                        tabla.TablaObservaciones().WriteSelectedRows(0, -1, 30, 220, cb);
                         PdfPTable tablaFirmas = TablaFirmas();
                         tablaFirmas.WriteSelectedRows(0, -1, 30, 165, cb);
                         /*if(_tipo == 2) //Sin salto de página
@@ -178,8 +179,9 @@
                     }
                     else
                     {
-                        PdfPTable tablaObservaciones = TablaObservaciones();
-                        tablaObservaciones.WriteSelectedRows(0, -1, 30, 275, cb);
+                        AgregarObservaciones tabla = new AgregarObservaciones(new ApiLogger(), _tableHeader, "Observaciones: ", _clavePlaza);
+                        //PdfPTable tablaObservaciones = TablaObservaciones();
+                        tabla.TablaObservaciones().WriteSelectedRows(0, -1, 30, 275, cb);
                         PdfPTable tablaFirmas = TablaFirmas();
                         tablaFirmas.WriteSelectedRows(0, -1, 30, 200, cb);
                     }
@@ -488,45 +490,57 @@
             }
         }
 
-        private PdfPTable TablaObservaciones()
-        {
-            try
-            {
-                PdfPTable table = new PdfPTable(new float[] { 12.5f, 12.5f, 12.5f, 12.5f, 12.5f, 12.5f, 12.5f, 12.5f }) { WidthPercentage = 100f };
-                table.TotalWidth = 550f;
+        //private PdfPTable TablaObservaciones()
+        //{
+        //    try
+        //    {
+        //        PdfPTable table = new PdfPTable(new float[] { 12.5f, 12.5f, 12.5f, 12.5f, 12.5f, 12.5f, 12.5f, 12.5f }) { WidthPercentage = 100f };
+        //        table.TotalWidth = 550f;
 
 
-                var colTextoObservaciones = new PdfPCell(new Phrase("Observaciones: ", letraoNegritaMediana)) { Border = 0, HorizontalAlignment = Element.ALIGN_LEFT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 1, Colspan = 2 };
+        //        var colTextoObservaciones = new PdfPCell(new Phrase("Observaciones: ", letraoNegritaMediana)) { Border = 0, HorizontalAlignment = Element.ALIGN_LEFT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 1, Colspan = 2 };
 
-                table.AddCell(colTextoObservaciones);
-                CeldasVacias(14, table);
-
-                var celdaObservaciones = SeparacionObservaciones(Convert.ToString(_tableHeader.Rows[0]["Observaciones"]));
-                int celdasTotalesObservaciones = 0;
-                foreach (var linea in celdaObservaciones)
-                {
-                    celdasTotalesObservaciones +=1;
-                    var celdaLinea = new PdfPCell(new Phrase(Convert.ToString(linea), letraNormalMediana)) { BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, BorderWidthBottom = 1, FixedHeight = 15, HorizontalAlignment = Element.ALIGN_JUSTIFIED, VerticalAlignment = Element.ALIGN_CENTER, Padding = 3, Colspan = 8 };
-                    table.AddCell(celdaLinea);
-                }
-                for (int i = 0; i < 3 - celdasTotalesObservaciones; i++)
-                {
-                    var celdaLinea = new PdfPCell(new Phrase("", letraNormalMediana)) { BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, BorderWidthBottom = 1, FixedHeight = 15, HorizontalAlignment = Element.ALIGN_JUSTIFIED, VerticalAlignment = Element.ALIGN_CENTER, Padding = 3, Colspan = 8 };
-                    table.AddCell(celdaLinea);
-                }
-                return table;
-            }
-            catch (PdfException ex)
-            {
-                _apiLogger.WriteLog(_clavePlaza, ex, "MantenimientoPdfCreation: TablaObservaciones", 5);
-                return null;
-            }
-            catch (Exception ex)
-            {
-                _apiLogger.WriteLog(_clavePlaza, ex, "MantenimientoPdfCreation: TablaObservaciones", 3);
-                return null;
-            }      
-        }
+        //        table.AddCell(colTextoObservaciones);
+        //        CeldasVacias(14, table);
+        //        var celdaObservaciones = SeparacionObservaciones(Convert.ToString(_tableHeader.Rows[0]["Observaciones"]));
+        //        int celdasTotalesObservaciones = 0;
+        //        foreach (var linea in celdaObservaciones)
+        //        {
+        //            if (linea.Contains('\n'))
+        //            {
+        //                string[] Divisiones = linea.Split('\n');
+        //                celdasTotalesObservaciones += Divisiones.Length;
+        //                foreach (var item in Divisiones)
+        //                {
+        //                    var celdaLinea1 = new PdfPCell(new Phrase(Convert.ToString(item), letraNormalMediana)) { BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, BorderWidthBottom = 1, FixedHeight = 15, HorizontalAlignment = Element.ALIGN_JUSTIFIED, VerticalAlignment = Element.ALIGN_CENTER, Padding = 3, Colspan = 8 };
+        //                    table.AddCell(celdaLinea1);
+        //                }
+        //            }
+        //            else 
+        //            { 
+        //                celdasTotalesObservaciones +=1;
+        //                var celdaLinea = new PdfPCell(new Phrase(Convert.ToString(linea), letraNormalMediana)) { BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, BorderWidthBottom = 1, FixedHeight = 15, HorizontalAlignment = Element.ALIGN_JUSTIFIED, VerticalAlignment = Element.ALIGN_CENTER, Padding = 3, Colspan = 8 };
+        //                table.AddCell(celdaLinea);
+        //            }
+        //        }
+        //        for (int i = 0; i < 3 - celdasTotalesObservaciones; i++)
+        //        {
+        //            var celdaLinea = new PdfPCell(new Phrase("", letraNormalMediana)) { BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, BorderWidthBottom = 1, FixedHeight = 15, HorizontalAlignment = Element.ALIGN_JUSTIFIED, VerticalAlignment = Element.ALIGN_CENTER, Padding = 3, Colspan = 8 };
+        //            table.AddCell(celdaLinea);
+        //        }
+        //        return table;
+        //    }
+        //    catch (PdfException ex)
+        //    {
+        //        _apiLogger.WriteLog(_clavePlaza, ex, "MantenimientoPdfCreation: TablaObservaciones", 5);
+        //        return null;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _apiLogger.WriteLog(_clavePlaza, ex, "MantenimientoPdfCreation: TablaObservaciones", 3);
+        //        return null;
+        //    }      
+        //}
 
         private PdfPTable TablaFirmas()
         {
