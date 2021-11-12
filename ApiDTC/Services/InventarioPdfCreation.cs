@@ -205,7 +205,22 @@ namespace ApiDTC.Services
                     if (tablaCarril.Rows[i]["Ubicacion"].Equals(1) && (Componente % 100 == 0))
                     {
                         var Descripcion = new PdfPCell(new Phrase(tablaCarril.Rows[i]["Descripcion"].ToString(), letritasMini)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_LEFT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 3 };
-                        var MarcaModelo = new PdfPCell(new Phrase(tablaCarril.Rows[i]["Marca/Modelo"].ToString(), letritasMini)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_LEFT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 3 };
+
+                        string _MarcaYModelo;
+                        if (tablaCarril.Rows[i]["Marca/Modelo"].Equals("PROSIS/1.00 MTS. / 2.00 MTS.") && tablaCarril.Rows[i]["No. de Serie"].Equals("S/N"))
+                        {
+                            _MarcaYModelo = "PROSIS / 1.00 MTS.";
+                        }
+                        else if (tablaCarril.Rows[i]["Marca/Modelo"].Equals("PROSIS/1.00 MTS. / 2.00 MTS.") && tablaCarril.Rows[i]["No. de Serie"].Equals("S/S"))
+                        {
+                            _MarcaYModelo = "PROSIS / 2.00 MTS.";
+                        }
+                        else
+                        {
+                            _MarcaYModelo = tablaCarril.Rows[i]["Marca/Modelo"].ToString();
+                        }
+
+                        var MarcaModelo = new PdfPCell(new Phrase(_MarcaYModelo, letritasMini)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_LEFT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 3 };
                         var Serie = new PdfPCell(new Phrase(tablaCarril.Rows[i]["No. de Serie"].ToString(), letritasMini)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_LEFT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 3 };
                         var Inventario = new PdfPCell(new Phrase(tablaCarril.Rows[i]["No. de Inventario"].ToString(), letritasMini)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_LEFT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 3 };
                         var Observaciones = new PdfPCell(new Phrase(tablaCarril.Rows[i]["Observciones"].ToString(), letritasMini)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_LEFT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 3 };
@@ -371,11 +386,11 @@ namespace ApiDTC.Services
                 }
                 tablaCuerpo_3.DeleteBodyRows();
 
-                if (contenido_6 )
+                if (contenido_6 && Equals(carril["Lane"], "Plaza"))
                 {
                     doc.Add(tablaCuerpo_6);
                 }
-                else
+                else if(Equals(carril["Lane"], "Plaza"))
                 {
                     var tablaEquipamientoEncabezadoVacio = new PdfPCell(new Phrase("Equipamiento de CSTP vacio", letraoNegritaChica)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, Padding = 3, Colspan = 5 };
                     tablaCuerpo_6.AddCell(tablaEquipamientoEncabezadoVacio);
