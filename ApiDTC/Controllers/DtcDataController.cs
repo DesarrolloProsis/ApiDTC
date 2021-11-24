@@ -533,12 +533,12 @@
             }
         }
 
-        [HttpPut("UpdateUserIdOfDTC/{ClavePlaza}")]
-        public ActionResult<Response> UpdateUserIdOfDTC(string ClavePlaza, [FromBody] DTCUserChangeLog infoUpdate)
+        [HttpPut("UpdateUserIdOfDTC/{ClavePlaza}/{userId}/{referenceNumberDtc}/{referenceDiag}")]
+        public ActionResult<Response> UpdateUserIdOfDTC(string ClavePlaza, int userId, string referenceNumberDtc, string referenceDiag)
         {
             if (ModelState.IsValid)
             {
-                var put = _db.UpdateUserIdOfDTC(ClavePlaza, infoUpdate);
+                var put = _db.UpdateUserIdOfDTC(ClavePlaza, userId, referenceNumberDtc, referenceDiag);
                 if (put.Result == null)
                     return NotFound(put);
                 return Ok(put);

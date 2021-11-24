@@ -616,7 +616,7 @@
             }
         }
 
-        public Response UpdateUserIdOfDTC(string clavePlaza, DTCUserChangeLog infoUpdate)
+        public Response UpdateUserIdOfDTC(string clavePlaza, int userId, string referenceNumberDtc, string referenceDiag)
         {
             try
             {
@@ -626,10 +626,10 @@
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
 
-                        cmd.Parameters.Add("@userId", SqlDbType.Int).Value = infoUpdate.UserId;
-                        cmd.Parameters.Add("@referenceNumberDTC", SqlDbType.NVarChar).Value = infoUpdate.ReferenceNumberDTC;
-                        cmd.Parameters.Add("@referenceNumberDiagnostic", SqlDbType.NVarChar).Value = infoUpdate.ReferenceNumberDiagnostic;                        
-                        cmd.Parameters.Add("@Comment", SqlDbType.NVarChar).Value = infoUpdate.Comment;
+                        cmd.Parameters.Add("@userId", SqlDbType.Int).Value = userId;
+                        cmd.Parameters.Add("@referenceNumberDTC", SqlDbType.NVarChar).Value = referenceNumberDtc;
+                        cmd.Parameters.Add("@referenceNumberDiagnostic", SqlDbType.NVarChar).Value = referenceDiag;                        
+                        //cmd.Parameters.Add("@Comment", SqlDbType.NVarChar).Value = infoUpdate.Comment;
                         var response = _sqlResult.Put(clavePlaza, cmd, sql, "spUpdateUserIdOfDTC");
                         return new Response
                         {
