@@ -139,7 +139,7 @@ namespace ApiDTC.Data
                             newObjDiagnosis.ValidacionFichaTecnica = objDiagnosis.ValidacionFichaTecnica;
                             newObjDiagnosis.SquareId = objDiagnosis.SquareId;
                             newObjDiagnosis.CauseFailure = objDiagnosis.CauseFailure;
-                            newObjDiagnosis.FailureDescription = objDiagnosis.CauseFailure;
+                            newObjDiagnosis.FailureDescription = objDiagnosis.FailureDescription;
                             newObjDiagnosis.FailureDiagnosis = objDiagnosis.FailureDiagnosis;
                             newObjDiagnosis.Start = objDiagnosis.Start;
                             newObjDiagnosis.End = objDiagnosis.End;
