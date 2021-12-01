@@ -12,13 +12,19 @@ namespace ApiDTC.Services
     public class AgregarObservaciones
     {
         #region Attributes
-        private readonly DataTable _tableHeader;
+        private readonly string _Contenido;
 
         private readonly ApiLogger _apiLogger;
 
         private readonly string _clavePlaza;
 
-        private readonly string _Mensaje;
+        private readonly string _MensajeEncabezado;
+
+        private readonly string _strLog;
+
+        private readonly int _numError1;
+
+        private readonly int _numError2;
         #endregion
 
         #region BaseFont
@@ -30,12 +36,15 @@ namespace ApiDTC.Services
         public static iTextSharp.text.Font letraNormalMediana = new iTextSharp.text.Font(NormalMediana, 9f, iTextSharp.text.Font.NORMAL, BaseColor.Black);
         public static iTextSharp.text.Font letraoNegritaMediana = new iTextSharp.text.Font(NegritaMediana, 8f, iTextSharp.text.Font.BOLD, BaseColor.Black);
         #endregion
-        public AgregarObservaciones(ApiLogger apiLogger, DataTable tableHeader, string Mensaje, string clavePlaza)
+        public AgregarObservaciones(ApiLogger apiLogger, string Contenido, string MensajeEncabezado, string clavePlaza, string strLog, int numError1, int numError2)
         {
             _apiLogger = apiLogger;
-            _tableHeader = tableHeader;
+            _Contenido = Contenido;
             _clavePlaza = clavePlaza;
-            _Mensaje = Mensaje;
+            _MensajeEncabezado = MensajeEncabezado;
+            _strLog = strLog;
+            _numError1 = numError1;
+            _numError2 = numError2;
         }
 
         #region Metodos
@@ -47,12 +56,12 @@ namespace ApiDTC.Services
                 table.TotalWidth = 550f;
 
 
-                var colTextoObservaciones = new PdfPCell(new Phrase(_Mensaje, letraoNegritaMediana)) { Border = 0, HorizontalAlignment = Element.ALIGN_LEFT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 1, Colspan = 2 };
+                var colMensajeEncabezado = new PdfPCell(new Phrase(_MensajeEncabezado, letraoNegritaMediana)) { Border = 0, HorizontalAlignment = Element.ALIGN_LEFT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 3, Colspan = 6 };
 
-                table.AddCell(colTextoObservaciones);
-                CeldasVacias(14, table);
+                table.AddCell(colMensajeEncabezado);
+                CeldasVacias(10, table);
 
-                var celdaObservaciones = SeparacionObservaciones(Convert.ToString(_tableHeader.Rows[0]["Observaciones"]));
+                var celdaObservaciones = SeparacionObservaciones(_Contenido);
                 int celdasTotalesObservaciones = 0;
                 foreach (var linea in celdaObservaciones)
                 {
@@ -78,16 +87,18 @@ namespace ApiDTC.Services
                     var celdaLinea = new PdfPCell(new Phrase("", letraNormalMediana)) { BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, BorderWidthBottom = 1, FixedHeight = 15, HorizontalAlignment = Element.ALIGN_JUSTIFIED, VerticalAlignment = Element.ALIGN_CENTER, Padding = 3, Colspan = 8 };
                     table.AddCell(celdaLinea);
                 }
+
+                CeldasVacias(8, table);
                 return table;
             }
             catch (PdfException ex)
             {
-                _apiLogger.WriteLog(_clavePlaza, ex, "MantenimientoPdfCreation: TablaObservaciones", 5);
+                _apiLogger.WriteLog(_clavePlaza, ex, _strLog, _numError1);
                 return null;
             }
             catch (Exception ex)
             {
-                _apiLogger.WriteLog(_clavePlaza, ex, "MantenimientoPdfCreation: TablaObservaciones", 3);
+                _apiLogger.WriteLog(_clavePlaza, ex, _strLog, _numError2);
                 return null;
             }
         }

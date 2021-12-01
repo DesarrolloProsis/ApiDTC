@@ -163,7 +163,8 @@
                     if(_tipo == 2 || _tipo == 7)//Mensual nivel carril y plaza con salto y hasta arriba observaciones
                     {
                         //doc.NewPage();
-                        AgregarObservaciones tabla = new AgregarObservaciones(new ApiLogger(), _tableHeader, "Observaciones: ", _clavePlaza);
+                        string textoObservaciones = Convert.ToString(_tableHeader.Rows[0]["Observaciones"]);
+                        AgregarObservaciones tabla = new AgregarObservaciones(new ApiLogger(), textoObservaciones, "Observaciones: ", _clavePlaza, "MantenimientoPdfCreation: TablaObservaciones", 5, 3);
                         //PdfPTable tablaObservacione = tabla.TablaObservaciones;
                         tabla.TablaObservaciones().WriteSelectedRows(0, -1, 30, 220, cb);
                         PdfPTable tablaFirmas = TablaFirmas();
@@ -179,7 +180,8 @@
                     }
                     else
                     {
-                        AgregarObservaciones tabla = new AgregarObservaciones(new ApiLogger(), _tableHeader, "Observaciones: ", _clavePlaza);
+                        string textoObservaciones = Convert.ToString(_tableHeader.Rows[0]["Observaciones"]);
+                        AgregarObservaciones tabla = new AgregarObservaciones(new ApiLogger(), textoObservaciones, "Observaciones: ", _clavePlaza, "MantenimientoPdfCreation: TablaObservaciones", 5, 3);
                         //PdfPTable tablaObservaciones = TablaObservaciones();
                         tabla.TablaObservaciones().WriteSelectedRows(0, -1, 30, 275, cb);
                         PdfPTable tablaFirmas = TablaFirmas();

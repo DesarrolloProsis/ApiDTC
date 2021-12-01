@@ -112,8 +112,20 @@ namespace ApiDTC.Services
                     doc.Open();
                     doc.Add(TablaEncabezado());
                     doc.Add(TablaInformacion());
-                    doc.Add(TablaObservaciones());
 
+                    string textoDescripcion = _diagnosticoDeFallaInfo.DescripcionFalla;
+                    AgregarObservaciones tablaFalla = new AgregarObservaciones(new ApiLogger(), textoDescripcion, "DESCRIPCIÓN DE LA FALLA REPORTADA:", _clavePlaza, "MantenimientoPdfCreation: TablaObservaciones", 5, 3);
+                    doc.Add(tablaFalla.TablaObservaciones());
+
+                    string textoDiagnostico = _diagnosticoDeFallaInfo.DiagnosticoFalla;
+                    AgregarObservaciones tablaDiagnostico = new AgregarObservaciones(new ApiLogger(), textoDiagnostico, "DIAGNÓSTICO DE LA FALLA REPORTADA:", _clavePlaza, "MantenimientoPdfCreation: TablaObservaciones", 5, 3);
+                    doc.Add(tablaDiagnostico.TablaObservaciones());
+
+                    string textoCausa = _diagnosticoDeFallaInfo.CausaFalla;
+                    AgregarObservaciones tablaCausa = new AgregarObservaciones(new ApiLogger(), textoCausa, "CAUSA DE LA FALLA REPORTADA:", _clavePlaza, "MantenimientoPdfCreation: TablaObservaciones", 5, 3);
+                    doc.Add(tablaCausa.TablaObservaciones());
+
+                    //doc.Add(TablaObservaciones());
                     //PRUEBA IMÁGENES, CAMBIAR RUTA
                     string directoryImgs = Path.Combine(directory, "DiagnosticoFallaImgs");
                     string[] fotos = new string[4];
