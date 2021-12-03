@@ -115,7 +115,15 @@ namespace ApiDTC.Services
                     doc.Add(TablaEncabezado());
                     doc.Add(TablaInformacion());
                     doc.Add(TablaTipoFalla());
-                    doc.Add(TablaObservaciones());
+                    //doc.Add(TablaObservaciones());
+
+                    string textoDescripcion = _fichaTecnicaInfo.DescripcionFalla;
+                    AgregarObservaciones tablaDescripcion = new AgregarObservaciones(new ApiLogger(), textoDescripcion, "DESCRIPCIÓN DE LA FALLA REPORTADA:", _clavePlaza, "FichaTecnicaAtencionPdfCreation: TablaObservaciones", 5, 3);
+                    doc.Add(tablaDescripcion.TablaObservaciones());
+
+                    string textoInervencion = _fichaTecnicaInfo.Intervencion;
+                    AgregarObservaciones tablaIntervencion = new AgregarObservaciones(new ApiLogger(), textoInervencion, "SOLUCIÓN y/o INTERVENCIÓN REALIZADA PARA LA FALLA REPORTADA:", _clavePlaza, "FichaTecnicaAtencionPdfCreation: TablaObservaciones", 5, 3);
+                    doc.Add(tablaIntervencion.TablaObservaciones());
 
                     //PRUEBA IMÁGENES, CAMBIAR RUTA por la carpeta de DiagnosticoFallaImgs cuando  _fichaTecnicaInfo.TipoFalloId sea 2 o 3 codemcm
                     string directoryImgs = "";
