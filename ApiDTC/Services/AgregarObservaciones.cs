@@ -62,6 +62,9 @@ namespace ApiDTC.Services
                 CeldasVacias(10, table);
 
                 var celdaObservaciones = SeparacionObservaciones(_Contenido);
+                var chunk = new Chunk(Convert.ToString(celdaObservaciones));
+                float largo = chunk.GetWidthPoint();
+
                 int celdasTotalesObservaciones = 0;
                 foreach (var linea in celdaObservaciones)
                 {
@@ -106,7 +109,16 @@ namespace ApiDTC.Services
         private List<string> SeparacionObservaciones(string observaciones)
         {
             List<string> lineaObservaciones = new List<string>();
-            if (observaciones.Length <= 85)
+
+            var chunk = new Chunk(observaciones);
+            float largo = chunk.GetWidthPoint();
+
+            if (observaciones.Contains('\n'))
+            {
+                observaciones = observaciones.Replace("\n", " ");
+            }
+
+            if (largo <= 725)
             {
                 lineaObservaciones.Add(observaciones);
                 return lineaObservaciones;
@@ -115,7 +127,7 @@ namespace ApiDTC.Services
             string linea = string.Empty;
             for (int i = 0; i < observaciones.Length; i++)
             {
-                if (observaciones[i].Equals(',') || observaciones[i].Equals('.') || observaciones[i].Equals('.') || observaciones[i].Equals(':'))
+                if (observaciones[i].Equals(',') || observaciones[i].Equals('.') || observaciones[i].Equals(';') || observaciones[i].Equals(':'))
                 {
                     if (i < observaciones.Length - 1 && !observaciones[i + 1].Equals(' '))
                     {
@@ -124,13 +136,66 @@ namespace ApiDTC.Services
                     }
                 }
                 linea += observaciones[i];
-                if (linea.Length >= 85 && observaciones[i].Equals(' '))
+                var chunke = new Chunk(linea);
+                float large = chunke.GetWidthPoint();
+                if ( (large >= 725 && observaciones[i].Equals(' ') ) || observaciones.Length -1 == i ) 
                 {
-                    lineaObservaciones.Add(linea);
-                    linea = string.Empty;
+                    if (large > 725 && observaciones.Length - 1 == i)
+                    {
+                        string sobrante = string.Empty;
+                        for (int j = linea.Length - 1; j != 0; j--)
+                        {
+                            sobrante += linea[j];
+
+                            if (linea[j].Equals(' '))
+                            {
+                                char[] charReversible = sobrante.ToCharArray();
+                                Array.Reverse(charReversible);
+                                string siguiente = new string(charReversible);
+                                lineaObservaciones.Add(linea);
+                                linea = string.Empty;
+                                linea += siguiente;
+                                siguiente = string.Empty;
+                                sobrante = string.Empty;
+                                break;
+                            }
+                        }
+                    }
+                    else if (large > 725)
+                    {
+                        string sobrante = string.Empty;
+                        for (int j = linea.LastIndexOf(' '); j != 0; j--)
+                        {
+                            if (linea.LastIndexOf(' ') == j)
+                                continue;
+
+                            sobrante += linea[j + 1];
+
+                            if (linea[j].Equals(' '))
+                            {
+                                char[] charReversible = sobrante.ToCharArray();
+                                Array.Reverse(charReversible);
+                                string siguiente = new string(charReversible);
+                                lineaObservaciones.Add(linea);
+                                linea = string.Empty;
+                                linea += siguiente;
+                                if (observaciones.Length - 1 == i)
+                                    lineaObservaciones.Add(siguiente);
+                                siguiente = string.Empty;
+                                sobrante = string.Empty;
+                                break;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        lineaObservaciones.Add(linea);
+                        linea = string.Empty;
+                    }
                 }
             }
             lineaObservaciones.Add(linea);
+
 
             /*char[] separadores = new char[]{
                 ' ',
