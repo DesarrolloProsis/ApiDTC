@@ -166,7 +166,7 @@
                         string textoObservaciones = Convert.ToString(_tableHeader.Rows[0]["Observaciones"]);
                         AgregarObservaciones tabla = new AgregarObservaciones(new ApiLogger(), textoObservaciones, "Observaciones: ", _clavePlaza, "MantenimientoPdfCreation: TablaObservaciones", 5, 3);
                         //PdfPTable tablaObservacione = tabla.TablaObservaciones;
-                        tabla.TablaObservaciones().WriteSelectedRows(0, -1, 30, 220, cb);
+                        tabla.TablaObservaciones().WriteSelectedRows(0, -1, 30, 250, cb);
                         PdfPTable tablaFirmas = TablaFirmas();
                         tablaFirmas.WriteSelectedRows(0, -1, 30, 165, cb);
                         /*if(_tipo == 2) //Sin salto de página

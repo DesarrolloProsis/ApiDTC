@@ -62,8 +62,6 @@ namespace ApiDTC.Services
                 CeldasVacias(10, table);
 
                 var celdaObservaciones = SeparacionObservaciones(_Contenido);
-                var chunk = new Chunk(Convert.ToString(celdaObservaciones));
-                float largo = chunk.GetWidthPoint();
 
                 int celdasTotalesObservaciones = 0;
                 foreach (var linea in celdaObservaciones)
@@ -194,7 +192,8 @@ namespace ApiDTC.Services
                     }
                 }
             }
-            lineaObservaciones.Add(linea);
+            if(!linea.Equals(""))
+                lineaObservaciones.Add(linea);
 
 
             /*char[] separadores = new char[]{
