@@ -150,6 +150,7 @@ namespace ApiDTC.Services
                                 char[] charReversible = sobrante.ToCharArray();
                                 Array.Reverse(charReversible);
                                 string siguiente = new string(charReversible);
+                                linea = linea.TrimEnd(charReversible);
                                 lineaObservaciones.Add(linea);
                                 linea = string.Empty;
                                 linea += siguiente;
@@ -174,6 +175,7 @@ namespace ApiDTC.Services
                                 char[] charReversible = sobrante.ToCharArray();
                                 Array.Reverse(charReversible);
                                 string siguiente = new string(charReversible);
+                                linea = linea.TrimEnd(charReversible);
                                 lineaObservaciones.Add(linea);
                                 linea = string.Empty;
                                 linea += siguiente;
@@ -195,37 +197,6 @@ namespace ApiDTC.Services
             if(!linea.Equals(""))
                 lineaObservaciones.Add(linea);
 
-
-            /*char[] separadores = new char[]{
-                ' ',
-                ',',
-                '.'
-            };
-            var palabras = observaciones.Split(separadores);
-            List<string> palabrasSinVacio = new List<string>();
-            foreach(var palabra in palabras)
-            {
-                if(!string.IsNullOrEmpty(palabra))
-                    palabrasSinVacio.Add(palabra);
-            }
-            string linea = string.Empty;
-            foreach (var palabra in palabrasSinVacio)
-            {
-                if(!string.IsNullOrEmpty(palabra))
-                {
-                    linea += $"{palabra} ";
-                    if(linea.Length > 100)
-                    {
-                        lineaObservaciones.Add(linea);
-                        linea = string.Empty;
-                    }
-                    if(palabra == palabrasSinVacio[palabrasSinVacio.Count - 1] && linea.Length < 100)
-                    {
-                        lineaObservaciones.Add(linea);
-                        linea = string.Empty;
-                    }
-                }
-            }*/
             return lineaObservaciones;
         }
 
