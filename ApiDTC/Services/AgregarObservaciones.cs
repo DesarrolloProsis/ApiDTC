@@ -116,6 +116,11 @@ namespace ApiDTC.Services
                 observaciones = observaciones.Replace("\n", " ");
             }
 
+            if(observaciones.Contains("  "))
+            {
+                observaciones = observaciones.Replace("  ", " ");
+            }
+
             if (largo <= 725)
             {
                 lineaObservaciones.Add(observaciones);
@@ -141,6 +146,7 @@ namespace ApiDTC.Services
                     if (large > 725 && observaciones.Length - 1 == i)
                     {
                         string sobrante = string.Empty;
+                        int cuentaRecorte = 0;
                         for (int j = linea.Length - 1; j != 0; j--)
                         {
                             sobrante += linea[j];
@@ -150,19 +156,27 @@ namespace ApiDTC.Services
                                 char[] charReversible = sobrante.ToCharArray();
                                 Array.Reverse(charReversible);
                                 string siguiente = new string(charReversible);
-                                linea = linea.TrimEnd(charReversible);
+
+
+                                cuentaRecorte += 1;
+                                linea = linea.Remove(j, cuentaRecorte);
                                 lineaObservaciones.Add(linea);
+
                                 linea = string.Empty;
                                 linea += siguiente;
                                 siguiente = string.Empty;
                                 sobrante = string.Empty;
                                 break;
                             }
+                            cuentaRecorte += 1;
                         }
+                        cuentaRecorte = 0;
                     }
                     else if (large > 725)
                     {
                         string sobrante = string.Empty;
+
+                        int cuentaRecorte = 0;
                         for (int j = linea.LastIndexOf(' '); j != 0; j--)
                         {
                             if (linea.LastIndexOf(' ') == j)
@@ -175,17 +189,23 @@ namespace ApiDTC.Services
                                 char[] charReversible = sobrante.ToCharArray();
                                 Array.Reverse(charReversible);
                                 string siguiente = new string(charReversible);
-                                linea = linea.TrimEnd(charReversible);
+
+                                cuentaRecorte += 1;
+                                linea = linea.Remove(j, cuentaRecorte);
                                 lineaObservaciones.Add(linea);
+
                                 linea = string.Empty;
                                 linea += siguiente;
+
                                 if (observaciones.Length - 1 == i)
                                     lineaObservaciones.Add(siguiente);
                                 siguiente = string.Empty;
                                 sobrante = string.Empty;
                                 break;
                             }
+                            cuentaRecorte += 1;
                         }
+                        cuentaRecorte = 0;
                     }
                     else
                     {
