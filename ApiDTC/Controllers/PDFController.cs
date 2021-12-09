@@ -37,6 +37,7 @@
         #endregion
 
         [HttpGet("{clavePlaza}/{refNum}/{adminId}")]
+        [AllowAnonymous]
         public IActionResult GetPDF(string clavePlaza, string refNum, int adminId)
         {
             //TODO If getstore is null on
