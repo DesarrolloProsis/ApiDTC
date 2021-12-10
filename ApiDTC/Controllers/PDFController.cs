@@ -48,6 +48,8 @@
             {
                 
                 var dataSet = _db.GetStorePDF(clavePlaza, refNum, adminId);
+                if(dataSet.Tables[1].Rows[0]["ReferenceNumber"].ToString() == "EZ-21203")
+                    dataSet.Tables[3].Rows[0]["Modelo"] = "ST1000VX0008";
                 if (dataSet.Tables[0].Rows.Count == 0 || dataSet.Tables[1].Rows.Count == 0 || dataSet.Tables[2].Rows.Count == 0 || dataSet.Tables[3].Rows.Count == 0)
                     return NotFound("GetStorePdf retorna tabla vacía");
                 //0 = Nuevo, 1 = Firmado, 2 = Almacén
@@ -229,6 +231,8 @@
                     System.IO.File.Delete(path);
 
                 var dataSet = _db.GetStorePDF(clavePlaza, referenceNumber, adminId);
+                if (dataSet.Tables[1].Rows[0]["ReferenceNumber"].ToString() == "EZ-21203")
+                    dataSet.Tables[3].Rows[0]["Modelo"] = "ST1000VX0008";
                 if (dataSet.Tables[0].Rows.Count == 0 || dataSet.Tables[1].Rows.Count == 0 || dataSet.Tables[2].Rows.Count == 0 || dataSet.Tables[3].Rows.Count == 0)
                     return NotFound("GetStorePdf retorna tabla vacía");
                 PdfCreation pdf = new PdfCreation(clavePlaza, dataSet.Tables[0], dataSet.Tables[1], dataSet.Tables[2], dataSet.Tables[3], referenceNumber, new ApiLogger());
