@@ -7,6 +7,7 @@
     using System.Collections.Generic;
     using System.Data;
     using System.IO;
+    using System.Text;
 
     public class ReporteFotograficoPdfCreation
     {
@@ -241,19 +242,26 @@
                     AgregarObservaciones tabla = new AgregarObservaciones(new ApiLogger(), textoObservaciones, "Observaciones: ", _clavePlaza, "ReporteFotograficoPdfCreation: TablaObservaciones", 5, 3);
                     tabla.TablaObservaciones().WriteSelectedRows(0, -1, 30, 275, cb);
 
-                    //PdfPTable tablaObservaciones = TablaObservaciones();
-                    //tablaObservaciones.WriteSelectedRows(0, -1, 30, 275, cb);
+
                     PdfPTable tablaFirmas = TablaFirmas();
                     tablaFirmas.WriteSelectedRows(0, -1, 30, 180, cb);
-                    doc.Close();
-                    writer.Close();
-                    byte[] content = myMemoryStream.ToArray();
+                    //doc.Close();
+                    //writer.Close();
 
+                    byte[] content = myMemoryStream.ToArray();
 
                     using (FileStream fs = File.Create(path))
                     {
                         fs.Write(content, 0, (int)content.Length);
                     }
+
+                    VerificarPDF thepdf = new VerificarPDF();
+
+                    if (thepdf.IsPDFOk(path).Equals(false))
+                    {
+                        throw new PdfException();
+                    }
+
 
                 }
             }
@@ -262,6 +270,17 @@
                 if (System.IO.File.Exists(path))
                     System.IO.File.Delete(path);
                 _apiLogger.WriteLog(_clavePlaza, ex, "ReporteFotograficoPdfCreation: NewPdf", 2);
+                return new Response
+                {
+                    Message = $"Error: {ex.Message}.",
+                    Result = null
+                };
+            }
+            catch (PdfException ex)
+            {
+                if (System.IO.File.Exists(path))
+                    System.IO.File.Delete(path);
+                _apiLogger.WriteLog(_clavePlaza, ex, "ReporteFotograficoPdfCreation: NewPdf", 5);
                 return new Response
                 {
                     Message = $"Error: {ex.Message}.",
@@ -278,6 +297,43 @@
         {
             for (int i = 0; i < numeroCeldas; i++)
                 table.AddCell(new PdfPCell() { Border = 0 });
+        }
+        public string ReadPdfFile(string fileName)
+        {
+
+            if (File.Exists(fileName))
+            {
+                PdfReader pdfReader = new PdfReader(fileName);
+
+                for (int page = 1; page <= pdfReader.NumberOfPages; page++)
+                {
+                    continue;
+                }
+                pdfReader.Close();
+            }
+            return ("Ok");
+        }
+        public bool IsPDFOk(string fileName)
+        {
+            byte[] buffer = null;
+
+            FileStream fs = new FileStream(fileName, FileMode.Open, FileAccess.Read);
+            BinaryReader br = new BinaryReader(fs);
+            long numBytes = new FileInfo(fileName).Length;
+            buffer = br.ReadBytes((int)numBytes);
+
+            var enc = new ASCIIEncoding();
+            var header = enc.GetString(buffer);
+
+            if (buffer[0] == 37 && buffer[1] == 80 && buffer[2] == 68 && buffer[3] == 70 && 
+                    buffer[numBytes-2] ==70 && buffer[numBytes - 3] == 79 && buffer[numBytes - 4] == 69)
+            {
+                fs.Close();
+                return true;
+            }
+            fs.Close();
+            return false;
+
         }
 
         private IElement TablaEncabezado()
@@ -664,110 +720,6 @@
                 _apiLogger.WriteLog(_clavePlaza, ex, "MatenimientoPdfCreation: TablaInformacion", 3);
                 return null;
             }
-        }
-
-        private PdfPTable TablaObservaciones()
-        {
-            try
-            {
-                PdfPTable table = new PdfPTable(new float[] { 12.5f, 12.5f, 12.5f, 12.5f, 12.5f, 12.5f, 12.5f, 12.5f }) { WidthPercentage = 100f };
-                table.TotalWidth = 550;
-                CeldasVacias(24, table);
-
-
-                var colTextoObservaciones = new PdfPCell(new Phrase("Observaciones: ", letraoNegritaMediana)) { Border = 0, HorizontalAlignment = Element.ALIGN_LEFT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 1, Colspan = 2 };
-
-                table.AddCell(colTextoObservaciones);
-                CeldasVacias(14, table);
-
-                var celdaObservaciones = SeparacionObservaciones((_tipo == 1) ? Convert.ToString(_tableHeader.Rows[0]["Observaciones"]) : Convert.ToString(_tableHeader.Rows[0]["Observation"]));
-                int celdasTotalesObservaciones = 0;
-                foreach (var linea in celdaObservaciones)
-                {
-                    celdasTotalesObservaciones += 1;
-                    var celdaLinea = new PdfPCell(new Phrase(Convert.ToString(linea), letraNormalMediana)) { BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, BorderWidthBottom = 1, FixedHeight = 15, HorizontalAlignment = Element.ALIGN_JUSTIFIED, VerticalAlignment = Element.ALIGN_CENTER, Padding = 3, Colspan = 8 };
-                    table.AddCell(celdaLinea);
-                }
-                for (int i = 0; i < 4 - celdasTotalesObservaciones; i++)
-                {
-                    var celdaLinea = new PdfPCell(new Phrase("", letraNormalMediana)) { BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, BorderWidthBottom = 1, FixedHeight = 15, HorizontalAlignment = Element.ALIGN_JUSTIFIED, VerticalAlignment = Element.ALIGN_CENTER, Padding = 3, Colspan = 8 };
-                    table.AddCell(celdaLinea);
-                }
-                CeldasVacias(16, table);
-                return table;
-            }
-            catch (PdfException ex)
-            {
-                _apiLogger.WriteLog(_clavePlaza, ex, "ReporteFotograficoPdfCreation: TablaObservaciones", 5);
-                return null;
-            }
-            catch (Exception ex)
-            {
-                _apiLogger.WriteLog(_clavePlaza, ex, "ReporteFotograficoPdfCreation: TablaObservaciones", 3);
-                return null;
-            }
-        }
-
-        private List<string> SeparacionObservaciones(string observaciones)
-        {
-            List<string> lineaObservaciones = new List<string>();
-            if(observaciones.Length <= 85)
-            {
-                lineaObservaciones.Add(observaciones);
-                return lineaObservaciones;
-            }
-
-            string linea = string.Empty;
-            for (int i = 0; i < observaciones.Length; i++)
-            {
-                if (observaciones[i].Equals(',') || observaciones[i].Equals('.') || observaciones[i].Equals('.') || observaciones[i].Equals(':'))
-                {
-                    if (i < observaciones.Length - 1 && !observaciones[i + 1].Equals(' '))
-                    {
-                        linea += $"{observaciones[i]} ";
-                        continue;
-                    }
-                }
-                linea += observaciones[i];
-                if(linea.Length >= 85 && observaciones[i].Equals(' '))
-                {
-                    lineaObservaciones.Add(linea);
-                    linea = string.Empty;
-                }
-            }
-            lineaObservaciones.Add(linea);
-
-            /*char[] separadores = new char[]{
-                ' ',
-                ',',
-                '.'
-            };
-            var palabras = observaciones.Split(separadores);
-            List<string> palabrasSinVacio = new List<string>();
-            foreach(var palabra in palabras)
-            {
-                if(!string.IsNullOrEmpty(palabra))
-                    palabrasSinVacio.Add(palabra);
-            }
-            string linea = string.Empty;
-            foreach (var palabra in palabrasSinVacio)
-            {
-                if(!string.IsNullOrEmpty(palabra))
-                {
-                    linea += $"{palabra} ";
-                    if(linea.Length > 100)
-                    {
-                        lineaObservaciones.Add(linea);
-                        linea = string.Empty;
-                    }
-                    if(palabra == palabrasSinVacio[palabrasSinVacio.Count - 1] && linea.Length < 100)
-                    {
-                        lineaObservaciones.Add(linea);
-                        linea = string.Empty;
-                    }
-                }
-            }*/
-            return lineaObservaciones;
         }
 
         private PdfPTable TablaFirmas()
