@@ -262,7 +262,6 @@
                         throw new PdfException();
                     }
 
-
                 }
             }
             catch (IOException ex)
@@ -297,43 +296,6 @@
         {
             for (int i = 0; i < numeroCeldas; i++)
                 table.AddCell(new PdfPCell() { Border = 0 });
-        }
-        public string ReadPdfFile(string fileName)
-        {
-
-            if (File.Exists(fileName))
-            {
-                PdfReader pdfReader = new PdfReader(fileName);
-
-                for (int page = 1; page <= pdfReader.NumberOfPages; page++)
-                {
-                    continue;
-                }
-                pdfReader.Close();
-            }
-            return ("Ok");
-        }
-        public bool IsPDFOk(string fileName)
-        {
-            byte[] buffer = null;
-
-            FileStream fs = new FileStream(fileName, FileMode.Open, FileAccess.Read);
-            BinaryReader br = new BinaryReader(fs);
-            long numBytes = new FileInfo(fileName).Length;
-            buffer = br.ReadBytes((int)numBytes);
-
-            var enc = new ASCIIEncoding();
-            var header = enc.GetString(buffer);
-
-            if (buffer[0] == 37 && buffer[1] == 80 && buffer[2] == 68 && buffer[3] == 70 && 
-                    buffer[numBytes-2] ==70 && buffer[numBytes - 3] == 79 && buffer[numBytes - 4] == 69)
-            {
-                fs.Close();
-                return true;
-            }
-            fs.Close();
-            return false;
-
         }
 
         private IElement TablaEncabezado()

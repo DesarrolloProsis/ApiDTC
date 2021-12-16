@@ -161,6 +161,12 @@ namespace ApiDTC.Services
                     {
                         fs.Write(content, 0, (int)content.Length);
                     }
+
+                    VerificarPDF thepdf = new VerificarPDF();
+                    if (thepdf.IsPDFOk(path).Equals(false))
+                    {
+                        throw new PdfException();
+                    }
                 }
             }
             catch (IOException ex)
@@ -168,6 +174,17 @@ namespace ApiDTC.Services
                 if (System.IO.File.Exists(path))
                     System.IO.File.Delete(path);
                 _apiLogger.WriteLog(_clavePlaza, ex, "FichaTecnicaAtencionPdfCreation: NewPdf", 2);
+                return new Response
+                {
+                    Message = $"Error: {ex.Message}.",
+                    Result = null
+                };
+            }
+            catch (PdfException ex)
+            {
+                if (System.IO.File.Exists(path))
+                    System.IO.File.Delete(path);
+                _apiLogger.WriteLog(_clavePlaza, ex, "ReporteFotograficoPdfCreation: NewPdf", 5);
                 return new Response
                 {
                     Message = $"Error: {ex.Message}.",
