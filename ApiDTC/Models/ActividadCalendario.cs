@@ -22,7 +22,7 @@ namespace ApiDTC.Models
 
         public int FrequencyId { get; set; }
 
-
+        public int AdminId { get; set; }
 
     }
     

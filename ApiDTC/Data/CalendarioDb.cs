@@ -101,6 +101,8 @@ namespace ApiDTC.Data
                                 AdminId = dtcView.AdminId,
                                 SquareId = dtcView.SquareId,
                                 ReferenceNumber = dtcView.ReferenceNumber,
+                                UserId = dtcView.UserId
+                                
                             };
                             //D:\BitacoraDesarrollo\TLA\Reportes\TLA-DF-21146
                             string path = $@"{disk}:\{folder}\{dtcView.ReferenceNumber.Split('-')[0].ToUpper()}\Reportes\{dtcView.ReferenceNumber}\{dtcView.ReferenceNumber}-Escaneado.pdf";
@@ -185,8 +187,9 @@ namespace ApiDTC.Data
                             cmd.Parameters.Add("@Day", SqlDbType.Int).Value = actividad.Day;
                             cmd.Parameters.Add("@Month", SqlDbType.Int).Value = actividad.Month;
                             cmd.Parameters.Add("@Year", SqlDbType.Int).Value = actividad.Year;
-                            cmd.Parameters.Add("@FrequencyId", SqlDbType.Int).Value = actividad.FrequencyId;                                                        
-                            
+                            cmd.Parameters.Add("@FrequencyId", SqlDbType.Int).Value = actividad.FrequencyId;
+                            cmd.Parameters.Add("@AdminId", SqlDbType.Int).Value = actividad.AdminId;
+
                             var storedResult = _sqlResult.Post(clavePlaza, cmd, sql, "InsertActivity");
                             if (storedResult.SqlResult !=  "Insertado"){
                                 actividadesNotInsert.Add(new String(storedResult.SqlMessage.ToCharArray()));                               
