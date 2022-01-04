@@ -17,24 +17,30 @@
     public class PDFController : ControllerBase
     {
         #region Attributes
+
         private readonly PdfConsultasDb _db;
 
         private readonly ApiLogger _apiLogger;
-        
+
         private readonly string _disk;
 
         private readonly string _folder;
-        #endregion
+        private IConfiguration configuration;
+
+        #endregion Attributes
 
         #region Constructor
+
         public PDFController(PdfConsultasDb db, IConfiguration configuration)
         {
             this._disk = $@"{Convert.ToString(configuration.GetValue<string>("Path:Disk"))}";
             this._folder = $"{Convert.ToString(configuration.GetValue<string>("Path:Folder"))}";
+            this.configuration = configuration;
             this._db = db ?? throw new ArgumentNullException(nameof(db));
             _apiLogger = new ApiLogger();
         }
-        #endregion
+
+        #endregion Constructor
 
         [HttpGet("{clavePlaza}/{refNum}/{adminId}")]
         [AllowAnonymous]
@@ -42,23 +48,22 @@
         {
             //TODO If getstore is null on
             var get = _db.SearchReference(clavePlaza, refNum);
-            if(get.Result == null)
+            if (get.Result == null)
                 return NotFound(get);
             else
             {
-                
                 var dataSet = _db.GetStorePDF(clavePlaza, refNum, adminId);
-                if(dataSet.Tables[1].Rows[0]["ReferenceNumber"].ToString() == "EZ-21203")
+                if (dataSet.Tables[1].Rows[0]["ReferenceNumber"].ToString() == "EZ-21203")
                     dataSet.Tables[3].Rows[0]["Modelo"] = "ST1000VX0008";
                 if (dataSet.Tables[0].Rows.Count == 0 || dataSet.Tables[1].Rows.Count == 0 || dataSet.Tables[2].Rows.Count == 0 || dataSet.Tables[3].Rows.Count == 0)
                     return NotFound("GetStorePdf retorna tabla vacía");
                 //0 = Nuevo, 1 = Firmado, 2 = Almacén
                 PdfCreation pdf = new PdfCreation(clavePlaza, dataSet.Tables[0], dataSet.Tables[1], dataSet.Tables[2], dataSet.Tables[3], refNum, new ApiLogger());
-                var pdfResult = pdf.NewPdf($@"{this._disk}:\{this._folder}", 0);
+                var pdfResult = pdf.NewPdf($@"{this._disk}:\{this._folder}", 0, configuration);
                 return File(new FileStream(pdfResult.Result.ToString(), FileMode.Open, FileAccess.Read), "application/pdf");
             }
         }
-        
+
         //Temporal para dtc con metraje(Alex) push
         [HttpGet("Metros/{clavePlaza}/{refNum}/{inicialRef}")]
         public IActionResult GetPDFMetraje(string clavePlaza, string refNum, string inicialRef)
@@ -69,13 +74,12 @@
                 return NotFound(get);
             else
             {
-
                 var dataSet = _db.GetStorePDFMetraje(clavePlaza, refNum, inicialRef);
                 if (dataSet.Tables[0].Rows.Count == 0 || dataSet.Tables[1].Rows.Count == 0 || dataSet.Tables[2].Rows.Count == 0 || dataSet.Tables[3].Rows.Count == 0)
                     return NotFound("GetStorePdf retorna tabla vacía");
                 //0 = Nuevo, 1 = Firmado, 2 = Almacén
                 PdfCreation pdf = new PdfCreation(clavePlaza, dataSet.Tables[0], dataSet.Tables[1], dataSet.Tables[2], dataSet.Tables[3], refNum, new ApiLogger());
-                var pdfResult = pdf.NewPdf($@"{this._disk}:\{this._folder}",0);
+                var pdfResult = pdf.NewPdf($@"{this._disk}:\{this._folder}", 0, configuration);
                 return File(new FileStream(pdfResult.Result.ToString(), FileMode.Open, FileAccess.Read), "application/pdf");
             }
         }
@@ -93,7 +97,7 @@
                 if (dataSet.Tables[0].Rows.Count == 0 || dataSet.Tables[1].Rows.Count == 0 || dataSet.Tables[2].Rows.Count == 0 || dataSet.Tables[3].Rows.Count == 0)
                     return NotFound("GetStorePdfOpen retorna tabla vacía");
                 PdfCreation pdf = new PdfCreation(clavePlaza, dataSet.Tables[0], dataSet.Tables[1], dataSet.Tables[2], dataSet.Tables[3], refNum, new ApiLogger());
-                var pdfResult = pdf.NewPdf($@"{this._disk}:\{this._folder}",0);
+                var pdfResult = pdf.NewPdf($@"{this._disk}:\{this._folder}", 0, configuration);
                 return File(new FileStream(pdfResult.Result.ToString(), FileMode.Open, FileAccess.Read), "application/pdf");
             }
         }
@@ -101,9 +105,9 @@
         [HttpPost("PdfSellado/{clavePlaza}/{referenceNumber}/{bandera}")]
         public ActionResult<Response> PdfSellado(string clavePlaza, [FromForm(Name = "file")] IFormFile file, string referenceNumber, bool bandera)
         {
-            if(file.Length > 0 || file != null)
+            if (file.Length > 0 || file != null)
             {
-                if(file.FileName.EndsWith(".pdf") || file.FileName.EndsWith(".PDF"))
+                if (file.FileName.EndsWith(".pdf") || file.FileName.EndsWith(".PDF"))
                 {
                     string path = $@"{this._disk}:\{this._folder}\{clavePlaza}\DTC\{referenceNumber}", filename;
                     try
@@ -116,7 +120,7 @@
                         var fs = new FileStream(Path.Combine(path, filename), FileMode.Create);
                         file.CopyTo(fs);
                         fs.Close();
-                        if(bandera)
+                        if (bandera)
                         {
                             var get = _db.SelladoReporte(clavePlaza, referenceNumber);
                             if (get.SqlResult == null)
@@ -124,7 +128,7 @@
                             return Ok(path);
                         }
                         else
-                            return Ok(Path.Combine(path,filename));
+                            return Ok(Path.Combine(path, filename));
                     }
                     catch (IOException ex)
                     {
@@ -140,8 +144,8 @@
         [HttpGet("PdfExists/{clavePlaza}/{referenceNumber}")]
         public ActionResult PdfExists(string clavePlaza, string referenceNumber)
         {
-            string path =  $@"{this._disk}:\{this._folder}\{clavePlaza}\DTC\{referenceNumber}\DTC-{referenceNumber}-Sellado.pdf";
-            if(System.IO.File.Exists((path)))
+            string path = $@"{this._disk}:\{this._folder}\{clavePlaza}\DTC\{referenceNumber}\DTC-{referenceNumber}-Sellado.pdf";
+            if (System.IO.File.Exists((path)))
                 return Ok();
             return NotFound();
         }
@@ -179,8 +183,7 @@
 
         [HttpGet("GetPdfSellado/{clavePlaza}/{referenceNumber}")]
         public IActionResult GetPdfSellado(string clavePlaza, string referenceNumber)
-        {            
-            
+        {
             string path = $@"{this._disk}:\{this._folder}\{clavePlaza}\DTC\{referenceNumber}\DTC-{referenceNumber}-Sellado.pdf";
             try
             {
@@ -208,7 +211,7 @@
                         return NotFound("GetStorePdf retorna tabla vacía");
                     PdfCreation pdf = new PdfCreation(clavePlaza, dataSet.Tables[0], dataSet.Tables[1], dataSet.Tables[2], dataSet.Tables[3], referenceNumber, new ApiLogger());
                     //0 = Nuevo, 1 = Firmado, 2 = Almacén
-                    var pdfResult = pdf.NewPdf($@"{this._disk}:\{this._folder}", 1);
+                    var pdfResult = pdf.NewPdf($@"{this._disk}:\{this._folder}", 1, configuration);
                     return File(new FileStream(pdfResult.Result.ToString(), FileMode.Open, FileAccess.Read), "application/pdf");
                 }
                 return NotFound("No existe el archivo");
@@ -223,7 +226,6 @@
         [HttpGet("GetPdfFirmado/{clavePlaza}/{referenceNumber}/{adminId}")]
         public IActionResult GetPdfFirmado(string clavePlaza, string referenceNumber, int adminId)
         {
-
             string path = $@"{this._disk}:\{this._folder}\{clavePlaza}\DTC\{referenceNumber}\DTC-{referenceNumber}-Finalizado.pdf";
             try
             {
@@ -237,7 +239,7 @@
                     return NotFound("GetStorePdf retorna tabla vacía");
                 PdfCreation pdf = new PdfCreation(clavePlaza, dataSet.Tables[0], dataSet.Tables[1], dataSet.Tables[2], dataSet.Tables[3], referenceNumber, new ApiLogger());
                 //0 = Nuevo, 1 = Firmado, 2 = Almacén
-                var pdfResult = pdf.NewPdf($@"{this._disk}:\{this._folder}", 1);
+                var pdfResult = pdf.NewPdf($@"{this._disk}:\{this._folder}", 1, configuration);
                 return File(new FileStream(pdfResult.Result.ToString(), FileMode.Open, FileAccess.Read), "application/pdf");
             }
             catch (IOException ex)
@@ -246,7 +248,7 @@
                 return NotFound(ex.ToString());
             }
         }
-        
+
         [HttpGet("FirmarReporte/{clavePlaza}/{refNum}/{adminId}")]
         public IActionResult FirmarReporte(string clavePlaza, string refNum, int adminId)
         {
@@ -260,7 +262,7 @@
                     return NotFound("GetStorePdf retorna tabla vacía");
                 PdfCreation pdf = new PdfCreation(clavePlaza, dataSet.Tables[0], dataSet.Tables[1], dataSet.Tables[2], dataSet.Tables[3], refNum, new ApiLogger());
                 //0 = Nuevo, 1 = Firmado, 2 = Almacén
-                var pdfResult = pdf.NewPdf($@"{this._disk}:\{this._folder}", 1);
+                var pdfResult = pdf.NewPdf($@"{this._disk}:\{this._folder}", 1, configuration);
                 return File(new FileStream(pdfResult.Result.ToString(), FileMode.Open, FileAccess.Read), "application/pdf");
             }
         }
@@ -278,7 +280,7 @@
                     return NotFound("GetStorePdf retorna tabla vacía");
                 //0 = Nuevo, 1 = Firmado, 2 = Almacén
                 PdfCreation pdf = new PdfCreation(clavePlaza, dataSet.Tables[0], dataSet.Tables[1], dataSet.Tables[2], dataSet.Tables[3], refNum, new ApiLogger());
-                var pdfResult = pdf.NewPdf($@"{this._disk}:\{this._folder}",2);
+                var pdfResult = pdf.NewPdf($@"{this._disk}:\{this._folder}", 2, configuration);
                 return File(new FileStream(pdfResult.Result.ToString(), FileMode.Open, FileAccess.Read), "application/pdf");
             }
         }
@@ -336,7 +338,7 @@
              * 1 - TLA-DF-21181-06-Diagnostico
              * 2 - TLA-DF-21181-06-FichaTecnica
              */
-            string path="";
+            string path = "";
             if (Tipo == 1)
             {
                 path = $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\Reportes\{reference}\{reference}-DiagnosticoSellado.pdf";

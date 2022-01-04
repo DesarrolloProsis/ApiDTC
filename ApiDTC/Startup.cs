@@ -53,7 +53,8 @@ namespace ApiDTC
             services.AddScoped<ReporteFotograficoDB>();
             services.AddScoped<ComentarioDb>();
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
-                options.TokenValidationParameters = new TokenValidationParameters{
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
                     ValidateIssuer = false,
                     ValidateAudience = false,
                     ValidateLifetime = true,
@@ -61,7 +62,7 @@ namespace ApiDTC
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JWT:key"])),
                     ClockSkew = TimeSpan.Zero
                 });
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);        
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

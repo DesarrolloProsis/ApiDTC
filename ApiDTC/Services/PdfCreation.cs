@@ -4,9 +4,11 @@ namespace ApiDTC.Services
     using System.Data;
     using System.Globalization;
     using System.IO;
+    using ApiDTC.Data;
     using ApiDTC.Models;
     using iTextSharp.text;
     using iTextSharp.text.pdf;
+    using Microsoft.Extensions.Configuration;
 
     public class PdfCreation
     {
@@ -86,7 +88,7 @@ namespace ApiDTC.Services
 
         #region Methods
 
-        public Response NewPdf(string folder, int operacion)
+        public Response NewPdf(string folder, int operacion, IConfiguration configuration)
         {
             string directory = $@"{folder}\{_clavePlaza.ToUpper()}\DTC\{_refNum}", filename;
             if (!Directory.Exists(directory))
@@ -150,7 +152,7 @@ namespace ApiDTC.Services
                     doc.Add(new Phrase(".", letritasMiniMini));
                     doc.Add(tablaEstatica());
                     doc.Add(new Phrase(".", letritasMiniMini));
-                    doc.Add(tablaFinal(operacion));
+                    doc.Add(tablaFinal(operacion, configuration));
                     doc.Add(new Phrase("\n"));
                     doc.Add(new Phrase("\n"));
                     doc.Close();
@@ -183,22 +185,27 @@ namespace ApiDTC.Services
             }
         }
 
-        private IElement tablaFinal(int op)
+        private IElement tablaFinal(int op, IConfiguration configuration)
         {
             var tablaFinal = new PdfPTable(new float[] { 40f, 7f, 34f, 7f, 26f }) { WidthPercentage = 100f };
             //Aqui poner el objeto con los datos de la autorizacion...
+            var tablaAu = new AutorizacionEntity(configuration).GetPieAutorizacion();
+            var fecha = Convert.ToDateTime(_tableDTCData.Rows[0]["ElaborationDate"]).ToString("dd/MM/yyyy");
+            Console.WriteLine(Convert.ToDateTime(_tableDTCData.Rows[0]["ElaborationDate"]).ToString("dd/MM/yyyy"));
+            Console.WriteLine(tablaAu.NameAutorizacion);
+            Console.WriteLine(tablaAu.LabelAutorizacion);
             var innerTable = new PdfPTable(1);
             var colAutorizacion = new PdfPCell(new Phrase("AUTORIZACIÓN TÉCNICA Y COMERCIAL", letraNormalChica)) { HorizontalAlignment = Element.ALIGN_CENTER, Border = 0, Padding = 2 };
             PdfPCell colFirma;
             if (op != 0)
             {
-                iTextSharp.text.Image firma = iTextSharp.text.Image.GetInstance($@"{System.Environment.CurrentDirectory}\Media\firma2022.png");
+                iTextSharp.text.Image firma = iTextSharp.text.Image.GetInstance($@"{System.Environment.CurrentDirectory}" + $@"{tablaAu.FirmaImagen}");
                 firma.ScaleAbsolute(35f, 40f);
                 colFirma = new PdfPCell(firma) { HorizontalAlignment = Element.ALIGN_CENTER, Border = 0, Padding = 2 };
             }
             else
                 colFirma = new PdfPCell(new Phrase("", letraNormalChica)) { FixedHeight = 20f, HorizontalAlignment = Element.ALIGN_CENTER, Border = 0, Padding = 2 };
-            var colNombreDirector = new PdfPCell(new Phrase("Gerente de Servicio\nArq. Rocio Manzanera Sánchez", letraNormalChica)) { HorizontalAlignment = Element.ALIGN_CENTER, Border = 0, Padding = 2 };
+            var colNombreDirector = new PdfPCell(new Phrase(tablaAu.LabelAutorizacion + "\n" + tablaAu.NameAutorizacion, letraNormalChica)) { HorizontalAlignment = Element.ALIGN_CENTER, Border = 0, Padding = 2 };
             innerTable.AddCell(colAutorizacion);
             innerTable.AddCell(colFirma);
             innerTable.AddCell(colNombreDirector);
