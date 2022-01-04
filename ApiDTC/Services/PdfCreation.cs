@@ -189,11 +189,12 @@ namespace ApiDTC.Services
         {
             var tablaFinal = new PdfPTable(new float[] { 40f, 7f, 34f, 7f, 26f }) { WidthPercentage = 100f };
             //Aqui poner el objeto con los datos de la autorizacion...
-            var tablaAu = new AutorizacionEntity(configuration).GetPieAutorizacion();
-            var fecha = Convert.ToDateTime(_tableDTCData.Rows[0]["ElaborationDate"]).ToString("dd/MM/yyyy");
-            Console.WriteLine(Convert.ToDateTime(_tableDTCData.Rows[0]["ElaborationDate"]).ToString("dd/MM/yyyy"));
-            Console.WriteLine(tablaAu.NameAutorizacion);
-            Console.WriteLine(tablaAu.LabelAutorizacion);
+            string fecha = Convert.ToDateTime(_tableDTCData.Rows[0]["ElaborationDate"]).ToString("dd/MM/yyyy");
+            var tablaAu = new AutorizacionEntity(configuration).GetPieAutorizacion(fecha);
+
+            //Console.WriteLine(Convert.ToDateTime(_tableDTCData.Rows[0]["ElaborationDate"]).ToString("dd/MM/yyyy"));
+            //Console.WriteLine(tablaAu.NameAutorizacion);
+            //Console.WriteLine(tablaAu.LabelAutorizacion);
             var innerTable = new PdfPTable(1);
             var colAutorizacion = new PdfPCell(new Phrase("AUTORIZACIÓN TÉCNICA Y COMERCIAL", letraNormalChica)) { HorizontalAlignment = Element.ALIGN_CENTER, Border = 0, Padding = 2 };
             PdfPCell colFirma;

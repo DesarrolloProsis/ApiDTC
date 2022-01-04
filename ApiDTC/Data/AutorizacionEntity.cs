@@ -18,7 +18,7 @@ namespace ApiDTC.Data
             _connectionString = configuration.GetConnectionString("defaultConnection");
         }
 
-        public Autorizacion GetPieAutorizacion()
+        public Autorizacion GetPieAutorizacion(string fecha)
         {
             Autorizacion entidad = new Autorizacion();
             try
@@ -29,6 +29,7 @@ namespace ApiDTC.Data
                     SqlCommand cmd = new SqlCommand(spName, conn);
                     conn.Open();
                     cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.Add("@fecha", SqlDbType.Date).Value = Convert.ToDateTime(fecha);
                     SqlDataReader dr = cmd.ExecuteReader();
                     if (dr.HasRows)
                     {
