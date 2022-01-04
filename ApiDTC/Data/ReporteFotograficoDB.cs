@@ -10,35 +10,39 @@
     public class ReporteFotograficoDB
     {
         #region Attributes
+
         private readonly string _connectionString;
 
         private readonly ApiLogger _apiLogger;
 
         private readonly SqlResult _sqlResult;
-        #endregion
+
+        #endregion Attributes
 
         #region Constructor
+
         public ReporteFotograficoDB(IConfiguration configuration, ApiLogger apiLogger, SqlResult sqlResult)
         {
             _sqlResult = sqlResult;
             _apiLogger = apiLogger;
             _connectionString = configuration.GetConnectionString("defaultConnection");
         }
-        #endregion
+
+        #endregion Constructor
 
         #region Methods
+
         public DataSet GetStorePDF(string clavePlaza, string referenceNumber)
         {
             try
             {
                 using (SqlConnection sql = new SqlConnection(_connectionString))
                 {
-                    //spPhotoReport DEBE TRAER EL DIAGNOSTICO 
+                    //spPhotoReport DEBE TRAER EL DIAGNOSTICO
                     using (SqlCommand cmd = new SqlCommand("dbo.spPhotoReport", sql))
                     {
                         SqlDataAdapter sqlDataAdapter = new SqlDataAdapter();
                         DataSet dataSet = new DataSet();
-
 
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.Add("@ReferenceNumber", SqlDbType.NVarChar).Value = referenceNumber;
@@ -71,7 +75,6 @@
                         SqlDataAdapter sqlDataAdapter = new SqlDataAdapter();
                         DataSet dataSet = new DataSet();
 
-
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.Add("@ReferenceNumber", SqlDbType.NVarChar).Value = referenceNumber;
 
@@ -91,6 +94,7 @@
                 return null;
             }
         }
-        #endregion
+
+        #endregion Methods
     }
 }
