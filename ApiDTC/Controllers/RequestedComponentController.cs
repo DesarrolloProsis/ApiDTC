@@ -26,18 +26,34 @@
         #endregion
 
         //[HttpPost("{flag}")]
-        [HttpPost("{clavePlaza}/{flag}")]
-        public ActionResult<Response> Post(string clavePlaza, [FromBody] List<RequestedComponent> requestedComponent, bool flag)
+        [HttpPost("{clavePlaza}/{flag}/{elementosEnviados}")]
+        public ActionResult<Response> Post(string clavePlaza, [FromBody] List<RequestedComponent> requestedComponent, bool flag, int elementosEnviados)
         {
-            if(ModelState.IsValid)
+            try
             {
-                var get = _db.PostRequestedComponent(clavePlaza, requestedComponent, flag);
-                if(get.Result == null)
-                    return BadRequest(get);
+                if (requestedComponent.Count() == elementosEnviados)
+                {
+                    if (ModelState.IsValid)
+                    {
+                        var get = _db.PostRequestedComponent(clavePlaza, requestedComponent, flag);
+                        if (get.Result == null)
+                            return BadRequest(get);
+                        else
+                            return Ok(get);
+                    }
+                    return BadRequest(ModelState);
+                }
                 else
-                    return Ok(get);
+                {
+                    return BadRequest();
+                }
             }
-            return BadRequest(ModelState);
+            catch (Exception ex)
+            {
+                Log.Logs log = new Log.Logs();
+                log.CreateFile(this, ex);
+                return BadRequest();
+            }
         }
 
         //[HttpPost("Open/{flag}")]
