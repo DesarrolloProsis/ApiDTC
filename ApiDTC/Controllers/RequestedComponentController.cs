@@ -25,32 +25,55 @@
         }
         #endregion
 
+        Log.Logs log = new Log.Logs();
+        int contadorPartidas = 0, contadorComponentes = 0;
+
         //[HttpPost("{flag}")]
-        [HttpPost("{clavePlaza}/{flag}/{elementosEnviados}")]
-        public ActionResult<Response> Post(string clavePlaza, [FromBody] List<RequestedComponent> requestedComponent, bool flag, int elementosEnviados)
+        [HttpPost("{clavePlaza}/{flag}/{numPartidas}/{numComponentes}")]
+        public ActionResult<Response> Post(string clavePlaza, [FromBody] List<RequestedComponent> requestedComponent, bool flag, int numPartidas, int numComponentes)
         {
             try
             {
-                if (requestedComponent.Count() == elementosEnviados)
+                foreach (var item in requestedComponent)
                 {
-                    if (ModelState.IsValid)
+                    if (item.IntPartida != 0)
                     {
-                        var get = _db.PostRequestedComponent(clavePlaza, requestedComponent, flag);
-                        if (get.Result == null)
-                            return BadRequest(get);
-                        else
-                            return Ok(get);
+                        contadorPartidas = contadorPartidas + item.IntPartida;
                     }
-                    return BadRequest(ModelState);
+                    else if (item.ComponentsStockId != 0)
+                    {
+                        contadorComponentes = contadorComponentes + item.ComponentsStockId;
+                    }
+                }
+
+                if (contadorPartidas == numPartidas)
+                {
+                    if (contadorComponentes == numComponentes)
+                    {
+                        if (ModelState.IsValid)
+                        {
+                            var get = _db.PostRequestedComponent(clavePlaza, requestedComponent, flag);
+                            if (get.Result == null)
+                                return BadRequest(get);
+                            else
+                                return Ok(get);
+                        }
+                        return BadRequest(ModelState);
+                    }
+                    else
+                    {
+                        log.CreateFileNoError(this, "El numero de componentes no coinciden con el numero de componentes enviados, Numeros de componentes: " + contadorComponentes + " Numero de componentes enviados: " + numComponentes);
+                        return BadRequest();
+                    }
                 }
                 else
                 {
+                    log.CreateFileNoError(this, "El numero de partidas no coinciden con el numero de partidas enviadas, Partidas enviadas: " + contadorPartidas + " Numero de partidas enviadas: " + numPartidas);
                     return BadRequest();
                 }
             }
             catch (Exception ex)
             {
-                Log.Logs log = new Log.Logs();
                 log.CreateFile(this, ex);
                 return BadRequest();
             }
