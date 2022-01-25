@@ -27,6 +27,7 @@
 
         Log.Logs log = new Log.Logs();
         int contadorPartidas = 0, contadorComponentes = 0;
+        int i = 1;
 
         //[HttpPost("{flag}")]
         [HttpPost("{clavePlaza}/{flag}/{numPartidas}/{numComponentes}")]
@@ -35,14 +36,16 @@
             try
             {
                 foreach (var item in requestedComponent)
-                {
-                    if (item.IntPartida != 0)
-                    {
-                        contadorPartidas = contadorPartidas + item.IntPartida;
+                {                    
+                    if (item.IntPartida == i)
+                    {                        
+                        contadorPartidas = item.IntPartida;
+                        i++;
                     }
-                    else if (item.ComponentsStockId != 0)
+
+                    if (requestedComponent.Count() != 0)
                     {
-                        contadorComponentes = contadorComponentes + item.ComponentsStockId;
+                        contadorComponentes++;
                     }
                 }
 
