@@ -81,7 +81,7 @@
                                 Result = null
                             };
                         }
-                    }
+                    }                   
 
                     foreach (var item in requestedComponent)
                     {
@@ -137,7 +137,7 @@
                         Message = "Ok",
                         Result = requestedComponent,
                         Rows = requestedComponent.Count
-                    };
+                    };                    
                 }
             }
             catch (SqlException ex)
