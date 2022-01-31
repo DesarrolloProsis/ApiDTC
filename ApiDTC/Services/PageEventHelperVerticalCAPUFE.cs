@@ -115,7 +115,6 @@ namespace ApiDTC.Services
             base.OnStartPage(writer, document);
             Rectangle pageSize = document.PageSize;
             int pageN = writer.PageNumber;
-            Chapter chapter = new Chapter(0);
 
             if (Title != string.Empty)
             {
