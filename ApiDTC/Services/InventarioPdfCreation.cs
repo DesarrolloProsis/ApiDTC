@@ -65,11 +65,6 @@ namespace ApiDTC.Services
             if (!Directory.Exists(directory))
             {
                 Directory.CreateDirectory(directory);
-                //return new Response
-                //{
-                //    Message = "Error: No existe el directorio",
-                //    Result = null
-                //};
             }
 
             filename = $"Reporte Almacén.pdf";

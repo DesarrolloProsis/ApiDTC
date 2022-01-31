@@ -1,16 +1,11 @@
 ﻿using iTextSharp.text;
 using iTextSharp.text.pdf;
-using Microsoft.AspNetCore.Hosting.Internal;
-using Microsoft.AspNetCore.Http;
 using System;
 using System.Data;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace ApiDTC.Services
 {
-    public class PageEventHelperVerticalAnexo : PageEventHelper
+    public class PageEventHelperVerticalAnexo : PdfPageEventHelper
     {
         // This is the contentbyte object of the writer
         PdfContentByte cb;
@@ -53,7 +48,33 @@ namespace ApiDTC.Services
             set { _FooterFont = value; }
         }
         #endregion
+
+        #region BaseFont
+        public static BaseFont NegritaGrande = BaseFont.CreateFont(BaseFont.HELVETICA, BaseFont.WINANSI, true);
+        public static BaseFont NegritaChica = BaseFont.CreateFont(BaseFont.HELVETICA, BaseFont.WINANSI, true);
+        public static BaseFont NegritaMediana = BaseFont.CreateFont(BaseFont.HELVETICA, BaseFont.WINANSI, true);
+        public static BaseFont NormalMediana = BaseFont.CreateFont(BaseFont.HELVETICA, BaseFont.WINANSI, true);
+        public static BaseFont NormalChica = BaseFont.CreateFont(BaseFont.HELVETICA, BaseFont.WINANSI, true);
+        public static BaseFont fuenteMini = BaseFont.CreateFont(BaseFont.HELVETICA, BaseFont.WINANSI, true);
+        #endregion
+        #region iText.Font
+        public static iTextSharp.text.Font letraoNegritaGrande = new iTextSharp.text.Font(NegritaGrande, 11f, iTextSharp.text.Font.BOLD, BaseColor.Black);
+        public static iTextSharp.text.Font letraoNegritaMediana = new iTextSharp.text.Font(NegritaMediana, 9f, iTextSharp.text.Font.BOLD, BaseColor.Black);
+        public static iTextSharp.text.Font letraoNegritaChica = new iTextSharp.text.Font(NegritaChica, 8f, iTextSharp.text.Font.BOLD, BaseColor.Black);
+        public static iTextSharp.text.Font letraoNormalChicaFirmas = new iTextSharp.text.Font(NormalChica, 6f, iTextSharp.text.Font.BOLD, BaseColor.Black);
+        public static iTextSharp.text.Font letraNormalMediana = new iTextSharp.text.Font(NormalMediana, 9f, iTextSharp.text.Font.NORMAL, BaseColor.Black);
+        public static iTextSharp.text.Font letraNormalChica = new iTextSharp.text.Font(NormalChica, 8f, iTextSharp.text.Font.NORMAL, BaseColor.Black);
+        public static iTextSharp.text.Font letritasMini = new iTextSharp.text.Font(fuenteMini, 6f, iTextSharp.text.Font.NORMAL, BaseColor.Black);
+        #endregion
+
         // we override the onOpenDocument method
+
+        public void CeldasVacias(int numeroCeldas, PdfPTable table)
+        {
+            for (int i = 0; i < numeroCeldas; i++)
+                table.AddCell(new PdfPCell() { Border = 0, PaddingTop = 25, PaddingBottom = 25
+                });
+        }
         public override void OnOpenDocument(PdfWriter writer, Document document)
         {
             try
@@ -80,7 +101,6 @@ namespace ApiDTC.Services
             base.OnStartPage(writer, document);
             Rectangle pageSize = document.PageSize;
             int pageN = writer.PageNumber;
-            Chapter chapter = new Chapter(0);
 
             if (Title != string.Empty)
             {
@@ -99,12 +119,10 @@ namespace ApiDTC.Services
 
             iTextSharp.text.Image logo_comunicaciones = iTextSharp.text.Image.GetInstance($@"{System.Environment.CurrentDirectory}\Media\logo-comunicaciones.png");
             logo_comunicaciones.ScalePercent(20f);
+
             PdfPCell collogo_capufe = new PdfPCell(logo_comunicaciones)
             {
-                BorderWidthTop = 1,
-                BorderWidthBottom = 0,
-                BorderWidthLeft = 1,
-                BorderWidthRight = 0,
+                Border = 0,
                 Colspan = 2,
                 HorizontalAlignment = Element.ALIGN_RIGHT,
                 VerticalAlignment = Element.ALIGN_MIDDLE,
@@ -114,10 +132,7 @@ namespace ApiDTC.Services
             };
             PdfPCell collogo_comunicaciones = new PdfPCell(logo_capufe)
             {
-                BorderWidthTop = 1,
-                BorderWidthBottom = 0,
-                BorderWidthLeft = 0,
-                BorderWidthRight = 1,
+                Border = 0,
                 Colspan = 2,
                 HorizontalAlignment = Element.ALIGN_LEFT,
                 VerticalAlignment = Element.ALIGN_MIDDLE,
@@ -125,11 +140,52 @@ namespace ApiDTC.Services
                 PaddingTop = 5,
                 PaddingBottom = 5
             };
+
             table.AddCell(collogo_capufe);
             table.AddCell(collogo_comunicaciones);
 
-            table.AddCell(new PdfPCell() { Border = 0 });
             document.Add(table);
+
+            if (pageN == 1)
+            {
+                PdfPTable tablaEncabezado = new PdfPTable(new float[] { 16.67f, 16.67f, 16.67f, 16.67f, 16.67f, 16.67f }) { WidthPercentage = 100f };
+
+
+                var colFormato = new PdfPCell(new Phrase("FORMATO 1-B", letraoNegritaGrande)) 
+                { 
+                    Border = 0,
+                    HorizontalAlignment = Element.ALIGN_RIGHT, 
+                    VerticalAlignment = Element.ALIGN_CENTER,
+                    PaddingTop = 12,
+                    PaddingBottom = 12,
+                    Colspan = 6 
+                };
+                var colActa = new PdfPCell(new Phrase("ACTA ADMINISTRATIVA INFORMATIVA (ENTREGA-RECEPCIÓN)", letraoNegritaGrande))
+                {
+                    Border = 0,
+                    HorizontalAlignment = Element.ALIGN_CENTER,
+                    VerticalAlignment = Element.ALIGN_CENTER,
+                    Padding = 0,
+                    Colspan = 6
+                };
+                var colYear = new PdfPCell(new Phrase("2022", letraoNegritaGrande))
+                {
+                    Border = 0,
+                    HorizontalAlignment = Element.ALIGN_CENTER,
+                    VerticalAlignment = Element.ALIGN_CENTER,
+                    Padding = 0,
+                    Colspan = 6
+                };
+                tablaEncabezado.AddCell(colFormato);
+                tablaEncabezado.AddCell(colActa);
+                tablaEncabezado.AddCell(colYear);
+
+                var colFecha = new PdfPCell(new Phrase(PrintTime.ToString(), letraNormalChica)) { Border = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, Padding = 3 };
+                tablaEncabezado.AddCell(colFecha);
+
+
+                document.Add(tablaEncabezado);
+            }
         }
 
         public override void OnEndPage(PdfWriter writer, Document document)
@@ -139,21 +195,22 @@ namespace ApiDTC.Services
             String text = "Pág. " + pageN;
             float len = bf.GetWidthPoint(text, 6.5f);
             Rectangle pageSize = document.PageSize;
-            cb.SetRgbColorFill(100, 100, 100);
-            cb.BeginText();
-            cb.SetFontAndSize(bf, 6.5f);
-            cb.SetTextMatrix(pageSize.GetRight(40), pageSize.GetBottom(20));
-            cb.ShowText(text);
-            cb.EndText();
+            PdfPTable table = new PdfPTable(new float[] { 100f }) { WidthPercentage = 100f };
 
-            cb.AddTemplate(template, pageSize.GetLeft(-30) + len, pageSize.GetBottom(20));
-            cb.BeginText();
-            cb.SetFontAndSize(bf, 6.5f);
-            cb.ShowTextAligned(PdfContentByte.ALIGN_LEFT,
-                "PROYECTOS Y SISTEMAS INFORMATICOS, S.A DE C.V PALENQUE #489 COL.VERTIZ NARVARTE C.P 03600 BENITO JUAREZ CDMX TEL. 5552437267",
-                pageSize.GetRight(580),
-                pageSize.GetBottom(20), 0);
-            cb.EndText();
+            iTextSharp.text.Image logo_footer = iTextSharp.text.Image.GetInstance($@"{System.Environment.CurrentDirectory}\Media\footer-anexo.png");
+            logo_footer.ScalePercent(80f);
+
+            PdfPCell collogo_footer = new PdfPCell(logo_footer)
+            {
+                Border = 0,
+                Colspan = 1,
+                HorizontalAlignment = Element.ALIGN_MIDDLE,
+                VerticalAlignment = Element.ALIGN_MIDDLE,
+            };
+            logo_footer.SetAbsolutePosition(document.PageSize.Width -575f, document.PageSize.Height -775f);
+            document.Add(logo_footer);
+            //table.AddCell(collogo_footer);
+            //table.WriteSelectedRows(0, 5, 550, 80, writer.DirectContent);
         }
 
         public override void OnCloseDocument(PdfWriter writer, Document document)
