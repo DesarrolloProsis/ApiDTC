@@ -29,5 +29,6 @@ namespace ApiDTC.Data
         public string ReferenceNumber { get; set; }
 
         public bool PdfExists { get; set; }
+        public int UserId { get; set; }
     }
 }
