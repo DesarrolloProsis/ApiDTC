@@ -188,7 +188,6 @@ namespace ApiDTC.Services
                     Result = null
                 };
             }
-<<<<<<< HEAD
             catch (PdfException ex)
             {
                 if (System.IO.File.Exists(path))
@@ -200,8 +199,6 @@ namespace ApiDTC.Services
                     Result = null
                 };
             }
-=======
->>>>>>> release
         }
 
         private IElement tablaFinal(int op, IConfiguration configuration)
