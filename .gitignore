@@ -348,8 +348,8 @@ MigrationBackup/
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
 
-# Folder called Log that coontains Logs.cs
-!Log/Logs.cs
+# Allow folder called Log that coontains Logs.cs
+!Log/
 
 ApiDTC/obj/
 ApiDTC/bin/
