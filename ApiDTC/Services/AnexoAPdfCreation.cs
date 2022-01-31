@@ -289,6 +289,156 @@ namespace ApiDTC.Services
         {
             try
             {
+                PdfPTable tablaCuatroFirmas = new PdfPTable(new float[] { 22.5f, 3.333f, 22.5f, 3.333f, 22.5f, 3.333f, 22.5f }) { WidthPercentage = 100f };
+
+                //Encabezado con firma 
+
+                var capufe  = new PdfPCell(new Phrase("POR CAPUFE", letraoNegritaMediana)) 
+                { 
+                    BorderWidthTop = 0,
+                    BorderWidthBottom = 1, 
+                    BorderWidthLeft = 0, 
+                    BorderWidthRight = 0, 
+                    HorizontalAlignment = Element.ALIGN_CENTER, 
+                    VerticalAlignment = Element.ALIGN_CENTER, 
+                    PaddingTop = 5, 
+                    PaddingLeft = 5, 
+                    PaddingRight = 5, 
+                    PaddingBottom = 30 
+                };
+
+                var empresa = new PdfPCell(new Phrase("POR LA EMPRESA", letraoNegritaMediana))
+                {
+                    BorderWidthTop = 0,
+                    BorderWidthBottom = 1,
+                    BorderWidthLeft = 0,
+                    BorderWidthRight = 0,
+                    HorizontalAlignment = Element.ALIGN_CENTER,
+                    VerticalAlignment = Element.ALIGN_CENTER,
+                    PaddingTop = 5,
+                    PaddingLeft = 5,
+                    PaddingRight = 5,
+                    PaddingBottom = 30
+                };
+
+                var administrador = new PdfPCell(new Phrase("ADMINISTRADOR Y ENCARGADO DE LA SUPERINTENDENCIA DE OPERACIÓN", letraoNegritaMediana))
+                {
+                    BorderWidthTop = 0,
+                    BorderWidthBottom = 1,
+                    BorderWidthLeft = 0,
+                    BorderWidthRight = 0,
+                    HorizontalAlignment = Element.ALIGN_CENTER,
+                    VerticalAlignment = Element.ALIGN_CENTER,
+                    PaddingTop = 5,
+                    PaddingLeft = 5,
+                    PaddingRight = 5,
+                    PaddingBottom = 30
+                };
+
+                var subgerente = new PdfPCell(new Phrase("SUBGERENTE DE OPERACIÓN CUERNAVACA", letraoNegritaMediana))
+                {
+                    BorderWidthTop = 0,
+                    BorderWidthBottom = 1,
+                    BorderWidthLeft = 0,
+                    BorderWidthRight = 0,
+                    HorizontalAlignment = Element.ALIGN_CENTER,
+                    VerticalAlignment = Element.ALIGN_CENTER,
+                    PaddingTop = 5,
+                    PaddingLeft = 5,
+                    PaddingRight = 5,
+                    PaddingBottom = 30
+                };
+
+                //Nombres
+
+                var nombreCapufe = new PdfPCell(new Phrase("LIC. JESÚS GERMAIN GONZÁLEZ MORALES.", letraoNegritaMediana))
+                {
+                    BorderWidthTop = 0,
+                    BorderWidthBottom = 0,
+                    BorderWidthLeft = 0,
+                    BorderWidthRight = 0,
+                    HorizontalAlignment = Element.ALIGN_CENTER,
+                    VerticalAlignment = Element.ALIGN_CENTER,
+                    PaddingTop = 0,
+                    PaddingLeft = 5,
+                    PaddingRight = 5,
+                    PaddingBottom = 5
+                };
+
+                var nombreEmpresa = new PdfPCell(new Phrase("C. JHOVANY MOHAMED ISAURO GARCIA", letraoNegritaMediana))
+                {
+                    BorderWidthTop = 0,
+                    BorderWidthBottom = 0,
+                    BorderWidthLeft = 0,
+                    BorderWidthRight = 0,
+                    HorizontalAlignment = Element.ALIGN_CENTER,
+                    VerticalAlignment = Element.ALIGN_CENTER,
+                    PaddingTop = 0,
+                    PaddingLeft = 5,
+                    PaddingRight = 5,
+                    PaddingBottom = 5
+                };
+
+                var nombreAdministrador = new PdfPCell(new Phrase("C. CARLOS BÁRCENAS ORTEGA SUPERVISÓN", letraoNegritaMediana))
+                {
+                    BorderWidthTop = 0,
+                    BorderWidthBottom = 0,
+                    BorderWidthLeft = 0,
+                    BorderWidthRight = 0,
+                    HorizontalAlignment = Element.ALIGN_CENTER,
+                    VerticalAlignment = Element.ALIGN_CENTER,
+                    PaddingTop = 0,
+                    PaddingLeft = 5,
+                    PaddingRight = 5,
+                    PaddingBottom = 5
+                };
+
+                var nombreSubgerente = new PdfPCell(new Phrase("L.A.E. FIDEL URIBE HERNÁNDEZ", letraoNegritaMediana))
+                {
+                    BorderWidthTop = 0,
+                    BorderWidthBottom = 0,
+                    BorderWidthLeft = 0,
+                    BorderWidthRight = 0,
+                    HorizontalAlignment = Element.ALIGN_CENTER,
+                    VerticalAlignment = Element.ALIGN_CENTER,
+                    PaddingTop = 0,
+                    PaddingLeft = 5,
+                    PaddingRight = 5,
+                    PaddingBottom = 5
+                };
+
+                //Indicativo preterito
+
+                var nombresubgerente = new PdfPCell(new Phrase("LIC. JESÚS GERMAIN GONZÁLEZ MORALES.", letraoNegritaMediana))
+                {
+                    BorderWidthTop = 0,
+                    BorderWidthBottom = 0,
+                    BorderWidthLeft = 0,
+                    BorderWidthRight = 0,
+                    HorizontalAlignment = Element.ALIGN_CENTER,
+                    VerticalAlignment = Element.ALIGN_CENTER,
+                    PaddingTop = 0,
+                    PaddingLeft = 5,
+                    PaddingRight = 5,
+                    PaddingBottom = 5
+                };
+
+                tablaCuatroFirmas.AddCell(capufe);
+                CeldasVacias(1, tablaCuatroFirmas);
+                tablaCuatroFirmas.AddCell(empresa);
+                CeldasVacias(1, tablaCuatroFirmas);
+                tablaCuatroFirmas.AddCell(administrador);
+                CeldasVacias(1, tablaCuatroFirmas);
+                tablaCuatroFirmas.AddCell(subgerente);
+
+                tablaCuatroFirmas.AddCell(nombreCapufe);
+                CeldasVacias(1, tablaCuatroFirmas);
+                tablaCuatroFirmas.AddCell(nombreEmpresa);
+                CeldasVacias(1, tablaCuatroFirmas);
+                tablaCuatroFirmas.AddCell(nombreAdministrador);
+                CeldasVacias(1, tablaCuatroFirmas);
+                tablaCuatroFirmas.AddCell(nombreSubgerente);
+
                 PdfPTable table = new PdfPTable(new float[] { 30f, 10f, 30f, 10f, 30f }) { WidthPercentage = 100f };
                 table.TotalWidth = 550;
                 CeldasVacias(15, table);
@@ -312,7 +462,7 @@ namespace ApiDTC.Services
                     PaddingTop = 2
                 };
 
-                var colSello = new PdfPCell(new Phrase("C. JHOVANY MOHAMED ISAURO GARCIA", letraoNormalChicaFirmas))
+                var colSello = new PdfPCell(new Phrase("C. JHOVANY MOHAMED ISAURO /n GARCIA", letraoNormalChicaFirmas))
                 {
                     BorderWidth = 0,
                     BorderWidthTop = 1,
@@ -329,7 +479,7 @@ namespace ApiDTC.Services
 
                 //Técnico
                 var colTecnico = new PdfPCell(new Phrase("Administrador o Encargado de Turno AUTORIZÓ", letraNormalChica))
-                {
+                {   
                     Border = 0,
                     HorizontalAlignment = Element.ALIGN_CENTER,
                     VerticalAlignment = Element.ALIGN_CENTER
@@ -366,7 +516,7 @@ namespace ApiDTC.Services
                 CeldasVacias(1, table);
                 table.AddCell(colCapufe);
                 CeldasVacias(2, table);
-                return table;
+                return tablaCuatroFirmas;
             }
             catch (PdfException ex)
             {
