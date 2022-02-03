@@ -110,6 +110,7 @@
                         cmd.Parameters.Add("@TableFolio", SqlDbType.Int).Value = item.TableFolio;
                         cmd.Parameters.Add("@Amount", SqlDbType.Int).Value = item.Amount;
 
+                        //INVESTIGAR SI SE PUEDE COMPAR UN OBJETO
                         if (item == requestedComponent[requestedComponent.Count - 1])
                             cmd.Parameters.Add("@validationFlag", SqlDbType.Bit).Value = 1;
                         else
