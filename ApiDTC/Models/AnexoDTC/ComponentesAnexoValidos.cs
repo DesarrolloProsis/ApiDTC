@@ -11,5 +11,5 @@ namespace ApiDTC.Models
         public int RequestedComponentId { get; set; }
         public string SerialNumber { get; set; }
         public bool UseInAnexo { get; set; }
-    }
+    }    
 }

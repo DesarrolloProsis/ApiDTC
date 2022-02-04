@@ -47,8 +47,22 @@ namespace ApiDTC.Controllers
             return BadRequest(ModelState);
         }
 
-        [HttpPost("{clavePlaza}")]
-        public ActionResult<Response> InsertAnexo(string clavePlaza, [FromBody] AnexoDTCInsert insetAnexo)
+        [HttpGet("HistoricoComponetes/{clavePlaza}/{referenceAnexo}")]
+        public ActionResult<Response> GetHistoricoComponetesAnexo(string clavePlaza, string referenceAnexo)
+        {
+            if (ModelState.IsValid)
+            {
+                var get = _db.GetHistoricoComponetesAnexo(clavePlaza, referenceAnexo);
+                if (get.Result == null)
+                    return BadRequest(get);
+                else
+                    return Ok(get);
+            }
+            return BadRequest(ModelState);
+        }
+
+        [HttpPost("{clavePlaza}/{editAnexoVersion}")]
+        public ActionResult<Response> InsertAnexo(string clavePlaza, bool editAnexoVersion, [FromBody] AnexoDTCInsert insetAnexo)
         {
             if (ModelState.IsValid)
             {

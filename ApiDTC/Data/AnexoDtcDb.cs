@@ -75,6 +75,28 @@ namespace ApiDTC.Data
                 return new Response { Message = $"Error: {ex.Message}", Result = null };
             }
         }
+        public Response GetHistoricoComponetesAnexo(string clavePlaza, string referenceAnexo)
+        {
+            try
+            {
+                using (SqlConnection sql = new SqlConnection(_connectionString))
+                {
+                    using (SqlCommand cmd = new SqlCommand("dbo.GetComponenteHistoricoAnexo", sql))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.Add("@referenceAnexo", SqlDbType.NVarChar).Value = referenceAnexo;
+                        var historicComponetesoAnexo = _sqlResult.GetList<AnexoHistoricoComponete>(clavePlaza, cmd, sql, "GetHistoricoComponetesAnexo");
+
+                        return historicComponetesoAnexo;
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                _apiLogger.WriteLog(clavePlaza, ex, "CalendarioDb: InsertComment", 1);
+                return new Response { Message = $"Error: {ex.Message}", Result = null };
+            }
+        }
         public Response InsertAnexoDTC(string clavePlaza, AnexoDTCInsert anexoDTCInsert)
         {
             try
