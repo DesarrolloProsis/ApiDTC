@@ -119,7 +119,7 @@ namespace ApiDTC.Services
             PdfPTable table = new PdfPTable(new float[] { 25f, 25f, 25f, 25f }) { WidthPercentage = 100f };
 
             iTextSharp.text.Image logo_capufe = iTextSharp.text.Image.GetInstance($@"{System.Environment.CurrentDirectory}\Media\logo-capufe.png");
-            logo_capufe.ScalePercent(5f);
+            logo_capufe.ScalePercent(4.5f);
 
             iTextSharp.text.Image logo_comunicaciones = iTextSharp.text.Image.GetInstance($@"{System.Environment.CurrentDirectory}\Media\logo-comunicaciones.png");
             logo_comunicaciones.ScalePercent(20f);
@@ -130,7 +130,7 @@ namespace ApiDTC.Services
                 Colspan = 2,
                 HorizontalAlignment = Element.ALIGN_RIGHT,
                 VerticalAlignment = Element.ALIGN_MIDDLE,
-                PaddingRight = 5,
+                PaddingRight = 10,
                 PaddingTop = 5,
                 PaddingBottom = 5
             };
@@ -140,7 +140,7 @@ namespace ApiDTC.Services
                 Colspan = 2,
                 HorizontalAlignment = Element.ALIGN_LEFT,
                 VerticalAlignment = Element.ALIGN_MIDDLE,
-                PaddingLeft = 5,
+                PaddingLeft = 10,
                 PaddingTop = 5,
                 PaddingBottom = 5
             };

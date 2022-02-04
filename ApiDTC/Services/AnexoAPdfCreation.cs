@@ -31,8 +31,8 @@ namespace ApiDTC.Services
 
         public static BaseFont BoldGrande = BaseFont.CreateFont(path + "Montserrat Black 900.ttf", BaseFont.WINANSI, true);
         public static BaseFont NormalMediana = BaseFont.CreateFont(path + "Montserrat Medium 500.ttf", BaseFont.WINANSI, true);
-        public static BaseFont NegritaMediana = BaseFont.CreateFont(path + "Montserrat Medium 500.ttf", BaseFont.WINANSI, true);
-        public static BaseFont NegritaMedianaIta = BaseFont.CreateFont(path + "Montserrat Medium Italic 500.ttf", BaseFont.WINANSI, true);
+        public static BaseFont NegritaMediana = BaseFont.CreateFont(path + "Montserrat Bold 700.ttf", BaseFont.WINANSI, true);
+        public static BaseFont NegritaMedianaIta = BaseFont.CreateFont(path + "Montserrat SemiBold Italic 600.ttf", BaseFont.WINANSI,true);
 
         public static BaseFont NegritaGrande = BaseFont.CreateFont(BaseFont.HELVETICA, BaseFont.WINANSI, true);
         public static BaseFont NegritaChica = BaseFont.CreateFont(BaseFont.HELVETICA, BaseFont.WINANSI, true);
@@ -51,13 +51,14 @@ namespace ApiDTC.Services
         //public static iTextSharp.text.Font letraoNegritaGrande = new iTextSharp.text.Font(NegritaGrande, 13f, iTextSharp.text.Font.BOLD, BaseColor.Black);
         public static iTextSharp.text.Font letraoNormalChicaFirmas = new iTextSharp.text.Font(NormalChica, 6f, iTextSharp.text.Font.BOLD, BaseColor.Black);
 
-        public static iTextSharp.text.Font letraoNegritaMediana = new iTextSharp.text.Font(NegritaMediana, 8f, iTextSharp.text.Font.BOLD, BaseColor.Black);
+        public static iTextSharp.text.Font letraoNegritaMediana = new iTextSharp.text.Font(NegritaMediana, 8f, iTextSharp.text.Font.NORMAL, BaseColor.Black);
 
         public static iTextSharp.text.Font letraoNegritaChica = new iTextSharp.text.Font(NegritaChica, 6f, iTextSharp.text.Font.BOLD, BaseColor.Black);
 
         public static iTextSharp.text.Font letraNormalMediana = new iTextSharp.text.Font(NormalMediana, 8f, iTextSharp.text.Font.NORMAL, BaseColor.Black);
         //public static iTextSharp.text.Font letraNormalMediana = new iTextSharp.text.Font(NormalMediana, 9f, iTextSharp.text.Font.NORMAL, BaseColor.Black);
 
+        public static iTextSharp.text.Font letraNegritaItalicaMedianaRoja = new iTextSharp.text.Font(NegritaMedianaIta, 8f, iTextSharp.text.Font.BOLD, BaseColor.Red);
         public static iTextSharp.text.Font letraNegritaItalicaMediana = new iTextSharp.text.Font(NegritaMedianaIta, 8f, iTextSharp.text.Font.BOLD, BaseColor.Black);
 
         public static iTextSharp.text.Font letraNormalMedianaRoja = new iTextSharp.text.Font(NormalMediana, 9f, iTextSharp.text.Font.NORMAL, BaseColor.Red);
@@ -261,7 +262,7 @@ namespace ApiDTC.Services
                 //Encabezado
                 PdfPTable table = new PdfPTable(new float[] { 14.28f, 14.28f, 14.28f, 14.28f, 14.28f, 14.28f, 14.28f }) { WidthPercentage = 100f };
 
-                Chunk ComponenteDañado = new Chunk("COMPONENTES Y/O REFACCIONES DAÑADAS:", letraNegritaItalicaMediana);
+                Chunk ComponenteDañado = new Chunk("COMPONENTES Y/O REFACCIONES DAÑADAS:", letraoNegritaMediana);
                 ComponenteDañado.SetUnderline(1, -1);
                 var parrafoComponenteDañado = new Paragraph();
                 parrafoComponenteDañado.Add(ComponenteDañado);
@@ -315,7 +316,7 @@ namespace ApiDTC.Services
                 //Encabezado
                 PdfPTable table = new PdfPTable(new float[] { 14.28f, 14.28f, 14.28f, 14.28f, 14.28f, 14.28f, 14.28f }) { WidthPercentage = 100f };
 
-                Chunk ComponenteDañado = new Chunk("COMPONENTES Y/O REFACCIONES NUEVAS:", letraNegritaItalicaMediana);
+                Chunk ComponenteDañado = new Chunk("COMPONENTES Y/O REFACCIONES NUEVAS:", letraoNegritaMediana);
                 ComponenteDañado.SetUnderline(1, -1);
                 var parrafoComponenteDañado = new Paragraph();
                 parrafoComponenteDañado.Add(ComponenteDañado);
@@ -402,23 +403,33 @@ namespace ApiDTC.Services
             {
                 PdfPTable tablaCuatroFirmas = new PdfPTable(new float[] { 22.5f, 3.333f, 22.5f, 3.333f, 22.5f, 3.333f, 22.5f }) { WidthPercentage = 100f };
 
-                //Encabezado con firma 
+                /////////////////////Encabezado con firma/////////////////////////////////////
 
-                var capufe  = new PdfPCell(new Phrase("POR CAPUFE", letraoNegritaMediana)) 
-                { 
-                    BorderWidthTop = 0,
-                    BorderWidthBottom = 1, 
-                    BorderWidthLeft = 0, 
-                    BorderWidthRight = 0, 
-                    HorizontalAlignment = Element.ALIGN_CENTER, 
-                    VerticalAlignment = Element.ALIGN_CENTER, 
-                    PaddingTop = 5, 
-                    PaddingLeft = 5, 
-                    PaddingRight = 5, 
-                    PaddingBottom = 30 
-                };
+                Chunk porCapufe = new Chunk("POR CAPUFE", letraoNegritaMediana);
+                var parrafoCapufe = new Paragraph();
+                parrafoCapufe.SetLeading(0, 1.2f);
+                parrafoCapufe.Add(porCapufe);
+                parrafoCapufe.Alignment = Element.ALIGN_CENTER;
 
-                var empresa = new PdfPCell(new Phrase("POR LA EMPRESA", letraoNegritaMediana))
+                Chunk porEmpresa = new Chunk("POR LA EMPRESA", letraoNegritaMediana);
+                var parrafoEmpresa = new Paragraph();
+                parrafoEmpresa.SetLeading(0, 1.2f);
+                parrafoEmpresa.Add(porEmpresa);
+                parrafoEmpresa.Alignment = Element.ALIGN_CENTER;
+
+                Chunk admin = new Chunk("ADMINISTRADOR Y ENCARGADO DE LA SUPERINTENDENCIA DE OPERACIÓN", letraoNegritaMediana);
+                var parrafoAdmin = new Paragraph();
+                parrafoAdmin.SetLeading(0, 1.2f);
+                parrafoAdmin.Add(admin);
+                parrafoAdmin.Alignment = Element.ALIGN_CENTER;
+
+                Chunk subg = new Chunk("SUBGERENTE DE OPERACIÓN CUERNAVACA", letraoNegritaMediana);
+                var parrafoSubgerente = new Paragraph();
+                parrafoSubgerente.SetLeading(0, 1.2f);
+                parrafoSubgerente.Add(subg);
+                parrafoSubgerente.Alignment = Element.ALIGN_CENTER;
+
+                var capufe = new PdfPCell()
                 {
                     BorderWidthTop = 0,
                     BorderWidthBottom = 1,
@@ -431,8 +442,9 @@ namespace ApiDTC.Services
                     PaddingRight = 5,
                     PaddingBottom = 30
                 };
+                capufe.AddElement(parrafoCapufe);
 
-                var administrador = new PdfPCell(new Phrase("ADMINISTRADOR Y ENCARGADO DE LA SUPERINTENDENCIA DE OPERACIÓN", letraoNegritaMediana))
+                var empresa = new PdfPCell()
                 {
                     BorderWidthTop = 0,
                     BorderWidthBottom = 1,
@@ -445,8 +457,9 @@ namespace ApiDTC.Services
                     PaddingRight = 5,
                     PaddingBottom = 30
                 };
+                empresa.AddElement(parrafoEmpresa);
 
-                var subgerente = new PdfPCell(new Phrase("SUBGERENTE DE OPERACIÓN CUERNAVACA", letraoNegritaMediana))
+                var administrador = new PdfPCell(new Phrase())
                 {
                     BorderWidthTop = 0,
                     BorderWidthBottom = 1,
@@ -459,10 +472,51 @@ namespace ApiDTC.Services
                     PaddingRight = 5,
                     PaddingBottom = 30
                 };
+                administrador.AddElement(parrafoAdmin);
 
-                //Nombres
+                var subgerente = new PdfPCell(new Phrase())
+                {
+                    BorderWidthTop = 0,
+                    BorderWidthBottom = 1,
+                    BorderWidthLeft = 0,
+                    BorderWidthRight = 0,
+                    HorizontalAlignment = Element.ALIGN_CENTER,
+                    VerticalAlignment = Element.ALIGN_CENTER,
+                    PaddingTop = 5,
+                    PaddingLeft = 5,
+                    PaddingRight = 5,
+                    PaddingBottom = 30
+                };
+                subgerente.AddElement(parrafoSubgerente);
 
-                var nombreCapufe = new PdfPCell(new Phrase("LIC. JESÚS GERMAIN GONZÁLEZ MORALES.", letraoNegritaMediana))
+                /////////////////////////////////Nombres////////////////////////////////////
+                ///
+
+                Chunk nomCapufe = new Chunk("LIC. JESÚS GERMAIN GONZÁLEZ MORALES.\n Administrador o Encargado de Turno\n AUTORIZÓ", letraoNegritaMediana);
+                var parrafonomCapufe = new Paragraph();
+                parrafonomCapufe.SetLeading(0, 1.8f);
+                parrafonomCapufe.Add(nomCapufe);
+                parrafonomCapufe.Alignment = Element.ALIGN_CENTER;
+
+                Chunk nomEmpresa = new Chunk("C. JHOVANY MOHAMED ISAURO GARCIA\n Técnico\n REALIZÓ", letraoNegritaMediana);
+                var parrafonomEmpresa = new Paragraph();
+                parrafonomEmpresa.SetLeading(0, 1.8f);
+                parrafonomEmpresa.Add(nomEmpresa);
+                parrafonomEmpresa.Alignment = Element.ALIGN_CENTER;
+
+                Chunk nomAdministrador = new Chunk("C. CARLOS BÁRCENAS ORTEGA\n SUPERVISÓN", letraoNegritaMediana);
+                var parrafonomAdministrador = new Paragraph();
+                parrafonomAdministrador.SetLeading(0, 1.8f);
+                parrafonomAdministrador.Add(nomAdministrador);
+                parrafonomAdministrador.Alignment = Element.ALIGN_CENTER;
+
+                Chunk nomSubg = new Chunk("L.A.E. FIDEL URIBE HERNÁNDEZ\n Vo.Bo.", letraoNegritaMediana);
+                var parrafonomSubg = new Paragraph();
+                parrafonomSubg.SetLeading(0, 1.8f);
+                parrafonomSubg.Add(nomSubg);
+                parrafonomSubg.Alignment = Element.ALIGN_CENTER;
+
+                var nombreCapufe = new PdfPCell()
                 {
                     BorderWidthTop = 0,
                     BorderWidthBottom = 0,
@@ -475,8 +529,9 @@ namespace ApiDTC.Services
                     PaddingRight = 5,
                     PaddingBottom = 5
                 };
+                nombreCapufe.AddElement(parrafonomCapufe);
 
-                var nombreEmpresa = new PdfPCell(new Phrase("C. JHOVANY MOHAMED ISAURO GARCIA", letraoNegritaMediana))
+                var nombreEmpresa = new PdfPCell()
                 {
                     BorderWidthTop = 0,
                     BorderWidthBottom = 0,
@@ -489,8 +544,9 @@ namespace ApiDTC.Services
                     PaddingRight = 5,
                     PaddingBottom = 5
                 };
+                nombreEmpresa.AddElement(parrafonomEmpresa);
 
-                var nombreAdministrador = new PdfPCell(new Phrase("C. CARLOS BÁRCENAS ORTEGA SUPERVISÓN", letraoNegritaMediana))
+                var nombreAdministrador = new PdfPCell()
                 {
                     BorderWidthTop = 0,
                     BorderWidthBottom = 0,
@@ -503,8 +559,9 @@ namespace ApiDTC.Services
                     PaddingRight = 5,
                     PaddingBottom = 5
                 };
+                nombreAdministrador.AddElement(parrafonomAdministrador);
 
-                var nombreSubgerente = new PdfPCell(new Phrase("L.A.E. FIDEL URIBE HERNÁNDEZ", letraoNegritaMediana))
+                var nombreSubgerente = new PdfPCell()
                 {
                     BorderWidthTop = 0,
                     BorderWidthBottom = 0,
@@ -517,23 +574,9 @@ namespace ApiDTC.Services
                     PaddingRight = 5,
                     PaddingBottom = 5
                 };
+                nombreSubgerente.AddElement(parrafonomSubg);
 
-                //Indicativo preterito
-
-                var nombresubgerente = new PdfPCell(new Phrase("LIC. JESÚS GERMAIN GONZÁLEZ MORALES.", letraoNegritaMediana))
-                {
-                    BorderWidthTop = 0,
-                    BorderWidthBottom = 0,
-                    BorderWidthLeft = 0,
-                    BorderWidthRight = 0,
-                    HorizontalAlignment = Element.ALIGN_CENTER,
-                    VerticalAlignment = Element.ALIGN_CENTER,
-                    PaddingTop = 0,
-                    PaddingLeft = 5,
-                    PaddingRight = 5,
-                    PaddingBottom = 5
-                };
-
+                var espacioVacio = new PdfPCell(new Phrase("", letraoNegritaMediana)) { BorderWidthTop = 0, BorderWidthBottom = 0, BorderWidthLeft = 0, BorderWidthRight = 0, HorizontalAlignment = Element.ALIGN_MIDDLE, VerticalAlignment = Element.ALIGN_CENTER, PaddingTop = 0, PaddingLeft = 3, PaddingRight = 3, PaddingBottom = 15, Colspan = 7 };
                 tablaCuatroFirmas.AddCell(capufe);
                 CeldasVacias(1, tablaCuatroFirmas);
                 tablaCuatroFirmas.AddCell(empresa);
@@ -550,9 +593,23 @@ namespace ApiDTC.Services
                 CeldasVacias(1, tablaCuatroFirmas);
                 tablaCuatroFirmas.AddCell(nombreSubgerente);
 
+                tablaCuatroFirmas.AddCell(espacioVacio);
+
                 PdfPTable tablaDosFirmas = new PdfPTable(new float[] { 13.33f, 30f, 13.33f, 30f, 13.33f }) { WidthPercentage = 100f };
 
-                //testigos
+                /////////////////////////////////////////////////testigos/////////////////////////////////////////////
+
+                Chunk nomEncargadoUno = new Chunk("FRANCISCO VALENTE\n Encargado de turno", letraoNegritaMediana);
+                var parrafonomEncargadoUno = new Paragraph();
+                parrafonomEncargadoUno.SetLeading(0, 1.8f);
+                parrafonomEncargadoUno.Add(nomEncargadoUno);
+                parrafonomEncargadoUno.Alignment = Element.ALIGN_CENTER;
+
+                Chunk nomEncargadoDos = new Chunk("JUAN SANTOS JIMENEZ\n Encargado de turno", letraoNegritaMediana);
+                var parrafonomEncargadoDos = new Paragraph();
+                parrafonomEncargadoDos.SetLeading(0, 1.8f);
+                parrafonomEncargadoDos.Add(nomEncargadoDos);
+                parrafonomEncargadoDos.Alignment = Element.ALIGN_CENTER;
 
                 var lineaDeFirmas = new PdfPCell(new Phrase("", letraoNegritaMediana))
                 {
@@ -568,7 +625,7 @@ namespace ApiDTC.Services
                     PaddingBottom = 50
                 };
 
-                var encargadoUno = new PdfPCell(new Phrase("FRANCISCO VALENTE", letraoNegritaMediana))
+                var encargadoUno = new PdfPCell()
                 {
                     BorderWidthTop = 0,
                     BorderWidthBottom = 0,
@@ -581,6 +638,7 @@ namespace ApiDTC.Services
                     PaddingRight = 5,
                     PaddingBottom = 5
                 };
+                encargadoUno.AddElement(parrafonomEncargadoUno);
 
                 var encabezadosTestigos = new PdfPCell(new Phrase("TESTIGOS:", letraoNegritaMediana))
                 {
@@ -596,7 +654,7 @@ namespace ApiDTC.Services
                     PaddingBottom = 5
                 };
 
-                var encargadoDos = new PdfPCell(new Phrase("JUAN SANTOS JIMENEZ", letraoNegritaMediana))
+                var encargadoDos = new PdfPCell()
                 {
                     BorderWidthTop = 0,
                     BorderWidthBottom = 0,
@@ -609,6 +667,9 @@ namespace ApiDTC.Services
                     PaddingRight = 5,
                     PaddingBottom = 5
                 };
+                encargadoDos.AddElement(parrafonomEncargadoDos);
+
+                var espacioVacio2 = new PdfPCell(new Phrase("", letraoNegritaMediana)) { BorderWidthTop = 0, BorderWidthBottom = 0, BorderWidthLeft = 0, BorderWidthRight = 0, HorizontalAlignment = Element.ALIGN_MIDDLE, VerticalAlignment = Element.ALIGN_CENTER, PaddingTop = 0, PaddingLeft = 3, PaddingRight = 3, PaddingBottom = 50, Colspan = 5 };
 
                 CeldasVacias(1, tablaDosFirmas);
                 tablaDosFirmas.AddCell(lineaDeFirmas);
@@ -622,23 +683,30 @@ namespace ApiDTC.Services
                 tablaDosFirmas.AddCell(encargadoDos);
                 CeldasVacias(1, tablaDosFirmas);
 
+                tablaDosFirmas.AddCell(espacioVacio2);
+
                 PdfPTable tablaPlaza = new PdfPTable(new float[] { 23.33f, 10f, 23.33f, 10f, 23.33f }) { WidthPercentage = 100f };
 
                 string ParrafoEncabezado = "SELLO DE PLAZA DE COBRO";
-                string ParrafoUno = "REQUISITAR ESTRICTAMENTE, LA ENTREGA Y RECEPCIÓN DE LA PRESENTE EN ORIGINAL POR LA SUBGERENCIA DE OPERACIÓN DE LA COORDINACIÓN Y PRESTADOR DE SERVICIO (EMPRESA) “RUBRICA” EN TODAS LAS PÁGINAS.";
 
-                var colEncabezado = new PdfPCell(new Phrase(ParrafoEncabezado, letraNormalMediana))
+                Chunk parrafoS = new Chunk("REQUISITAR ESTRICTAMENTE, LA ENTREGA Y RECEPCIÓN DE LA PRESENTE EN ORIGINAL POR LA SUBGERENCIA DE OPERACIÓN DE LA COORDINACIÓN Y PRESTADOR DE SERVICIO (EMPRESA) “RUBRICA” EN TODAS LAS PÁGINAS.", letraoNegritaMediana);
+                var parrafoSello = new Paragraph();
+                parrafoSello.SetLeading(0, 1.4f);
+                parrafoSello.Add(parrafoS);
+                parrafoSello.Alignment = Element.ALIGN_JUSTIFIED;
+
+                var colEncabezado = new PdfPCell(new Phrase(ParrafoEncabezado, letraoNegritaMediana))
                 {
                     Border = 0,
                     HorizontalAlignment = Element.ALIGN_CENTER,
                     VerticalAlignment = Element.ALIGN_CENTER,
                     PaddingTop = 15,
-                    PaddingBottom = 30,
+                    PaddingBottom = 20,
                     Colspan = 5
 
                 };
 
-                var colParrafoUno = new PdfPCell(new Phrase(ParrafoUno, letraNormalMediana))
+                var colParrafoUno = new PdfPCell()
                 {
                     Border = 0,
                     HorizontalAlignment = Element.ALIGN_LEFT,
@@ -647,6 +715,7 @@ namespace ApiDTC.Services
                     PaddingBottom = 20,
                     Colspan = 5
                 };
+                colParrafoUno.AddElement(parrafoSello);
 
                 var fecha = new PdfPCell(new Phrase("FECHA DE ENTREGA", letraoNegritaMediana))
                 {
@@ -734,14 +803,34 @@ namespace ApiDTC.Services
                 ///
                 PdfPTable tablaFinal = new PdfPTable(new float[] { 100f }) { WidthPercentage = 100f };
 
-                string ParrafoUnoFinal = "ESTRICTAMENTE LA SUBGERENCIA DE OPERACIÓN DEBERA ENTREGAR COPIA A:";
-                string ParrafoDosFinal = "C.c.p.";
-                string ParrafoTresFinal = "Lic. Rogelio Galicia Pérez. -Gerente de Seguros/ rgalicia@capufe.gob.mx";
-                string ParrafoCuatroFinal = "C. Ricardo Esparza.- Subgerente de Almacenes e Inventarios /resparza@capufe.gob.mx";
-                string ParrafoCincoFinal = "Superintendencia de Recursos Materiales de la Coordinación Regional";
-                string ParrafoSeisFinal = "Para los fines que sean necesarios.";
+                string LineaUnoFinal = "ESTRICTAMENTE LA SUBGERENCIA DE OPERACIÓN DEBERA ENTREGAR COPIA A:";
+                string LineaDosFinal = "C.c.p.";
+                string LineaTresFinal = "Lic. Rogelio Galicia Pérez. -Gerente de Seguros/ rgalicia@capufe.gob.mx";
+                string LineaCuatroFinal = "C. Ricardo Esparza.- Subgerente de Almacenes e Inventarios /resparza@capufe.gob.mx";
+                string LineaCincoFinal = "Superintendencia de Recursos Materiales de la Coordinación Regional";
+                //No funcionaba la alineacion XD
+                string LineaSeisFinal = "                                                                                     Para los fines que sean necesarios.";
 
-                var colParrafoUnoFinal = new PdfPCell(new Phrase(ParrafoUnoFinal, letraNormalMediana))
+                Chunk finalEncabezado = new Chunk(LineaUnoFinal, letraNegritaItalicaMedianaRoja);
+                var parrafoFinalE = new Paragraph();
+                parrafoFinalE.SetLeading(0, 2f);
+                finalEncabezado.SetUnderline(1, -2);
+                parrafoFinalE.Add(finalEncabezado);
+                parrafoFinalE.Alignment = Element.ALIGN_CENTER;
+
+                Chunk finalParrafo = new Chunk(LineaDosFinal + "\n" + LineaTresFinal + "\n" + LineaCuatroFinal + "\n" + LineaCincoFinal + "\n", letraNegritaItalicaMediana);
+                var parrafoFinal = new Paragraph();
+                parrafoFinal.SetLeading(0, 1.4f);
+                parrafoFinal.Add(finalParrafo);
+                parrafoFinal.Alignment = Element.ALIGN_LEFT;
+
+                Chunk fines = new Chunk(LineaSeisFinal, letraNormalMediana);
+                var parrafoFines = new Paragraph();
+                parrafoFines.SetLeading(0, 1.4f);
+                parrafoFines.Add(fines);
+                parrafoFines.Alignment = Element.ALIGN_RIGHT;
+
+                var colParrafoFinal = new PdfPCell()
                 {
                     Border = 0,
                     HorizontalAlignment = Element.ALIGN_MIDDLE,
@@ -749,53 +838,12 @@ namespace ApiDTC.Services
                     PaddingTop = 15,
                     PaddingBottom = 5
                 };
+                colParrafoFinal.AddElement(parrafoFinalE);
+                colParrafoFinal.AddElement(parrafoFinal);
+                colParrafoFinal.AddElement(fines);
 
-                var colParrafoDosFinal = new PdfPCell(new Phrase(ParrafoDosFinal, letraNormalMediana))
-                {
-                    Border = 0,
-                    HorizontalAlignment = Element.ALIGN_LEFT,
-                    VerticalAlignment = Element.ALIGN_CENTER,
-                    PaddingBottom = 0
-                };
+                tablaFinal.AddCell(colParrafoFinal);
 
-                var colParrafoTresFinal = new PdfPCell(new Phrase(ParrafoTresFinal, letraNormalMediana))
-                {
-                    Border = 0,
-                    HorizontalAlignment = Element.ALIGN_LEFT,
-                    VerticalAlignment = Element.ALIGN_CENTER,
-                    PaddingBottom = 0
-                };
-
-                var colParrafoCuatroFinal = new PdfPCell(new Phrase(ParrafoCuatroFinal, letraNormalMediana))
-                {
-                    Border = 0,
-                    HorizontalAlignment = Element.ALIGN_LEFT,
-                    VerticalAlignment = Element.ALIGN_CENTER,
-                    PaddingBottom = 0
-                };
-
-                var colParrafoCincoFinal = new PdfPCell(new Phrase(ParrafoCincoFinal, letraNormalMediana))
-                {
-                    Border = 0,
-                    HorizontalAlignment = Element.ALIGN_LEFT,
-                    VerticalAlignment = Element.ALIGN_CENTER,
-                    PaddingBottom = 0
-                };
-
-                var colParrafoSeisFinal = new PdfPCell(new Phrase(ParrafoSeisFinal, letraNormalMediana))
-                {
-                    Border = 0,
-                    HorizontalAlignment = Element.ALIGN_LEFT,
-                    VerticalAlignment = Element.ALIGN_CENTER,
-                    PaddingBottom = 0
-                };
-
-                tablaFinal.AddCell(colParrafoUnoFinal);
-                tablaFinal.AddCell(colParrafoDosFinal);
-                tablaFinal.AddCell(colParrafoTresFinal);
-                tablaFinal.AddCell(colParrafoCuatroFinal);
-                tablaFinal.AddCell(colParrafoCincoFinal);
-                tablaFinal.AddCell(colParrafoSeisFinal);
 
                 doc.Add(tablaCuatroFirmas);
                 doc.Add(tablaDosFirmas);
