@@ -52,6 +52,7 @@ namespace ApiDTC
             services.AddScoped<InventarioDb>();
             services.AddScoped<ReporteFotograficoDB>();
             services.AddScoped<ComentarioDb>();
+            services.AddScoped<AnexoDtcDb>();
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
