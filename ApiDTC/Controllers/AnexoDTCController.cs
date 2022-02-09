@@ -18,7 +18,20 @@ namespace ApiDTC.Controllers
         {
             this._db = db ?? throw new ArgumentNullException(nameof(db));
         }
-        
+        [HttpGet("Testigos/{clavePlaza}/{plazaId}")]
+        public ActionResult<Response> GetListaTestigos(string clavePlaza, string plazaId)
+        {
+            if (ModelState.IsValid)
+            {
+                var get = _db.GetTestigos(clavePlaza, plazaId);
+                if (get.Result == null)
+                    return BadRequest(get);
+                else
+                    return Ok(get);
+            }
+            return BadRequest(ModelState);
+        }
+
         [HttpGet("Componentes/{clavePlaza}/{referenceNumber}")]
         public ActionResult<Response> GetComponent(string clavePlaza, string referenceNumber)
         {

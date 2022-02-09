@@ -30,6 +30,27 @@ namespace ApiDTC.Data
         }
         #endregion
 
+        public Response GetTestigos(string clavePlaza, string plazaId)
+        {
+            try
+            {
+                using (SqlConnection sql = new SqlConnection(_connectionString))
+                {
+                    using (SqlCommand cmd = new SqlCommand("dbo.GetTestigosPlaza", sql))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.Add("@plazaId", SqlDbType.NVarChar).Value = plazaId;
+                        var componentes = _sqlResult.GetList<TestigosPlaza>(clavePlaza, cmd, sql, "GetTestigosPlaza");
+                        return componentes;
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                _apiLogger.WriteLog(clavePlaza, ex, "CalendarioDb: InsertComment", 1);
+                return new Response { Message = $"Error: {ex.Message}", Result = null };
+            }
+        }
         public Response GetComponentAnexo(string clavePlaza, string referenceNumber)
         {
             try
