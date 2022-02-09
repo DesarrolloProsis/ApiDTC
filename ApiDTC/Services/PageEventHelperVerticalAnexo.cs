@@ -15,6 +15,15 @@ namespace ApiDTC.Services
         BaseFont bf = null;
         // This keeps track of the creation time
         DateTime PrintTime = DateTime.Now;
+        //This select the type of document we are creating, A or B.
+        public static string _tipo;
+        //Why we are documenting in english??
+
+        public PageEventHelperVerticalAnexo(string Tipo)
+        {
+            _tipo = Tipo;
+        }
+
         #region Properties
         private string _Title;
         public string Title
@@ -155,7 +164,7 @@ namespace ApiDTC.Services
                 PdfPTable tablaEncabezado = new PdfPTable(new float[] { 16.67f, 16.67f, 16.67f, 16.67f, 16.67f, 16.67f }) { WidthPercentage = 100f };
 
 
-                var colFormato = new PdfPCell(new Phrase("FORMATO 1-B", letraoNegritaGrande)) 
+                var colFormato = new PdfPCell(new Phrase("FORMATO 1-" + _tipo, letraoNegritaGrande)) 
                 { 
                     Border = 0,
                     HorizontalAlignment = Element.ALIGN_RIGHT, 
