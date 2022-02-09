@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace ApiDTC.Models.AnexoDTC
 {
-    public class TestigosPlaza
+    public class AnexoUsuarioPlaza
     {
         public int Id { get; set; }
         public string Nombre { get; set; }

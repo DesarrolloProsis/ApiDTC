@@ -30,6 +30,27 @@ namespace ApiDTC.Data
         }
         #endregion
 
+        public Response GetSupervisores(string clavePlaza, string plazaId)
+        {
+            try
+            {
+                using (SqlConnection sql = new SqlConnection(_connectionString))
+                {
+                    using (SqlCommand cmd = new SqlCommand("dbo.GetSupervisorAnexoPlaza", sql))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.Add("@plazaId", SqlDbType.NVarChar).Value = plazaId;
+                        var componentes = _sqlResult.GetList<AnexoUsuarioPlaza>(clavePlaza, cmd, sql, "GetTestigosPlaza");
+                        return componentes;
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                _apiLogger.WriteLog(clavePlaza, ex, "CalendarioDb: InsertComment", 1);
+                return new Response { Message = $"Error: {ex.Message}", Result = null };
+            }
+        }
         public Response GetTestigos(string clavePlaza, string plazaId)
         {
             try
@@ -40,7 +61,7 @@ namespace ApiDTC.Data
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.Add("@plazaId", SqlDbType.NVarChar).Value = plazaId;
-                        var componentes = _sqlResult.GetList<TestigosPlaza>(clavePlaza, cmd, sql, "GetTestigosPlaza");
+                        var componentes = _sqlResult.GetList<AnexoUsuarioPlaza>(clavePlaza, cmd, sql, "GetTestigosPlaza");
                         return componentes;
                     }
                 }
