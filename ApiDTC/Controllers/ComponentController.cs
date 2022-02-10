@@ -147,6 +147,7 @@ namespace ApiDTC.Controllers
             return Ok(put);
 
         }
+        //Prueba
         [HttpGet("ReporteComponente/")]
         public ActionResult<Response> GetReporteComponent()
         {
