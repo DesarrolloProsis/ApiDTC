@@ -139,6 +139,11 @@ namespace ApiDTC.Data
                 return new Response { Message = $"Error: {ex.Message}", Result = null };
             }
         }
+        private string GenerarAnexoId(string referenceDTC, bool nuevoAnexo, char tipoAnexo) 
+        {
+
+            return "";
+        }
         public Response InsertAnexoDTC(string clavePlaza, AnexoDTCInsert anexoDTCInsert)
         {
             try
