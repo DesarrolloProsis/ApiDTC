@@ -12,8 +12,8 @@ namespace ApiDTC.Models.AnexoDTC
         public DateTime FechaApertura { get; set; }
         public DateTime FechaCierre { get; set; }
         public string FolioOficio { get; set; }
-        public DateTime FechaOficioInicio { get; set; }
-        public DateTime FechaOficioFin { get; set; }
+        public DateTime? FechaOficioInicio { get; set; }
+        public DateTime? FechaOficioFin { get; set; }
         public int SupervisorId { get; set; }
         public int[] Testigos { get; set; }
         public char TipoAnexo { get; set; }

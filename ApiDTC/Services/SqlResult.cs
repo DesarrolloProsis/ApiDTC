@@ -422,7 +422,43 @@ namespace ApiDTC.Services
                 };
             }
         }
-        
+
+        public SqlResponse Count(string clavePlaza, SqlCommand cmd, SqlConnection con, string origen)
+        {
+            try
+            {
+                con.Open();
+                if (con.State != ConnectionState.Open)
+                {
+                    return new SqlResponse
+                    {
+                        SqlMessage = "SQL connection is closed",
+                        SqlResult = null
+                    };
+                }
+                int reader = (Int32)cmd.ExecuteScalar();
+               
+                //var result = PostMapper(clavePlaza, reader, origen);
+                con.Close();
+                return new SqlResponse
+                {
+                    SqlMessage = $"Ok",
+                    SqlResult = reader
+
+                };
+            }
+            catch (SqlException ex)
+            {
+                _apiLogger.WriteLog(clavePlaza, ex, $"SqlResult: Post", 1);
+                return new SqlResponse
+                {
+                    SqlMessage = $"Error: {ex.Message}",
+                    SqlResult = null
+
+                };
+            }
+        }
+
         #endregion
     }
 }

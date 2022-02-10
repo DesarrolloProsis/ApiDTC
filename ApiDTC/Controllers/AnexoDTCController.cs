@@ -18,6 +18,32 @@ namespace ApiDTC.Controllers
         {
             this._db = db ?? throw new ArgumentNullException(nameof(db));
         }
+        [HttpGet("id/{clavePlaza}/{refereceNumber}/{referenceAnexo}/{isSubAnexo}")]
+        public ActionResult<Response> GetListaSupervisores(string clavePlaza, string refereceNumber, string referenceAnexo, bool isSubAnexo)
+        {
+            if (ModelState.IsValid)
+            {
+                var get = _db.GenerarAnexoId(clavePlaza, refereceNumber, referenceAnexo, isSubAnexo, 'A');
+                if (get == string.Empty)
+                    return BadRequest(get);
+                else
+                    return Ok(get);
+            }
+            return BadRequest(ModelState);
+        }
+        [HttpGet("Supervisor/{clavePlaza}/{plazaId}")]
+        public ActionResult<Response> GetId(string clavePlaza, string plazaId)
+        {
+            if (ModelState.IsValid)
+            {
+                var get = _db.GetSupervisores(clavePlaza, plazaId);
+                if (get.Result == null)
+                    return BadRequest(get);
+                else
+                    return Ok(get);
+            }
+            return BadRequest(ModelState);
+        }
         [HttpGet("Supervisor/{clavePlaza}/{plazaId}")]
         public ActionResult<Response> GetListaSupervisores(string clavePlaza, string plazaId)
         {
@@ -87,12 +113,12 @@ namespace ApiDTC.Controllers
             return BadRequest(ModelState);
         }
 
-        [HttpPost("{clavePlaza}/{editAnexoVersion}")]
-        public ActionResult<Response> InsertAnexo(string clavePlaza, bool editAnexoVersion, [FromBody] AnexoDTCInsert insetAnexo)
+        [HttpPost("{clavePlaza}/{isSubAnexo}")]
+        public ActionResult<Response> InsertAnexo(string clavePlaza, bool isSubAnexo, [FromBody] AnexoDTCInsert insertAnexo)
         {
             if (ModelState.IsValid)
             {
-                var get = _db.InsertAnexoDTC(clavePlaza, insetAnexo);
+                var get = _db.InsertAnexoDTC(clavePlaza, isSubAnexo, insertAnexo);
                 if (get.Message == null)
                     return BadRequest(get);
                 else
