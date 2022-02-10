@@ -149,6 +149,7 @@ namespace ApiDTC.Data
                             newObjDiagnosis.TypeFaultId = objDiagnosis.TypeFaultId;
                             newObjDiagnosis.ValidacionDTC = objDiagnosis.ValidacionDTC;
                             newObjDiagnosis.ReferenceDTC = objDiagnosis.ReferenceDTC;
+                            newObjDiagnosis.StatusDtc = objDiagnosis.StatusDtc;
                             string ruta = $@"{_disk}:/{_folder}/{objDiagnosis.ReferenceNumber.Split('-')[0]}/Reportes/{objDiagnosis.ReferenceNumber}/{objDiagnosis.ReferenceNumber}";
                             
                             if(System.IO.File.Exists(ruta + "-DiagnosticoSellado.pdf")){

@@ -40,6 +40,7 @@ namespace ApiDTC.Data
         public int TypeFaultId { get; set; }
         public bool ValidacionDTC { get; set; }
         public string ReferenceDTC { get; set; }
+        public int StatusDtc    { get; set; }
              
     }
     public class DiagnosisSheetViewValid
@@ -80,8 +81,9 @@ namespace ApiDTC.Data
         public int TypeFaultId { get; set; }
         public bool ValidacionDTC { get; set; }
         public string ReferenceDTC { get; set; }
-           public bool DiagnosticoSellado { get; set; }
+        public bool DiagnosticoSellado { get; set; }
         public bool FichaSellado { get; set; }
+        public int StatusDtc    { get; set; }
         
     }
 }
