@@ -40,7 +40,7 @@ namespace ApiDTC.Services
                 var reader = cmd.ExecuteReader();
                 if (!reader.HasRows)
                 {
-                    return new SqlResponse
+                        return new SqlResponse
                     {
                         SqlMessage = "No se pudo insertar el registro",
                         SqlResult = null
