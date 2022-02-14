@@ -161,7 +161,6 @@ namespace ApiDTC.Data
                             if (isSubAnexo)
                             {
                                 return (referenceAnexo + '-' + (listCount.Count + 1), listCount.FirstOrDefault().AnexoReference);
-
                             }
                             else
                             {
@@ -173,18 +172,14 @@ namespace ApiDTC.Data
                             if (isSubAnexo)
                             {
                                 return (referenceAnexo + '-' + '1', referenceAnexo);
-
                             }
                             else
                             {
                                 return (referenceDTC + '-' + tipoAnexo + '1', string.Empty);
                             }
                         }
-
                     }
-
                     return (string.Empty, string.Empty);
-
                 }
             }
             catch (SqlException ex)
@@ -230,6 +225,8 @@ namespace ApiDTC.Data
                             else
                                 cmd.Parameters.Add("@fechaOficioFin", SqlDbType.DateTime).Value = anexoDTCInsert.FechaOficioFin;
                             cmd.Parameters.Add("@supervisorId", SqlDbType.Int).Value = anexoDTCInsert.SupervisorId;
+                            cmd.Parameters.Add("@testigo1", SqlDbType.Int).Value = anexoDTCInsert.Testigos[0];
+                            cmd.Parameters.Add("@testigo2", SqlDbType.Int).Value = anexoDTCInsert.Testigos[1];
                             cmd.Parameters.Add("@tipoAnexo", SqlDbType.Char).Value = anexoDTCInsert.TipoAnexo;
                             cmd.Parameters.Add("@isSubVersion", SqlDbType.Bit).Value = isSubAnexo;
                             var result = _sqlResult.Post(clavePlaza, cmd, sql, "InserAnexoHeader");
