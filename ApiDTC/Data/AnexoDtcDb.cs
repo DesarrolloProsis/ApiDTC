@@ -139,7 +139,7 @@ namespace ApiDTC.Data
                 return new Response { Message = $"Error: {ex.Message}", Result = null };
             }
         }
-        public string GenerarAnexoId(string clavePlaza, string referenceDTC, string referenceAnexo, bool isSubAnexo, char tipoAnexo) 
+        private (string newId, string idUltimaVersion) GenerarAnexoId(string clavePlaza, string referenceDTC, string referenceAnexo, bool isSubAnexo, char tipoAnexo) 
         {
 
             try
@@ -152,37 +152,54 @@ namespace ApiDTC.Data
                         cmd.Parameters.Add("@referenceDTC", SqlDbType.NVarChar).Value = referenceDTC;
                         cmd.Parameters.Add("@referenceAnexo", SqlDbType.NVarChar).Value = referenceAnexo;
                         cmd.Parameters.Add("@isSubVersion", SqlDbType.Bit).Value = isSubAnexo;
-                        var response = _sqlResult.Count(clavePlaza, cmd, sql, "GetConteoVersionesAnexo");
-                        if(response.SqlResult != null)
+                        var response = _sqlResult.GetList<AnexoCount>(clavePlaza, cmd, sql, "GetConteoVersionesAnexo");
+
+                        if(response.Result != null)
                         {
+                            var listCount = (List<AnexoCount>)response.Result;
+
                             if (isSubAnexo)
                             {
-                                return referenceAnexo + '-' + (Convert.ToInt32(response.SqlResult.ToString()) + 1);
-                                
+                                return (referenceAnexo + '-' + (listCount.Count + 1), listCount.FirstOrDefault().AnexoReference);
+
                             }
                             else
                             {
-                                return referenceDTC + '-' +tipoAnexo + (Convert.ToInt32(response.SqlResult.ToString()) + 1).ToString();
+                                return (referenceDTC + '-' + tipoAnexo + (listCount.Count + 1).ToString(), listCount.FirstOrDefault().AnexoReference);
                             }
                         }
                         else
-                            return string.Empty;
+                        {
+                            if (isSubAnexo)
+                            {
+                                return (referenceAnexo + '-' + '1', referenceAnexo);
+
+                            }
+                            else
+                            {
+                                return (referenceDTC + '-' + tipoAnexo + '1', string.Empty);
+                            }
+                        }
+
                     }
+
+                    return (string.Empty, string.Empty);
+
                 }
             }
             catch (SqlException ex)
             {
                 _apiLogger.WriteLog(clavePlaza, ex, "CalendarioDb: InsertComment", 1);
-                return string.Empty;
+                return (string.Empty, string.Empty);
             }            
         }
         public Response InsertAnexoDTC(string clavePlaza, bool isSubAnexo, AnexoDTCInsert anexoDTCInsert)
         {
             try
             {
-                string nuevoAnexoId = GenerarAnexoId(clavePlaza, anexoDTCInsert.DTCReference, anexoDTCInsert.AnexoReference, isSubAnexo, anexoDTCInsert.TipoAnexo);
+                var valueNewId = GenerarAnexoId(clavePlaza, anexoDTCInsert.DTCReference, anexoDTCInsert.AnexoReference, isSubAnexo, anexoDTCInsert.TipoAnexo);
 
-                if (nuevoAnexoId != string.Empty)
+                if (valueNewId.newId != string.Empty)
                 {
                     using (SqlConnection sql = new SqlConnection(_connectionString))
                     {
@@ -193,10 +210,17 @@ namespace ApiDTC.Data
                             };
                             cmd.CommandType = CommandType.StoredProcedure;
                             cmd.Parameters.Add("@referenceDTC", SqlDbType.NVarChar).Value = anexoDTCInsert.DTCReference;
-                            cmd.Parameters.Add("@referenceAnexo", SqlDbType.NVarChar).Value = nuevoAnexoId;
+                            if(valueNewId.idUltimaVersion == string.Empty)
+                                cmd.Parameters.Add("@referenceAnexoAnterior", SqlDbType.NVarChar).Value = DBNull.Value;
+                            else
+                                cmd.Parameters.Add("@referenceAnexoAnterior", SqlDbType.NVarChar).Value = valueNewId.idUltimaVersion;
+                            cmd.Parameters.Add("@referenceAnexo", SqlDbType.NVarChar).Value = valueNewId.newId;
                             cmd.Parameters.Add("@fechaApertura", SqlDbType.DateTime).Value = anexoDTCInsert.FechaApertura;
                             cmd.Parameters.Add("@fechaCierre", SqlDbType.DateTime).Value = anexoDTCInsert.FechaCierre;
-                            cmd.Parameters.Add("@folioOficio", SqlDbType.NVarChar).Value = anexoDTCInsert.FolioOficio;
+                            if(anexoDTCInsert.FolioOficio == string.Empty)
+                                cmd.Parameters.Add("@folioOficio", SqlDbType.NVarChar).Value = DBNull.Value;
+                            else
+                                cmd.Parameters.Add("@folioOficio", SqlDbType.NVarChar).Value = anexoDTCInsert.FolioOficio;
                             if (anexoDTCInsert.FechaOficioInicio == null)
                                 cmd.Parameters.Add("@fechaOficioInicio", SqlDbType.DateTime).Value = DBNull.Value;
                             else
@@ -207,6 +231,7 @@ namespace ApiDTC.Data
                                 cmd.Parameters.Add("@fechaOficioFin", SqlDbType.DateTime).Value = anexoDTCInsert.FechaOficioFin;
                             cmd.Parameters.Add("@supervisorId", SqlDbType.Int).Value = anexoDTCInsert.SupervisorId;
                             cmd.Parameters.Add("@tipoAnexo", SqlDbType.Char).Value = anexoDTCInsert.TipoAnexo;
+                            cmd.Parameters.Add("@isSubVersion", SqlDbType.Bit).Value = isSubAnexo;
                             var result = _sqlResult.Post(clavePlaza, cmd, sql, "InserAnexoHeader");
                             if (result.SqlResult == null)
                             {
@@ -219,28 +244,28 @@ namespace ApiDTC.Data
                         }
 
 
-                        //foreach (var item in anexoDTCInsert.ComponentesAnexo)
-                        //{
-                        //    SqlCommand cmd = new SqlCommand("dbo.InsertComponentesAnexo", sql)
-                        //    {
-                        //        CommandType = CommandType.StoredProcedure
-                        //    };
-                        //    cmd.CommandType = CommandType.StoredProcedure;
-                        //    cmd.Parameters.Add("@referenceNumber", SqlDbType.NVarChar).Value = anexoDTCInsert.DTCReference;
-                        //    cmd.Parameters.Add("@AnexoId", SqlDbType.NVarChar).Value = anexoDTCInsert.AnexoReference;
-                        //    cmd.Parameters.Add("@ComponentDTCId", SqlDbType.Int).Value = item.RequestedComponentId;
-                        //    cmd.Parameters.Add("@NumeroSerie", SqlDbType.NVarChar).Value = item.SerialNumber;
-                        //    var result = _sqlResult.Post(clavePlaza, cmd, sql, "InsertCompoenteAnexo");
+                        foreach (var item in anexoDTCInsert.ComponentesAnexo)
+                        {
+                            SqlCommand cmd = new SqlCommand("dbo.InsertComponentesAnexo", sql)
+                            {
+                                CommandType = CommandType.StoredProcedure
+                            };
+                            cmd.CommandType = CommandType.StoredProcedure;
+                            cmd.Parameters.Add("@referenceNumber", SqlDbType.NVarChar).Value = anexoDTCInsert.DTCReference;
+                            cmd.Parameters.Add("@AnexoId", SqlDbType.NVarChar).Value = valueNewId.newId;
+                            cmd.Parameters.Add("@ComponentDTCId", SqlDbType.Int).Value = item.RequestedComponentId;
+                            cmd.Parameters.Add("@NumeroSerie", SqlDbType.NVarChar).Value = item.SerialNumber;                  
+                            var result = _sqlResult.Post(clavePlaza, cmd, sql, "InsertCompoenteAnexo");
 
-                        //    if (result.SqlResult == null)
-                        //    {
-                        //        return new Response
-                        //        {
-                        //            Message = $"{result.SqlMessage}. No se pudo insertar el compoente",
-                        //            Result = null
-                        //        };
-                        //    }
-                        //}
+                            if (result.SqlResult == null)
+                            {
+                                return new Response
+                                {
+                                    Message = $"{result.SqlMessage}. No se pudo insertar el compoente",
+                                    Result = null
+                                };
+                            }
+                        }
 
                     }
                     return new Response

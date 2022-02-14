@@ -13,4 +13,8 @@ namespace ApiDTC.Models.AnexoDTC
         public DateTime FechaCierre { get; set; }
         public int SupervisorId { get; set; }
     }
+
+    public class AnexoCount{
+        public string AnexoReference { get; set; }
+    }
 }
