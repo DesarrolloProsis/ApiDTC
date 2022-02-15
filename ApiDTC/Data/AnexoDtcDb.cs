@@ -78,7 +78,7 @@ namespace ApiDTC.Data
             {
                 using (SqlConnection sql = new SqlConnection(_connectionString))
                 {
-                    using (SqlCommand cmd = new SqlCommand("dbo.GetComponentesAnexo", sql))
+                    using (SqlCommand cmd = new SqlCommand("dbo.GetCompRequestAnexo", sql))
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.Add("@referenceNumber", SqlDbType.NVarChar).Value = referenceNumber;
@@ -103,8 +103,7 @@ namespace ApiDTC.Data
                 {
                     using (SqlCommand cmd = new SqlCommand("dbo.GetHistoricoAnexo", sql))
                     {
-                        cmd.CommandType = CommandType.StoredProcedure;
-                        cmd.Parameters.Add("@referenceNumber", SqlDbType.NVarChar).Value = referenceNumber;
+                        cmd.CommandType = CommandType.StoredProcedure;                        
                         var historicoAnexo = _sqlResult.GetList<AnexoDTCHistorico>(clavePlaza, cmd, sql, "GetHistoricoAnexo");
 
                         return historicoAnexo;
@@ -123,11 +122,33 @@ namespace ApiDTC.Data
             {
                 using (SqlConnection sql = new SqlConnection(_connectionString))
                 {
-                    using (SqlCommand cmd = new SqlCommand("dbo.GetComponenteHistoricoAnexo", sql))
+                    using (SqlCommand cmd = new SqlCommand("dbo.GetComponentesAnexo", sql))
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.Add("@referenceAnexo", SqlDbType.NVarChar).Value = referenceAnexo;
                         var historicComponetesoAnexo = _sqlResult.GetList<AnexoHistoricoComponete>(clavePlaza, cmd, sql, "GetHistoricoComponetesAnexo");
+
+                        return historicComponetesoAnexo;
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                _apiLogger.WriteLog(clavePlaza, ex, "CalendarioDb: InsertComment", 1);
+                return new Response { Message = $"Error: {ex.Message}", Result = null };
+            }
+        }
+        public Response GetHeaderAnexo(string clavePlaza, string referenceAnexo)
+        {
+            try
+            {
+                using (SqlConnection sql = new SqlConnection(_connectionString))
+                {
+                    using (SqlCommand cmd = new SqlCommand("dbo.GetHeaderAnexo", sql))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.Add("@referenceAnexo", SqlDbType.NVarChar).Value = referenceAnexo;
+                        var historicComponetesoAnexo = _sqlResult.GetList<AnexoDTCHistorico>(clavePlaza, cmd, sql, "GetHistoricoComponetesAnexo");
 
                         return historicComponetesoAnexo;
                     }
