@@ -12,5 +12,8 @@ namespace ApiDTC.Models
         public string Brand { get; set; }
         public string Model { get; set; }
         public string SerialNumber { get; set; }
+        public string Lane { get; set; }
+        public string Observation { get; set; }
+        public bool UseInAnexo { get; set; }
     }    
 }

@@ -20,19 +20,6 @@ namespace ApiDTC.Controllers
         }
 
         [HttpGet("Supervisor/{clavePlaza}/{plazaId}")]
-        public ActionResult<Response> GetId(string clavePlaza, string plazaId)
-        {
-            if (ModelState.IsValid)
-            {
-                var get = _db.GetSupervisores(clavePlaza, plazaId);
-                if (get.Result == null)
-                    return BadRequest(get);
-                else
-                    return Ok(get);
-            }
-            return BadRequest(ModelState);
-        }
-        [HttpGet("Supervisor/{clavePlaza}/{plazaId}")]
         public ActionResult<Response> GetListaSupervisores(string clavePlaza, string plazaId)
         {
             if (ModelState.IsValid)
@@ -59,8 +46,8 @@ namespace ApiDTC.Controllers
             return BadRequest(ModelState);
         }
 
-        [HttpGet("Componentes/{clavePlaza}/{referenceNumber}")]
-        public ActionResult<Response> GetComponent(string clavePlaza, string referenceNumber)
+        [HttpGet("ComponentesRequest/{clavePlaza}/{referenceNumber}")]
+        public ActionResult<Response> GetComponentRequested(string clavePlaza, string referenceNumber)
         {
             if (ModelState.IsValid)
             {
@@ -87,8 +74,22 @@ namespace ApiDTC.Controllers
             return BadRequest(ModelState);
         }
 
-        [HttpGet("HistoricoComponetes/{clavePlaza}/{referenceAnexo}")]
+        [HttpGet("HistoricoComponetesAnexo/{clavePlaza}/{referenceAnexo}")]
         public ActionResult<Response> GetHistoricoComponetesAnexo(string clavePlaza, string referenceAnexo)
+        {
+            if (ModelState.IsValid)
+            {
+                var get = _db.GetHistoricoComponetesAnexo(clavePlaza, referenceAnexo);
+                if (get.Result == null)
+                    return BadRequest(get);
+                else
+                    return Ok(get);
+            }
+            return BadRequest(ModelState);
+        }
+
+        [HttpGet("HeaderAnexo/{clavePlaza}/{referenceAnexo}")]
+        public ActionResult<Response> GetHeaderAnexo(string clavePlaza, string referenceAnexo)
         {
             if (ModelState.IsValid)
             {
