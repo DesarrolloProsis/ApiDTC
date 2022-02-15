@@ -17,7 +17,7 @@ namespace ApiDTC.Models.AnexoDTC
         public int SupervisorId { get; set; }
         public DateTime FechaUltimoCambio { get; set; }
         public string Comentarios { get; set; }
-        public char TipoAnexo { get; set; }
+        public string TipoAnexo { get; set; }
         public bool Activo { get; set; }
         public bool IsSubVersion { get; set; }
         public bool PDFFirmardo { get; set; }

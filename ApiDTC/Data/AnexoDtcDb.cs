@@ -95,7 +95,7 @@ namespace ApiDTC.Data
                 return new Response { Message = $"Error: {ex.Message}", Result = null };
             }
         }
-        public Response GetHistoricoAnexo(string clavePlaza, string referenceNumber)
+        public Response GetHistoricoAnexo(string clavePlaza)
         {
             try
             {

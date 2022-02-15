@@ -60,12 +60,12 @@ namespace ApiDTC.Controllers
             return BadRequest(ModelState);
         }
 
-        [HttpGet("Historico/{clavePlaza}/{referenceNumber}")]
-        public ActionResult<Response> GetHistoricoAnexo(string clavePlaza, string referenceNumber)
+        [HttpGet("Historico/{clavePlaza}")]
+        public ActionResult<Response> GetHistoricoAnexo(string clavePlaza)
         {
             if (ModelState.IsValid)
             {
-                var get = _db.GetHistoricoAnexo(clavePlaza, referenceNumber);
+                var get = _db.GetHistoricoAnexo(clavePlaza);
                 if (get.Result == null)
                     return BadRequest(get);
                 else
@@ -93,7 +93,7 @@ namespace ApiDTC.Controllers
         {
             if (ModelState.IsValid)
             {
-                var get = _db.GetHistoricoComponetesAnexo(clavePlaza, referenceAnexo);
+                var get = _db.GetHeaderAnexo(clavePlaza, referenceAnexo);
                 if (get.Result == null)
                     return BadRequest(get);
                 else
