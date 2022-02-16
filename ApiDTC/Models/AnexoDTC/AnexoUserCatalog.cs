@@ -12,4 +12,9 @@ namespace ApiDTC.Models.AnexoDTC
         public string SquareId { get; set; }
         public int RollId { get; set; }
     }
+    public class InsertUsuarioAnexo
+    {
+        public string Nombre { get; set; }
+        public string SquareId { get; set; }
+    }
 }

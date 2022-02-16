@@ -51,6 +51,40 @@ namespace ApiDTC.Data
                 return new Response { Message = $"Error: {ex.Message}", Result = null };
             }
         }
+        public Response InsertSupervisor(string clavePlaza, InsertUsuarioAnexo insertUsuario)
+        {
+            try
+            {
+                using (SqlConnection sql = new SqlConnection(_connectionString))
+                {
+                    using (SqlCommand cmd = new SqlCommand("dbo.InsertSupervisor", sql))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.Add("@nombreSupervisor", SqlDbType.NVarChar).Value = insertUsuario.Nombre;
+                        cmd.Parameters.Add("@numeroPlaza", SqlDbType.NVarChar).Value = insertUsuario.SquareId;
+                        var result = _sqlResult.Post(clavePlaza, cmd, sql, "GetTestigosPlaza");
+                        if(result.SqlResult == null)
+                        {
+                            return new Response
+                            {
+                                Message = result.SqlMessage,
+                                Result = null
+                            };
+                        }
+                        return new Response
+                        {
+                            Message = result.SqlMessage,
+                            Result = insertUsuario
+                        };
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                _apiLogger.WriteLog(clavePlaza, ex, "CalendarioDb: InsertComment", 1);
+                return new Response { Message = $"Error: {ex.Message}", Result = null };
+            }
+        }
         public Response GetTestigos(string clavePlaza, string plazaId)
         {
             try
@@ -63,6 +97,40 @@ namespace ApiDTC.Data
                         cmd.Parameters.Add("@plazaId", SqlDbType.NVarChar).Value = plazaId;
                         var componentes = _sqlResult.GetList<AnexoUsuarioPlaza>(clavePlaza, cmd, sql, "GetTestigosPlaza");
                         return componentes;
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                _apiLogger.WriteLog(clavePlaza, ex, "CalendarioDb: InsertComment", 1);
+                return new Response { Message = $"Error: {ex.Message}", Result = null };
+            }
+        }
+        public Response InsertTestigo(string clavePlaza, InsertUsuarioAnexo insertUsuario)
+        {
+            try
+            {
+                using (SqlConnection sql = new SqlConnection(_connectionString))
+                {
+                    using (SqlCommand cmd = new SqlCommand("dbo.InsertTestigo", sql))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.Add("@nombreTestigo", SqlDbType.NVarChar).Value = insertUsuario.Nombre;
+                        cmd.Parameters.Add("@numeroPlaza", SqlDbType.NVarChar).Value = insertUsuario.SquareId;
+                        var result = _sqlResult.Post(clavePlaza, cmd, sql, "GetTestigosPlaza");
+                        if (result.SqlResult == null)
+                        {
+                            return new Response
+                            {
+                                Message = result.SqlMessage,
+                                Result = null
+                            };
+                        }
+                        return new Response
+                        {
+                            Message = result.SqlMessage,
+                            Result = insertUsuario
+                        };
                     }
                 }
             }
@@ -199,8 +267,7 @@ namespace ApiDTC.Data
                                 return (referenceDTC + '-' + tipoAnexo + '1', string.Empty);
                             }
                         }
-                    }
-                    return (string.Empty, string.Empty);
+                    }                    
                 }
             }
             catch (SqlException ex)
