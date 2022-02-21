@@ -47,6 +47,8 @@
         public int TypeFaultId { get; set; }
         public string TechnicalSheetReference { get; set; }
         public string FaultDescription { get; set; }
+        public bool IsAnexoCreate { get; set; }
+        
 
     }
 }
