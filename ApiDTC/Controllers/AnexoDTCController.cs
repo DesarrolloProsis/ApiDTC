@@ -92,13 +92,15 @@ namespace ApiDTC.Controllers
             return BadRequest(ModelState);
         }
 
-        [HttpGet("AnexoA/{clavePlaza}")]
-        public IActionResult GetAnexoA(string clavePlaza)
+        [HttpGet("AnexoA/{clavePlaza}/{referenciaAnexo}")]
+        public IActionResult GetAnexoA(string clavePlaza, string referenciaAnexo)
         {
             try
             {
-
-                AnexosPdfCreation pdf = new AnexosPdfCreation(clavePlaza, new ApiLogger());
+                var dataSet = _db.GetAnexoPDF(referenciaAnexo);
+                if (dataSet.Tables[0].Rows.Count == 0)
+                    return NotFound("GetStorePdf retorna tabla vacía");
+                AnexosPdfCreation pdf = new AnexosPdfCreation(clavePlaza, referenciaAnexo, dataSet.Tables[0], dataSet.Tables[1], new ApiLogger());
                 var pdfResult = pdf.NewPdfA($@"{this._disk}:\{this._folder}");
                 if (pdfResult.Result == null)
                     return NotFound(pdfResult.Message);
@@ -107,18 +109,20 @@ namespace ApiDTC.Controllers
             }
             catch (IOException ex)
             {
-                _apiLogger.WriteLog(clavePlaza, ex, "ReporteFotograficoController: GetReporteEqupoNuevo", 2);
+                _apiLogger.WriteLog(referenciaAnexo, ex, "ReporteFotograficoController: GetReporteEqupoNuevo", 2);
                 return NotFound(ex.ToString());
             }
         }
 
-        [HttpGet("AnexoB/{clavePlaza}")]
-        public IActionResult GetAnexoB(string clavePlaza)
+        [HttpGet("AnexoB/{clavePlaza}/{referenciaAnexo}")]
+        public IActionResult GetAnexoB(string clavePlaza, string referenciaAnexo)
         {
             try
             {
-
-                AnexosPdfCreation pdf = new AnexosPdfCreation(clavePlaza, new ApiLogger());
+                var dataSet = _db.GetAnexoPDF(referenciaAnexo);
+                if (dataSet.Tables[0].Rows.Count == 0 || dataSet.Tables[1].Rows.Count == 0)
+                    return NotFound("GetStorePdf retorna tabla vacía");
+                AnexosPdfCreation pdf = new AnexosPdfCreation(clavePlaza, referenciaAnexo, dataSet.Tables[0], dataSet.Tables[1], new ApiLogger());
                 var pdfResult = pdf.NewPdfB($@"{this._disk}:\{this._folder}");
                 if (pdfResult.Result == null)
                     return NotFound(pdfResult.Message);
@@ -127,7 +131,7 @@ namespace ApiDTC.Controllers
             }
             catch (IOException ex)
             {
-                _apiLogger.WriteLog(clavePlaza, ex, "ReporteFotograficoController: GetReporteEqupoNuevo", 2);
+                _apiLogger.WriteLog(referenciaAnexo, ex, "ReporteFotograficoController: GetReporteEqupoNuevo", 2);
                 return NotFound(ex.ToString());
             }
         }
