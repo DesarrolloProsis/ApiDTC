@@ -436,7 +436,7 @@
             {
                 using (SqlConnection sql = new SqlConnection(_connectionString))
                 {
-                    SqlCommand cmd = new SqlCommand($"SELECT Plaza, Carril, Componente, Cantidad, Precio, Solicitante, TipoDTC, Referencia  from v_CompnentesRequeridos", sql);
+                    SqlCommand cmd = new SqlCommand($"SELECT Plaza, Carril, Componente, Cantidad, Precio, Solicitante, TipoDTC, Referencia, Estatus from v_CompnentesRequeridos", sql);
                     //this.CrearExcel();
                     var lista= _sqlResult.GetList<ReporteComponente>(clavePlaza, cmd, sql, "GetReporteComponente");
                     

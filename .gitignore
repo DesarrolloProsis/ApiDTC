@@ -348,5 +348,8 @@ MigrationBackup/
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
 
+#LogRichi
+!Log/
+
 ApiDTC/obj/
 ApiDTC/bin/

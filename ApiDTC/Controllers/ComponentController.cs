@@ -178,23 +178,25 @@ namespace ApiDTC.Controllers
                         int fila = 2;
                         var ws = workbook.Worksheets.Add("Lista");
                         ws.Cell(1, 1).Value = "Plaza";
-                        ws.Cell(1, 2).Value = "Carril";
-                        ws.Cell(1, 3).Value = "Componente";
-                        ws.Cell(1, 4).Value = "Cantidad";
-                        ws.Cell(1, 5).Value = "Precio";
-                        ws.Cell(1, 6).Value = "Solicitante";
-                        ws.Cell(1, 7).Value = "TipoDTC";
-                        ws.Cell(1, 8).Value = "Referencia";
+                        ws.Cell(1, 2).Value = "Referencia";
+                        ws.Cell(1, 3).Value = "Estatus";
+                        ws.Cell(1, 4).Value = "Carril";
+                        ws.Cell(1, 5).Value = "Componente";
+                        ws.Cell(1, 6).Value = "Precio";
+                        ws.Cell(1, 7).Value = "Solicitante";
+                        ws.Cell(1, 8).Value = "TipoDTC";
+                        ws.Cell(1, 9).Value = "Cantidad";
                         foreach (ReporteComponente item in lista)
                         {
                             ws.Cell(fila, 1).Value = item.Plaza;
-                            ws.Cell(fila, 2).Value = item.Carril;
-                            ws.Cell(fila, 3).Value = item.Componente;
-                            ws.Cell(fila, 4).Value = item.Cantidad;
-                            ws.Cell(fila, 5).Value = item.Precio;
-                            ws.Cell(fila, 6).Value = item.Solicitante;
-                            ws.Cell(fila, 7).Value = item.TipoDTC;
-                            ws.Cell(fila, 8).Value = item.Referencia;
+                            ws.Cell(fila, 2).Value = item.Referencia;
+                            ws.Cell(fila, 3).Value = item.Estatus;
+                            ws.Cell(fila, 4).Value = item.Carril;
+                            ws.Cell(fila, 5).Value = item.Componente;
+                            ws.Cell(fila, 6).Value = item.Precio;
+                            ws.Cell(fila, 7).Value = item.Solicitante;
+                            ws.Cell(fila, 8).Value = item.TipoDTC;
+                            ws.Cell(fila, 9).Value = item.Cantidad;
                             fila++;
 
                         }

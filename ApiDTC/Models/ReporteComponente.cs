@@ -15,5 +15,6 @@ namespace ApiDTC.Models
         public string Solicitante { get; set; }//
         public string TipoDTC { get; set; }//
         public string Referencia { get; set; }//
+        public string Estatus { get; set; }//
     }
 }
