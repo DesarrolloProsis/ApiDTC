@@ -34,10 +34,64 @@ namespace ApiDTC.Controllers
             this._db = db ?? throw new ArgumentNullException(nameof(db));
             _apiLogger = new ApiLogger();
         }
+
         #endregion
 
-        [HttpGet("Componentes/{clavePlaza}/{referenceNumber}")]
-        public ActionResult<Response> GetComponent(string clavePlaza, string referenceNumber)
+        [HttpGet("Supervisor/{clavePlaza}/{plazaId}")]
+        public ActionResult<Response> GetListaSupervisores(string clavePlaza, string plazaId)
+        {
+            if (ModelState.IsValid)
+            {
+                var get = _db.GetSupervisores(clavePlaza, plazaId);
+                if (get.Result == null)
+                    return BadRequest(get);
+                else
+                    return Ok(get);
+            }
+            return BadRequest(ModelState);
+        }
+        [HttpGet("Testigos/{clavePlaza}/{plazaId}")]
+        public ActionResult<Response> GetListaTestigos(string clavePlaza, string plazaId)
+        {
+            if (ModelState.IsValid)
+            {
+                var get = _db.GetTestigos(clavePlaza, plazaId);
+                if (get.Result == null)
+                    return BadRequest(get);
+                else
+                    return Ok(get);
+            }
+            return BadRequest(ModelState);
+        }
+        [HttpPost("Supervisor/{clavePlaza}")]
+        public ActionResult<Response> InsertSupervisor(string clavePlaza, [FromBody] InsertUsuarioAnexo insertSupervision)
+        {
+            if (ModelState.IsValid)
+            {
+                var get = _db.InsertSupervisor(clavePlaza, insertSupervision);
+                if (get.Result == null)
+                    return BadRequest(get);
+                else
+                    return Ok(get);
+            }
+            return BadRequest(ModelState);
+        }
+        [HttpPost("Testigos/{clavePlaza}")]
+        public ActionResult<Response> InsertTestigo(string clavePlaza, [FromBody] InsertUsuarioAnexo insertTestigos)
+        {
+            if (ModelState.IsValid)
+            {
+                var get = _db.InsertTestigo(clavePlaza, insertTestigos);
+                if (get.Result == null)
+                    return BadRequest(get);
+                else
+                    return Ok(get);
+            }
+            return BadRequest(ModelState);
+        }
+
+        [HttpGet("ComponentesRequest/{clavePlaza}/{referenceNumber}")]
+        public ActionResult<Response> GetComponentRequested(string clavePlaza, string referenceNumber)
         {
             if (ModelState.IsValid)
             {
@@ -50,12 +104,12 @@ namespace ApiDTC.Controllers
             return BadRequest(ModelState);
         }
 
-        [HttpGet("Historico/{clavePlaza}/{referenceNumber}")]
-        public ActionResult<Response> GetHistoricoAnexo(string clavePlaza, string referenceNumber)
+        [HttpGet("Historico/{clavePlaza}/{referenceDTC}")]
+        public ActionResult<Response> GetHistoricoAnexo(string clavePlaza, string referenceDTC)
         {
             if (ModelState.IsValid)
             {
-                var get = _db.GetHistoricoAnexo(clavePlaza, referenceNumber);
+                var get = _db.GetHistoricoAnexo(clavePlaza, referenceDTC);
                 if (get.Result == null)
                     return BadRequest(get);
                 else
@@ -64,7 +118,7 @@ namespace ApiDTC.Controllers
             return BadRequest(ModelState);
         }
 
-        [HttpGet("HistoricoComponetes/{clavePlaza}/{referenceAnexo}")]
+        [HttpGet("HistoricoComponetesAnexo/{clavePlaza}/{referenceAnexo}")]
         public ActionResult<Response> GetHistoricoComponetesAnexo(string clavePlaza, string referenceAnexo)
         {
             if (ModelState.IsValid)
@@ -78,12 +132,26 @@ namespace ApiDTC.Controllers
             return BadRequest(ModelState);
         }
 
-        [HttpPost("{clavePlaza}/{editAnexoVersion}")]
-        public ActionResult<Response> InsertAnexo(string clavePlaza, bool editAnexoVersion, [FromBody] AnexoDTCInsert insetAnexo)
+        [HttpGet("HeaderAnexo/{clavePlaza}/{referenceAnexo}")]
+        public ActionResult<Response> GetHeaderAnexo(string clavePlaza, string referenceAnexo)
         {
             if (ModelState.IsValid)
             {
-                var get = _db.InsertAnexoDTC(clavePlaza, insetAnexo);
+                var get = _db.GetHeaderAnexo(clavePlaza, referenceAnexo);
+                if (get.Result == null)
+                    return BadRequest(get);
+                else
+                    return Ok(get);
+            }
+            return BadRequest(ModelState);
+        }
+
+        [HttpPost("{clavePlaza}/{isSubAnexo}")]
+        public ActionResult<Response> InsertAnexo(string clavePlaza, bool isSubAnexo, [FromBody] AnexoDTCInsert insertAnexo)
+        {
+            if (ModelState.IsValid)
+            {
+                var get = _db.InsertAnexoDTC(clavePlaza, isSubAnexo, insertAnexo);
                 if (get.Message == null)
                     return BadRequest(get);
                 else
