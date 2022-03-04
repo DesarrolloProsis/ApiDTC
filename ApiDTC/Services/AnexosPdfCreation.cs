@@ -77,14 +77,14 @@ namespace ApiDTC.Services
         //public static iTextSharp.text.Font letraoNegritaGrande = new iTextSharp.text.Font(NegritaGrande, 13f, iTextSharp.text.Font.BOLD, BaseColor.Black);
         public static iTextSharp.text.Font letraoNormalChicaFirmas = new iTextSharp.text.Font(NormalChica, 6f, iTextSharp.text.Font.BOLD, BaseColor.Black);
 
-        public static iTextSharp.text.Font letraoNegritaMediana = new iTextSharp.text.Font(NegritaMediana, 8f, iTextSharp.text.Font.NORMAL, BaseColor.Black);
+        public static iTextSharp.text.Font letraoNegritaMediana = new iTextSharp.text.Font(NegritaMediana, 9f, iTextSharp.text.Font.NORMAL, BaseColor.Black);
 
         public static iTextSharp.text.Font letraoNegritaChica = new iTextSharp.text.Font(NegritaChica, 6f, iTextSharp.text.Font.BOLD, BaseColor.Black);
 
         public static iTextSharp.text.Font letraNormalMediana = new iTextSharp.text.Font(NormalMediana, 8f, iTextSharp.text.Font.NORMAL, BaseColor.Black);
-        //public static iTextSharp.text.Font letraNormalMediana = new iTextSharp.text.Font(NormalMediana, 9f, iTextSharp.text.Font.NORMAL, BaseColor.Black);
 
         public static iTextSharp.text.Font letraNegritaItalicaMedianaRoja = new iTextSharp.text.Font(NegritaMedianaIta, 8f, iTextSharp.text.Font.BOLD, BaseColor.Red);
+        //public static iTextSharp.text.Font letraNormalMediana = new iTextSharp.text.Font(NormalMediana, 9f, iTextSharp.text.Font.NORMAL, BaseColor.Black);
         public static iTextSharp.text.Font letraNegritaItalicaMediana = new iTextSharp.text.Font(NegritaMedianaIta, 8f, iTextSharp.text.Font.BOLD, BaseColor.Black);
 
         public static iTextSharp.text.Font letraNormalMedianaRoja = new iTextSharp.text.Font(NormalMediana, 9f, iTextSharp.text.Font.NORMAL, BaseColor.Red);
@@ -340,9 +340,15 @@ namespace ApiDTC.Services
                 Chunk Dos13 = new Chunk("Y ", letraNormalMediana);
                 Chunk Dos14 = new Chunk(_tableTestigos.Rows[1]["Testigos"].ToString().ToUpper() + ", ", letraoNegritaMediana);
                 Chunk Dos15 = new Chunk("TESTIGOS DE ASISTENCIA, PARA HACER CONSTAR QUE LA FALLA DEL EQUIPO DE ", letraNormalMediana);
-                Chunk Dos16 = new Chunk(_tableAnexo.Rows[0]["Carril"].ToString().ToUpper() + ", ", letraoNegritaMediana);
+
+                string carril_es = appendRows(_tableAnexo, "Carril");
+                Chunk Dos16 = new Chunk(carril_es.ToUpper() + ", ", letraoNegritaMediana);
+
                 Chunk Dos17 = new Chunk("REPORTADA CON No. DE ACUSE/FOLIO ", letraNormalMediana);
-                Chunk Dos18 = new Chunk(_tableAnexo.Rows[0]["Folio"].ToString().ToUpper() + ", ", letraoNegritaMediana);
+
+                string folio_s = appendRows(_tableAnexo, "Folio");
+                Chunk Dos18 = new Chunk(folio_s.ToUpper() + ", ", letraoNegritaMediana);
+
                 Chunk Dos19 = new Chunk("DE FECHA ", letraNormalMediana);
                 Chunk Dos20 = new Chunk(fechaInicio.ToString("d DE MMMMM DE yyyy", CultureInfo.CreateSpecificCulture("es-MX")).ToUpper() + "; ", letraoNegritaMediana);
                 //Chunk Dos20 = new Chunk("18 DE JUNIO DE 2021; ", letraoNegritaMediana);
@@ -350,7 +356,10 @@ namespace ApiDTC.Services
                 Chunk Dos22 = new Chunk(fechaFin.ToString("d DE MMMMM DE yyyy", CultureInfo.CreateSpecificCulture("es-MX")).ToUpper() + ", ", letraoNegritaMediana);
                 //Chunk Dos22 = new Chunk("10 DE DICIEMBRE DE 2021, ", letraoNegritaMediana);
                 Chunk Dos23 = new Chunk("DICHA FALLA CONSISTIÓ EN EL DAÑO A ", letraNormalMediana);
-                Chunk Dos24 = new Chunk("MONITOR TOUCH, ", letraoNegritaMediana);
+
+                string componente_es = appendRows(_tableAnexo, "Componente");
+                Chunk Dos24 = new Chunk(componente_es.ToUpper() + ", ", letraoNegritaMediana);
+
                 Chunk Dos25 = new Chunk("Y FUE PROVOCADA ", letraNormalMediana);
                 Chunk Dos26 = new Chunk("POR VANDALISMO, ", letraoNegritaMediana);
                 Chunk Dos27 = new Chunk("OCURRIDO EL ", letraNormalMediana);
@@ -407,6 +416,16 @@ namespace ApiDTC.Services
                 parrafoCuatro.Add(Cuatro3);
                 parrafoCuatro.Alignment = Element.ALIGN_JUSTIFIED;
 
+                Chunk CiincoUno = new Chunk("NO. SINIESTRO Y/O NO. DE REPORTE. ", letraoNegritaMediana);
+                Chunk CiincoDos = new Chunk(_tableAnexo.Rows[0]["Folio"].ToString().ToUpper() + " DE ", letraoNegritaMediana);
+                Chunk CiincoTres = new Chunk(fechaFin.ToString("d DE MMMMM DE yyyy", CultureInfo.CreateSpecificCulture("es-MX")).ToUpper(), letraoNegritaMediana);
+                var parrafoCinco = new Paragraph();
+                parrafoCinco.SetLeading(0, 1.4f);
+                parrafoCinco.Add(CiincoUno);
+                parrafoCinco.Add(CiincoDos);
+                parrafoCinco.Add(CiincoTres);
+                parrafoCinco.Alignment = Element.ALIGN_JUSTIFIED;
+
                 var colParrafoUno = new PdfPCell()
                 {
                     Border = 0,
@@ -444,10 +463,20 @@ namespace ApiDTC.Services
                 };
                 colParrafoCuatro.AddElement(parrafoCuatro);
 
+                var colParrafoCinco = new PdfPCell()
+                {
+                    Border = 0,
+                    HorizontalAlignment = Element.ALIGN_JUSTIFIED,
+                    VerticalAlignment = Element.ALIGN_CENTER,
+                    PaddingBottom = 10
+                };
+                colParrafoCinco.AddElement(parrafoCinco);
+
                 table.AddCell(colParrafoUno);
                 table.AddCell(colParrafoDos);
                 table.AddCell(colParrafoTres);
                 table.AddCell(colParrafoCuatro);
+                table.AddCell(colParrafoCinco);
 
                 return table;
 
@@ -477,7 +506,7 @@ namespace ApiDTC.Services
                 Chunk Uno2 = new Chunk("POR FÍN DE VIDA ÚTIL/REUBICACIÓN/ACONDICIONAMIENTO", letraoNegritaMediana);
                 Chunk Uno3 = new Chunk(", REALIZADO AL EQUIPO DE CONTROL DE TRANSITO DE ", letraNormalMediana);
                 Chunk Uno4 = new Chunk("PLAZA", letraoNegritaMediana);
-                Chunk Uno5 = new Chunk(", EN LA PLAZA DE COBRO No.103, PALO BLANCO, PERTENECIENTE A LA ", letraNormalMediana);
+                Chunk Uno5 = new Chunk(", " + _tableAnexo.Rows[0]["Plaza"].ToString().ToUpper() + ", PALO BLANCO, PERTENECIENTE A LA ", letraNormalMediana);
                 Chunk Uno6 = new Chunk("UNIDAD REGIONAL CUERNAVACA.", letraoNegritaMediana);
                 var parrafoUno = new Paragraph();
                 parrafoUno.SetLeading(0, 1.4f);
@@ -490,29 +519,29 @@ namespace ApiDTC.Services
                 parrafoUno.Alignment = Element.ALIGN_JUSTIFIED;
 
                 Chunk Dos1 = new Chunk("EN LA CIUDAD DE MAZATLAN, GRO., SIENDO LAS ", letraNormalMediana);
-                Chunk Dos2 = new Chunk("17:30 HRS.", letraoNegritaMediana);
+                Chunk Dos2 = new Chunk(fechaApertura.ToString("hh:mm", CultureInfo.CreateSpecificCulture("es-MX")).ToUpper() + " HRS. ", letraoNegritaMediana);
                 Chunk Dos3 = new Chunk(" DEL DÍA ", letraNormalMediana);
-                Chunk Dos4 = new Chunk("20 DE DICIEMBRE DE 2021, ", letraoNegritaMediana);
-                Chunk Dos5 = new Chunk("EL ", letraNormalMediana);
-                Chunk Dos6 = new Chunk("LIC. JESUS GERMAIN GONZALEZ MORALES, ", letraoNegritaMediana);
+                Chunk Dos4 = new Chunk(fechaApertura.ToString("d DE MMMMM DE yyyy", CultureInfo.CreateSpecificCulture("es-MX")).ToUpper(), letraoNegritaMediana);
+                Chunk Dos5 = new Chunk(" EL ", letraNormalMediana);
+                Chunk Dos6 = new Chunk(_tableAnexo.Rows[0]["Admin"].ToString().ToUpper() + ", ", letraoNegritaMediana);
                 Chunk Dos7 = new Chunk("DE LA PLAZA DE COBRO, EL ", letraNormalMediana);
-                Chunk Dos8 = new Chunk("C. JHOVANY MOHAMED ISAURO GARCIA, ", letraoNegritaMediana);
+                Chunk Dos8 = new Chunk(_tableAnexo.Rows[0]["Supervisor"].ToString().ToUpper() + ", ", letraoNegritaMediana);
                 Chunk Dos9 = new Chunk("TÉCNICO REPRESENTANTE DE LA EMPRESA PRESTADORA DE SERVICIOS PROYECTOS Y SISTEMAS INFORMATICOS S.A. DE C.V. Y LOS ", letraNormalMediana);
-                Chunk Dos10 = new Chunk("C. FRANCISCO VALENTE MIRANDA ", letraoNegritaMediana);
+                Chunk Dos10 = new Chunk(_tableTestigos.Rows[0]["Testigos"].ToString().ToUpper() + ", ", letraoNegritaMediana);
                 Chunk Dos11 = new Chunk("Y EL ", letraNormalMediana);
-                Chunk Dos12 = new Chunk("C. JUAN SANTOS JIMENEZ, ", letraoNegritaMediana);
+                Chunk Dos12 = new Chunk(_tableTestigos.Rows[1]["Testigos"].ToString().ToUpper() + ", ", letraoNegritaMediana);
                 Chunk Dos13 = new Chunk("TESTIGOS DE ASISTENCIA, PARA HACER CONSTAR LA SUSTITUCIÓN DE COMPONENTES DEL EQUIPO DE CONTROL DE TRANSITO DE ", letraNormalMediana);
                 Chunk Dos14 = new Chunk("PLAZA, ", letraoNegritaMediana);
                 Chunk Dos15 = new Chunk("DE ACUERDO A LA SOLICITUD DE FECHA ", letraNormalMediana);
-                Chunk Dos16 = new Chunk("15 DE DICIEMBRE DE 2021 ", letraoNegritaMediana);
+                Chunk Dos16 = new Chunk(fechaInicio.ToString("d DE MMMMM DE yyyy", CultureInfo.CreateSpecificCulture("es-MX")).ToUpper() + " ", letraoNegritaMediana);
                 Chunk Dos17 = new Chunk("Y AUTORIZADA EN OFICIO ", letraNormalMediana);
-                Chunk Dos18 = new Chunk("DO/3828/2021, ", letraoNegritaMediana);
-                Chunk Dos19 = new Chunk("DE", letraNormalMediana);
-                Chunk Dos20 = new Chunk("FECHA 15 DE DICIEMBRE DE 2021, ", letraoNegritaMediana);
+                Chunk Dos18 = new Chunk(_tableAnexo.Rows[0]["Folio"].ToString().ToUpper() + ", ", letraoNegritaMediana);
+                Chunk Dos19 = new Chunk("DE ", letraNormalMediana);
+                Chunk Dos20 = new Chunk(fechaInicio.ToString("d DE MMMMM DE yyyy", CultureInfo.CreateSpecificCulture("es-MX")).ToUpper() + ", ", letraoNegritaMediana);
                 Chunk Dos21 = new Chunk("POR LA ", letraNormalMediana);
                 Chunk Dos22 = new Chunk("GERENCIA DE MANTENIMIENTO Y MODERNIZACIÓN DE EQUIPOS DE PEAJE; ", letraoNegritaMediana);
                 Chunk Dos23 = new Chunk("PARA CUYO EFECTÓ FUÉ NECESARIO REPONER EN FECHA ", letraNormalMediana);
-                Chunk Dos24 = new Chunk("20 DE DICIEMBRE DE 2021 ", letraoNegritaMediana);
+                Chunk Dos24 = new Chunk(fechaFin.ToString("d DE MMMMM DE yyyy", CultureInfo.CreateSpecificCulture("es-MX")).ToUpper() + " ", letraoNegritaMediana);
                 Chunk Dos25 = new Chunk("LAS PARTES QUE A CONTINUACIÓN SE DETALLAN.", letraNormalMediana);
                 var parrafoDos = new Paragraph();
                 parrafoDos.SetLeading(0, 1.4f);
@@ -623,7 +652,7 @@ namespace ApiDTC.Services
             try
             {
                 //Encabezado
-                PdfPTable table = new PdfPTable(new float[] { 14.28f, 14.28f, 14.28f, 14.28f, 14.28f, 14.28f, 14.28f }) { WidthPercentage = 100f };
+                PdfPTable table = new PdfPTable(new float[] { 11.28f, 17.28f, 15.28f, 14.28f, 14.28f, 12f, 15.56f }) { WidthPercentage = 100f };
 
                 Chunk ComponenteDañado = new Chunk("COMPONENTES Y/O REFACCIONES DAÑADAS:", letraoNegritaMediana);
                 ComponenteDañado.SetUnderline(1, -1);
@@ -653,14 +682,29 @@ namespace ApiDTC.Services
                 table.AddCell(encabezadoUbicacion);
                 table.AddCell(encabezadoObservaciones);
 
-                foreach (DataRow item in _tableAnexo.Rows)
+                var componentesGropuped = from s in _tableAnexo.AsEnumerable()
+                                        group s by s.Field<string>("Componente")
+                                            into grp
+                                            orderby grp.Key
+                                            select new
+                                            {
+                                                grpComponente = grp.Key,
+                                                grpMOD_MARCA = string.Join("\n\n", grp.Select(a => a["MOD/MARCA Dañado"])),
+                                                grpInventario = string.Join("\n\n", grp.Select(a => a["Inventario"])),
+                                                grpSerie = string.Join("\n\n", grp.Select(a => a["Serie Dañado"])),
+                                                grpCarril = string.Join("\n\n", grp.Select(a => a["Carril"])),
+                                                grpCount = grp.Count()
+                                            };
+
+
+                for (int i = 0; i < componentesGropuped.Count(); i++)
                 {
-                    var cantidad = new PdfPCell(new Phrase("10008000", letraoNegritaMediana)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, PaddingTop = 9, PaddingLeft = 3, PaddingRight = 3, PaddingBottom = 7 };
-                    var componente = new PdfPCell(new Phrase(item["Componente"].ToString(), letraoNegritaMediana)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, PaddingTop = 9, PaddingLeft = 3, PaddingRight = 3, PaddingBottom = 7 };
-                    var marcaMod = new PdfPCell(new Phrase(item["MOD/MARCA Dañado"].ToString(), letraoNegritaMediana)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, PaddingTop = 9, PaddingLeft = 3, PaddingRight = 3, PaddingBottom = 7 };
-                    var serie = new PdfPCell(new Phrase(item["Serie Dañado"].ToString(), letraoNegritaMediana)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, PaddingTop = 9, PaddingLeft = 3, PaddingRight = 3, PaddingBottom = 7 };
-                    var inventario = new PdfPCell(new Phrase(item["Inventario"].ToString(), letraoNegritaMediana)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, PaddingTop = 9, PaddingLeft = 3, PaddingRight = 3, PaddingBottom = 7 };
-                    var ubicacion = new PdfPCell(new Phrase(item["Carril"].ToString(), letraoNegritaMediana)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, PaddingTop = 9, PaddingLeft = 3, PaddingRight = 3, PaddingBottom = 7 };
+                    var cantidad = new PdfPCell(new Phrase(componentesGropuped.ElementAt(i).grpCount.ToString(), letraoNegritaMediana)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, PaddingTop = 9, PaddingLeft = 3, PaddingRight = 3, PaddingBottom = 7 };
+                    var componente = new PdfPCell(new Phrase(componentesGropuped.ElementAt(i).grpComponente.ToString(), letraoNegritaMediana)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, PaddingTop = 9, PaddingLeft = 3, PaddingRight = 3, PaddingBottom = 7 };
+                    var marcaMod = new PdfPCell(new Phrase(componentesGropuped.ElementAt(i).grpMOD_MARCA.ToString(), letraoNegritaMediana)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, PaddingTop = 9, PaddingLeft = 3, PaddingRight = 3, PaddingBottom = 7 };
+                    var serie = new PdfPCell(new Phrase(componentesGropuped.ElementAt(i).grpSerie.ToString(), letraoNegritaMediana)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, PaddingTop = 9, PaddingLeft = 3, PaddingRight = 3, PaddingBottom = 7 };
+                    var inventario = new PdfPCell(new Phrase(componentesGropuped.ElementAt(i).grpInventario.ToString(), letraoNegritaMediana)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, PaddingTop = 9, PaddingLeft = 3, PaddingRight = 3, PaddingBottom = 7 };
+                    var ubicacion = new PdfPCell(new Phrase(componentesGropuped.ElementAt(i).grpCarril.ToString(), letraoNegritaMediana)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, PaddingTop = 9, PaddingLeft = 3, PaddingRight = 3, PaddingBottom = 7 };
                     var Observaciones = new PdfPCell(new Phrase("Dañado", letraoNegritaMediana)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, PaddingTop = 9, PaddingLeft = 3, PaddingRight = 3, PaddingBottom = 7 };
 
                     table.AddCell(cantidad);
@@ -672,7 +716,6 @@ namespace ApiDTC.Services
                     table.AddCell(Observaciones);
                 }
 
-                //CeldasContenido(7, table);
                 table.AddCell(espacioVacio);
 
                 return table;
@@ -696,7 +739,7 @@ namespace ApiDTC.Services
             try
             {
                 //Encabezado
-                PdfPTable table = new PdfPTable(new float[] { 14.28f, 14.28f, 14.28f, 14.28f, 14.28f, 14.28f, 14.28f }) { WidthPercentage = 100f };
+                PdfPTable table = new PdfPTable(new float[] { 14.28f, 14.28f, 14.28f, 14.28f, 14.28f, 13f, 15.56f }) { WidthPercentage = 100f };
 
                 Chunk ComponenteDañado = new Chunk("COMPONENTES Y/O REFACCIONES NUEVAS:", letraoNegritaMediana);
                 ComponenteDañado.SetUnderline(1, -1);
@@ -712,7 +755,7 @@ namespace ApiDTC.Services
                 var encabezadoMarca = new PdfPCell(new Phrase("Marca Y/O Modelo", letraoNegritaMediana)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, PaddingTop = 9, PaddingLeft = 3, PaddingRight = 3, PaddingBottom = 7 };
                 var encabezadoSerie = new PdfPCell(new Phrase("No. de Serie", letraoNegritaMediana)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, PaddingTop = 9, PaddingLeft = 3, PaddingRight = 3, PaddingBottom = 7 };
                 var encabezadoInventario = new PdfPCell(new Phrase("No. Inventario", letraoNegritaMediana)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, PaddingTop = 9, PaddingLeft = 3, PaddingRight = 3, PaddingBottom = 7 };
-                var encabezadoUbicacion = new PdfPCell(new Phrase("Ubicacion", letraoNegritaMediana)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, PaddingTop = 9, PaddingLeft = 3, PaddingRight = 3, PaddingBottom = 7 };
+                var encabezadoUbicacion = new PdfPCell(new Phrase("Ubicacion", letraoNegritaMediana)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, PaddingTop = 9, PaddingLeft = 1, PaddingRight = 1, PaddingBottom = 7 };
                 var encabezadoObservaciones = new PdfPCell(new Phrase("Observaciones", letraoNegritaMediana)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, PaddingTop = 9, PaddingLeft = 3, PaddingRight = 3, PaddingBottom = 7 };
 
                 var espacioVacio = new PdfPCell(new Phrase("", letraoNegritaMediana)) { BorderWidthTop = 0, BorderWidthBottom = 0, BorderWidthLeft = 0, BorderWidthRight = 0, HorizontalAlignment = Element.ALIGN_MIDDLE, VerticalAlignment = Element.ALIGN_CENTER, PaddingTop = 0, PaddingLeft = 3, PaddingRight = 3, PaddingBottom = 15, Colspan = 7 };
@@ -726,22 +769,31 @@ namespace ApiDTC.Services
                 table.AddCell(encabezadoUbicacion);
                 table.AddCell(encabezadoObservaciones);
 
-                int numCantidad = 0;
-
-                var tableUniqueComponents = new DataTable();
-                //tableUniqueComponents = _tableAnexo.Clone();
 
 
-                tableUniqueComponents = _tableAnexo.AsEnumerable().GroupBy(r => new {comp = r["Componente"],mod = r["MOD/MARCA"], serie = r["Serie"], Inv = r["Inventario"], carril = r["Carril"] }).Select(g => g.Count()).CopyToDataTable();
+                var componentesGropuped = from s in _tableAnexo.AsEnumerable()
+                                        group s by s.Field<string>("Componente")
+                                            into grp
+                                            orderby grp.Key
+                                            select new
+                                            {
+                                                grpComponente = grp.Key,
+                                                grpMOD_MARCA = string.Join("\n\n", grp.Select(a => a["MOD/MARCA"])),
+                                                grpInventario = string.Join("\n\n", grp.Select(a => a["Inventario"])),
+                                                grpSerie = string.Join("\n\n", grp.Select(a => a["Serie"])),
+                                                grpCarril = string.Join("\n\n", grp.Select(a => a["Carril"])),
+                                                grpCount = grp.Count()
+                                            };
 
-                foreach (DataRow item in _tableAnexo.Rows)
+
+                for (int i = 0; i < componentesGropuped.Count(); i++)
                 {
-                    var cantidad = new PdfPCell(new Phrase("10008000", letraoNegritaMediana)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, PaddingTop = 9, PaddingLeft = 3, PaddingRight = 3, PaddingBottom = 7 };
-                    var componente = new PdfPCell(new Phrase(item["Componente"].ToString(), letraoNegritaMediana)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, PaddingTop = 9, PaddingLeft = 3, PaddingRight = 3, PaddingBottom = 7 };
-                    var marcaMod = new PdfPCell(new Phrase(item["MOD/MARCA"].ToString(), letraoNegritaMediana)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, PaddingTop = 9, PaddingLeft = 3, PaddingRight = 3, PaddingBottom = 7 };
-                    var serie = new PdfPCell(new Phrase(item["Serie"].ToString(), letraoNegritaMediana)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, PaddingTop = 9, PaddingLeft = 3, PaddingRight = 3, PaddingBottom = 7 };
-                    var inventario = new PdfPCell(new Phrase(item["Inventario"].ToString(), letraoNegritaMediana)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, PaddingTop = 9, PaddingLeft = 3, PaddingRight = 3, PaddingBottom = 7 };
-                    var ubicacion = new PdfPCell(new Phrase(item["Carril"].ToString(), letraoNegritaMediana)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, PaddingTop = 9, PaddingLeft = 3, PaddingRight = 3, PaddingBottom = 7 };
+                    var cantidad = new PdfPCell(new Phrase(componentesGropuped.ElementAt(i).grpCount.ToString(), letraoNegritaMediana)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, PaddingTop = 9, PaddingLeft = 3, PaddingRight = 3, PaddingBottom = 7 };
+                    var componente = new PdfPCell(new Phrase(componentesGropuped.ElementAt(i).grpComponente.ToString(), letraoNegritaMediana)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, PaddingTop = 9, PaddingLeft = 3, PaddingRight = 3, PaddingBottom = 7 };
+                    var marcaMod = new PdfPCell(new Phrase(componentesGropuped.ElementAt(i).grpMOD_MARCA.ToString(), letraoNegritaMediana)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, PaddingTop = 9, PaddingLeft = 3, PaddingRight = 3, PaddingBottom = 7 };
+                    var serie = new PdfPCell(new Phrase(componentesGropuped.ElementAt(i).grpSerie.ToString(), letraoNegritaMediana)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, PaddingTop = 9, PaddingLeft = 3, PaddingRight = 3, PaddingBottom = 7 };
+                    var inventario = new PdfPCell(new Phrase(componentesGropuped.ElementAt(i).grpInventario.ToString(), letraoNegritaMediana)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, PaddingTop = 9, PaddingLeft = 3, PaddingRight = 3, PaddingBottom = 7 };
+                    var ubicacion = new PdfPCell(new Phrase(componentesGropuped.ElementAt(i).grpCarril.ToString(), letraoNegritaMediana)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, PaddingTop = 9, PaddingLeft = 3, PaddingRight = 3, PaddingBottom = 7 };
                     var Observaciones = new PdfPCell(new Phrase("Nuevo", letraoNegritaMediana)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, PaddingTop = 9, PaddingLeft = 3, PaddingRight = 3, PaddingBottom = 7 };
 
                     table.AddCell(cantidad);
@@ -911,13 +963,13 @@ namespace ApiDTC.Services
                 /////////////////////////////////Nombres////////////////////////////////////
                 ///
 
-                Chunk nomCapufe = new Chunk("LIC. JESÚS GERMAIN GONZÁLEZ MORALES.\n Administrador o Encargado de Turno\n AUTORIZÓ", letraoNegritaMediana);
+                Chunk nomCapufe = new Chunk(_tableAnexo.Rows[0]["Admin"].ToString().ToUpper() + "\n Administrador o Encargado de Turno\n AUTORIZÓ", letraoNegritaMediana);
                 var parrafonomCapufe = new Paragraph();
                 parrafonomCapufe.SetLeading(0, 1.8f);
                 parrafonomCapufe.Add(nomCapufe);
                 parrafonomCapufe.Alignment = Element.ALIGN_CENTER;
 
-                Chunk nomEmpresa = new Chunk("C. JHOVANY MOHAMED ISAURO GARCIA\n Técnico\n REALIZÓ", letraoNegritaMediana);
+                Chunk nomEmpresa = new Chunk(_tableAnexo.Rows[0]["Supervisor"].ToString().ToUpper() + "\n Técnico\n REALIZÓ", letraoNegritaMediana);
                 var parrafonomEmpresa = new Paragraph();
                 parrafonomEmpresa.SetLeading(0, 1.8f);
                 parrafonomEmpresa.Add(nomEmpresa);
@@ -1018,13 +1070,13 @@ namespace ApiDTC.Services
 
                 /////////////////////////////////////////////////testigos/////////////////////////////////////////////
 
-                Chunk nomEncargadoUno = new Chunk("FRANCISCO VALENTE\n Encargado de turno", letraoNegritaMediana);
+                Chunk nomEncargadoUno = new Chunk(_tableTestigos.Rows[0]["Testigos"].ToString().ToUpper() + "\n Encargado de turno", letraoNegritaMediana);
                 var parrafonomEncargadoUno = new Paragraph();
                 parrafonomEncargadoUno.SetLeading(0, 1.8f);
                 parrafonomEncargadoUno.Add(nomEncargadoUno);
                 parrafonomEncargadoUno.Alignment = Element.ALIGN_CENTER;
 
-                Chunk nomEncargadoDos = new Chunk("JUAN SANTOS JIMENEZ\n Encargado de turno", letraoNegritaMediana);
+                Chunk nomEncargadoDos = new Chunk(_tableTestigos.Rows[1]["Testigos"].ToString().ToUpper() + "\n Encargado de turno", letraoNegritaMediana);
                 var parrafonomEncargadoDos = new Paragraph();
                 parrafonomEncargadoDos.SetLeading(0, 1.8f);
                 parrafonomEncargadoDos.Add(nomEncargadoDos);
@@ -1314,6 +1366,40 @@ namespace ApiDTC.Services
                 return true;
             }
             return fileInUse;
+        }
+
+        public string appendRows(DataTable table, string column)
+        {
+            string list = "";
+            int numList = 0;
+            foreach (DataRow item in table.Rows)
+            {
+                if (table.Rows.IndexOf(item) == table.Rows.Count - 1)
+                {
+                    if (!list.Contains(item[column].ToString()))
+                    {
+                        list += item[column];
+                        numList += 1;
+                    }
+                    else
+                    {
+                        list = list.Remove(list.Length - 2);
+                    }
+                }
+                else
+                {
+                    if (!list.Contains(item[column].ToString()))
+                    {
+                        list += item[column] + ", ";
+                        numList += 1;
+                    }
+                }
+
+                if (numList > 1 && table.Rows.IndexOf(item) == table.Rows.Count - 1)
+                    "Y ".Insert(0, list);
+            }
+
+            return list;
         }
         #endregion
 

@@ -205,13 +205,32 @@ namespace ApiDTC.Services
         {
             base.OnEndPage(writer, document);
             int pageN = writer.PageNumber;
-            String text = "Pág. " + pageN;
+            String text = "Página. " + pageN;
             float len = bf.GetWidthPoint(text, 6.5f);
             Rectangle pageSize = document.PageSize;
+            cb.SetRgbColorFill(192, 152, 82);
+
+            cb.AddTemplate(template, pageSize.GetLeft(-30) + len, pageSize.GetBottom(20));
+            cb.BeginText();
+            cb.SetFontAndSize(bf, 8f);
+            cb.ShowTextAligned(PdfContentByte.ALIGN_LEFT,
+                "Calzada de los Reyes No. 24 Colonia Tetela del Monte C.P. 62130 Cuernavaca, Morelos.",
+                pageSize.GetRight(550),
+                pageSize.GetBottom(70), 0);
+            cb.EndText();
+
+            cb.BeginText();
+            cb.SetFontAndSize(bf, 8f);
+            cb.ShowTextAligned(PdfContentByte.ALIGN_LEFT,
+                "Tel:  01 (777) 329 2100              www.gob.mx/capufe   " + text,
+                pageSize.GetRight(552),
+                pageSize.GetBottom(57), 0);
+            cb.EndText();
+
             PdfPTable table = new PdfPTable(new float[] { 100f }) { WidthPercentage = 100f };
 
             iTextSharp.text.Image logo_footer = iTextSharp.text.Image.GetInstance($@"{System.Environment.CurrentDirectory}\Media\footer-anexo.png");
-            logo_footer.ScalePercent(80f);
+            logo_footer.ScalePercent(76f);
 
             PdfPCell collogo_footer = new PdfPCell(logo_footer)
             {
@@ -220,7 +239,7 @@ namespace ApiDTC.Services
                 HorizontalAlignment = Element.ALIGN_MIDDLE,
                 VerticalAlignment = Element.ALIGN_MIDDLE,
             };
-            logo_footer.SetAbsolutePosition(document.PageSize.Width -575f, document.PageSize.Height -775f);
+            logo_footer.SetAbsolutePosition(document.PageSize.Width -560f, document.PageSize.Height -775f);
             document.Add(logo_footer);
             //table.AddCell(collogo_footer);
             //table.WriteSelectedRows(0, 5, 550, 80, writer.DirectContent);
