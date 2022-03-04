@@ -163,7 +163,7 @@ namespace ApiDTC.Data
                 return new Response { Message = $"Error: {ex.Message}", Result = null };
             }
         }
-        public Response GetHistoricoAnexo(string clavePlaza)
+        public Response GetHistoricoAnexo(string clavePlaza, string referenceNumber)
         {
             try
             {
@@ -171,7 +171,8 @@ namespace ApiDTC.Data
                 {
                     using (SqlCommand cmd = new SqlCommand("dbo.GetHistoricoAnexo", sql))
                     {
-                        cmd.CommandType = CommandType.StoredProcedure;                        
+                        cmd.CommandType = CommandType.StoredProcedure;   
+                        cmd.Parameters.Add("@referenceDTC", SqlDbType.NVarChar).Value = referenceNumber;                     
                         var historicoAnexo = _sqlResult.GetList<AnexoDTCHistorico>(clavePlaza, cmd, sql, "GetHistoricoAnexo");
 
                         return historicoAnexo;
