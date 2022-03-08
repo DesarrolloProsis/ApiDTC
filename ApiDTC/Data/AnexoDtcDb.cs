@@ -165,7 +165,7 @@ namespace ApiDTC.Data
         }
 
         public DataSet GetAnexoPDF(string referenceAnexo)
-        {
+         {
             try
             {
                 using (SqlConnection sql = new SqlConnection(_connectionString))
@@ -177,7 +177,7 @@ namespace ApiDTC.Data
 
 
                         cmd.CommandType = CommandType.StoredProcedure;
-                        cmd.Parameters.Add("@referenceNumber", SqlDbType.NVarChar).Value = referenceAnexo;
+                        cmd.Parameters.Add("@referenceAnexo", SqlDbType.NVarChar).Value = referenceAnexo;
 
                         sql.Open();
                         sqlDataAdapter = new SqlDataAdapter(cmd);

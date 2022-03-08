@@ -18,11 +18,17 @@ namespace ApiDTC.Services
 
         private readonly DataTable _tableTestigos;
 
+        private readonly DataTable _tableComponentesNuevos;
+
+        private readonly DataTable _tableComponentesDañados;
+
         private readonly string _clavePlaza;
 
         private readonly string _referenciaAnexo;
 
         private readonly ApiLogger _apiLogger;
+
+        private readonly DateTime fechaSiniestro;
 
         private readonly DateTime fechaApertura;
 
@@ -35,18 +41,30 @@ namespace ApiDTC.Services
 
         #region Constructors
 
-        public AnexosPdfCreation(string clavePlaza, string referenciaAnexo, DataTable tableAnexo, DataTable tableTestigos, ApiLogger apiLogger)
+        public AnexosPdfCreation(string clavePlaza, string referenciaAnexo, DataTable tableAnexo, DataTable componentesDañados, DataTable componentesNuevos, DataTable tableTestigos, ApiLogger apiLogger)
         {
             _clavePlaza = clavePlaza;
             _apiLogger = apiLogger;
             _tableAnexo = tableAnexo;
+            _tableComponentesNuevos = componentesNuevos;
+            _tableComponentesDañados = componentesDañados;
             _tableTestigos = tableTestigos;
             _referenciaAnexo = referenciaAnexo;
 
-            fechaApertura = Convert.ToDateTime(_tableAnexo.Rows[0]["FechaApertura"]);
-            fechaCierre = Convert.ToDateTime(_tableAnexo.Rows[0]["FechaCierre"]);
-            fechaInicio = Convert.ToDateTime(_tableAnexo.Rows[0]["FechaOficioInicio"]);
-            fechaFin = Convert.ToDateTime(_tableAnexo.Rows[0]["FechaOficioFin"]);
+            if (!DBNull.Value.Equals(_tableAnexo.Rows[0]["SinisterDate"]))
+                fechaSiniestro = Convert.ToDateTime(_tableAnexo.Rows[0]["SinisterDate"]);
+
+            if (!DBNull.Value.Equals(_tableAnexo.Rows[0]["FechaApertura"]))
+                fechaApertura = Convert.ToDateTime(_tableAnexo.Rows[0]["FechaApertura"]);
+
+            if (!DBNull.Value.Equals(_tableAnexo.Rows[0]["FechaCierre"]))
+                fechaCierre = Convert.ToDateTime(_tableAnexo.Rows[0]["FechaCierre"]);
+
+            if(!DBNull.Value.Equals(_tableAnexo.Rows[0]["FechaOficioInicio"]))
+                fechaInicio = Convert.ToDateTime(_tableAnexo.Rows[0]["FechaOficioInicio"]);
+
+            if (!DBNull.Value.Equals(_tableAnexo.Rows[0]["FechaOficioFin"]))
+                fechaFin = Convert.ToDateTime(_tableAnexo.Rows[0]["FechaOficioFin"]);
         }
 
         #endregion
@@ -159,10 +177,9 @@ namespace ApiDTC.Services
                     doc.Open();
 
                     doc.Add(TablaLegalA());
-                    doc.Add(TablaComponentesDañados());
-                    doc.Add(TablaComponentesNuevos());
+                    doc.Add(TablaComponentesDañados(writer));
+                    doc.Add(TablaComponentesNuevos(writer));
                     doc.Add(CierreFecha());
-
                     doc.NewPage();
 
                     TablaFirmas(doc);
@@ -261,8 +278,8 @@ namespace ApiDTC.Services
                     doc.Open();
 
                     doc.Add(TablaLegalB());
-                    doc.Add(TablaComponentesDañados());
-                    doc.Add(TablaComponentesNuevos());
+                    doc.Add(TablaComponentesDañados(writer));
+                    doc.Add(TablaComponentesNuevos(writer));
                     doc.Add(CierreFecha());
 
                     doc.NewPage();
@@ -308,7 +325,10 @@ namespace ApiDTC.Services
                 Chunk Uno = new Chunk("SE LEVANTA LA PRESENTE ACTA, PARA HACER CONSTAR EL SERVICIO DE MANTENIMIENTO ", letraNormalMediana);
                 Chunk Uno2 = new Chunk("CORRECTIVO (SINIESTRO, ACCIDENTE VEHICULAR, DESCARGA ELÉCTRICA, ETC.) ", letraoNegritaMediana);
                 Chunk Uno3 = new Chunk("REALIZADO AL EQUIPO DE CONTROL DE TRANSITO DE ", letraNormalMediana);
-                Chunk Uno4 = new Chunk(_tableAnexo.Rows[0]["Carril"].ToString().ToUpper() + ", ", letraoNegritaMediana);
+
+                string carril_es = appendRows(_tableAnexo, "Carril");
+                Chunk Uno4 = new Chunk(carril_es.ToUpper() + ", ", letraoNegritaMediana);
+
                 Chunk Uno5 = new Chunk("EN LA PLAZA DE COBRO ", letraNormalMediana);
                 Chunk Uno6 = new Chunk(_tableAnexo.Rows[0]["Plaza"].ToString().ToUpper() + ", ", letraoNegritaMediana);
                 Chunk Uno7 = new Chunk("PERTENECIENTE A LA ", letraNormalMediana);
@@ -341,13 +361,12 @@ namespace ApiDTC.Services
                 Chunk Dos14 = new Chunk(_tableTestigos.Rows[1]["Testigos"].ToString().ToUpper() + ", ", letraoNegritaMediana);
                 Chunk Dos15 = new Chunk("TESTIGOS DE ASISTENCIA, PARA HACER CONSTAR QUE LA FALLA DEL EQUIPO DE ", letraNormalMediana);
 
-                string carril_es = appendRows(_tableAnexo, "Carril");
                 Chunk Dos16 = new Chunk(carril_es.ToUpper() + ", ", letraoNegritaMediana);
 
                 Chunk Dos17 = new Chunk("REPORTADA CON No. DE ACUSE/FOLIO ", letraNormalMediana);
 
-                string folio_s = appendRows(_tableAnexo, "Folio");
-                Chunk Dos18 = new Chunk(folio_s.ToUpper() + ", ", letraoNegritaMediana);
+                string fallo_s = appendRows(_tableAnexo, "No. de Fallo");
+                Chunk Dos18 = new Chunk(fallo_s.ToUpper() + ", ", letraoNegritaMediana);
 
                 Chunk Dos19 = new Chunk("DE FECHA ", letraNormalMediana);
                 Chunk Dos20 = new Chunk(fechaInicio.ToString("d DE MMMMM DE yyyy", CultureInfo.CreateSpecificCulture("es-MX")).ToUpper() + "; ", letraoNegritaMediana);
@@ -357,7 +376,7 @@ namespace ApiDTC.Services
                 //Chunk Dos22 = new Chunk("10 DE DICIEMBRE DE 2021, ", letraoNegritaMediana);
                 Chunk Dos23 = new Chunk("DICHA FALLA CONSISTIÓ EN EL DAÑO A ", letraNormalMediana);
 
-                string componente_es = appendRows(_tableAnexo, "Componente");
+                string componente_es = appendRows(_tableComponentesDañados, "Componente");
                 Chunk Dos24 = new Chunk(componente_es.ToUpper() + ", ", letraoNegritaMediana);
 
                 Chunk Dos25 = new Chunk("Y FUE PROVOCADA ", letraNormalMediana);
@@ -417,7 +436,13 @@ namespace ApiDTC.Services
                 parrafoCuatro.Alignment = Element.ALIGN_JUSTIFIED;
 
                 Chunk CiincoUno = new Chunk("NO. SINIESTRO Y/O NO. DE REPORTE. ", letraoNegritaMediana);
-                Chunk CiincoDos = new Chunk(_tableAnexo.Rows[0]["Folio"].ToString().ToUpper() + " DE ", letraoNegritaMediana);
+                string siniestro;
+                if (!DBNull.Value.Equals(_tableAnexo.Rows[0]["No. de Siniestro"]) && _tableAnexo.Rows[0]["No. de Siniestro"].ToString() != "" && _tableAnexo.Rows[0]["No. de Siniestro"].ToString() != "S/N")
+                    siniestro = _tableAnexo.Rows[0]["No. de Siniestro"].ToString().ToUpper();
+                else
+                    siniestro = _tableAnexo.Rows[0]["No. de Reporte"].ToString().ToUpper();
+                Chunk CiincoDos = new Chunk(siniestro + " DE ", letraoNegritaMediana);
+
                 Chunk CiincoTres = new Chunk(fechaFin.ToString("d DE MMMMM DE yyyy", CultureInfo.CreateSpecificCulture("es-MX")).ToUpper(), letraoNegritaMediana);
                 var parrafoCinco = new Paragraph();
                 parrafoCinco.SetLeading(0, 1.4f);
@@ -647,7 +672,7 @@ namespace ApiDTC.Services
 
         }
 
-        private IElement TablaComponentesDañados()
+        private IElement TablaComponentesDañados(PdfWriter writer)
         {
             try
             {
@@ -682,16 +707,16 @@ namespace ApiDTC.Services
                 table.AddCell(encabezadoUbicacion);
                 table.AddCell(encabezadoObservaciones);
 
-                var componentesGropuped = from s in _tableAnexo.AsEnumerable()
+                var componentesGropuped = from s in _tableComponentesDañados.AsEnumerable()
                                         group s by s.Field<string>("Componente")
                                             into grp
                                             orderby grp.Key
                                             select new
                                             {
                                                 grpComponente = grp.Key,
-                                                grpMOD_MARCA = string.Join("\n\n", grp.Select(a => a["MOD/MARCA Dañado"])),
+                                                grpMOD_MARCA = string.Join("\n\n", grp.Select(a => a["MOD/MARCA"])),
                                                 grpInventario = string.Join("\n\n", grp.Select(a => a["Inventario"])),
-                                                grpSerie = string.Join("\n\n", grp.Select(a => a["Serie Dañado"])),
+                                                grpSerie = string.Join("\n\n", grp.Select(a => a["Serie"])),
                                                 grpCarril = string.Join("\n\n", grp.Select(a => a["Carril"])),
                                                 grpCount = grp.Count()
                                             };
@@ -707,20 +732,21 @@ namespace ApiDTC.Services
                     var ubicacion = new PdfPCell(new Phrase(componentesGropuped.ElementAt(i).grpCarril.ToString(), letraoNegritaMediana)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, PaddingTop = 9, PaddingLeft = 3, PaddingRight = 3, PaddingBottom = 7 };
                     var Observaciones = new PdfPCell(new Phrase("Dañado", letraoNegritaMediana)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, PaddingTop = 9, PaddingLeft = 3, PaddingRight = 3, PaddingBottom = 7 };
 
+                    var posicion = writer.GetVerticalPosition(true);
                     table.AddCell(cantidad);
                     table.AddCell(componente);
                     table.AddCell(marcaMod);
                     table.AddCell(serie);
                     table.AddCell(inventario);
                     table.AddCell(ubicacion);
-                    table.AddCell(Observaciones);
+                    table.A
+                return taffffffffffddCell(Observaciones);
                 }
 
-                table.AddCell(espacioVacio);
-
-                return table;
+                table.AddCell(espacioVacio)
 
             }
+
             catch (PdfException ex)
             {
                 _apiLogger.WriteLog(_clavePlaza, ex, "InventarioPdfCreation: TablaEncabezado", 5);
@@ -734,7 +760,7 @@ namespace ApiDTC.Services
 
         }
 
-        private IElement TablaComponentesNuevos()
+        private IElement TablaComponentesNuevos(PdfWriter writer)
         {
             try
             {
@@ -771,7 +797,7 @@ namespace ApiDTC.Services
 
 
 
-                var componentesGropuped = from s in _tableAnexo.AsEnumerable()
+                var componentesGropuped = from s in _tableComponentesNuevos.AsEnumerable()
                                         group s by s.Field<string>("Componente")
                                             into grp
                                             orderby grp.Key
@@ -1372,13 +1398,17 @@ namespace ApiDTC.Services
         {
             string list = "";
             int numList = 0;
+
             foreach (DataRow item in table.Rows)
             {
                 if (table.Rows.IndexOf(item) == table.Rows.Count - 1)
                 {
                     if (!list.Contains(item[column].ToString()))
                     {
-                        list += item[column];
+                        if (!DBNull.Value.Equals(item[column]))
+                            list += item[column];
+                        else
+                            list += "Sin Numero";
                         numList += 1;
                     }
                     else
@@ -1390,13 +1420,17 @@ namespace ApiDTC.Services
                 {
                     if (!list.Contains(item[column].ToString()))
                     {
-                        list += item[column] + ", ";
+                        if (!DBNull.Value.Equals(item[column]))
+                            list += item[column] + ", ";
+                        else
+                            list += "Sin Numero, ";
+
                         numList += 1;
                     }
                 }
 
                 if (numList > 1 && table.Rows.IndexOf(item) == table.Rows.Count - 1)
-                    "Y ".Insert(0, list);
+                    list = list.Insert(list.Length - item[column].ToString().Length -1, "Y ");
             }
 
             return list;
