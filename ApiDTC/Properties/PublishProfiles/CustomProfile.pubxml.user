@@ -7,6 +7,6 @@ edite el archivo MSBuild. Visite https://go.microsoft.com/fwlink/?LinkID=208121 
   <PropertyGroup>
     <TimeStampOfAssociatedLegacyPublishXmlFile />
     <_PublishTargetUrl>C:\inetpub\wwwroot\ApiBitacoraDesarrollo</_PublishTargetUrl>
-    <History>False|2021-05-12T16:25:29.8292113Z;</History>
+    <History>False|2022-02-24T17:03:05.5071363Z;False|2021-05-12T11:25:29.8292113-05:00;</History>
   </PropertyGroup>
 </Project>
