@@ -204,5 +204,27 @@ namespace ApiDTC.Controllers
             }
         }
 
+        [HttpGet("AnexoReporteFotografico/{clavePlaza}/{referenceNumber}/{ubicacion}")]
+        public IActionResult GetReporteFotografico(string clavePlaza, string referenceNumber, string ubicacion)
+        {
+            try
+            {
+                var dataSet = _db.GetAnexoPDFReporteFotografico(clavePlaza, referenceNumber);
+                if (dataSet.Tables[0].Rows.Count == 0)
+                    return NotFound("GetStoredPdf retorna tabla vacía");
+                ReporteFotograficoPdfCreation pdf = new ReporteFotograficoPdfCreation(clavePlaza, dataSet.Tables[0], new ApiLogger(), 4, referenceNumber, ubicacion);
+                var pdfResult = pdf.NewPdf($@"{this._disk}:\{this._folder}");
+                if (pdfResult.Result == null)
+                    return NotFound(pdfResult.Message);
+                return File(new FileStream(pdfResult.Result.ToString(), FileMode.Open, FileAccess.Read), "application/pdf");
+            }
+            catch (IOException ex)
+            {
+                _apiLogger.WriteLog(clavePlaza, ex, "ReporteFotograficoController: GetReporteFotografico", 2);
+                return NotFound(ex.ToString());
+            }
+
+        }
+
     }
 }

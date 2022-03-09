@@ -178,9 +178,14 @@ namespace ApiDTC.Services
 
                     doc.Add(TablaLegalA());
                     doc.Add(TablaComponentesDañados(writer));
-                    doc.Add(TablaComponentesNuevos(writer));
+
+                    var posicionEnY = writer.GetVerticalPosition(true);
+                    doc.Add(TablaComponentesNuevos(writer, doc, posicionEnY));
+
+                    posicionEnY = writer.GetVerticalPosition(true);
                     doc.Add(CierreFecha());
                     doc.NewPage();
+
 
                     TablaFirmas(doc);
 
@@ -279,7 +284,10 @@ namespace ApiDTC.Services
 
                     doc.Add(TablaLegalB());
                     doc.Add(TablaComponentesDañados(writer));
-                    doc.Add(TablaComponentesNuevos(writer));
+
+                    var posicionEnY = writer.GetVerticalPosition(true);
+                    doc.Add(TablaComponentesNuevos(writer, doc, posicionEnY));
+
                     doc.Add(CierreFecha());
 
                     doc.NewPage();
@@ -732,19 +740,19 @@ namespace ApiDTC.Services
                     var ubicacion = new PdfPCell(new Phrase(componentesGropuped.ElementAt(i).grpCarril.ToString(), letraoNegritaMediana)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, PaddingTop = 9, PaddingLeft = 3, PaddingRight = 3, PaddingBottom = 7 };
                     var Observaciones = new PdfPCell(new Phrase("Dañado", letraoNegritaMediana)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, PaddingTop = 9, PaddingLeft = 3, PaddingRight = 3, PaddingBottom = 7 };
 
-                    var posicion = writer.GetVerticalPosition(true);
                     table.AddCell(cantidad);
                     table.AddCell(componente);
                     table.AddCell(marcaMod);
                     table.AddCell(serie);
                     table.AddCell(inventario);
                     table.AddCell(ubicacion);
-                    table.A
-                return taffffffffffddCell(Observaciones);
+                    table.AddCell(Observaciones);
+                
                 }
 
-                table.AddCell(espacioVacio)
-
+                table.AddCell(espacioVacio);
+                
+                return table;
             }
 
             catch (PdfException ex)
@@ -760,13 +768,14 @@ namespace ApiDTC.Services
 
         }
 
-        private IElement TablaComponentesNuevos(PdfWriter writer)
+        private IElement TablaComponentesNuevos(PdfWriter writer, Document doc, float PosicionEnY)
         {
             try
             {
                 //Encabezado
                 PdfPTable table = new PdfPTable(new float[] { 14.28f, 14.28f, 14.28f, 14.28f, 14.28f, 13f, 15.56f }) { WidthPercentage = 100f };
 
+                table.SetTotalWidth(new float[] { 11.28f, 17.28f, 15.28f, 14.28f, 14.28f, 12f, 15.56f });
                 Chunk ComponenteDañado = new Chunk("COMPONENTES Y/O REFACCIONES NUEVAS:", letraoNegritaMediana);
                 ComponenteDañado.SetUnderline(1, -1);
                 var parrafoComponenteDañado = new Paragraph();
@@ -830,6 +839,12 @@ namespace ApiDTC.Services
                     table.AddCell(ubicacion);
                     table.AddCell(Observaciones);
                 }
+
+                var height = table.CalculateHeights(false);
+
+                if (height > PosicionEnY - 706.9606247f)
+                    doc.NewPage();
+
                 table.AddCell(espacioVacio);
 
                 return table;

@@ -10,11 +10,8 @@
     <WebStackScaffolding_LayoutPageFile />
     <WebStackScaffolding_IsAsyncSelected>False</WebStackScaffolding_IsAsyncSelected>
     <WebStackScaffolding_DbContextDialogWidth>600</WebStackScaffolding_DbContextDialogWidth>
-<<<<<<< HEAD
-    <NameOfLastUsedPublishProfile>CustomProfile</NameOfLastUsedPublishProfile>
-=======
+
     <NameOfLastUsedPublishProfile>C:\Users\martin\Desktop\Emi\ApiDTC\ApiDTC\Properties\PublishProfiles\CustomProfile.pubxml</NameOfLastUsedPublishProfile>
->>>>>>> dev-emi
     <ActiveDebugProfile>ApiDTC</ActiveDebugProfile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
