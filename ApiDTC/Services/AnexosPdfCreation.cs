@@ -335,12 +335,12 @@ namespace ApiDTC.Services
                 Chunk Uno3 = new Chunk("REALIZADO AL EQUIPO DE CONTROL DE TRANSITO DE ", letraNormalMediana);
 
                 string carril_es = appendRows(_tableAnexo, "Carril");
-                Chunk Uno4 = new Chunk(carril_es.ToUpper() + ", ", letraoNegritaMediana);
+                Chunk Uno4 = carril_es.Length > 3 ? new Chunk("CARRILES " + carril_es.ToUpper() + ", ", letraoNegritaMediana) : new Chunk("CARRIL " + carril_es.ToUpper() + ", ", letraoNegritaMediana);
 
                 Chunk Uno5 = new Chunk("EN LA PLAZA DE COBRO ", letraNormalMediana);
                 Chunk Uno6 = new Chunk(_tableAnexo.Rows[0]["Plaza"].ToString().ToUpper() + ", ", letraoNegritaMediana);
                 Chunk Uno7 = new Chunk("PERTENECIENTE A LA ", letraNormalMediana);
-                Chunk Uno8 = new Chunk("UNIDAD REGIONAL CUERNAVACA.", letraoNegritaMediana);
+                Chunk Uno8 = new Chunk(_tableAnexo.Rows[0]["Region"].ToString().ToUpper() + ".", letraoNegritaMediana);
                 var parrafoUno = new Paragraph();
                 parrafoUno.SetLeading(0, 1.4f);
                 parrafoUno.Add(Uno);
@@ -349,6 +349,8 @@ namespace ApiDTC.Services
                 parrafoUno.Add(Uno4);
                 parrafoUno.Add(Uno5);
                 parrafoUno.Add(Uno6);
+                parrafoUno.Add(Uno7);
+                parrafoUno.Add(Uno8);
                 parrafoUno.Alignment = Element.ALIGN_JUSTIFIED;
 
                 Chunk Dos1 = new Chunk("EN LA CIUDAD DE ", letraNormalMediana);
@@ -369,7 +371,7 @@ namespace ApiDTC.Services
                 Chunk Dos14 = new Chunk(_tableTestigos.Rows[1]["Testigos"].ToString().ToUpper() + ", ", letraoNegritaMediana);
                 Chunk Dos15 = new Chunk("TESTIGOS DE ASISTENCIA, PARA HACER CONSTAR QUE LA FALLA DEL EQUIPO DE ", letraNormalMediana);
 
-                Chunk Dos16 = new Chunk(carril_es.ToUpper() + ", ", letraoNegritaMediana);
+                Chunk Dos16 = carril_es.Length > 3 ? new Chunk("LOS CARRILES " + carril_es.ToUpper() + ", ", letraoNegritaMediana) : new Chunk("CARRIL " + carril_es.ToUpper() + ", ", letraoNegritaMediana);
 
                 Chunk Dos17 = new Chunk("REPORTADA CON No. DE ACUSE/FOLIO ", letraNormalMediana);
 
@@ -377,20 +379,23 @@ namespace ApiDTC.Services
                 Chunk Dos18 = new Chunk(fallo_s.ToUpper() + ", ", letraoNegritaMediana);
 
                 Chunk Dos19 = new Chunk("DE FECHA ", letraNormalMediana);
-                Chunk Dos20 = new Chunk(fechaInicio.ToString("d DE MMMMM DE yyyy", CultureInfo.CreateSpecificCulture("es-MX")).ToUpper() + "; ", letraoNegritaMediana);
+                Chunk Dos20 = new Chunk(fechaSiniestro.ToString("d DE MMMMM DE yyyy", CultureInfo.CreateSpecificCulture("es-MX")).ToUpper() + "; ", letraoNegritaMediana);
                 //Chunk Dos20 = new Chunk("18 DE JUNIO DE 2021; ", letraoNegritaMediana);
                 Chunk Dos21 = new Chunk("FUE REPARADA EL DÍA ", letraNormalMediana);
-                Chunk Dos22 = new Chunk(fechaFin.ToString("d DE MMMMM DE yyyy", CultureInfo.CreateSpecificCulture("es-MX")).ToUpper() + ", ", letraoNegritaMediana);
+                Chunk Dos22 = new Chunk(fechaCierre.ToString("d DE MMMMM DE yyyy", CultureInfo.CreateSpecificCulture("es-MX")).ToUpper() + ", ", letraoNegritaMediana);
                 //Chunk Dos22 = new Chunk("10 DE DICIEMBRE DE 2021, ", letraoNegritaMediana);
                 Chunk Dos23 = new Chunk("DICHA FALLA CONSISTIÓ EN EL DAÑO A ", letraNormalMediana);
 
                 string componente_es = appendRows(_tableComponentesDañados, "Componente");
                 Chunk Dos24 = new Chunk(componente_es.ToUpper() + ", ", letraoNegritaMediana);
 
-                Chunk Dos25 = new Chunk("Y FUE PROVOCADA ", letraNormalMediana);
-                Chunk Dos26 = new Chunk("POR VANDALISMO, ", letraoNegritaMediana);
+                Chunk Dos25 = new Chunk("Y FUE PROVOCADA POR ", letraNormalMediana);
+
+                string descripcion_es = appendRows(_tableAnexo, "Descripcion");
+                Chunk Dos26 = new Chunk(descripcion_es.ToUpper() + ", ", letraoNegritaMediana);
+
                 Chunk Dos27 = new Chunk("OCURRIDO EL ", letraNormalMediana);
-                Chunk Dos28 = new Chunk(fechaInicio.ToString("d DE MMMMM DE yyyy", CultureInfo.CreateSpecificCulture("es-MX")).ToUpper() + "; ", letraoNegritaMediana);
+                Chunk Dos28 = new Chunk(fechaSiniestro.ToString("d DE MMMMM DE yyyy", CultureInfo.CreateSpecificCulture("es-MX")).ToUpper() + "; ", letraoNegritaMediana);
                 //Chunk Dos28 = new Chunk("18 DE JUNIO DE 2021; ", letraoNegritaMediana);
                 Chunk Dos29 = new Chunk("PARA CUYO EFECTO FUE NECESARIO REPONER LAS PARTES QUE A CONTINUACIÓN SE DETALLAN.", letraNormalMediana);
                 var parrafoDos = new Paragraph();
@@ -451,7 +456,7 @@ namespace ApiDTC.Services
                     siniestro = _tableAnexo.Rows[0]["No. de Reporte"].ToString().ToUpper();
                 Chunk CiincoDos = new Chunk(siniestro + " DE ", letraoNegritaMediana);
 
-                Chunk CiincoTres = new Chunk(fechaFin.ToString("d DE MMMMM DE yyyy", CultureInfo.CreateSpecificCulture("es-MX")).ToUpper(), letraoNegritaMediana);
+                Chunk CiincoTres = new Chunk(fechaSiniestro.ToString("d DE MMMMM DE yyyy", CultureInfo.CreateSpecificCulture("es-MX")).ToUpper(), letraoNegritaMediana);
                 var parrafoCinco = new Paragraph();
                 parrafoCinco.SetLeading(0, 1.4f);
                 parrafoCinco.Add(CiincoUno);
@@ -534,13 +539,17 @@ namespace ApiDTC.Services
                 //Encabezado
                 PdfPTable table = new PdfPTable(new float[] { 100f }) { WidthPercentage = 100f };
 
-
                 Chunk Uno = new Chunk("SE LEVANTA LA PRESENTE ACTA, PARA HACER CONSTAR LA SUSTITUCIÓN DE COMPONENTES ", letraNormalMediana);
                 Chunk Uno2 = new Chunk("POR FÍN DE VIDA ÚTIL/REUBICACIÓN/ACONDICIONAMIENTO", letraoNegritaMediana);
-                Chunk Uno3 = new Chunk(", REALIZADO AL EQUIPO DE CONTROL DE TRANSITO DE ", letraNormalMediana);
-                Chunk Uno4 = new Chunk("PLAZA", letraoNegritaMediana);
-                Chunk Uno5 = new Chunk(", " + _tableAnexo.Rows[0]["Plaza"].ToString().ToUpper() + ", PALO BLANCO, PERTENECIENTE A LA ", letraNormalMediana);
-                Chunk Uno6 = new Chunk("UNIDAD REGIONAL CUERNAVACA.", letraoNegritaMediana);
+                Chunk Uno3 = new Chunk(", REALIZADO AL EQUIPO DE CONTROL DE TRANSITO ", letraNormalMediana);
+
+                string carril_es = appendRows(_tableAnexo, "Carril");
+                Chunk Uno4 = carril_es.Length > 3 ? new Chunk("DEL CARRILES " + carril_es.ToUpper() + ", ", letraoNegritaMediana) : new Chunk("DE LOS CARRIL " + carril_es.ToUpper() + ", ", letraoNegritaMediana);
+
+                Chunk Uno5 = new Chunk("EN LA PLAZA DE COBRO ", letraNormalMediana);
+                Chunk Uno6 = new Chunk(_tableAnexo.Rows[0]["Plaza"].ToString().ToUpper() + ", PALO BLANCO, ", letraoNegritaMediana);
+                Chunk Uno7 = new Chunk("PERTENECIENTE A LA ", letraNormalMediana);
+                Chunk Uno8 = new Chunk(_tableAnexo.Rows[0]["Region"].ToString().ToUpper() + ".", letraoNegritaMediana);
                 var parrafoUno = new Paragraph();
                 parrafoUno.SetLeading(0, 1.4f);
                 parrafoUno.Add(Uno);
@@ -549,6 +558,8 @@ namespace ApiDTC.Services
                 parrafoUno.Add(Uno4);
                 parrafoUno.Add(Uno5);
                 parrafoUno.Add(Uno6);
+                parrafoUno.Add(Uno7);
+                parrafoUno.Add(Uno8);
                 parrafoUno.Alignment = Element.ALIGN_JUSTIFIED;
 
                 Chunk Dos1 = new Chunk("EN LA CIUDAD DE MAZATLAN, GRO., SIENDO LAS ", letraNormalMediana);
@@ -564,17 +575,19 @@ namespace ApiDTC.Services
                 Chunk Dos11 = new Chunk("Y EL ", letraNormalMediana);
                 Chunk Dos12 = new Chunk(_tableTestigos.Rows[1]["Testigos"].ToString().ToUpper() + ", ", letraoNegritaMediana);
                 Chunk Dos13 = new Chunk("TESTIGOS DE ASISTENCIA, PARA HACER CONSTAR LA SUSTITUCIÓN DE COMPONENTES DEL EQUIPO DE CONTROL DE TRANSITO DE ", letraNormalMediana);
-                Chunk Dos14 = new Chunk("PLAZA, ", letraoNegritaMediana);
+
+                Chunk Dos14 = carril_es.Length > 3 ? new Chunk("LOS CARRILES " + carril_es.ToUpper() + ", ", letraoNegritaMediana) : new Chunk("CARRIL " + carril_es.ToUpper() + ", ", letraoNegritaMediana);
+
                 Chunk Dos15 = new Chunk("DE ACUERDO A LA SOLICITUD DE FECHA ", letraNormalMediana);
                 Chunk Dos16 = new Chunk(fechaInicio.ToString("d DE MMMMM DE yyyy", CultureInfo.CreateSpecificCulture("es-MX")).ToUpper() + " ", letraoNegritaMediana);
                 Chunk Dos17 = new Chunk("Y AUTORIZADA EN OFICIO ", letraNormalMediana);
                 Chunk Dos18 = new Chunk(_tableAnexo.Rows[0]["Folio"].ToString().ToUpper() + ", ", letraoNegritaMediana);
                 Chunk Dos19 = new Chunk("DE ", letraNormalMediana);
-                Chunk Dos20 = new Chunk(fechaInicio.ToString("d DE MMMMM DE yyyy", CultureInfo.CreateSpecificCulture("es-MX")).ToUpper() + ", ", letraoNegritaMediana);
+                Chunk Dos20 = new Chunk(fechaFin.ToString("d DE MMMMM DE yyyy", CultureInfo.CreateSpecificCulture("es-MX")).ToUpper() + ", ", letraoNegritaMediana);
                 Chunk Dos21 = new Chunk("POR LA ", letraNormalMediana);
                 Chunk Dos22 = new Chunk("GERENCIA DE MANTENIMIENTO Y MODERNIZACIÓN DE EQUIPOS DE PEAJE; ", letraoNegritaMediana);
                 Chunk Dos23 = new Chunk("PARA CUYO EFECTÓ FUÉ NECESARIO REPONER EN FECHA ", letraNormalMediana);
-                Chunk Dos24 = new Chunk(fechaFin.ToString("d DE MMMMM DE yyyy", CultureInfo.CreateSpecificCulture("es-MX")).ToUpper() + " ", letraoNegritaMediana);
+                Chunk Dos24 = new Chunk(fechaApertura.ToString("d DE MMMMM DE yyyy", CultureInfo.CreateSpecificCulture("es-MX")).ToUpper() + " ", letraoNegritaMediana);
                 Chunk Dos25 = new Chunk("LAS PARTES QUE A CONTINUACIÓN SE DETALLAN.", letraNormalMediana);
                 var parrafoDos = new Paragraph();
                 parrafoDos.SetLeading(0, 1.4f);
@@ -871,9 +884,9 @@ namespace ApiDTC.Services
                 PdfPTable table = new PdfPTable(new float[] { 100f }) { WidthPercentage = 100f };
 
                 Chunk Uno = new Chunk("Se cierra la presente acta en fecha ", letraoNegritaMediana);
-                Chunk Uno2 = new Chunk(fechaCierre.ToString("d DE MMMMM DE yyyy", CultureInfo.CreateSpecificCulture("es-MX")).ToUpper() + " siendo las ", letraoNegritaMediana);
+                Chunk Uno2 = new Chunk(fechaSiniestro.ToString("d DE MMMMM DE yyyy", CultureInfo.CreateSpecificCulture("es-MX")).ToUpper() + " siendo las ", letraoNegritaMediana);
                 //Chunk Uno2 = new Chunk("20 de diciembre de 2021 siendo las ", letraoNegritaMediana);
-                Chunk Uno3 = new Chunk(fechaCierre.ToString("hh:mm", CultureInfo.CreateSpecificCulture("es-MX")).ToUpper() + " hrs.", letraoNegritaMediana);
+                Chunk Uno3 = new Chunk(fechaSiniestro.ToString("hh:mm", CultureInfo.CreateSpecificCulture("es-MX")).ToUpper() + " hrs.", letraoNegritaMediana);
                 //Chunk Uno3 = new Chunk("18:00 hrs.", letraoNegritaMediana);
                 var parrafoUno = new Paragraph();
                 parrafoUno.SetLeading(0, 1.4f);
@@ -1022,7 +1035,7 @@ namespace ApiDTC.Services
                 parrafonomAdministrador.Add(nomAdministrador);
                 parrafonomAdministrador.Alignment = Element.ALIGN_CENTER;
 
-                Chunk nomSubg = new Chunk("L.A.E. FIDEL URIBE HERNÁNDEZ\n Vo.Bo.", letraoNegritaMediana);
+                Chunk nomSubg = new Chunk(_tableAnexo.Rows[0]["Vo.Bo."].ToString().ToUpper() + "\n Vo.Bo.", letraoNegritaMediana);
                 var parrafonomSubg = new Paragraph();
                 parrafonomSubg.SetLeading(0, 1.8f);
                 parrafonomSubg.Add(nomSubg);
@@ -1445,7 +1458,7 @@ namespace ApiDTC.Services
                 }
 
                 if (numList > 1 && table.Rows.IndexOf(item) == table.Rows.Count - 1)
-                    list = list.Insert(list.Length - item[column].ToString().Length -1, "Y ");
+                    list = list.Insert(list.Length - item[column].ToString().Length -1, " Y ");
             }
 
             return list;

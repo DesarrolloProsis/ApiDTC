@@ -375,7 +375,7 @@ namespace ApiDTC.Data
             }
         }
 
-        public DataSet GetAnexoPDF(string referenceAnexo)
+        public DataSet GetAnexoPDF(string referenceAnexo, bool IsSubVersion)
          {
             try
             {
@@ -389,6 +389,7 @@ namespace ApiDTC.Data
 
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.Add("@referenceAnexo", SqlDbType.NVarChar).Value = referenceAnexo;
+                        cmd.Parameters.Add("@isSubVersion", SqlDbType.Bit).Value = IsSubVersion;
 
                         sql.Open();
                         sqlDataAdapter = new SqlDataAdapter(cmd);
