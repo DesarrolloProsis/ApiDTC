@@ -26,6 +26,8 @@ namespace ApiDTC.Services
 
         private readonly string _referenciaAnexo;
 
+        private readonly string _referenceNumber;
+
         private readonly ApiLogger _apiLogger;
 
         private readonly DateTime fechaSiniestro;
@@ -41,7 +43,7 @@ namespace ApiDTC.Services
 
         #region Constructors
 
-        public AnexosPdfCreation(string clavePlaza, string referenciaAnexo, DataTable tableAnexo, DataTable componentesDañados, DataTable componentesNuevos, DataTable tableTestigos, ApiLogger apiLogger)
+        public AnexosPdfCreation(string clavePlaza, string referenciaAnexo, string referenceNumber, DataTable tableAnexo, DataTable componentesDañados, DataTable componentesNuevos, DataTable tableTestigos, ApiLogger apiLogger)
         {
             _clavePlaza = clavePlaza;
             _apiLogger = apiLogger;
@@ -50,6 +52,7 @@ namespace ApiDTC.Services
             _tableComponentesDañados = componentesDañados;
             _tableTestigos = tableTestigos;
             _referenciaAnexo = referenciaAnexo;
+            _referenceNumber = referenceNumber;
 
             if (!DBNull.Value.Equals(_tableAnexo.Rows[0]["SinisterDate"]))
                 fechaSiniestro = Convert.ToDateTime(_tableAnexo.Rows[0]["SinisterDate"]);
@@ -114,13 +117,13 @@ namespace ApiDTC.Services
         public Response NewPdfA(string folder)
         {
             string directory, filename, path;
-            directory = $@"{folder}\{_clavePlaza.ToUpper()}\Anexo";
+            directory = $@"{folder}\{_clavePlaza.ToUpper()}\Reportes\{_referenceNumber}\Anexos";
             if (!Directory.Exists(directory))
             {
                 Directory.CreateDirectory(directory);
             }
 
-            filename = $"AnexoA.pdf";
+            filename = $"AnexoA_{_referenciaAnexo}.pdf";
 
             path = Path.Combine(directory, filename);
 
@@ -220,13 +223,13 @@ namespace ApiDTC.Services
         public Response NewPdfB(string folder)
         {
             string directory, filename, path;
-            directory = $@"{folder}\{_clavePlaza.ToUpper()}\Anexo";
+            directory = $@"{folder}\{_clavePlaza.ToUpper()}\Reportes\{_referenceNumber}\Anexos";
             if (!Directory.Exists(directory))
             {
                 Directory.CreateDirectory(directory);
             }
 
-            filename = $"AnexoA.pdf";
+            filename = $"AnexoB_{_referenciaAnexo}.pdf";
 
             path = Path.Combine(directory, filename);
 

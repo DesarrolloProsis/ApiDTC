@@ -160,15 +160,15 @@ namespace ApiDTC.Controllers
             return BadRequest(ModelState);
         }
 
-        [HttpGet("AnexoA/{clavePlaza}/{referenciaAnexo}/{isSubAnexo}")]
-        public IActionResult GetAnexoA(string clavePlaza, string referenciaAnexo, bool IsSubVersion)
+        [HttpGet("AnexoA/{clavePlaza}/{referenceNumber}/{referenciaAnexo}/{isSubAnexo}")]
+        public IActionResult GetAnexoA(string clavePlaza, string referenceNumber, string referenciaAnexo, bool IsSubVersion)
         {
             try
             {
                 var dataSet = _db.GetAnexoPDF(referenciaAnexo, IsSubVersion);
                 if (dataSet.Tables[0].Rows.Count == 0)
                     return NotFound("GetStorePdf retorna tabla vacía");
-                AnexosPdfCreation pdf = new AnexosPdfCreation(clavePlaza, referenciaAnexo, dataSet.Tables[0], dataSet.Tables[1], dataSet.Tables[2], dataSet.Tables[3], new ApiLogger());
+                AnexosPdfCreation pdf = new AnexosPdfCreation(clavePlaza, referenciaAnexo, referenceNumber, dataSet.Tables[0], dataSet.Tables[1], dataSet.Tables[2], dataSet.Tables[3], new ApiLogger());
                 var pdfResult = pdf.NewPdfA($@"{this._disk}:\{this._folder}");
                 if (pdfResult.Result == null)
                     return NotFound(pdfResult.Message);
@@ -182,15 +182,15 @@ namespace ApiDTC.Controllers
             }
         }
 
-        [HttpGet("AnexoB/{clavePlaza}/{referenciaAnexo}/{IsSubVersion}")]
-        public IActionResult GetAnexoB(string clavePlaza, string referenciaAnexo, bool IsSubVersion)
+        [HttpGet("AnexoB/{clavePlaza}/{referenceNumber}/{referenciaAnexo}/{isSubAnexo}")]
+        public IActionResult GetAnexoB(string clavePlaza, string referenceNumber, string referenciaAnexo, bool IsSubVersion)
         {
             try
             {
                 var dataSet = _db.GetAnexoPDF(referenciaAnexo, IsSubVersion);
                 if (dataSet.Tables[0].Rows.Count == 0 || dataSet.Tables[1].Rows.Count == 0)
                     return NotFound("GetStorePdf retorna tabla vacía");
-                AnexosPdfCreation pdf = new AnexosPdfCreation(clavePlaza, referenciaAnexo, dataSet.Tables[0], dataSet.Tables[1], dataSet.Tables[2], dataSet.Tables[3], new ApiLogger());
+                AnexosPdfCreation pdf = new AnexosPdfCreation(clavePlaza, referenciaAnexo, referenceNumber, dataSet.Tables[0], dataSet.Tables[1], dataSet.Tables[2], dataSet.Tables[3], new ApiLogger());
                 var pdfResult = pdf.NewPdfB($@"{this._disk}:\{this._folder}");
                 if (pdfResult.Result == null)
                     return NotFound(pdfResult.Message);

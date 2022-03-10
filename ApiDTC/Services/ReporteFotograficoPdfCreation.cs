@@ -69,7 +69,7 @@
             if (_tipo == 1)
                 directory = $@"{folder}\{_clavePlaza.ToUpper()}\Reportes\{_referenceNumber}";
             else if (_tipo == 4)
-                directory = $@"{folder}\{_clavePlaza.ToUpper()}\ReportesAnexo\{_referenceNumber}";
+                directory = $@"{folder}\{_clavePlaza.ToUpper()}\Reportes\{_referenceNumber}";
             else
                 directory = $@"{folder}\{_clavePlaza.ToUpper()}\DTC\{_referenceNumber}";
             if (!Directory.Exists(directory))
@@ -84,7 +84,7 @@
             else if (_tipo == 2)
                 filename = $@"DTC-{_referenceNumber}-EquipoNuevo.pdf";
             else if (_tipo == 4)
-                filename = $"ReporteFotográfico-Anexo-{_referenceNumber}.pdf";
+                filename = $"ReporteFotográfico-{_referenceNumber}-EquipoNuevo.pdf";
             else
                 filename = $@"DTC-{_referenceNumber}-EquipoDañado.pdf";
             if (_tipo == 3)
