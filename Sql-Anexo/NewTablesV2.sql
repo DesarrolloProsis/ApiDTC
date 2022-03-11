@@ -19,9 +19,14 @@ CREATE TABLE AnexosDTC(
 	AnexoReference NVARCHAR(20) NOT NULL PRIMARY KEY,
 	FechaApertura DATETIME NOT NULL,
 	FechaCierre DATETIME NOT NULL,
+	Solicitud NVARCHAR(50) NULL,
+	FechaSolicitudInicio DATETIME NULL,
+	FechaSolicitudFin DATETIME NULL,
 	FolioOficio NVARCHAR(50) NULL,
     FechaOficioInicio DATETIME NULL,
     FechaOficioFin DATETIME NULL,
+	Testigo1Id INT NOT NULL,
+	Testigo2Id INT NOT NULL,
 	SupervisorId INT NOT NULL,	
     FechaUltimoCambio DATETIME NULL,
     Comentarios NVARCHAR(300) NULL,
@@ -32,17 +37,19 @@ CREATE TABLE AnexosDTC(
 	PDFFotografico BIT NOT NULL DEFAULT(0)
 
 	FOREIGN KEY(DTCReference) REFERENCES DTCData(ReferenceNumber),
+	FOREIGN KEY(Testigo1Id) REFERENCES CatalogoUserAnexo(Id),
+	FOREIGN KEY(Testigo2Id) REFERENCES CatalogoUserAnexo(Id),
 	FOREIGN KEY(SupervisorId) REFERENCES CatalogoUserAnexo(Id)
 )
 
 
-CREATE TABLE TestigosAnexo(
-	TestigoId INT NOT NULL,
-	AnexoId NVARCHAR(20) NOT NULL,
-	PRIMARY KEY(TestigoId,AnexoId),
-	FOREIGN KEY(TestigoId) REFERENCES CatalogoUserAnexo(Id),
-	FOREIGN KEY(AnexoId) REFERENCES AnexosDTC(AnexoReference)
-)
+--CREATE TABLE TestigosAnexo(
+--	TestigoId INT NOT NULL,
+--	AnexoId NVARCHAR(20) NOT NULL,
+--	PRIMARY KEY(TestigoId,AnexoId),
+--	FOREIGN KEY(TestigoId) REFERENCES CatalogoUserAnexo(Id),
+--	FOREIGN KEY(AnexoId) REFERENCES AnexosDTC(AnexoReference)
+--)
 
 CREATE TABLE ComponentAnexo(
 	Id INT NOT NULL IDENTITY(1,1) PRIMARY KEY,
