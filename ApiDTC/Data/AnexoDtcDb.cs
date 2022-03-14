@@ -301,22 +301,6 @@ namespace ApiDTC.Data
                             cmd.Parameters.Add("@referenceAnexo", SqlDbType.NVarChar).Value = valueNewId.newId;
                             cmd.Parameters.Add("@fechaApertura", SqlDbType.DateTime).Value = anexoDTCInsert.FechaApertura;
                             cmd.Parameters.Add("@fechaCierre", SqlDbType.DateTime).Value = anexoDTCInsert.FechaCierre;
-                            if (anexoDTCInsert.Solicitud == string.Empty)
-                                cmd.Parameters.Add("@solicitud", SqlDbType.NVarChar).Value = DBNull.Value;
-                            else
-                                cmd.Parameters.Add("@solicitud", SqlDbType.NVarChar).Value = anexoDTCInsert.Solicitud;
-
-
-                            if(anexoDTCInsert.FechaSolicitudInicio == null)
-                                cmd.Parameters.Add("@fechaSolicitudInicio", SqlDbType.NVarChar).Value = DBNull.Value;
-                            else
-                                cmd.Parameters.Add("@fechaSolicitudInicio", SqlDbType.NVarChar).Value =anexoDTCInsert.FechaSolicitudInicio;
-
-
-                            if (anexoDTCInsert.FechaSolicitudFin == null)
-                                cmd.Parameters.Add("@fechaSolicitudFin", SqlDbType.NVarChar).Value = DBNull.Value;
-                            else
-                                cmd.Parameters.Add("@fechaSolicitudFin", SqlDbType.NVarChar).Value = anexoDTCInsert.FechaSolicitudFin;
 
 
                             if (anexoDTCInsert.FolioOficio == string.Empty)
@@ -334,6 +318,23 @@ namespace ApiDTC.Data
                                 cmd.Parameters.Add("@fechaOficioFin", SqlDbType.DateTime).Value = DBNull.Value;
                             else
                                 cmd.Parameters.Add("@fechaOficioFin", SqlDbType.DateTime).Value = anexoDTCInsert.FechaOficioFin;
+
+                            if (anexoDTCInsert.Solicitud == string.Empty)
+                                cmd.Parameters.Add("@solicitud", SqlDbType.NVarChar).Value = DBNull.Value;
+                            else
+                                cmd.Parameters.Add("@solicitud", SqlDbType.NVarChar).Value = anexoDTCInsert.Solicitud;
+
+
+                            if (anexoDTCInsert.FechaSolicitudInicio == null)
+                                cmd.Parameters.Add("@fechaSolicitudInicio", SqlDbType.DateTime).Value = DBNull.Value;
+                            else
+                                cmd.Parameters.Add("@fechaSolicitudInicio", SqlDbType.DateTime).Value = anexoDTCInsert.FechaSolicitudInicio;
+
+
+                            if (anexoDTCInsert.FechaSolicitudFin == null)
+                                cmd.Parameters.Add("@fechaSolicitudFin", SqlDbType.DateTime).Value = DBNull.Value;
+                            else
+                                cmd.Parameters.Add("@fechaSolicitudFin", SqlDbType.DateTime).Value = anexoDTCInsert.FechaSolicitudFin;
                             cmd.Parameters.Add("@supervisorId", SqlDbType.Int).Value = anexoDTCInsert.SupervisorId;
                             cmd.Parameters.Add("@testigo1", SqlDbType.Int).Value = anexoDTCInsert.Testigo1Id;
                             cmd.Parameters.Add("@testigo2", SqlDbType.Int).Value = anexoDTCInsert.Testigo2Id;
