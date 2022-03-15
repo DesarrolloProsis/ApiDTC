@@ -10,8 +10,8 @@ namespace ApiDTC.Models.AnexoDTC
         public string DTCReference { get; set; }
         public string AnexoReference { get; set; }
         public string Solicitud { get; set; }
-        public DateTime FechaSolicitudInicio { get; set; }
-        public DateTime FechaSolicitudFin { get; set; }
+        public DateTime? FechaSolicitudInicio { get; set; }
+        public DateTime? FechaSolicitudFin { get; set; }
         public DateTime FechaApertura { get; set; }
         public DateTime FechaCierre { get; set; }
         public string FolioOficio { get; set; }
