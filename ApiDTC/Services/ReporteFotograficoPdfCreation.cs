@@ -252,8 +252,8 @@
 
                     PdfPTable tablaFirmas = TablaFirmas();
                     tablaFirmas.WriteSelectedRows(0, -1, 30, 180, cb);
-                    //doc.Close();
-                    //writer.Close();
+                    doc.Close();
+                    writer.Close();
 
                     byte[] content = myMemoryStream.ToArray();
 

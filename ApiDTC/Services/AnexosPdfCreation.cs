@@ -16,8 +16,6 @@ namespace ApiDTC.Services
 
         private readonly DataTable _tableAnexo;
 
-        private readonly DataTable _tableTestigos;
-
         private readonly DataTable _tableComponentesNuevos;
 
         private readonly DataTable _tableComponentesDañados;
@@ -38,19 +36,18 @@ namespace ApiDTC.Services
 
         private readonly DateTime fechaInicio;
 
-        private readonly DateTime fechaFin;
+        private readonly DateTime fechaSolicitud;
         #endregion
 
         #region Constructors
 
-        public AnexosPdfCreation(string clavePlaza, string referenciaAnexo, string referenceNumber, DataTable tableAnexo, DataTable componentesDañados, DataTable componentesNuevos, DataTable tableTestigos, ApiLogger apiLogger)
+        public AnexosPdfCreation(string clavePlaza, string referenciaAnexo, string referenceNumber, DataTable tableAnexo, DataTable componentesDañados, DataTable componentesNuevos, ApiLogger apiLogger)
         {
             _clavePlaza = clavePlaza;
             _apiLogger = apiLogger;
             _tableAnexo = tableAnexo;
             _tableComponentesNuevos = componentesNuevos;
             _tableComponentesDañados = componentesDañados;
-            _tableTestigos = tableTestigos;
             _referenciaAnexo = referenciaAnexo;
             _referenceNumber = referenceNumber;
 
@@ -66,8 +63,8 @@ namespace ApiDTC.Services
             if(!DBNull.Value.Equals(_tableAnexo.Rows[0]["FechaOficioInicio"]))
                 fechaInicio = Convert.ToDateTime(_tableAnexo.Rows[0]["FechaOficioInicio"]);
 
-            if (!DBNull.Value.Equals(_tableAnexo.Rows[0]["FechaOficioFin"]))
-                fechaFin = Convert.ToDateTime(_tableAnexo.Rows[0]["FechaOficioFin"]);
+            if (!DBNull.Value.Equals(_tableAnexo.Rows[0]["FechaSolicitudInicio"]))
+                fechaSolicitud = Convert.ToDateTime(_tableAnexo.Rows[0]["FechaSolicitudInicio"]);
         }
 
         #endregion
@@ -369,9 +366,9 @@ namespace ApiDTC.Services
                 Chunk Dos9 = new Chunk("ADMINISTRADOR DE LA PLAZA DE COBRO, EL ", letraNormalMediana);
                 Chunk Dos10 = new Chunk(_tableAnexo.Rows[0]["Supervisor"].ToString().ToUpper() + ", ", letraoNegritaMediana);
                 Chunk Dos11 = new Chunk("TÉCNICO REPRESENTANTE DE LA EMPRESA PRESTADORA DE SERVICIOS PROYECTOS Y SISTEMAS INFORMATICOS S.A. DE C.V. Y LOS ", letraNormalMediana);
-                Chunk Dos12 = new Chunk(_tableTestigos.Rows[0]["Testigos"].ToString().ToUpper() + ", ", letraoNegritaMediana);
+                Chunk Dos12 = new Chunk(_tableAnexo.Rows[0]["Testigo Uno"].ToString().ToUpper() + ", ", letraoNegritaMediana);
                 Chunk Dos13 = new Chunk("Y ", letraNormalMediana);
-                Chunk Dos14 = new Chunk(_tableTestigos.Rows[1]["Testigos"].ToString().ToUpper() + ", ", letraoNegritaMediana);
+                Chunk Dos14 = new Chunk(_tableAnexo.Rows[0]["Testigo Dos"].ToString().ToUpper() + ", ", letraoNegritaMediana);
                 Chunk Dos15 = new Chunk("TESTIGOS DE ASISTENCIA, PARA HACER CONSTAR QUE LA FALLA DEL EQUIPO DE ", letraNormalMediana);
 
                 Chunk Dos16 = carril_es.Length > 3 ? new Chunk("LOS CARRILES " + carril_es.ToUpper() + ", ", letraoNegritaMediana) : new Chunk("CARRIL " + carril_es.ToUpper() + ", ", letraoNegritaMediana);
@@ -574,24 +571,26 @@ namespace ApiDTC.Services
                 Chunk Dos7 = new Chunk("DE LA PLAZA DE COBRO, EL ", letraNormalMediana);
                 Chunk Dos8 = new Chunk(_tableAnexo.Rows[0]["Supervisor"].ToString().ToUpper() + ", ", letraoNegritaMediana);
                 Chunk Dos9 = new Chunk("TÉCNICO REPRESENTANTE DE LA EMPRESA PRESTADORA DE SERVICIOS PROYECTOS Y SISTEMAS INFORMATICOS S.A. DE C.V. Y LOS ", letraNormalMediana);
-                Chunk Dos10 = new Chunk(_tableTestigos.Rows[0]["Testigos"].ToString().ToUpper() + ", ", letraoNegritaMediana);
+                Chunk Dos10 = new Chunk(_tableAnexo.Rows[0]["Testigo Uno"].ToString().ToUpper() + ", ", letraoNegritaMediana);
                 Chunk Dos11 = new Chunk("Y EL ", letraNormalMediana);
-                Chunk Dos12 = new Chunk(_tableTestigos.Rows[1]["Testigos"].ToString().ToUpper() + ", ", letraoNegritaMediana);
+                Chunk Dos12 = new Chunk(_tableAnexo.Rows[0]["Testigo Dos"].ToString().ToUpper() + ", ", letraoNegritaMediana);
                 Chunk Dos13 = new Chunk("TESTIGOS DE ASISTENCIA, PARA HACER CONSTAR LA SUSTITUCIÓN DE COMPONENTES DEL EQUIPO DE CONTROL DE TRANSITO DE ", letraNormalMediana);
 
                 Chunk Dos14 = carril_es.Length > 3 ? new Chunk("LOS CARRILES " + carril_es.ToUpper() + ", ", letraoNegritaMediana) : new Chunk("CARRIL " + carril_es.ToUpper() + ", ", letraoNegritaMediana);
 
-                Chunk Dos15 = new Chunk("DE ACUERDO A LA SOLICITUD DE FECHA ", letraNormalMediana);
-                Chunk Dos16 = new Chunk(fechaInicio.ToString("d DE MMMMM DE yyyy", CultureInfo.CreateSpecificCulture("es-MX")).ToUpper() + " ", letraoNegritaMediana);
-                Chunk Dos17 = new Chunk("Y AUTORIZADA EN OFICIO ", letraNormalMediana);
-                Chunk Dos18 = new Chunk(_tableAnexo.Rows[0]["Folio"].ToString().ToUpper() + ", ", letraoNegritaMediana);
-                Chunk Dos19 = new Chunk("DE ", letraNormalMediana);
-                Chunk Dos20 = new Chunk(fechaFin.ToString("d DE MMMMM DE yyyy", CultureInfo.CreateSpecificCulture("es-MX")).ToUpper() + ", ", letraoNegritaMediana);
-                Chunk Dos21 = new Chunk("POR LA ", letraNormalMediana);
-                Chunk Dos22 = new Chunk("GERENCIA DE MANTENIMIENTO Y MODERNIZACIÓN DE EQUIPOS DE PEAJE; ", letraoNegritaMediana);
-                Chunk Dos23 = new Chunk("PARA CUYO EFECTÓ FUÉ NECESARIO REPONER EN FECHA ", letraNormalMediana);
-                Chunk Dos24 = new Chunk(fechaApertura.ToString("d DE MMMMM DE yyyy", CultureInfo.CreateSpecificCulture("es-MX")).ToUpper() + " ", letraoNegritaMediana);
-                Chunk Dos25 = new Chunk("LAS PARTES QUE A CONTINUACIÓN SE DETALLAN.", letraNormalMediana);
+                Chunk Dos15 = new Chunk("DE ACUERDO A LA SOLICITUD ", letraNormalMediana);
+                Chunk Dos16 = new Chunk(_tableAnexo.Rows[0]["Solicitud"].ToString().ToUpper() + " " , letraNormalMediana);
+                Chunk Dos17 = new Chunk("DE FECHA ", letraNormalMediana);
+                Chunk Dos18 = new Chunk(fechaInicio.ToString("d DE MMMMM DE yyyy", CultureInfo.CreateSpecificCulture("es-MX")).ToUpper() + " ", letraoNegritaMediana);
+                Chunk Dos19 = new Chunk("Y AUTORIZADA EN OFICIO ", letraNormalMediana);
+                Chunk Dos20 = new Chunk(_tableAnexo.Rows[0]["Folio"].ToString().ToUpper() + ", ", letraoNegritaMediana);
+                Chunk Dos21 = new Chunk("DE ", letraNormalMediana);
+                Chunk Dos22 = new Chunk(fechaSolicitud.ToString("d DE MMMMM DE yyyy", CultureInfo.CreateSpecificCulture("es-MX")).ToUpper() + ", ", letraoNegritaMediana);
+                Chunk Dos23 = new Chunk("POR LA ", letraNormalMediana);
+                Chunk Dos24 = new Chunk("GERENCIA DE MANTENIMIENTO Y MODERNIZACIÓN DE EQUIPOS DE PEAJE; ", letraoNegritaMediana);
+                Chunk Dos25 = new Chunk("PARA CUYO EFECTÓ FUÉ NECESARIO REPONER EN FECHA ", letraNormalMediana);
+                Chunk Dos26 = new Chunk(fechaApertura.ToString("d DE MMMMM DE yyyy", CultureInfo.CreateSpecificCulture("es-MX")).ToUpper() + " ", letraoNegritaMediana);
+                Chunk Dos27 = new Chunk("LAS PARTES QUE A CONTINUACIÓN SE DETALLAN.", letraNormalMediana);
                 var parrafoDos = new Paragraph();
                 parrafoDos.SetLeading(0, 1.4f);
 
@@ -620,6 +619,8 @@ namespace ApiDTC.Services
                 parrafoDos.Add(Dos23);
                 parrafoDos.Add(Dos24);
                 parrafoDos.Add(Dos25);
+                parrafoDos.Add(Dos26);
+                parrafoDos.Add(Dos27);
                 parrafoDos.Alignment = Element.ALIGN_JUSTIFIED;
 
                 Chunk Tres = new Chunk("LOS EQUIPOS/COMPONENTES DAÑADOS EL ADMINISTRADOR DEBERÁ IDENTIFICAR Y EMBALAR, ENVIANDOLOS EN UN PERÍODO DE 5 DÍAS MÁXIMO AL ÁLMACÉN DE LA COORDINACION REGIONAL POR OFICIO, PARA SU DESTINO FINAL CONFORME LA NORMA CAPUFE.", letraNormalMediana);
@@ -1127,13 +1128,13 @@ namespace ApiDTC.Services
 
                 /////////////////////////////////////////////////testigos/////////////////////////////////////////////
 
-                Chunk nomEncargadoUno = new Chunk(_tableTestigos.Rows[0]["Testigos"].ToString().ToUpper() + "\n Encargado de turno", letraoNegritaMediana);
+                Chunk nomEncargadoUno = new Chunk(_tableAnexo.Rows[0]["Testigo Uno"].ToString().ToUpper() + "\n Encargado de turno", letraoNegritaMediana);
                 var parrafonomEncargadoUno = new Paragraph();
                 parrafonomEncargadoUno.SetLeading(0, 1.8f);
                 parrafonomEncargadoUno.Add(nomEncargadoUno);
                 parrafonomEncargadoUno.Alignment = Element.ALIGN_CENTER;
 
-                Chunk nomEncargadoDos = new Chunk(_tableTestigos.Rows[1]["Testigos"].ToString().ToUpper() + "\n Encargado de turno", letraoNegritaMediana);
+                Chunk nomEncargadoDos = new Chunk(_tableAnexo.Rows[0]["Testigo Dos"].ToString().ToUpper() + "\n Encargado de turno", letraoNegritaMediana);
                 var parrafonomEncargadoDos = new Paragraph();
                 parrafonomEncargadoDos.SetLeading(0, 1.8f);
                 parrafonomEncargadoDos.Add(nomEncargadoDos);
