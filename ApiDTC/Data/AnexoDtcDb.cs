@@ -300,22 +300,47 @@ namespace ApiDTC.Data
                                 cmd.Parameters.Add("@referenceAnexoAnterior", SqlDbType.NVarChar).Value = valueNewId.idUltimaVersion;
                             cmd.Parameters.Add("@referenceAnexo", SqlDbType.NVarChar).Value = valueNewId.newId;
                             cmd.Parameters.Add("@fechaApertura", SqlDbType.DateTime).Value = anexoDTCInsert.FechaApertura;
-                            cmd.Parameters.Add("@fechaCierre", SqlDbType.DateTime).Value = anexoDTCInsert.FechaCierre;
-                            if(anexoDTCInsert.FolioOficio == string.Empty)
+                            if(anexoDTCInsert.FechaCierre == null)
+                                cmd.Parameters.Add("@fechaCierre", SqlDbType.DateTime).Value = DBNull.Value;
+                            else
+                                cmd.Parameters.Add("@fechaCierre", SqlDbType.DateTime).Value = anexoDTCInsert.FechaCierre;
+
+
+                            if (anexoDTCInsert.FolioOficio == string.Empty)
                                 cmd.Parameters.Add("@folioOficio", SqlDbType.NVarChar).Value = DBNull.Value;
                             else
                                 cmd.Parameters.Add("@folioOficio", SqlDbType.NVarChar).Value = anexoDTCInsert.FolioOficio;
+
                             if (anexoDTCInsert.FechaOficioInicio == null)
                                 cmd.Parameters.Add("@fechaOficioInicio", SqlDbType.DateTime).Value = DBNull.Value;
                             else
                                 cmd.Parameters.Add("@fechaOficioInicio", SqlDbType.DateTime).Value = anexoDTCInsert.FechaOficioInicio;
-                            if (anexoDTCInsert.FechaOficioFin == null)
-                                cmd.Parameters.Add("@fechaOficioFin", SqlDbType.DateTime).Value = DBNull.Value;
+
+
+                            //if (anexoDTCInsert.FechaOficioFin == null)
+                            //    cmd.Parameters.Add("@fechaOficioFin", SqlDbType.DateTime).Value = DBNull.Value;
+                            //else
+                            //    cmd.Parameters.Add("@fechaOficioFin", SqlDbType.DateTime).Value = anexoDTCInsert.FechaOficioFin;
+
+                            if (anexoDTCInsert.Solicitud == string.Empty)
+                                cmd.Parameters.Add("@solicitud", SqlDbType.NVarChar).Value = DBNull.Value;
                             else
-                                cmd.Parameters.Add("@fechaOficioFin", SqlDbType.DateTime).Value = anexoDTCInsert.FechaOficioFin;
+                                cmd.Parameters.Add("@solicitud", SqlDbType.NVarChar).Value = anexoDTCInsert.Solicitud;
+
+
+                            if (anexoDTCInsert.FechaSolicitudInicio == null)
+                                cmd.Parameters.Add("@fechaSolicitudInicio", SqlDbType.DateTime).Value = DBNull.Value;
+                            else
+                                cmd.Parameters.Add("@fechaSolicitudInicio", SqlDbType.DateTime).Value = anexoDTCInsert.FechaSolicitudInicio;
+
+
+                            //if (anexoDTCInsert.FechaSolicitudFin == null)
+                            //    cmd.Parameters.Add("@fechaSolicitudFin", SqlDbType.DateTime).Value = DBNull.Value;
+                            //else
+                            //    cmd.Parameters.Add("@fechaSolicitudFin", SqlDbType.DateTime).Value = anexoDTCInsert.FechaSolicitudFin;
                             cmd.Parameters.Add("@supervisorId", SqlDbType.Int).Value = anexoDTCInsert.SupervisorId;
-                            cmd.Parameters.Add("@testigo1", SqlDbType.Int).Value = anexoDTCInsert.Testigos[0];
-                            cmd.Parameters.Add("@testigo2", SqlDbType.Int).Value = anexoDTCInsert.Testigos[1];
+                            cmd.Parameters.Add("@testigo1", SqlDbType.Int).Value = anexoDTCInsert.Testigo1Id;
+                            cmd.Parameters.Add("@testigo2", SqlDbType.Int).Value = anexoDTCInsert.Testigo2Id;
                             cmd.Parameters.Add("@tipoAnexo", SqlDbType.Char).Value = anexoDTCInsert.TipoAnexo;
                             cmd.Parameters.Add("@isSubVersion", SqlDbType.Bit).Value = isSubAnexo;
                             var result = _sqlResult.Post(clavePlaza, cmd, sql, "InserAnexoHeader");
@@ -357,8 +382,8 @@ namespace ApiDTC.Data
                     return new Response
                     {
                         Message = "Ok",
-                        Result = anexoDTCInsert,
-                        Rows = anexoDTCInsert.ComponentesAnexo.Count
+                        Result = valueNewId.newId,
+                        Rows = 1
                     };
                 }
                 return new Response
