@@ -382,8 +382,8 @@ namespace ApiDTC.Data
                     return new Response
                     {
                         Message = "Ok",
-                        Result = anexoDTCInsert,
-                        Rows = anexoDTCInsert.ComponentesAnexo.Count
+                        Result = valueNewId.newId,
+                        Rows = 1
                     };
                 }
                 return new Response
