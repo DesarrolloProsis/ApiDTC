@@ -48,6 +48,7 @@
         public string TechnicalSheetReference { get; set; }
         public string FaultDescription { get; set; }
         public bool IsAnexoCreate { get; set; }
+        public bool IsValidCreate { get; set; }
         public string Name { get; set; }
 
 

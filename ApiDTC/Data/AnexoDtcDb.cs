@@ -217,9 +217,21 @@ namespace ApiDTC.Data
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.Add("@referenceAnexo", SqlDbType.NVarChar).Value = referenceAnexo;
-                        var historicComponetesoAnexo = _sqlResult.GetList<AnexoDTCHistorico>(clavePlaza, cmd, sql, "GetHistoricoComponetesAnexo");
+                        var historicComponetesoAnexo = _sqlResult.GetRows<AnexoDTCHistorico>(clavePlaza, cmd, sql, "GetHistoricoComponetesAnexo");
+                                                                    
+                        foreach(var item in historicComponetesoAnexo)
+                        {
+                            item.FolioOficio = item.FolioOficio == null ? "" : item.FolioOficio;
+                            item.Solicitud = item.Solicitud == null ? "" : item.Solicitud;
+                        }
 
-                        return historicComponetesoAnexo;
+                        return new Response
+                        {
+                            Result = historicComponetesoAnexo,
+                            Message = "Header del anexo",
+                            Rows = historicComponetesoAnexo.Count
+
+                        };   
                     }
                 }
             }

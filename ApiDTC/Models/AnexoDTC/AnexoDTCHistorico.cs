@@ -31,7 +31,10 @@ namespace ApiDTC.Models.AnexoDTC
         public string UserName { get; set; }
         
     }
-
+    public class HistoricoWhiFlag : AnexoDTCHistorico
+    {
+        public bool ComponentesLibres { get; set; }
+    }
     public class HeaderAnexo : AnexoDTCHistorico
     {
 
