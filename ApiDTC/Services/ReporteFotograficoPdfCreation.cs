@@ -68,8 +68,6 @@
 
             if (_tipo == 1)
                 directory = $@"{folder}\{_clavePlaza.ToUpper()}\Reportes\{_referenceNumber}";
-            else if (_tipo == 4)
-                directory = $@"{folder}\{_clavePlaza.ToUpper()}\Reportes\{_referenceNumber}";
             else
                 directory = $@"{folder}\{_clavePlaza.ToUpper()}\DTC\{_referenceNumber}";
             if (!Directory.Exists(directory))
@@ -83,8 +81,6 @@
                 filename = $"ReporteFotográfico-{_referenceNumber}.pdf";
             else if (_tipo == 2)
                 filename = $@"DTC-{_referenceNumber}-EquipoNuevo.pdf";
-            else if (_tipo == 4)
-                filename = $"ReporteFotográfico-{_referenceNumber}-EquipoNuevo.pdf";
             else
                 filename = $@"DTC-{_referenceNumber}-EquipoDañado.pdf";
             if (_tipo == 3)
@@ -139,9 +135,6 @@
                             break;
                         case 3:
                             doc.AddTitle("REPORTE FOTOGRÁFICO MANTENIMIENTO CORRECTIVO EQUIPO DAÑADO");
-                            break;
-                        case 4:
-                            doc.AddTitle("REPORTE FOTOGRÁFICO ANEXO");
                             break;
                         default: break;
                     }
@@ -325,9 +318,6 @@
                         break;
                     case 3:
                         textoTitulo = "REPORTE FOTOGRÁFICO MANTENIMIENTO CORRECTIVO EQUIPO DAÑADO";
-                        break;
-                    case 4:
-                        textoTitulo = "REPORTE FOTOGRÁFICO ANEXO";
                         break;
                     default: break;
                 }

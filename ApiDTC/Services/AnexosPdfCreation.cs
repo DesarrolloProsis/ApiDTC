@@ -114,7 +114,7 @@ namespace ApiDTC.Services
         public Response NewPdfA(string folder)
         {
             string directory, filename, path;
-            directory = $@"{folder}\{_clavePlaza.ToUpper()}\Reportes\{_referenceNumber}\Anexos";
+            directory = $@"{folder}\{_clavePlaza.ToUpper()}\DTC\{_referenceNumber}\Anexos";
             if (!Directory.Exists(directory))
             {
                 Directory.CreateDirectory(directory);
@@ -220,7 +220,7 @@ namespace ApiDTC.Services
         public Response NewPdfB(string folder)
         {
             string directory, filename, path;
-            directory = $@"{folder}\{_clavePlaza.ToUpper()}\Reportes\{_referenceNumber}\Anexos";
+            directory = $@"{folder}\{_clavePlaza.ToUpper()}\DTC\{_referenceNumber}\Anexos";
             if (!Directory.Exists(directory))
             {
                 Directory.CreateDirectory(directory);
