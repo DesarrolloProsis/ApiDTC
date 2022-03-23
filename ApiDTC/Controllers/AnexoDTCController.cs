@@ -203,7 +203,7 @@ namespace ApiDTC.Controllers
                 return NotFound(ex.ToString());
             }
         }
-
+        
         [HttpGet("AnexoReporteFotografico/{clavePlaza}/{referenceNumber}/{ubicacion}")]
         public IActionResult GetReporteFotografico(string clavePlaza, string referenceNumber, string ubicacion)
         {

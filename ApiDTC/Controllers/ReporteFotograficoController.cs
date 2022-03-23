@@ -532,6 +532,7 @@
             }
         }
 
+        [AllowAnonymous]
         [HttpGet("Nuevo/{clavePlaza}/{ubicacion}/{referenceNumber}/{referenceAnexo}")]
         public IActionResult GetReporteEquipoNuevo(string clavePlaza, string ubicacion, string referenceNumber, string referenceAnexo)
         {

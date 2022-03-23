@@ -153,7 +153,7 @@
                     if (_tipo == 1)
                         directoryImgs = Path.Combine(directory, "Imgs");
                     else if (_tipo == 2)
-                        directoryImgs = Path.Combine(directory, "EquipoNuevoImgs");
+                        directoryImgs = Path.Combine(directory, "Imgs");
                     else
                         directoryImgs = Path.Combine(directoryImageDiagnostico, "DiagnosticoFallaImgs");//Misma carpeta que Diagnostico
                     if (Directory.Exists(directoryImgs))
