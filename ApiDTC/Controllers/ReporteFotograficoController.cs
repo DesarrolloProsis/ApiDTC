@@ -147,15 +147,15 @@
                         fs.Close();
 
                         FileInfo fi = new FileInfo(Path.Combine(dir, filename));
-                            string temporal = Path.Combine(dir, filename) + "_temp";
+                        string temporal = Path.Combine(dir, filename) + "_temp";
                         this.VaryQualityLevel(Path.Combine(dir, filename), temporal);
                         if (System.IO.File.Exists(Path.Combine(dir, filename)))
-                            {
-                                //Se borra archivo grande
-                                System.IO.File.Delete(Path.Combine(dir, filename));
-                                //Archivo temporal actualiza su nombre al real
-                                System.IO.File.Move(Path.Combine(dir, temporal), Path.Combine(dir, filename));
-                            }
+                        {
+                            //Se borra archivo grande
+                            System.IO.File.Delete(Path.Combine(dir, filename));
+                            //Archivo temporal actualiza su nombre al real
+                            System.IO.File.Move(Path.Combine(dir, temporal), Path.Combine(dir, filename));
+                        }
                     }
                     return Ok(Path.Combine(dir, filename));
                 }
@@ -185,66 +185,6 @@
             bmp1.Dispose();
             
 
-        }
-
-        [HttpPost("EquipoNuevo/Images/{clavePlaza}/{reportNumber}")]
-        public ActionResult<Response> InsertImageNuevos(string clavePlaza, [FromForm(Name = "image")] IFormFile image, string reportNumber)
-        {
-            if (image.Length > 0 || image != null)
-            {
-                int numberOfImages;
-                string dir = $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\Reportes\{reportNumber}\Imgs";
-                string dirFull = $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\Reportes\{reportNumber}\ImgsFullSize";
-                string filename;
-                try
-                {
-                    if (!Directory.Exists(dir))
-                        Directory.CreateDirectory(dir);
-
-                    if (!Directory.Exists(dirFull))
-                        Directory.CreateDirectory(dirFull);
-
-                    numberOfImages = Directory.GetFiles(dir).Length + 1;
-                    filename = $"{reportNumber}_EquipoNuevoImgs_{numberOfImages}{image.FileName.Substring(image.FileName.LastIndexOf('.'))}";
-                    while (System.IO.File.Exists(Path.Combine(dir, filename)))
-                    {
-                        numberOfImages += 1;
-                        filename = $"{reportNumber}_EquipoNuevoImgs_{numberOfImages}{image.FileName.Substring(image.FileName.LastIndexOf('.'))}";
-                    }
-
-                    //full
-                    using (FileStream fs = new FileStream(Path.Combine(dirFull, filename), FileMode.Create))
-                    {
-                        image.CopyTo(fs);
-                        fs.Close();
-                    }
-                    //full
-                    using (FileStream fs = new FileStream(Path.Combine(dir, filename), FileMode.Create))
-                    {
-                        image.CopyTo(fs);
-                        fs.Close();
-
-                        FileInfo fi = new FileInfo(Path.Combine(dir, filename));
-                        string temporal = Path.Combine(dir, filename) + "_temp";
-                        this.VaryQualityLevel(Path.Combine(dir, filename), temporal);
-                        if (System.IO.File.Exists(Path.Combine(dir, filename)))
-                        {
-                            //Se borra archivo grande
-                            System.IO.File.Delete(Path.Combine(dir, filename));
-                            //Archivo temporal actualiza su nombre al real
-                            System.IO.File.Move(Path.Combine(dir, temporal), Path.Combine(dir, filename));
-                        }
-                    }
-                    return Ok(Path.Combine(dir, filename));
-                }
-                catch (IOException ex)
-                {
-                    _apiLogger.WriteLog(clavePlaza, ex, "ReporteFotograficoController: InsertImage", 2);
-                    return NotFound(ex.ToString());
-                }
-            }
-            else
-                return NotFound("Insert another image");
         }
 
         private ImageCodecInfo GetEncoder(ImageFormat format)
@@ -476,7 +416,7 @@
         {
             try
             {
-                string directoy = $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\DTC\{reportNumber}\DiagnosticoFallaImgs";
+                string directoy = $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\DTC\{reportNumber}\imgs";
                 List<string> dtcImages = new List<string>();
                 if (!Directory.Exists(directoy))
                     return Ok(dtcImages);
@@ -497,8 +437,8 @@
             if (image.Length > 0 || image != null)
             {
                 int numberOfImages;
-                string dir = $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\Reportes\{reportNumber}\Imgs";
-                string dirFull = $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\Reportes\{reportNumber}\ImgsFullSize";
+                string dir = $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\DTC\{reportNumber}\Imgs";
+                string dirFull = $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\DTC\{reportNumber}\ImgsFullSize";
                 string filename;
                 try
                 {
@@ -557,7 +497,7 @@
         {
             try
             {
-                string path = $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\Reportes\{reportNumber}\Imgs\{fileName}";
+                string path = $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\DTC\{reportNumber}\Imgs\{fileName}";
                 if (!System.IO.File.Exists(path))
                     return NotFound("No existe el archivo");
                 Byte[] bitMap = System.IO.File.ReadAllBytes(path);
@@ -577,12 +517,12 @@
         {
             try
             {
-                string path = $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\Reportes\{reportNumber}\Imgs\{fileName}";
+                string path = $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\DTC\{reportNumber}\Imgs\{fileName}";
                 if (!System.IO.File.Exists(path))
                     return NotFound(path);
                 System.IO.File.Delete(path);
-                if (Directory.GetFiles($@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\Reportes\{reportNumber}\Imgs").Length == 0)
-                    Directory.Delete($@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\Reportes\{reportNumber}\Imgs");
+                if (Directory.GetFiles($@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\DTC\{reportNumber}\Imgs").Length == 0)
+                    Directory.Delete($@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\DTC\{reportNumber}\Imgs");
                 return Ok(path);
             }
             catch (IOException ex)
@@ -600,7 +540,7 @@
                 var dataSet = _db.GetStoreNuevoPDF(clavePlaza, referenceNumber, referenceAnexo);
                 if (dataSet.Tables[0].Rows.Count == 0)
                     return NotFound("GetStoredPdf retorna tabla vacía");
-                ReporteFotograficoPdfCreation pdf = new ReporteFotograficoPdfCreation(clavePlaza, dataSet.Tables[0], new ApiLogger(), 3, referenceNumber, ubicacion);
+                ReporteFotograficoPdfCreation pdf = new ReporteFotograficoPdfCreation(clavePlaza, dataSet.Tables[0], new ApiLogger(), 2, referenceNumber, ubicacion);
                 var pdfResult = pdf.NewPdf($@"{this._disk}:\{this._folder}");
                 if (pdfResult.Result == null)
                     return NotFound(pdfResult.Message);
