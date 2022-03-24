@@ -161,11 +161,12 @@ namespace ApiDTC.Controllers
         }
 
         [HttpGet("AnexoA/{clavePlaza}/{referenceNumber}/{referenciaAnexo}/{isSubAnexo}")]
-        public IActionResult GetAnexoA(string clavePlaza, string referenceNumber, string referenciaAnexo, bool IsSubVersion)
+        public IActionResult GetAnexoA(string clavePlaza, string referenceNumber, string referenciaAnexo, bool isSubAnexo)
         {
             try
             {
-                var dataSet = _db.GetAnexoPDF(referenciaAnexo, IsSubVersion);
+                //isSubAnexo = true;
+                var dataSet = _db.GetAnexoPDF(referenciaAnexo, isSubAnexo);
                 if (dataSet.Tables[0].Rows.Count == 0)
                     return NotFound("GetStorePdf retorna tabla vacía");
                 AnexosPdfCreation pdf = new AnexosPdfCreation(clavePlaza, referenciaAnexo, referenceNumber, dataSet.Tables[0], dataSet.Tables[1], dataSet.Tables[2], new ApiLogger());
@@ -183,11 +184,12 @@ namespace ApiDTC.Controllers
         }
 
         [HttpGet("AnexoB/{clavePlaza}/{referenceNumber}/{referenciaAnexo}/{isSubAnexo}")]
-        public IActionResult GetAnexoB(string clavePlaza, string referenceNumber, string referenciaAnexo, bool IsSubVersion)
+        public IActionResult GetAnexoB(string clavePlaza, string referenceNumber, string referenciaAnexo, bool isSubAnexo)
         {
             try
             {
-                var dataSet = _db.GetAnexoPDF(referenciaAnexo, IsSubVersion);
+                //IsSubVersion = true;
+                var dataSet = _db.GetAnexoPDF(referenciaAnexo, isSubAnexo);
                 if (dataSet.Tables[0].Rows.Count == 0 || dataSet.Tables[1].Rows.Count == 0)
                     return NotFound("GetStorePdf retorna tabla vacía");
                 AnexosPdfCreation pdf = new AnexosPdfCreation(clavePlaza, referenciaAnexo, referenceNumber, dataSet.Tables[0], dataSet.Tables[1], dataSet.Tables[2], new ApiLogger());
