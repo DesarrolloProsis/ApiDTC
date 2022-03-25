@@ -888,9 +888,9 @@ namespace ApiDTC.Services
                 PdfPTable table = new PdfPTable(new float[] { 100f }) { WidthPercentage = 100f };
 
                 Chunk Uno = new Chunk("Se cierra la presente acta en fecha ", letraoNegritaMediana);
-                Chunk Uno2 = new Chunk(fechaSiniestro.ToString("d DE MMMMM DE yyyy", CultureInfo.CreateSpecificCulture("es-MX")).ToUpper() + " siendo las ", letraoNegritaMediana);
+                Chunk Uno2 = new Chunk(fechaApertura.ToString("d DE MMMMM DE yyyy", CultureInfo.CreateSpecificCulture("es-MX")).ToUpper() + " siendo las ", letraoNegritaMediana);
                 //Chunk Uno2 = new Chunk("20 de diciembre de 2021 siendo las ", letraoNegritaMediana);
-                Chunk Uno3 = new Chunk(fechaSiniestro.ToString("hh:mm", CultureInfo.CreateSpecificCulture("es-MX")).ToUpper() + " hrs.", letraoNegritaMediana);
+                Chunk Uno3 = new Chunk(fechaCierre.ToString("hh:mm", CultureInfo.CreateSpecificCulture("es-MX")).ToUpper() + " hrs.", letraoNegritaMediana);
                 //Chunk Uno3 = new Chunk("18:00 hrs.", letraoNegritaMediana);
                 var parrafoUno = new Paragraph();
                 parrafoUno.SetLeading(0, 1.4f);
