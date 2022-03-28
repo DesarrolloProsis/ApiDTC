@@ -7,7 +7,6 @@
     using System.Collections.Generic;
     using System.Data;
     using System.IO;
-    using System.Text;
 
     public class ReporteFotograficoPdfCreation
     {
@@ -168,7 +167,7 @@
                             List<string> fotosEnPagina = new List<string>();
                             PdfPTable table = new PdfPTable(new float[] { 100f }) { WidthPercentage = 100f };
                             PdfPTable table2 = new PdfPTable(new float[] { 100f }) { WidthPercentage = 100f };
-                            var celdaVacia = new PdfPCell() { Border = 0, Padding = 35f};
+                            var celdaVacia = new PdfPCell() { Border = 0, Padding = 35f };
                             var celdaVacia2 = new PdfPCell() { Border = 0, Padding = 7f };
                             int pagina;
                             int i = 0;
@@ -582,7 +581,7 @@
                 table.AddCell(plazaDeCobro);
                 //CeldasVacias(2, table);
                 //TODO poner la hora inicio del stored de Alex en reporte fotográfico equipo nuevo y dañado
-                string valorHoraInicio = _tipo == 2? Convert.ToString(_tableHeader.Rows[0]["FechaApertura"]) : Convert.ToString(_tableHeader.Rows[0]["Inicio"]);
+                string valorHoraInicio = _tipo == 2 ? Convert.ToString(_tableHeader.Rows[0]["FechaApertura"]) : Convert.ToString(_tableHeader.Rows[0]["Inicio"]);
                 //var inicioDateTime = Convert.ToDateTime(valorHoraInicio);
                 //string conversionInicio = inicioDateTime.ToString("hh:mm tt", CultureInfo.CurrentCulture);
                 var colTextoHoraInicio = new PdfPCell(new Phrase("Hora de inicio: ", letraoNegritaChica)) { Border = 0, HorizontalAlignment = Element.ALIGN_RIGHT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 5 };
@@ -604,7 +603,7 @@
                 table.AddCell(colUbicacion);
                 table.AddCell(ubicacion);
                 //CeldasVacias(2, table);
-                string valorHoraFin =  _tipo == 2? Convert.ToString(_tableHeader.Rows[0]["FechaCierre"]) : Convert.ToString(_tableHeader.Rows[0]["Fin"]);
+                string valorHoraFin = _tipo == 2 ? Convert.ToString(_tableHeader.Rows[0]["FechaCierre"]) : Convert.ToString(_tableHeader.Rows[0]["Fin"]);
                 //var finDateTime = Convert.ToDateTime(valorHoraFin);
                 //string conversionFin = finDateTime.ToString("hh:mm tt", CultureInfo.CurrentCulture);
                 var colTextoHoraFin = new PdfPCell(new Phrase("Hora de fin: ", letraoNegritaChica)) { Border = 0, HorizontalAlignment = Element.ALIGN_RIGHT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 5 };
