@@ -862,7 +862,7 @@ namespace ApiDTC.Services
                 if (height > 1000)
                     height = height - 1000;
 
-                if (height > PosicionEnY + 124)
+                if (height > PosicionEnY + 360)
                     doc.NewPage();
 
                 table.AddCell(espacioVacio);
