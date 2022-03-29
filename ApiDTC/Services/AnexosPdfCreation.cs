@@ -859,7 +859,10 @@ namespace ApiDTC.Services
 
                 var height = table.CalculateHeights(false);
 
-                if (height > PosicionEnY - 706.9606247f)
+                if (height > 1000)
+                    height = height - 1000;
+
+                if (height > PosicionEnY + 124)
                     doc.NewPage();
 
                 table.AddCell(espacioVacio);

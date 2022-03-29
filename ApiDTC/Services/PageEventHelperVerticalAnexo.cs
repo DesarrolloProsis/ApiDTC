@@ -250,8 +250,8 @@ namespace ApiDTC.Services
             base.OnCloseDocument(writer, document);
             template.BeginText();
             template.SetFontAndSize(bf, 8);
-            template.SetTextMatrix(0, 0);
-            template.ShowText("" + (writer.PageNumber - 1));
+            template.SetTextMatrix(295, 37);
+            template.ShowText("de " + (writer.PageNumber - 1));
             template.EndText();
         }
     }
