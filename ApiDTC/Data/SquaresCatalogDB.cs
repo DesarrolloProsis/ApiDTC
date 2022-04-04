@@ -118,6 +118,7 @@
                         cmd.Parameters.Add("@Mail", SqlDbType.NVarChar).Value = updateAdmin.Mail;
                         cmd.Parameters.Add("@Plaza", SqlDbType.NVarChar).Value = updateAdmin.Plaza;
                         cmd.Parameters.Add("@AdminId", SqlDbType.Int).Value = updateAdmin.AdminId;
+                        cmd.Parameters.Add("@User", SqlDbType.Int).Value = updateAdmin.UserId;
                         var response = _sqlResult.Put("USR", cmd, sql, "UpdateAdmin");
                         return new Response
                         {
