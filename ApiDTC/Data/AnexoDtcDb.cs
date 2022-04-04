@@ -266,7 +266,8 @@ namespace ApiDTC.Data
                             }
                             else
                             {
-                                return (referenceDTC + '-' + tipoAnexo + (listCount.Count + 1).ToString(), listCount.FirstOrDefault().AnexoReference);
+                                //return (referenceDTC + '-' + tipoAnexo + (listCount.Count + 1).ToString(), listCount.FirstOrDefault().AnexoReference);
+                                return (referenceDTC + '-' + tipoAnexo + (listCount.Count + 1).ToString(), string.Empty);
                             }
                         }
                         else
