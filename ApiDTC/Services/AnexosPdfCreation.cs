@@ -1446,6 +1446,11 @@ namespace ApiDTC.Services
                             list += "Sin Numero";
                         numList += 1;
                     }
+                    else if (item[column].ToString().Equals(""))
+                    {
+                        list += "Sin Numero";
+                        numList += 1;
+                    }
                     else
                     {
                         list = list.Remove(list.Length - 2);
