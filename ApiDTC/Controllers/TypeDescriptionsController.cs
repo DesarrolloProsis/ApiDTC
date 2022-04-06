@@ -34,6 +34,15 @@
             else
                 return Ok(get);
         }
+        [HttpGet("tipoDescripcion/{idType}")]
+        public ActionResult<Response> GetType(string idType)
+        {
+            var get = _db.GetTypeDescriptionsId(idType);
+            if (get.Result == null)
+                return NotFound(get);
+            else
+                return Ok(get);
+        }
         #endregion
     }
 }
