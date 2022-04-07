@@ -20,7 +20,7 @@ CREATE TABLE [dbo].[AnexosDTC](
 	[FechaOficioInicio] [datetime] NULL,
 	[Testigo1Id] [int] NOT NULL,
 	[Testigo2Id] [int] NOT NULL,
-	[SupervisorId] [int] NOT NULL,
+	--[SupervisorId] [int] NOT NULL,
 	[FechaUltimoCambio] [datetime] NULL,
 	[Comentarios] [nvarchar](300) NULL,
 	[TipoAnexo] [char](1) NOT NULL,
@@ -30,10 +30,22 @@ CREATE TABLE [dbo].[AnexosDTC](
 	[PDFFotografico] [bit] NOT NULL,
 	
 	FOREIGN KEY(DTCReference) REFERENCES DTCData(ReferenceNumber),
-	FOREIGN KEY(Testigo1Id) REFERENCES CatalogoUserAnexo(Id),
-	FOREIGN KEY(Testigo2Id) REFERENCES CatalogoUserAnexo(Id),
-	FOREIGN KEY(SupervisorId) REFERENCES CatalogoUserAnexo(Id)
+	FOREIGN KEY(Testigo1Id) REFERENCES AdminsSquares(AdminSquareId),
+	FOREIGN KEY(Testigo2Id) REFERENCES AdminsSquares(AdminSquareId),
+	--FOREIGN KEY(SupervisorId) REFERENCES CatalogoUserAnexo(Id)
 )
+
+--AGREGAMOS LOS ROLLES QUE FALTAN PARA DISTINGUIR LOS OPERADORES Y LOS ADMIN EN LA TABLA DE AdminsSquares PARA USAR COMO TESTIGOS EN LOS ANEXOS
+
+INSERT INTO RollsCatalog VALUES (11,'Administrar Plaza')
+INSERT INTO RollsCatalog VALUES (12,'Operador Plaza')
+
+--MODIFICAR TABLA DE AdminsSquares
+ALTER TABLE AdminsSquares	
+	ADD IdRoll INT FOREIGN KEY(IdRoll) REFERENCES RollsCatalog(RollId)
+
+UPDATE AdminsSquares SET IdRoll = 11
+SELECT * FROM AdminsSquares
 
 --AGREGAR COLUMNA PARA IDENTIFICAR COMPONETES YA USADOS EN ANEXO
 ALTER TABLE RequestedComponents ADD UseInAnexo BIT NOT NULL DEFAULT(0)
@@ -49,17 +61,23 @@ CREATE TABLE [dbo].[ComponentAnexo](
 )
 
 --ULTIMOS COMPONENTES DEL SUB ANEXO
-CREATE PROCEDURE GetComponentesAnexo
+CREATE OR ALTER PROCEDURE GetComponentesAnexo
 	@referenceAnexo NVARCHAR(20)
 AS	
 	DECLARE @ultimaVersionAnexo NVARCHAR(20)
 	DECLARE @conteoVersion INT
+	DECLARE @referenceDTC NVARCHAR(20)
 	
-	SELECT @conteoVersion = COUNT(*) FROM AnexosDTC WHERE SUBSTRING(AnexoReference, 0, LEN(@referenceAnexo) + 1) = @referenceAnexo AND IsSubVersion = 1
+	SELECT @conteoVersion = COUNT(*) FROM AnexosDTC WHERE SUBSTRING(AnexoReference, 0, LEN(@referenceAnexo) + 1) = @referenceAnexo AND IsSubVersion = 1	
+
+	SELECT TOP 1 @referenceDTC = DTCReference FROM AnexosDTC WHERE AnexoReference = @referenceAnexo
 
 	IF @conteoVersion > 0
 	BEGIN	
-		SElECT TOP 1 @ultimaVersionAnexo = AnexoReference FROM AnexosDTC WHERE SUBSTRING(AnexoReference, 0, LEN(@referenceAnexo) + 1) = @referenceAnexo AND IsSubVersion = 1 ORDER BY AnexoReference DESC 
+		DECLARE @LenDTC NVARCHAR(20)
+		SET @LenDTC = (SELECT LEN(@referenceDTC))
+		--SElECT TOP 1 @ultimaVersionAnexo = AnexoReference FROM AnexosDTC WHERE SUBSTRING(AnexoReference, 0, LEN(@referenceAnexo) + 1) = @referenceAnexo AND IsSubVersion = 1 ORDER BY AnexoReference DESC 
+		SElECT TOP 1 @ultimaVersionAnexo = AnexoReference FROM AnexosDTC WHERE DTCReference = @referenceDTC AND SUBSTRING(AnexoReference, 0, LEN(@referenceAnexo) + 1) = @referenceAnexo AND IsSubVersion = 1 ORDER BY CAST(SUBSTRING(AnexoReference,(@LenDTC + 5),2) AS int) DESC 
 		SELECT * FROM ComponentAnexo WHERE AnexoId = @ultimaVersionAnexo
 	END
 	ELSE
@@ -69,7 +87,7 @@ AS
 GO
 
 --BUSCA LOS COMPONETES QUE TIENE UN DTC 
-CREATE PROCEDURE [dbo].[GetCompRequestAnexo]
+CREATE OR ALTER PROCEDURE [dbo].[GetCompRequestAnexo]
   @referenceNumber NVARCHAR(20)
 AS
         SELECT DISTINCT R.RequestedComponentId,
@@ -95,7 +113,7 @@ AS
 GO
 
 --VALIDAR CUAL ES EL SP QUE NOS SIRVE A AMBOS
-CREATE PROCEDURE [dbo].[GetConteoVersionesAnexo]
+CREATE OR ALTER PROCEDURE [dbo].[GetConteoVersionesAnexo]
 	@referenceDTC NVARCHAR(20),
 	@referenceAnexo NVARCHAR(20),
 	@isSubVersion BIT
@@ -113,24 +131,24 @@ AS
 	END
 GO
 
-CREATE PROCEDURE [dbo].[GetConteoVersionesAnexos]
-	@referenceDTC NVARCHAR(20),
-	@referenceAnexo NVARCHAR(20),
-	@isSubVersion BIT
-AS
-	IF @isSubVersion = 1
-	BEGIN
-		SELECT AnexoReference FROM AnexosDTC  WHERE DTCReference = @referenceDTC AND SUBSTRING(AnexoReference, 0, LEN(@referenceAnexo) + 1) = @referenceAnexo AND IsSubVersion = 1 ORDER BY AnexoReference DESC 
-	END
-	ELSE
-	BEGIN 
-		SELECT AnexoReference FROM AnexosDTC WHERE DTCReference = @referenceDTC AND IsSubVersion = 0 ORDER BY AnexoReference DESC 
-	END
-GO
+--CREATE PROCEDURE [dbo].[GetConteoVersionesAnexos]
+--	@referenceDTC NVARCHAR(20),
+--	@referenceAnexo NVARCHAR(20),
+--	@isSubVersion BIT
+--AS
+--	IF @isSubVersion = 1
+--	BEGIN
+--		SELECT AnexoReference FROM AnexosDTC  WHERE DTCReference = @referenceDTC AND SUBSTRING(AnexoReference, 0, LEN(@referenceAnexo) + 1) = @referenceAnexo AND IsSubVersion = 1 ORDER BY AnexoReference DESC 
+--	END
+--	ELSE
+--	BEGIN 
+--		SELECT AnexoReference FROM AnexosDTC WHERE DTCReference = @referenceDTC AND IsSubVersion = 0 ORDER BY AnexoReference DESC 
+--	END
+--GO
 
 
 --BUSCA EL HEADER DE UN ANEXO EN ESPECIFICO
-CREATE PROCEDURE [dbo].[GetHeaderAnexo]
+CREATE OR ALTER PROCEDURE [dbo].[GetHeaderAnexo]
 	@referenceAnexo NVARCHAR(20)
 AS
 	DECLARE @ultimaVersionAnexo NVARCHAR(20)
@@ -145,7 +163,8 @@ AS
 	--SI ES MAYOR A 0 ES QUE TIENE SUBVERSION SE DEBE BUSCAR LA ULTIMA SUBVERSION
 	IF @conteoVersion > 0
 	BEGIN		
-		SElECT TOP 1 @ultimaVersionAnexo = AnexoReference FROM AnexosDTC WHERE SUBSTRING(AnexoReference, 0, LEN(@referenceAnexo) + 1) = @referenceAnexo AND IsSubVersion = 1 ORDER BY AnexoReference DESC 	
+		--SElECT TOP 1 @ultimaVersionAnexo = AnexoReference FROM AnexosDTC WHERE SUBSTRING(AnexoReference, 0, LEN(@referenceAnexo) + 1) = @referenceAnexo AND IsSubVersion = 1 ORDER BY AnexoReference DESC 	
+		SElECT TOP 1 @ultimaVersionAnexo = AnexoReference FROM AnexosDTC WHERE SUBSTRING(AnexoReference, 0, LEN(@referenceAnexo) + 1) = @referenceAnexo AND IsSubVersion = 1 ORDER BY AnexoReference DESC
 		SELECT *, @userId AS UserId, @userName AS UserName FROM AnexosDTC WHERE AnexoReference = @ultimaVersionAnexo
 	END
 	ELSE 
@@ -155,7 +174,7 @@ AS
 GO
 
 --ANEXOS CREADOS EN UN DTC EN ESPECIFICO
-CREATE PROCEDURE [dbo].[GetHistoricoAnexo]	
+CREATE OR ALTER PROCEDURE [dbo].[GetHistoricoAnexo]	
 	@referenceDTC NVARCHAR(20)
 AS
 	SELECT A.DTCReference, 
@@ -170,7 +189,7 @@ AS
 		--A.FechaOficioFin, 
 		A.Testigo1Id, 
 		A.Testigo2Id, 
-		A.SupervisorId, 
+		--A.SupervisorId, 
 		A.FechaUltimoCambio, 
 		A.Comentarios, 
 		A.TipoAnexo, 
@@ -191,24 +210,24 @@ AS
 GO
 
 
---BUSCAR LOS SUPERVISORES DE ANEXO
-CREATE PROCEDURE [dbo].[GetSupervisorAnexoPlaza]
-	@plazaId NVARCHAR(4)
-AS
-	--11 IDROLL DE SUPERVISOR ANEXO
-	SELECT * FROM CatalogoUserAnexo WHERE SquareId = @plazaId AND RollId = 11
-GO
+----BUSCAR LOS SUPERVISORES DE ANEXO
+--CREATE PROCEDURE [dbo].[GetSupervisorAnexoPlaza]
+--	@plazaId NVARCHAR(4)
+--AS
+--	--11 IDROLL DE SUPERVISOR ANEXO
+--	SELECT * FROM CatalogoUserAnexo WHERE SquareId = @plazaId AND RollId = 11
+--GO
 
 --BUSCAR LOS TESTIGOS DE ANEXO
-CREATE PROCEDURE [dbo].[GetTestigosPlaza]
+CREATE or ALTER PROCEDURE [dbo].[GetTestigosPlaza]
 	@plazaId NVARCHAR(4)
 AS
-	--12 IDROLL DE TESTIGOS
-	SELECT * FROM CatalogoUserAnexo WHERE SquareId = @plazaId AND RollId = 12
+	--11 IDROLL DE TESTIGOS == AdministradorPlaza
+	SELECT AdminSquareId AS Id, Name AS Nombre, SquareCatalogId AS SquareId, IdRoll AS SquareId  FROM AdminsSquares WHERE SquareCatalogId = @plazaId AND IdRoll = 11
 GO
 
 --INSERTA LOS COMPONETE CONTIENE LOGICA PARA OCUPAR LOS COMPONENTES DE UN DTC CAMBIO DE BANDERA
-CREATE PROCEDURE [dbo].[InsertComponentesAnexo]
+CREATE OR ALTER PROCEDURE [dbo].[InsertComponentesAnexo]
 	@referenceNumber NVARCHAR(20),	
 	@AnexoId NVARCHAR(20),
 	@ComponentDTCId INT,
@@ -246,7 +265,7 @@ CREATE PROCEDURE [dbo].[InsertHeaderAnexo]
 	@solicitud NVARCHAR(50),
 	@fechaSolicitudInicio DATETIME,
 	--@fechaSolicitudFin DATETIME,
-	@supervisorId INT,
+	--@supervisorId INT,
 	@testigo1 INT,
 	@testigo2 INT,
 	@tipoAnexo CHAR,
@@ -255,8 +274,8 @@ AS
 BEGIN TRY
 	IF @tipoAnexo = 'A'
 	BEGIN
-		INSERT INTO AnexosDTC(DTCReference, AnexoReference, FechaApertura, FechaCierre, Solicitud, FechaSolicitudInicio, FolioOficio, FechaOficioInicio,Testigo1Id, Testigo2Id, SupervisorId, Activo, TipoAnexo, FechaUltimoCambio, IsSubVersion) 
-		VALUES(@referenceDTC, @referenceAnexo, @fechaApertura, @fechaCierre, @solicitud, @fechaSolicitudInicio, @folioOficio, @fechaOficioInicio, @testigo1, @testigo2, @supervisorId, 1, 'A', GETDATE(), @isSubVersion)	
+		INSERT INTO AnexosDTC(DTCReference, AnexoReference, FechaApertura, FechaCierre, Solicitud, FechaSolicitudInicio, FolioOficio, FechaOficioInicio,Testigo1Id, Testigo2Id, Activo, TipoAnexo, FechaUltimoCambio, IsSubVersion) 
+		VALUES(@referenceDTC, @referenceAnexo, @fechaApertura, @fechaCierre, @solicitud, @fechaSolicitudInicio, @folioOficio, @fechaOficioInicio, @testigo1, @testigo2, 1, 'A', GETDATE(), @isSubVersion)	
 		
 		IF @@ROWCOUNT = 1
 		BEGIN 
@@ -276,8 +295,8 @@ BEGIN TRY
 	END
 	ELSE
 	BEGIN	
-		INSERT INTO AnexosDTC(DTCReference, AnexoReference, FechaApertura, FechaCierre, Solicitud, FechaSolicitudInicio, FolioOficio, FechaOficioInicio, Testigo1Id, Testigo2Id, SupervisorId, Activo, TipoAnexo, FechaUltimoCambio, IsSubVersion) 
-		VALUES(@referenceDTC, @referenceAnexo, @fechaApertura, @fechaCierre, @solicitud, @fechaSolicitudInicio, @folioOficio, @fechaOficioInicio,@testigo1, @testigo2, @supervisorId, 1, 'B', GETDATE(), @isSubVersion)	
+		INSERT INTO AnexosDTC(DTCReference, AnexoReference, FechaApertura, FechaCierre, Solicitud, FechaSolicitudInicio, FolioOficio, FechaOficioInicio, Testigo1Id, Testigo2Id, Activo, TipoAnexo, FechaUltimoCambio, IsSubVersion) 
+		VALUES(@referenceDTC, @referenceAnexo, @fechaApertura, @fechaCierre, @solicitud, @fechaSolicitudInicio, @folioOficio, @fechaOficioInicio,@testigo1, @testigo2, 1, 'B', GETDATE(), @isSubVersion)	
 
 		IF @@ROWCOUNT = 1
 		BEGIN
@@ -303,33 +322,31 @@ PRINT(CAST(@@ERROR AS VARCHAR))
 END CATCH
 GO
 
+--CREATE PROCEDURE [dbo].[InsertSupervisor]
+--	@nombreSupervisor NVARCHAR(40),
+--	@numeroPlaza NVARCHAR(4)
+--AS	
+--	BEGIN TRY
+--		INSERT INTO CatalogoUserAnexo VALUES(@nombreSupervisor, @numeroPlaza, 11)
+--		SELECT 'Insertado' SqlMessage, 'Se inserto el usuario anexo: '+  @nombreSupervisor + 'en la plaza' + @numeroPlaza  SqlResult
+--	END TRY
+--	BEGIN CATCH
+--		SELECT NULL AS SqlResult, 'Línea: ' + CAST(ERROR_LINE() AS VARCHAR) + ' ' + CAST(@@ERROR AS VARCHAR) AS SqlMessage
+--	END CATCH
+--GO
 
-
-CREATE PROCEDURE [dbo].[InsertSupervisor]
-	@nombreSupervisor NVARCHAR(40),
-	@numeroPlaza NVARCHAR(4)
-AS	
-	BEGIN TRY
-		INSERT INTO CatalogoUserAnexo VALUES(@nombreSupervisor, @numeroPlaza, 11)
-		SELECT 'Insertado' SqlMessage, 'Se inserto el usuario anexo: '+  @nombreSupervisor + 'en la plaza' + @numeroPlaza  SqlResult
-	END TRY
-	BEGIN CATCH
-		SELECT NULL AS SqlResult, 'Línea: ' + CAST(ERROR_LINE() AS VARCHAR) + ' ' + CAST(@@ERROR AS VARCHAR) AS SqlMessage
-	END CATCH
-GO
-
-CREATE PROCEDURE [dbo].[InsertTestigo]
-	@nombreTestigo NVARCHAR(40),
-	@numeroPlaza NVARCHAR(4)
-AS	
-	BEGIN TRY
-		INSERT INTO CatalogoUserAnexo VALUES(@nombreTestigo, @numeroPlaza, 12)
-		SELECT 'Insertado' SqlMessage, 'Se inserto el usuario anexo: '+  @nombreTestigo + 'en la plaza' + @numeroPlaza  SqlResult
-	END TRY
-	BEGIN CATCH
-		SELECT NULL AS SqlResult, 'Línea: ' + CAST(ERROR_LINE() AS VARCHAR) + ' ' + CAST(@@ERROR AS VARCHAR) AS SqlMessage
-	END CATCH
-GO
+--CREATE PROCEDURE [dbo].[InsertTestigo]
+--	@nombreTestigo NVARCHAR(40),
+--	@numeroPlaza NVARCHAR(4)
+--AS	
+--	BEGIN TRY
+--		INSERT INTO CatalogoUserAnexo VALUES(@nombreTestigo, @numeroPlaza, 12)
+--		SELECT 'Insertado' SqlMessage, 'Se inserto el usuario anexo: '+  @nombreTestigo + 'en la plaza' + @numeroPlaza  SqlResult
+--	END TRY
+--	BEGIN CATCH
+--		SELECT NULL AS SqlResult, 'Línea: ' + CAST(ERROR_LINE() AS VARCHAR) + ' ' + CAST(@@ERROR AS VARCHAR) AS SqlMessage
+--	END CATCH
+--GO
 
 --SP PARA PDF ANEXODTC
 CREATE PROCEDURE [dbo].[spPhotoReportNuevos]
@@ -1055,9 +1072,6 @@ UPDATE SquaresCatalog SET Ciudad = 'Ahuehuetzingo', Estado = 'Morelos' WHERE Squ
 UPDATE SquaresCatalog SET Ciudad = 'Huitzuco de los Figueroa', Estado = 'Guerrero' WHERE SquareCatalogId = '102'
 UPDATE SquaresCatalog SET Ciudad = 'Mazatlan', Estado = 'Guerrero' WHERE SquareCatalogId = '103'
 UPDATE SquaresCatalog SET Ciudad = 'Acapulco', Estado = 'Guerrero' WHERE SquareCatalogId = '104'
-
-
-
 UPDATE SquaresCatalog SET Ciudad = 'Tepotzotlan', Estado = 'Estado de México' WHERE SquareCatalogId = '004' 
 UPDATE SquaresCatalog SET Ciudad = 'Huehuetoca', Estado = 'Estado de México' WHERE SquareCatalogId = '069' 
 UPDATE SquaresCatalog SET Ciudad = 'Polotitlan', Estado = 'Estado de México' WHERE SquareCatalogId = '070' 

@@ -19,7 +19,7 @@ namespace ApiDTC.Models.AnexoDTC
         //public DateTime? FechaOficioFin { get; set; }
         public int Testigo1Id { get; set; }
         public int Testigo2Id { get; set; }
-        public int SupervisorId { get; set; }
+        //public int SupervisorId { get; set; }
         public DateTime FechaUltimoCambio { get; set; }
         public string Comentarios { get; set; }
         public string TipoAnexo { get; set; }
