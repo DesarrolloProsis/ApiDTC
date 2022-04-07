@@ -253,7 +253,7 @@ AS
 GO
 
 --INSERTA LOS COMPONETE CONTIENE LOGICA PARA LIBERAR ESPACIOS DE LOS DTC
-CREATE PROCEDURE [dbo].[InsertHeaderAnexo]
+CREATE OR ALTER PROCEDURE [dbo].[InsertHeaderAnexo]
 	@referenceDTC NVARCHAR(20),
 	@referenceAnexoAnterior NVARCHAR(20),
 	@referenceAnexo NVARCHAR(20),
@@ -274,8 +274,8 @@ AS
 BEGIN TRY
 	IF @tipoAnexo = 'A'
 	BEGIN
-		INSERT INTO AnexosDTC(DTCReference, AnexoReference, FechaApertura, FechaCierre, Solicitud, FechaSolicitudInicio, FolioOficio, FechaOficioInicio,Testigo1Id, Testigo2Id, Activo, TipoAnexo, FechaUltimoCambio, IsSubVersion) 
-		VALUES(@referenceDTC, @referenceAnexo, @fechaApertura, @fechaCierre, @solicitud, @fechaSolicitudInicio, @folioOficio, @fechaOficioInicio, @testigo1, @testigo2, 1, 'A', GETDATE(), @isSubVersion)	
+		INSERT INTO AnexosDTC(DTCReference, AnexoReference, FechaApertura, FechaCierre, Solicitud, FechaSolicitudInicio, FolioOficio, FechaOficioInicio,Testigo1Id, Testigo2Id, Activo, TipoAnexo, FechaUltimoCambio, IsSubVersion, PDFFirmardo, PDFFotografico) 
+		VALUES(@referenceDTC, @referenceAnexo, @fechaApertura, @fechaCierre, @solicitud, @fechaSolicitudInicio, @folioOficio, @fechaOficioInicio, @testigo1, @testigo2, 1, 'A', GETDATE(), @isSubVersion, 0 , 0)	
 		
 		IF @@ROWCOUNT = 1
 		BEGIN 
@@ -295,8 +295,8 @@ BEGIN TRY
 	END
 	ELSE
 	BEGIN	
-		INSERT INTO AnexosDTC(DTCReference, AnexoReference, FechaApertura, FechaCierre, Solicitud, FechaSolicitudInicio, FolioOficio, FechaOficioInicio, Testigo1Id, Testigo2Id, Activo, TipoAnexo, FechaUltimoCambio, IsSubVersion) 
-		VALUES(@referenceDTC, @referenceAnexo, @fechaApertura, @fechaCierre, @solicitud, @fechaSolicitudInicio, @folioOficio, @fechaOficioInicio,@testigo1, @testigo2, 1, 'B', GETDATE(), @isSubVersion)	
+		INSERT INTO AnexosDTC(DTCReference, AnexoReference, FechaApertura, FechaCierre, Solicitud, FechaSolicitudInicio, FolioOficio, FechaOficioInicio, Testigo1Id, Testigo2Id, Activo, TipoAnexo, FechaUltimoCambio, IsSubVersion, PDFFirmardo, PDFFotografico) 
+		VALUES(@referenceDTC, @referenceAnexo, @fechaApertura, @fechaCierre, @solicitud, @fechaSolicitudInicio, @folioOficio, @fechaOficioInicio,@testigo1, @testigo2, 1, 'B', GETDATE(), @isSubVersion, 0, 0)	
 
 		IF @@ROWCOUNT = 1
 		BEGIN

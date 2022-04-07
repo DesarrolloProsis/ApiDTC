@@ -367,7 +367,6 @@ namespace ApiDTC.Data
                             }
                         }
 
-
                         foreach (var item in anexoDTCInsert.ComponentesAnexo)
                         {
                             SqlCommand cmd = new SqlCommand("dbo.InsertComponentesAnexo", sql)
