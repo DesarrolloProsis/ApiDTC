@@ -239,7 +239,7 @@
 
                     string textoObservaciones = Convert.ToString((_tipo == 1) ? Convert.ToString(_tableHeader.Rows[0]["Observaciones"]) : Convert.ToString(_tableHeader.Rows[0]["Observation"]));
                     //Pendiente introducir texto
-                    string textoObservacionesNuevo = _tableHeader.Rows[0]["Comentarios"].ToString();
+                    string textoObservacionesNuevo = _tableHeader.Rows[0]["Observaciones"].ToString();
                     AgregarObservaciones tabla = _tipo == 2 ? new AgregarObservaciones(new ApiLogger(), textoObservacionesNuevo, "Observaciones: ", _clavePlaza, "ReporteFotograficoPdfCreation: TablaObservaciones", 5, 3) : new AgregarObservaciones(new ApiLogger(), textoObservaciones, "Observaciones: ", _clavePlaza, "ReporteFotograficoPdfCreation: TablaObservaciones", 5, 3);
                     tabla.TablaObservaciones().WriteSelectedRows(0, -1, 30, 275, cb);
 
