@@ -7,6 +7,7 @@ namespace ApiDTC.Services
 {
     public class PageEventHelperVerticalAnexo : PdfPageEventHelper
     {
+        private readonly DataTable _table;
         // This is the contentbyte object of the writer
         PdfContentByte cb;
         // we will put the final number of pages in a template
@@ -18,10 +19,11 @@ namespace ApiDTC.Services
         //This select the type of document we are creating, A or B.
         public static string _tipo;
         //Why we are documenting in english??
-
-        public PageEventHelperVerticalAnexo(string Tipo)
+        //Aahh, i get it, this is a template
+        public PageEventHelperVerticalAnexo(string Tipo, DataTable table)
         {
             _tipo = Tipo;
+            _table = table;
         }
 
         #region Properties
@@ -125,37 +127,23 @@ namespace ApiDTC.Services
                 cb.EndText();
             }
 
-            PdfPTable table = new PdfPTable(new float[] { 25f, 25f, 25f, 25f }) { WidthPercentage = 100f };
+            PdfPTable table = new PdfPTable(new float[] { 50f, 50f }) { WidthPercentage = 100f };
 
-            iTextSharp.text.Image logo_capufe = iTextSharp.text.Image.GetInstance($@"{System.Environment.CurrentDirectory}\Media\logo-capufe.png");
-            logo_capufe.ScalePercent(4.5f);
+            iTextSharp.text.Image logo_encabezado = iTextSharp.text.Image.GetInstance($@"{System.Environment.CurrentDirectory}\Media\Encabezado Anexo.png");
+            logo_encabezado.ScalePercent(8f);
 
-            iTextSharp.text.Image logo_comunicaciones = iTextSharp.text.Image.GetInstance($@"{System.Environment.CurrentDirectory}\Media\logo-comunicaciones.png");
-            logo_comunicaciones.ScalePercent(20f);
 
-            PdfPCell collogo_capufe = new PdfPCell(logo_comunicaciones)
+            PdfPCell collogo_encabezado = new PdfPCell(logo_encabezado)
             {
                 Border = 0,
                 Colspan = 2,
-                HorizontalAlignment = Element.ALIGN_RIGHT,
+                HorizontalAlignment = Element.ALIGN_CENTER,
                 VerticalAlignment = Element.ALIGN_MIDDLE,
                 PaddingRight = 10,
                 PaddingTop = 5,
                 PaddingBottom = 5
             };
-            PdfPCell collogo_comunicaciones = new PdfPCell(logo_capufe)
-            {
-                Border = 0,
-                Colspan = 2,
-                HorizontalAlignment = Element.ALIGN_LEFT,
-                VerticalAlignment = Element.ALIGN_MIDDLE,
-                PaddingLeft = 10,
-                PaddingTop = 5,
-                PaddingBottom = 5
-            };
-
-            table.AddCell(collogo_capufe);
-            table.AddCell(collogo_comunicaciones);
+            table.AddCell(collogo_encabezado);
 
             document.Add(table);
 
@@ -213,24 +201,70 @@ namespace ApiDTC.Services
             cb.AddTemplate(template, pageSize.GetLeft(-30) + len, pageSize.GetBottom(20));
             cb.BeginText();
             cb.SetFontAndSize(bf, 8f);
-            cb.ShowTextAligned(PdfContentByte.ALIGN_LEFT,
-                "Calzada de los Reyes No. 24 Colonia Tetela del Monte C.P. 62130 Cuernavaca, Morelos.",
-                pageSize.GetRight(550),
-                pageSize.GetBottom(70), 0);
+            switch (_table.Rows[0]["DelegationId"])
+            {
+                case 1:
+                    cb.ShowTextAligned(PdfContentByte.ALIGN_LEFT,
+                        "Calzada de los Reyes No. 24 Colonia Tetela del Monte C.P. 62130 Cuernavaca, Morelos.",
+                        pageSize.GetRight(550),
+                        pageSize.GetBottom(70), 0);
+                    break;
+
+                case 2:
+                    cb.ShowTextAligned(PdfContentByte.ALIGN_LEFT,
+                        "Km. 7+100 Autopista Querétaro-Irapuato, Corregidora, Querétaro",
+                        pageSize.GetRight(550),
+                        pageSize.GetBottom(70), 0);
+                    break;
+
+                case 3:
+                    cb.ShowTextAligned(PdfContentByte.ALIGN_LEFT,
+                        "Km. 5+000 Autopista Champa Lecheria, Col. Ejidos de San Miguel, Atizapan de Zaragoza, Edo. de México.",
+                        pageSize.GetRight(550),
+                        pageSize.GetBottom(70), 0);
+                    break;
+
+                default:
+                    break;
+            }
             cb.EndText();
 
             cb.BeginText();
             cb.SetFontAndSize(bf, 8f);
-            cb.ShowTextAligned(PdfContentByte.ALIGN_LEFT,
-                "Tel:  01 (777) 329 2100              www.gob.mx/capufe   " + text,
-                pageSize.GetRight(552),
-                pageSize.GetBottom(57), 0);
+
+            switch (_table.Rows[0]["DelegationId"])
+            {
+                case 1:
+                    cb.ShowTextAligned(PdfContentByte.ALIGN_LEFT,
+                        "Tel:  01 (777) 329 2100              www.gob.mx/capufe   " + text,
+                        pageSize.GetRight(552),
+                        pageSize.GetBottom(57), 0);
+                    break;
+
+                case 2:
+                    cb.ShowTextAligned(PdfContentByte.ALIGN_LEFT,
+                        "Tel:  442 238 16 00                  www.gob.mx/capufe   " + text,
+                        pageSize.GetRight(552),
+                        pageSize.GetBottom(57), 0);
+                    break;
+
+                case 3:
+                    cb.ShowTextAligned(PdfContentByte.ALIGN_LEFT,
+                        "Tel:  777 329 2100                   www.gob.mx/capufe   " + text,
+                        pageSize.GetRight(552),
+                        pageSize.GetBottom(57), 0);
+                    break;
+
+                default:
+                    break;
+            }
+
             cb.EndText();
 
             PdfPTable table = new PdfPTable(new float[] { 100f }) { WidthPercentage = 100f };
 
-            iTextSharp.text.Image logo_footer = iTextSharp.text.Image.GetInstance($@"{System.Environment.CurrentDirectory}\Media\footer-anexo.png");
-            logo_footer.ScalePercent(76f);
+            iTextSharp.text.Image logo_footer = iTextSharp.text.Image.GetInstance($@"{System.Environment.CurrentDirectory}\Media\Pie de Pagina Ricardo Flores Magon.png");
+            logo_footer.ScalePercent(12.1f);
 
             PdfPCell collogo_footer = new PdfPCell(logo_footer)
             {

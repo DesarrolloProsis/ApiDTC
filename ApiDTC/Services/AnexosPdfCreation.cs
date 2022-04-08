@@ -172,7 +172,7 @@ namespace ApiDTC.Services
 
 
                     PdfWriter writer = PdfWriter.GetInstance(doc, myMemoryStream);
-                    writer.PageEvent = new PageEventHelperVerticalAnexo(Tipo);
+                    writer.PageEvent = new PageEventHelperVerticalAnexo(Tipo, _tableAnexo);
                     writer.Open();
                     doc.Open();
 
@@ -278,7 +278,7 @@ namespace ApiDTC.Services
 
 
                     PdfWriter writer = PdfWriter.GetInstance(doc, myMemoryStream);
-                    writer.PageEvent = new PageEventHelperVerticalAnexo(Tipo);
+                    writer.PageEvent = new PageEventHelperVerticalAnexo(Tipo, _tableAnexo);
                     writer.Open();
                     doc.Open();
 
@@ -340,7 +340,9 @@ namespace ApiDTC.Services
                 Chunk Uno5 = new Chunk("EN LA PLAZA DE COBRO ", letraNormalMediana);
                 Chunk Uno6 = new Chunk(_tableAnexo.Rows[0]["Plaza"].ToString().ToUpper() + ", ", letraoNegritaMediana);
                 Chunk Uno7 = new Chunk("PERTENECIENTE A LA ", letraNormalMediana);
-                Chunk Uno8 = new Chunk(_tableAnexo.Rows[0]["Region"].ToString().ToUpper() + ".", letraoNegritaMediana);
+
+                Chunk Uno8 = _tableAnexo.Rows[0]["Region"].ToString() == "Estado de México" ? new Chunk("UNIDAD REGIONAL ESTADO DE MÉXICO.", letraoNegritaMediana) : new Chunk(_tableAnexo.Rows[0]["Region"].ToString().ToUpper() + ".", letraoNegritaMediana);
+
                 var parrafoUno = new Paragraph();
                 parrafoUno.SetLeading(0, 1.4f);
                 parrafoUno.Add(Uno);
@@ -354,7 +356,7 @@ namespace ApiDTC.Services
                 parrafoUno.Alignment = Element.ALIGN_JUSTIFIED;
 
                 Chunk Dos1 = new Chunk("EN LA CIUDAD DE ", letraNormalMediana);
-                Chunk Dos2 = new Chunk("PALO BLANCO, GUERRERO, ", letraoNegritaMediana);
+                Chunk Dos2 = new Chunk(_tableAnexo.Rows[0]["Ciudad"].ToString().ToUpper() + ", " + _tableAnexo.Rows[0]["Estado"].ToString().ToUpper() + ", ", letraoNegritaMediana);
                 Chunk Dos3 = new Chunk("SIENDO LAS ", letraNormalMediana);
                 Chunk Dos4 = new Chunk(fechaApertura.ToString("hh:mm", CultureInfo.CreateSpecificCulture("es-MX")).ToUpper() + " HRS. ", letraoNegritaMediana);
                 //Chunk Dos4 = new Chunk("16:30 HRS. ", letraoNegritaMediana);
@@ -454,7 +456,7 @@ namespace ApiDTC.Services
                     siniestro = _tableAnexo.Rows[0]["No. de Siniestro"].ToString().ToUpper();
                 else
                     siniestro = _tableAnexo.Rows[0]["No. de Reporte"].ToString().ToUpper();
-                Chunk CiincoDos = new Chunk(siniestro + " DE ", letraoNegritaMediana);
+                Chunk CiincoDos = new Chunk(siniestro + " DE FECHA ", letraoNegritaMediana);
 
                 Chunk CiincoTres = new Chunk(fechaSiniestro.ToString("d DE MMMMM DE yyyy", CultureInfo.CreateSpecificCulture("es-MX")).ToUpper(), letraoNegritaMediana);
                 var parrafoCinco = new Paragraph();
@@ -544,12 +546,12 @@ namespace ApiDTC.Services
                 Chunk Uno3 = new Chunk(", REALIZADO AL EQUIPO DE CONTROL DE TRANSITO ", letraNormalMediana);
 
                 string carril_es = appendRows(_tableAnexo, "Carril");
-                Chunk Uno4 = carril_es.Length > 3 ? new Chunk("DEL CARRILES " + carril_es.ToUpper() + ", ", letraoNegritaMediana) : new Chunk("DE LOS CARRIL " + carril_es.ToUpper() + ", ", letraoNegritaMediana);
+                Chunk Uno4 = carril_es.Length > 3 ? new Chunk("DE CARRILES " + carril_es.ToUpper() + " ", letraoNegritaMediana) : new Chunk("DE CARRIL " + carril_es.ToUpper() + " ", letraoNegritaMediana);
 
                 Chunk Uno5 = new Chunk("EN LA PLAZA DE COBRO ", letraNormalMediana);
-                Chunk Uno6 = new Chunk(_tableAnexo.Rows[0]["Plaza"].ToString().ToUpper() + ", PALO BLANCO, ", letraoNegritaMediana);
+                Chunk Uno6 = new Chunk(_tableAnexo.Rows[0]["Plaza"].ToString().ToUpper() + ", ", letraoNegritaMediana);
                 Chunk Uno7 = new Chunk("PERTENECIENTE A LA ", letraNormalMediana);
-                Chunk Uno8 = new Chunk(_tableAnexo.Rows[0]["Region"].ToString().ToUpper() + ".", letraoNegritaMediana);
+                Chunk Uno8 = _tableAnexo.Rows[0]["Region"].ToString() == "Estado de México" ? new Chunk("UNIDAD REGIONAL ESTADO DE MÉXICO.", letraoNegritaMediana) : new Chunk(_tableAnexo.Rows[0]["Region"].ToString().ToUpper() + ".", letraoNegritaMediana);
                 var parrafoUno = new Paragraph();
                 parrafoUno.SetLeading(0, 1.4f);
                 parrafoUno.Add(Uno);
@@ -562,35 +564,37 @@ namespace ApiDTC.Services
                 parrafoUno.Add(Uno8);
                 parrafoUno.Alignment = Element.ALIGN_JUSTIFIED;
 
-                Chunk Dos1 = new Chunk("EN LA CIUDAD DE MAZATLAN, GRO., SIENDO LAS ", letraNormalMediana);
-                Chunk Dos2 = new Chunk(fechaApertura.ToString("hh:mm", CultureInfo.CreateSpecificCulture("es-MX")).ToUpper() + " HRS. ", letraoNegritaMediana);
-                Chunk Dos3 = new Chunk(" DEL DÍA ", letraNormalMediana);
-                Chunk Dos4 = new Chunk(fechaApertura.ToString("d DE MMMMM DE yyyy", CultureInfo.CreateSpecificCulture("es-MX")).ToUpper(), letraoNegritaMediana);
-                Chunk Dos5 = new Chunk(" EL ", letraNormalMediana);
-                Chunk Dos6 = new Chunk(_tableAnexo.Rows[0]["Admin"].ToString().ToUpper() + ", ", letraoNegritaMediana);
-                Chunk Dos7 = new Chunk("DE LA PLAZA DE COBRO, EL ", letraNormalMediana);
-                Chunk Dos8 = new Chunk(_tableAnexo.Rows[0]["Supervisor"].ToString().ToUpper() + ", ", letraoNegritaMediana);
-                Chunk Dos9 = new Chunk("TÉCNICO REPRESENTANTE DE LA EMPRESA PRESTADORA DE SERVICIOS PROYECTOS Y SISTEMAS INFORMATICOS S.A. DE C.V. Y LOS ", letraNormalMediana);
-                Chunk Dos10 = new Chunk(_tableAnexo.Rows[0]["Testigo Uno"].ToString().ToUpper() + ", ", letraoNegritaMediana);
-                Chunk Dos11 = new Chunk("Y EL ", letraNormalMediana);
-                Chunk Dos12 = new Chunk(_tableAnexo.Rows[0]["Testigo Dos"].ToString().ToUpper() + ", ", letraoNegritaMediana);
-                Chunk Dos13 = new Chunk("TESTIGOS DE ASISTENCIA, PARA HACER CONSTAR LA SUSTITUCIÓN DE COMPONENTES DEL EQUIPO DE CONTROL DE TRANSITO DE ", letraNormalMediana);
+                Chunk Dos1 = new Chunk("EN LA CIUDAD ", letraNormalMediana);
+                Chunk Dos2 = new Chunk(_tableAnexo.Rows[0]["Ciudad"].ToString().ToUpper() + ", " + _tableAnexo.Rows[0]["Estado"].ToString().ToUpper() + ", ", letraoNegritaMediana);
+                Chunk Dos3 = new Chunk("SIENDO LAS ", letraNormalMediana);
+                Chunk Dos4 = new Chunk(fechaApertura.ToString("hh:mm", CultureInfo.CreateSpecificCulture("es-MX")).ToUpper() + " HRS. ", letraoNegritaMediana);
+                Chunk Dos5 = new Chunk(" DEL DÍA ", letraNormalMediana);
+                Chunk Dos6 = new Chunk(fechaApertura.ToString("d DE MMMMM DE yyyy", CultureInfo.CreateSpecificCulture("es-MX")).ToUpper(), letraoNegritaMediana);
+                Chunk Dos7 = new Chunk(" EL ", letraNormalMediana);
+                Chunk Dos8 = new Chunk(_tableAnexo.Rows[0]["Admin"].ToString().ToUpper() + ", ", letraoNegritaMediana);
+                Chunk Dos9 = new Chunk("ADMINISTRADOR DE LA PLAZA DE COBRO, EL ", letraNormalMediana);
+                Chunk Dos10 = new Chunk(_tableAnexo.Rows[0]["Supervisor"].ToString().ToUpper() + ", ", letraoNegritaMediana);
+                Chunk Dos11 = new Chunk("TÉCNICO REPRESENTANTE DE LA EMPRESA PRESTADORA DE SERVICIOS PROYECTOS Y SISTEMAS INFORMATICOS S.A. DE C.V. Y LOS ", letraNormalMediana);
+                Chunk Dos12 = new Chunk(_tableAnexo.Rows[0]["Testigo Uno"].ToString().ToUpper() + ", ", letraoNegritaMediana);
+                Chunk Dos13 = new Chunk("Y EL ", letraNormalMediana);
+                Chunk Dos14 = new Chunk(_tableAnexo.Rows[0]["Testigo Dos"].ToString().ToUpper() + ", ", letraoNegritaMediana);
+                Chunk Dos15 = new Chunk("TESTIGOS DE ASISTENCIA, PARA HACER CONSTAR LA SUSTITUCIÓN DE COMPONENTES DEL EQUIPO DE CONTROL DE TRANSITO DE ", letraNormalMediana);
 
-                Chunk Dos14 = carril_es.Length > 3 ? new Chunk("LOS CARRILES " + carril_es.ToUpper() + ", ", letraoNegritaMediana) : new Chunk("CARRIL " + carril_es.ToUpper() + ", ", letraoNegritaMediana);
+                Chunk Dos16 = carril_es.Length > 3 ? new Chunk("LOS CARRILES " + carril_es.ToUpper() + ", ", letraoNegritaMediana) : new Chunk("CARRIL " + carril_es.ToUpper() + ", ", letraoNegritaMediana);
 
-                Chunk Dos15 = new Chunk("DE ACUERDO A LA SOLICITUD ", letraNormalMediana);
-                Chunk Dos16 = new Chunk(_tableAnexo.Rows[0]["Solicitud"].ToString().ToUpper() + " " , letraNormalMediana);
-                Chunk Dos17 = new Chunk("DE FECHA ", letraNormalMediana);
-                Chunk Dos18 = new Chunk(fechaInicio.ToString("d DE MMMMM DE yyyy", CultureInfo.CreateSpecificCulture("es-MX")).ToUpper() + " ", letraoNegritaMediana);
-                Chunk Dos19 = new Chunk("Y AUTORIZADA EN OFICIO ", letraNormalMediana);
-                Chunk Dos20 = new Chunk(_tableAnexo.Rows[0]["Folio"].ToString().ToUpper() + ", ", letraoNegritaMediana);
-                Chunk Dos21 = new Chunk("DE ", letraNormalMediana);
-                Chunk Dos22 = new Chunk(fechaSolicitud.ToString("d DE MMMMM DE yyyy", CultureInfo.CreateSpecificCulture("es-MX")).ToUpper() + ", ", letraoNegritaMediana);
-                Chunk Dos23 = new Chunk("POR LA ", letraNormalMediana);
-                Chunk Dos24 = new Chunk("GERENCIA DE MANTENIMIENTO Y MODERNIZACIÓN DE EQUIPOS DE PEAJE; ", letraoNegritaMediana);
-                Chunk Dos25 = new Chunk("PARA CUYO EFECTÓ FUÉ NECESARIO REPONER EN FECHA ", letraNormalMediana);
-                Chunk Dos26 = new Chunk(fechaApertura.ToString("d DE MMMMM DE yyyy", CultureInfo.CreateSpecificCulture("es-MX")).ToUpper() + " ", letraoNegritaMediana);
-                Chunk Dos27 = new Chunk("LAS PARTES QUE A CONTINUACIÓN SE DETALLAN.", letraNormalMediana);
+                Chunk Dos17 = new Chunk("DE ACUERDO A LA SOLICITUD ", letraNormalMediana);
+                Chunk Dos18 = new Chunk(_tableAnexo.Rows[0]["Solicitud"].ToString().ToUpper() + " " , letraoNegritaMediana);
+                Chunk Dos19 = new Chunk("DE FECHA ", letraNormalMediana);
+                Chunk Dos20 = new Chunk(fechaInicio.ToString("d DE MMMMM DE yyyy", CultureInfo.CreateSpecificCulture("es-MX")).ToUpper() + " ", letraoNegritaMediana);
+                Chunk Dos21 = new Chunk("Y AUTORIZADA EN OFICIO ", letraNormalMediana);
+                Chunk Dos22 = new Chunk(_tableAnexo.Rows[0]["Folio"].ToString().ToUpper() + ", ", letraoNegritaMediana);
+                Chunk Dos23 = new Chunk("DE ", letraNormalMediana);
+                Chunk Dos24 = new Chunk(fechaSolicitud.ToString("d DE MMMMM DE yyyy", CultureInfo.CreateSpecificCulture("es-MX")).ToUpper() + ", ", letraoNegritaMediana);
+                Chunk Dos25 = new Chunk("POR LA ", letraNormalMediana);
+                Chunk Dos26 = new Chunk("GERENCIA DE MANTENIMIENTO Y MODERNIZACIÓN DE EQUIPOS DE PEAJE; ", letraoNegritaMediana);
+                Chunk Dos27 = new Chunk("PARA CUYO EFECTÓ FUÉ NECESARIO REPONER EN FECHA ", letraNormalMediana);
+                Chunk Dos28 = new Chunk(fechaApertura.ToString("d DE MMMMM DE yyyy", CultureInfo.CreateSpecificCulture("es-MX")).ToUpper() + " ", letraoNegritaMediana);
+                Chunk Dos29 = new Chunk("LAS PARTES QUE A CONTINUACIÓN SE DETALLAN.", letraNormalMediana);
                 var parrafoDos = new Paragraph();
                 parrafoDos.SetLeading(0, 1.4f);
 
@@ -621,6 +625,8 @@ namespace ApiDTC.Services
                 parrafoDos.Add(Dos25);
                 parrafoDos.Add(Dos26);
                 parrafoDos.Add(Dos27);
+                parrafoDos.Add(Dos28);
+                parrafoDos.Add(Dos29);
                 parrafoDos.Alignment = Element.ALIGN_JUSTIFIED;
 
                 Chunk Tres = new Chunk("LOS EQUIPOS/COMPONENTES DAÑADOS EL ADMINISTRADOR DEBERÁ IDENTIFICAR Y EMBALAR, ENVIANDOLOS EN UN PERÍODO DE 5 DÍAS MÁXIMO AL ÁLMACÉN DE LA COORDINACION REGIONAL POR OFICIO, PARA SU DESTINO FINAL CONFORME LA NORMA CAPUFE.", letraNormalMediana);
@@ -732,6 +738,8 @@ namespace ApiDTC.Services
                 table.AddCell(encabezadoUbicacion);
                 table.AddCell(encabezadoObservaciones);
 
+
+                ////Agrupa los componentes por "Componente" y lleva la cuenta de cada componente
                 var componentesGropuped = from s in _tableComponentesDañados.AsEnumerable()
                                         group s by s.Field<string>("Componente")
                                             into grp
@@ -862,7 +870,7 @@ namespace ApiDTC.Services
                 if (height > 1000)
                     height = height - 1000;
 
-                if (height > PosicionEnY + 360)
+                if (height > PosicionEnY + 200)
                     doc.NewPage();
 
                 table.AddCell(espacioVacio);
@@ -955,7 +963,7 @@ namespace ApiDTC.Services
                 parrafoAdmin.Add(admin);
                 parrafoAdmin.Alignment = Element.ALIGN_CENTER;
 
-                Chunk subg = new Chunk("SUBGERENTE DE OPERACIÓN CUERNAVACA", letraoNegritaMediana);
+                Chunk subg = new Chunk("SUBGERENTE DE OPERACIÓN REGIONAL", letraoNegritaMediana);
                 var parrafoSubgerente = new Paragraph();
                 parrafoSubgerente.SetLeading(0, 1.2f);
                 parrafoSubgerente.Add(subg);
@@ -1036,7 +1044,26 @@ namespace ApiDTC.Services
                 parrafonomEmpresa.Add(nomEmpresa);
                 parrafonomEmpresa.Alignment = Element.ALIGN_CENTER;
 
-                Chunk nomAdministrador = new Chunk("C. CARLOS BÁRCENAS ORTEGA\n SUPERVISÓN", letraoNegritaMediana);
+                string supervision = "";
+
+                switch (_tableAnexo.Rows[0]["DelegationId"])
+                {
+                    case 1:
+                        supervision = "C. CARLOS BÁRCENAS ORTEGA";
+                        break;
+
+                    case 2:
+                        supervision = "ING. MARTHA ANGÉLICA MÁRQUEZ CUELLAR";
+                        break;
+
+                    case 3:
+                        supervision = "LIC. ANTONIO SÁNCHEZ CRUZ";
+                        break;
+
+                    default:
+                        break;
+                }
+                Chunk nomAdministrador = new Chunk(supervision + "\n SUPERINTENDENTE DE EQUIPO DE CONTROL DE TRÁNSITO\n SUPERVISÓ", letraoNegritaMediana);
                 var parrafonomAdministrador = new Paragraph();
                 parrafonomAdministrador.SetLeading(0, 1.8f);
                 parrafonomAdministrador.Add(nomAdministrador);
@@ -1215,7 +1242,7 @@ namespace ApiDTC.Services
                 tablaDosFirmas.AddCell(encargadoDos);
                 CeldasVacias(1, tablaDosFirmas);
 
-                tablaDosFirmas.AddCell(espacioVacio2);
+                //tablaDosFirmas.AddCell(espacioVacio2);
 
                 PdfPTable tablaPlaza = new PdfPTable(new float[] { 23.33f, 10f, 23.33f, 10f, 23.33f }) { WidthPercentage = 100f };
 
@@ -1232,7 +1259,7 @@ namespace ApiDTC.Services
                     Border = 0,
                     HorizontalAlignment = Element.ALIGN_CENTER,
                     VerticalAlignment = Element.ALIGN_CENTER,
-                    PaddingTop = 15,
+                    PaddingTop = 20,
                     PaddingBottom = 20,
                     Colspan = 5
 
@@ -1243,8 +1270,8 @@ namespace ApiDTC.Services
                     Border = 0,
                     HorizontalAlignment = Element.ALIGN_LEFT,
                     VerticalAlignment = Element.ALIGN_CENTER,
-                    PaddingTop = 15,
-                    PaddingBottom = 20,
+                    PaddingTop = 12,
+                    PaddingBottom = 18,
                     Colspan = 5
                 };
                 colParrafoUno.AddElement(parrafoSello);
@@ -1469,8 +1496,11 @@ namespace ApiDTC.Services
                     }
                 }
 
-                if (numList > 1 && table.Rows.IndexOf(item) == table.Rows.Count - 1)
+                if ( (numList > 1) && (table.Rows.IndexOf(item) == table.Rows.Count - 1))
+                {
+                    list = list.Remove(list.Length - item[column].ToString().Length - 2, 1);
                     list = list.Insert(list.Length - item[column].ToString().Length -1, " Y ");
+                }
             }
 
             return list;
