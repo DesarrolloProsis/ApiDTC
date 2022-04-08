@@ -34,6 +34,10 @@ CREATE TABLE [dbo].[AnexosDTC](
 	FOREIGN KEY(Testigo2Id) REFERENCES AdminsSquares(AdminSquareId),
 	--FOREIGN KEY(SupervisorId) REFERENCES CatalogoUserAnexo(Id)
 )
+--AGREGAMOS COLUMNA NUEVA DE OBSERVACIONES A LA TABLAD EANEXO DTC
+ALTER TABLE AnexosDTC
+ADD Observaciones NVARCHAR(300) NULL
+
 
 --AGREGAMOS LOS ROLLES QUE FALTAN PARA DISTINGUIR LOS OPERADORES Y LOS ADMIN EN LA TABLA DE AdminsSquares PARA USAR COMO TESTIGOS EN LOS ANEXOS
 
@@ -266,6 +270,7 @@ CREATE OR ALTER PROCEDURE [dbo].[InsertHeaderAnexo]
 	@fechaSolicitudInicio DATETIME,
 	--@fechaSolicitudFin DATETIME,
 	--@supervisorId INT,
+	@observaciones NVARCHAR(300),
 	@testigo1 INT,
 	@testigo2 INT,
 	@tipoAnexo CHAR,
@@ -274,8 +279,8 @@ AS
 BEGIN TRY
 	IF @tipoAnexo = 'A'
 	BEGIN
-		INSERT INTO AnexosDTC(DTCReference, AnexoReference, FechaApertura, FechaCierre, Solicitud, FechaSolicitudInicio, FolioOficio, FechaOficioInicio,Testigo1Id, Testigo2Id, Activo, TipoAnexo, FechaUltimoCambio, IsSubVersion, PDFFirmardo, PDFFotografico) 
-		VALUES(@referenceDTC, @referenceAnexo, @fechaApertura, @fechaCierre, @solicitud, @fechaSolicitudInicio, @folioOficio, @fechaOficioInicio, @testigo1, @testigo2, 1, 'A', GETDATE(), @isSubVersion, 0 , 0)	
+		INSERT INTO AnexosDTC(DTCReference, AnexoReference, FechaApertura, FechaCierre, Solicitud, FechaSolicitudInicio, FolioOficio, FechaOficioInicio, Observaciones, Testigo1Id, Testigo2Id, Activo, TipoAnexo, FechaUltimoCambio, IsSubVersion, PDFFirmardo, PDFFotografico) 
+		VALUES(@referenceDTC, @referenceAnexo, @fechaApertura, @fechaCierre, @solicitud, @fechaSolicitudInicio, @folioOficio, @fechaOficioInicio, @observaciones, @testigo1, @testigo2, 1, 'A', GETDATE(), @isSubVersion, 0 , 0)	
 		
 		IF @@ROWCOUNT = 1
 		BEGIN 
@@ -295,8 +300,8 @@ BEGIN TRY
 	END
 	ELSE
 	BEGIN	
-		INSERT INTO AnexosDTC(DTCReference, AnexoReference, FechaApertura, FechaCierre, Solicitud, FechaSolicitudInicio, FolioOficio, FechaOficioInicio, Testigo1Id, Testigo2Id, Activo, TipoAnexo, FechaUltimoCambio, IsSubVersion, PDFFirmardo, PDFFotografico) 
-		VALUES(@referenceDTC, @referenceAnexo, @fechaApertura, @fechaCierre, @solicitud, @fechaSolicitudInicio, @folioOficio, @fechaOficioInicio,@testigo1, @testigo2, 1, 'B', GETDATE(), @isSubVersion, 0, 0)	
+		INSERT INTO AnexosDTC(DTCReference, AnexoReference, FechaApertura, FechaCierre, Solicitud, FechaSolicitudInicio, FolioOficio, FechaOficioInicio, Observaciones, Testigo1Id, Testigo2Id, Activo, TipoAnexo, FechaUltimoCambio, IsSubVersion, PDFFirmardo, PDFFotografico) 
+		VALUES(@referenceDTC, @referenceAnexo, @fechaApertura, @fechaCierre, @solicitud, @fechaSolicitudInicio, @folioOficio, @fechaOficioInicio, @observaciones, @testigo1, @testigo2, 1, 'B', GETDATE(), @isSubVersion, 0, 0)	
 
 		IF @@ROWCOUNT = 1
 		BEGIN
@@ -1084,11 +1089,7 @@ UPDATE SquaresCatalog SET Ciudad = 'Cerro Gordo', Estado = 'Guanajuato' WHERE Sq
 UPDATE SquaresCatalog SET Ciudad = 'Salamanca', Estado = 'Guanajuato' WHERE SquareCatalogId = '041'
 
 
-
 --QUERYS KAREN MODIFICACIONES
-
-
-
 CREATE TABLE Users_log
 (
 ID_USER INT,

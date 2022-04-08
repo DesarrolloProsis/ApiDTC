@@ -347,6 +347,12 @@ namespace ApiDTC.Data
                                 cmd.Parameters.Add("@fechaSolicitudInicio", SqlDbType.DateTime).Value = anexoDTCInsert.FechaSolicitudInicio;
 
 
+                            if (anexoDTCInsert.Observaciones == string.Empty)
+                                cmd.Parameters.Add("@observaciones", SqlDbType.NVarChar).Value = DBNull.Value;
+                            else
+                                cmd.Parameters.Add("@observaciones", SqlDbType.NVarChar).Value = anexoDTCInsert.Observaciones;
+
+
                             //if (anexoDTCInsert.FechaSolicitudFin == null)
                             //    cmd.Parameters.Add("@fechaSolicitudFin", SqlDbType.DateTime).Value = DBNull.Value;
                             //else
