@@ -150,7 +150,7 @@ namespace ApiDTC.Data
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.Add("@referenceNumber", SqlDbType.NVarChar).Value = referenceNumber;
-                        var componentes = _sqlResult.GetList<ComponentesAnexoValidos>(clavePlaza, cmd, sql, "GetComponentesAnexo");
+                        var componentes = _sqlResult.GetList<ComponentesAnexoValidos>(clavePlaza, cmd, sql, "GetCompRequestAnexo");
 
                         return componentes;
                     }
@@ -195,7 +195,7 @@ namespace ApiDTC.Data
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.Add("@referenceAnexo", SqlDbType.NVarChar).Value = referenceAnexo;
-                        var historicComponetesoAnexo = _sqlResult.GetList<AnexoHistoricoComponete>(clavePlaza, cmd, sql, "GetHistoricoComponetesAnexo");
+                        var historicComponetesoAnexo = _sqlResult.GetList<AnexoHistoricoComponete>(clavePlaza, cmd, sql, "GetComponentesAnexo");
 
                         return historicComponetesoAnexo;
                     }
@@ -248,7 +248,7 @@ namespace ApiDTC.Data
             {
                 using (SqlConnection sql = new SqlConnection(_connectionString))
                 {
-                    using (SqlCommand cmd = new SqlCommand("dbo.GetConteoVersionesAnexos", sql))
+                    using (SqlCommand cmd = new SqlCommand("dbo.GetConteoVersionesAnexo", sql))
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.Add("@referenceDTC", SqlDbType.NVarChar).Value = referenceDTC;
@@ -266,7 +266,8 @@ namespace ApiDTC.Data
                             }
                             else
                             {
-                                return (referenceDTC + '-' + tipoAnexo + (listCount.Count + 1).ToString(), listCount.FirstOrDefault().AnexoReference);
+                                //return (referenceDTC + '-' + tipoAnexo + (listCount.Count + 1).ToString(), listCount.FirstOrDefault().AnexoReference);
+                                return (referenceDTC + '-' + tipoAnexo + (listCount.Count + 1).ToString(), string.Empty);
                             }
                         }
                         else
@@ -346,11 +347,17 @@ namespace ApiDTC.Data
                                 cmd.Parameters.Add("@fechaSolicitudInicio", SqlDbType.DateTime).Value = anexoDTCInsert.FechaSolicitudInicio;
 
 
+                            if (anexoDTCInsert.Observaciones == string.Empty)
+                                cmd.Parameters.Add("@observaciones", SqlDbType.NVarChar).Value = DBNull.Value;
+                            else
+                                cmd.Parameters.Add("@observaciones", SqlDbType.NVarChar).Value = anexoDTCInsert.Observaciones;
+
+
                             //if (anexoDTCInsert.FechaSolicitudFin == null)
                             //    cmd.Parameters.Add("@fechaSolicitudFin", SqlDbType.DateTime).Value = DBNull.Value;
                             //else
                             //    cmd.Parameters.Add("@fechaSolicitudFin", SqlDbType.DateTime).Value = anexoDTCInsert.FechaSolicitudFin;
-                            cmd.Parameters.Add("@supervisorId", SqlDbType.Int).Value = anexoDTCInsert.SupervisorId;
+                            //cmd.Parameters.Add("@supervisorId", SqlDbType.Int).Value = anexoDTCInsert.SupervisorId;
                             cmd.Parameters.Add("@testigo1", SqlDbType.Int).Value = anexoDTCInsert.Testigo1Id;
                             cmd.Parameters.Add("@testigo2", SqlDbType.Int).Value = anexoDTCInsert.Testigo2Id;
                             cmd.Parameters.Add("@tipoAnexo", SqlDbType.Char).Value = anexoDTCInsert.TipoAnexo;
@@ -365,7 +372,6 @@ namespace ApiDTC.Data
                                 };
                             }
                         }
-
 
                         foreach (var item in anexoDTCInsert.ComponentesAnexo)
                         {
