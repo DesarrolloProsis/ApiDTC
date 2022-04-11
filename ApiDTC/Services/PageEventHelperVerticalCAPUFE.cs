@@ -96,12 +96,12 @@ namespace ApiDTC.Services
             catch (DocumentException ex)
             {
                 var apiLogger = new ApiLogger();
-                apiLogger.WriteLog("PHV", ex, "PageEventHelperVertical: OnOpenDocument", 7);
+                apiLogger.WriteLog("PHV", ex, "PageEventHelperVerticalCAPUFE: OnOpenDocument", 7);
             }
             catch (System.IO.IOException ex)
             {
                 var apiLogger = new ApiLogger();
-                apiLogger.WriteLog("PHV", ex, "PageEventHelperVertical: OnOpenDocument", 2);
+                apiLogger.WriteLog("PHV", ex, "PageEventHelperVerticalCAPUFE: OnOpenDocument", 2);
             }
         }
 
@@ -115,7 +115,6 @@ namespace ApiDTC.Services
             base.OnStartPage(writer, document);
             Rectangle pageSize = document.PageSize;
             int pageN = writer.PageNumber;
-            Chapter chapter = new Chapter(0);
 
             if (Title != string.Empty)
             {

@@ -49,12 +49,7 @@ namespace ApiDTC.Controllers
                 if (pdfResult.Result == null)
                     return NotFound(pdfResult.Message);
                 return File(new FileStream(pdfResult.Result.ToString(), FileMode.Open, FileAccess.Read), "application/pdf");
-                //var pdfResult = pdf.NewPdf($@"{this._disk}:\{this._folder}");
-                //var InPdf = File(new FileStream(pdfResult.Result.ToString(), FileMode.Open, FileAccess.Read), "application/pdf");
 
-                //if (pdfResult.Result == null)
-                //    return NotFound(pdfResult.Message);
-                //return InPdf;
             }
             catch (IOException ex)
             {

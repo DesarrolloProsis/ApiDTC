@@ -12,13 +12,19 @@ namespace ApiDTC.Services
     public class AgregarObservaciones
     {
         #region Attributes
-        private readonly DataTable _tableHeader;
+        private readonly string _Contenido;
 
         private readonly ApiLogger _apiLogger;
 
         private readonly string _clavePlaza;
 
-        private readonly string _Mensaje;
+        private readonly string _MensajeEncabezado;
+
+        private readonly string _strLog;
+
+        private readonly int _numError1;
+
+        private readonly int _numError2;
         #endregion
 
         #region BaseFont
@@ -30,12 +36,15 @@ namespace ApiDTC.Services
         public static iTextSharp.text.Font letraNormalMediana = new iTextSharp.text.Font(NormalMediana, 9f, iTextSharp.text.Font.NORMAL, BaseColor.Black);
         public static iTextSharp.text.Font letraoNegritaMediana = new iTextSharp.text.Font(NegritaMediana, 8f, iTextSharp.text.Font.BOLD, BaseColor.Black);
         #endregion
-        public AgregarObservaciones(ApiLogger apiLogger, DataTable tableHeader, string Mensaje, string clavePlaza)
+        public AgregarObservaciones(ApiLogger apiLogger, string Contenido, string MensajeEncabezado, string clavePlaza, string strLog, int numError1, int numError2)
         {
             _apiLogger = apiLogger;
-            _tableHeader = tableHeader;
+            _Contenido = Contenido;
             _clavePlaza = clavePlaza;
-            _Mensaje = Mensaje;
+            _MensajeEncabezado = MensajeEncabezado;
+            _strLog = strLog;
+            _numError1 = numError1;
+            _numError2 = numError2;
         }
 
         #region Metodos
@@ -47,12 +56,13 @@ namespace ApiDTC.Services
                 table.TotalWidth = 550f;
 
 
-                var colTextoObservaciones = new PdfPCell(new Phrase(_Mensaje, letraoNegritaMediana)) { Border = 0, HorizontalAlignment = Element.ALIGN_LEFT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 1, Colspan = 2 };
+                var colMensajeEncabezado = new PdfPCell(new Phrase(_MensajeEncabezado, letraoNegritaMediana)) { Border = 0, HorizontalAlignment = Element.ALIGN_LEFT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 3, Colspan = 6 };
 
-                table.AddCell(colTextoObservaciones);
-                CeldasVacias(14, table);
+                table.AddCell(colMensajeEncabezado);
+                CeldasVacias(10, table);
 
-                var celdaObservaciones = SeparacionObservaciones(Convert.ToString(_tableHeader.Rows[0]["Observaciones"]));
+                var celdaObservaciones = SeparacionObservaciones(_Contenido);
+
                 int celdasTotalesObservaciones = 0;
                 foreach (var linea in celdaObservaciones)
                 {
@@ -78,16 +88,18 @@ namespace ApiDTC.Services
                     var celdaLinea = new PdfPCell(new Phrase("", letraNormalMediana)) { BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, BorderWidthBottom = 1, FixedHeight = 15, HorizontalAlignment = Element.ALIGN_JUSTIFIED, VerticalAlignment = Element.ALIGN_CENTER, Padding = 3, Colspan = 8 };
                     table.AddCell(celdaLinea);
                 }
+
+                CeldasVacias(8, table);
                 return table;
             }
             catch (PdfException ex)
             {
-                _apiLogger.WriteLog(_clavePlaza, ex, "MantenimientoPdfCreation: TablaObservaciones", 5);
+                _apiLogger.WriteLog(_clavePlaza, ex, _strLog, _numError1);
                 return null;
             }
             catch (Exception ex)
             {
-                _apiLogger.WriteLog(_clavePlaza, ex, "MantenimientoPdfCreation: TablaObservaciones", 3);
+                _apiLogger.WriteLog(_clavePlaza, ex, _strLog, _numError2);
                 return null;
             }
         }
@@ -95,7 +107,21 @@ namespace ApiDTC.Services
         private List<string> SeparacionObservaciones(string observaciones)
         {
             List<string> lineaObservaciones = new List<string>();
-            if (observaciones.Length <= 85)
+
+            var chunk = new Chunk(observaciones);
+            float largo = chunk.GetWidthPoint();
+
+            if (observaciones.Contains('\n'))
+            {
+                observaciones = observaciones.Replace("\n", " ");
+            }
+
+            if(observaciones.Contains("  "))
+            {
+                observaciones = observaciones.Replace("  ", " ");
+            }
+
+            if (largo <= 725)
             {
                 lineaObservaciones.Add(observaciones);
                 return lineaObservaciones;
@@ -104,7 +130,7 @@ namespace ApiDTC.Services
             string linea = string.Empty;
             for (int i = 0; i < observaciones.Length; i++)
             {
-                if (observaciones[i].Equals(',') || observaciones[i].Equals('.') || observaciones[i].Equals('.') || observaciones[i].Equals(':'))
+                if (observaciones[i].Equals(',') || observaciones[i].Equals('.') || observaciones[i].Equals(';') || observaciones[i].Equals(':'))
                 {
                     if (i < observaciones.Length - 1 && !observaciones[i + 1].Equals(' '))
                     {
@@ -113,44 +139,84 @@ namespace ApiDTC.Services
                     }
                 }
                 linea += observaciones[i];
-                if (linea.Length >= 85 && observaciones[i].Equals(' '))
+                var chunke = new Chunk(linea);
+                float large = chunke.GetWidthPoint();
+                if ( (large >= 725 && observaciones[i].Equals(' ') ) || observaciones.Length -1 == i ) 
                 {
-                    lineaObservaciones.Add(linea);
-                    linea = string.Empty;
-                }
-            }
-            lineaObservaciones.Add(linea);
+                    if (large > 725 && observaciones.Length - 1 == i)
+                    {
+                        string sobrante = string.Empty;
+                        int cuentaRecorte = 0;
+                        for (int j = linea.Length - 1; j != 0; j--)
+                        {
+                            sobrante += linea[j];
 
-            /*char[] separadores = new char[]{
-                ' ',
-                ',',
-                '.'
-            };
-            var palabras = observaciones.Split(separadores);
-            List<string> palabrasSinVacio = new List<string>();
-            foreach(var palabra in palabras)
-            {
-                if(!string.IsNullOrEmpty(palabra))
-                    palabrasSinVacio.Add(palabra);
-            }
-            string linea = string.Empty;
-            foreach (var palabra in palabrasSinVacio)
-            {
-                if(!string.IsNullOrEmpty(palabra))
-                {
-                    linea += $"{palabra} ";
-                    if(linea.Length > 100)
-                    {
-                        lineaObservaciones.Add(linea);
-                        linea = string.Empty;
+                            if (linea[j].Equals(' '))
+                            {
+                                char[] charReversible = sobrante.ToCharArray();
+                                Array.Reverse(charReversible);
+                                string siguiente = new string(charReversible);
+
+
+                                cuentaRecorte += 1;
+                                linea = linea.Remove(j, cuentaRecorte);
+                                lineaObservaciones.Add(linea);
+
+                                linea = string.Empty;
+                                linea += siguiente;
+                                siguiente = string.Empty;
+                                sobrante = string.Empty;
+                                break;
+                            }
+                            cuentaRecorte += 1;
+                        }
+                        cuentaRecorte = 0;
                     }
-                    if(palabra == palabrasSinVacio[palabrasSinVacio.Count - 1] && linea.Length < 100)
+                    else if (large > 725)
+                    {
+                        string sobrante = string.Empty;
+
+                        int cuentaRecorte = 0;
+                        for (int j = linea.LastIndexOf(' '); j != 0; j--)
+                        {
+                            if (linea.LastIndexOf(' ') == j)
+                                continue;
+
+                            sobrante += linea[j + 1];
+
+                            if (linea[j].Equals(' '))
+                            {
+                                char[] charReversible = sobrante.ToCharArray();
+                                Array.Reverse(charReversible);
+                                string siguiente = new string(charReversible);
+
+                                cuentaRecorte += 1;
+                                linea = linea.Remove(j, cuentaRecorte);
+                                lineaObservaciones.Add(linea);
+
+                                linea = string.Empty;
+                                linea += siguiente;
+
+                                if (observaciones.Length - 1 == i)
+                                    lineaObservaciones.Add(siguiente);
+                                siguiente = string.Empty;
+                                sobrante = string.Empty;
+                                break;
+                            }
+                            cuentaRecorte += 1;
+                        }
+                        cuentaRecorte = 0;
+                    }
+                    else
                     {
                         lineaObservaciones.Add(linea);
                         linea = string.Empty;
                     }
                 }
-            }*/
+            }
+            if(!linea.Equals(""))
+                lineaObservaciones.Add(linea);
+
             return lineaObservaciones;
         }
 

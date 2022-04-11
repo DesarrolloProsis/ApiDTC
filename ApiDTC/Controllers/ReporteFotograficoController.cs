@@ -147,15 +147,15 @@
                         fs.Close();
 
                         FileInfo fi = new FileInfo(Path.Combine(dir, filename));
-                            string temporal = Path.Combine(dir, filename) + "_temp";
+                        string temporal = Path.Combine(dir, filename) + "_temp";
                         this.VaryQualityLevel(Path.Combine(dir, filename), temporal);
                         if (System.IO.File.Exists(Path.Combine(dir, filename)))
-                            {
-                                //Se borra archivo grande
-                                System.IO.File.Delete(Path.Combine(dir, filename));
-                                //Archivo temporal actualiza su nombre al real
-                                System.IO.File.Move(Path.Combine(dir, temporal), Path.Combine(dir, filename));
-                            }
+                        {
+                            //Se borra archivo grande
+                            System.IO.File.Delete(Path.Combine(dir, filename));
+                            //Archivo temporal actualiza su nombre al real
+                            System.IO.File.Move(Path.Combine(dir, temporal), Path.Combine(dir, filename));
+                        }
                     }
                     return Ok(Path.Combine(dir, filename));
                 }
@@ -332,7 +332,7 @@
         //REPORTE FOTOGRAFICO DE EQUIPO DAÑADO
         [HttpGet("Dañado/{clavePlaza}/{ubicacion}/{referenceNumber}")]
         public IActionResult GetReporteEquipoDañado(string clavePlaza, string ubicacion, string referenceNumber)
-        {
+         {
             try
             {
                 var dataSet = _db.GetStorePDF(clavePlaza, referenceNumber);
@@ -410,8 +410,154 @@
             return NotFound();
         }
 
+        #region Anexo
+        [HttpGet("Images/GetPaths/{clavePlaza}/{reportNumber}")]
+        public ActionResult<List<string>> GetImagesNuevo(string clavePlaza, string reportNumber)
+        {
+            try
+            {
+                string directoy = $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\DTC\{reportNumber}\imgs";
+                List<string> dtcImages = new List<string>();
+                if (!Directory.Exists(directoy))
+                    return Ok(dtcImages);
+                foreach (var item in Directory.GetFiles(directoy))
+                    dtcImages.Add(item.Substring(item.LastIndexOf('\\') + 1));
+                return Ok(dtcImages);
+            }
+            catch (IOException ex)
+            {
+                _apiLogger.WriteLog(clavePlaza, ex, "DiagnosticoFallaController: GetImagesDiagnostico", 2);
+                return NotFound(ex.ToString());
+            }
+        }
+
+        [HttpPost("EquipoNuevo/Images/{clavePlaza}/{reportNumber}")]
+        public ActionResult<Response> InsertImageNuev(string clavePlaza, [FromForm(Name = "image")] IFormFile image, string reportNumber)
+        {
+            if (image.Length > 0 || image != null)
+            {
+                int numberOfImages;
+                string dir = $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\DTC\{reportNumber}\Imgs";
+                string dirFull = $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\DTC\{reportNumber}\ImgsFullSize";
+                string filename;
+                try
+                {
+                    if (!Directory.Exists(dir))
+                        Directory.CreateDirectory(dir);
+
+                    if (!Directory.Exists(dirFull))
+                        Directory.CreateDirectory(dirFull);
+
+                    numberOfImages = Directory.GetFiles(dir).Length + 1;
+                    filename = $"{reportNumber}_EquipoNuevoImgs_{numberOfImages}{image.FileName.Substring(image.FileName.LastIndexOf('.'))}";
+                    while (System.IO.File.Exists(Path.Combine(dir, filename)))
+                    {
+                        numberOfImages += 1;
+                        filename = $"{reportNumber}_EquipoNuevoImgs_{numberOfImages}{image.FileName.Substring(image.FileName.LastIndexOf('.'))}";
+                    }
+
+                    //full
+                    using (FileStream fs = new FileStream(Path.Combine(dirFull, filename), FileMode.Create))
+                    {
+                        image.CopyTo(fs);
+                        fs.Close();
+                    }
+                    //full
+                    using (FileStream fs = new FileStream(Path.Combine(dir, filename), FileMode.Create))
+                    {
+                        image.CopyTo(fs);
+                        fs.Close();
+
+                        FileInfo fi = new FileInfo(Path.Combine(dir, filename));
+                        string temporal = Path.Combine(dir, filename) + "_temp";
+                        this.VaryQualityLevel(Path.Combine(dir, filename), temporal);
+                        if (System.IO.File.Exists(Path.Combine(dir, filename)))
+                        {
+                            //Se borra archivo grande
+                            System.IO.File.Delete(Path.Combine(dir, filename));
+                            //Archivo temporal actualiza su nombre al real
+                            System.IO.File.Move(Path.Combine(dir, temporal), Path.Combine(dir, filename));
+                        }
+                    }
+                    return Ok(Path.Combine(dir, filename));
+                }
+                catch (IOException ex)
+                {
+                    _apiLogger.WriteLog(clavePlaza, ex, "ReporteFotograficoController: InsertImage", 2);
+                    return NotFound(ex.ToString());
+                }
+            }
+            else
+                return NotFound("Insert another image");
+        }
+
+        [AllowAnonymous]
+        [HttpGet("EquipoNuevo/Images/{clavePlaza}/{reportNumber}/{fileName}")]
+        public ActionResult<DtcImage> DownloadEquipoNuevoImgs(string clavePlaza, string reportNumber, string fileName)
+        {
+            try
+            {
+                string path = $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\DTC\{reportNumber}\Imgs\{fileName}";
+                if (!System.IO.File.Exists(path))
+                    return NotFound("No existe el archivo");
+                Byte[] bitMap = System.IO.File.ReadAllBytes(path);
+
+                return File(bitMap, "Image/jpg");
+            }
+            catch (IOException ex)
+            {
+                _apiLogger.WriteLog(clavePlaza, ex, "ReporteFotograficoController: DownloadEquipoNuevoImg", 2);
+                return NotFound(ex.ToString());
+            }
+        }
+
+        [AllowAnonymous]
+        [HttpGet("EquipoNuevo/Images/DeleteImg/{clavePlaza}/{reportNumber}/{fileName}")]
+        public ActionResult<string> DeleteEquipoNuevoImgs(string clavePlaza, string reportNumber, string fileName)
+        {
+            try
+            {
+                string path = $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\DTC\{reportNumber}\Imgs\{fileName}";
+                if (!System.IO.File.Exists(path))
+                    return NotFound(path);
+                System.IO.File.Delete(path);
+                if (Directory.GetFiles($@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\DTC\{reportNumber}\Imgs").Length == 0)
+                    Directory.Delete($@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\DTC\{reportNumber}\Imgs");
+                return Ok(path);
+            }
+            catch (IOException ex)
+            {
+                _apiLogger.WriteLog(clavePlaza, ex, "ReporteFotograficoController: DeleteEquipoNuevoImg", 2);
+                return NotFound(ex.ToString());
+            }
+        }
+
+        [AllowAnonymous]
+        [HttpGet("Nuevo/{clavePlaza}/{ubicacion}/{referenceNumber}/{referenceAnexo}")]
+        public IActionResult GetReporteEquipoNuevo(string clavePlaza, string ubicacion, string referenceNumber, string referenceAnexo)
+        {
+            try
+            {
+                var dataSet = _db.GetStoreNuevoPDF(clavePlaza, referenceNumber, referenceAnexo);
+                if (dataSet.Tables[0].Rows.Count == 0)
+                    return NotFound("GetStoredPdf retorna tabla vacía");
+                ReporteFotograficoPdfCreation pdf = new ReporteFotograficoPdfCreation(clavePlaza, dataSet.Tables[0], new ApiLogger(), 2, referenceNumber, ubicacion);
+                var pdfResult = pdf.NewPdf($@"{this._disk}:\{this._folder}");
+                if (pdfResult.Result == null)
+                    return NotFound(pdfResult.Message);
+                return File(new FileStream(pdfResult.Result.ToString(), FileMode.Open, FileAccess.Read), "application/pdf");
+            }
+            catch (IOException ex)
+            {
+                _apiLogger.WriteLog(clavePlaza, ex, "ReporteFotograficoController: GetReporteEquipoDañado", 2);
+                return NotFound(ex.ToString());
+            }
+        }
+
         #endregion
-        
+
+        #endregion
+
         #endregion
     }
 }
