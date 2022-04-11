@@ -191,6 +191,7 @@ AS
 		A.FechaSolicitudInicio, 
 		--A.FechaSolicitudFin, 
 		--A.FechaOficioFin, 
+		A.Observaciones,
 		A.Testigo1Id, 
 		A.Testigo2Id, 
 		--A.SupervisorId, 
@@ -227,8 +228,10 @@ CREATE or ALTER PROCEDURE [dbo].[GetTestigosPlaza]
 	@plazaId NVARCHAR(4)
 AS
 	--11 IDROLL DE TESTIGOS == AdministradorPlaza
-	SELECT AdminSquareId AS Id, Name + ' ' + LastName1 + ' ' + LastName2 AS Nombre, SquareCatalogId AS SquareId, IdRoll AS RollId  FROM AdminsSquares WHERE SquareCatalogId = @plazaId AND IdRoll = 11
+	SELECT AdminSquareId AS Id, Name + ' ' + LastName1 + ' ' + LastName2 AS Nombre, SquareCatalogId AS SquareId, IdRoll AS RollId  FROM AdminsSquares WHERE SquareCatalogId = @plazaId AND IdRoll = 12
 GO
+
+SELECT * from AdminsSquares
 
 --INSERTA LOS COMPONETE CONTIENE LOGICA PARA OCUPAR LOS COMPONENTES DE UN DTC CAMBIO DE BANDERA
 CREATE OR ALTER PROCEDURE [dbo].[InsertComponentesAnexo]
