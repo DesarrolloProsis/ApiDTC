@@ -366,7 +366,7 @@ namespace ApiDTC.Services
                 Chunk Dos7 = new Chunk("EL ", letraNormalMediana);
                 Chunk Dos8 = new Chunk(_tableAnexo.Rows[0]["Admin"].ToString().ToUpper() + ", ", letraoNegritaMediana);
                 Chunk Dos9 = new Chunk("ADMINISTRADOR DE LA PLAZA DE COBRO, EL ", letraNormalMediana);
-                Chunk Dos10 = new Chunk(_tableAnexo.Rows[0]["Supervisor"].ToString().ToUpper() + ", ", letraoNegritaMediana);
+                Chunk Dos10 = new Chunk("C. " + _tableAnexo.Rows[0]["Supervisor"].ToString().ToUpper() + ", ", letraoNegritaMediana);
                 Chunk Dos11 = new Chunk("TÉCNICO REPRESENTANTE DE LA EMPRESA PRESTADORA DE SERVICIOS PROYECTOS Y SISTEMAS INFORMATICOS S.A. DE C.V. Y LOS ", letraNormalMediana);
                 Chunk Dos12 = new Chunk(_tableAnexo.Rows[0]["Testigo Uno"].ToString().ToUpper() + ", ", letraoNegritaMediana);
                 Chunk Dos13 = new Chunk("Y ", letraNormalMediana);
@@ -573,7 +573,7 @@ namespace ApiDTC.Services
                 Chunk Dos7 = new Chunk(" EL ", letraNormalMediana);
                 Chunk Dos8 = new Chunk(_tableAnexo.Rows[0]["Admin"].ToString().ToUpper() + ", ", letraoNegritaMediana);
                 Chunk Dos9 = new Chunk("ADMINISTRADOR DE LA PLAZA DE COBRO, EL ", letraNormalMediana);
-                Chunk Dos10 = new Chunk(_tableAnexo.Rows[0]["Supervisor"].ToString().ToUpper() + ", ", letraoNegritaMediana);
+                Chunk Dos10 = new Chunk("C. " + _tableAnexo.Rows[0]["Supervisor"].ToString().ToUpper() + ", ", letraoNegritaMediana);
                 Chunk Dos11 = new Chunk("TÉCNICO REPRESENTANTE DE LA EMPRESA PRESTADORA DE SERVICIOS PROYECTOS Y SISTEMAS INFORMATICOS S.A. DE C.V. Y LOS ", letraNormalMediana);
                 Chunk Dos12 = new Chunk(_tableAnexo.Rows[0]["Testigo Uno"].ToString().ToUpper() + ", ", letraoNegritaMediana);
                 Chunk Dos13 = new Chunk("Y EL ", letraNormalMediana);
@@ -1063,13 +1063,13 @@ namespace ApiDTC.Services
                     default:
                         break;
                 }
-                Chunk nomAdministrador = new Chunk(supervision + "\n SUPERINTENDENTE DE EQUIPO DE CONTROL DE TRÁNSITO\n SUPERVISÓ", letraoNegritaMediana);
+                Chunk nomAdministrador = _tableAnexo.Rows[0]["DelegationId"].Equals(3)? new Chunk(supervision + "\n SUPERVISIÓN DE OPERACIÓN UNIDAD REGIONAL DE ESTADO DE MÉXICO\n SUPERVISÓ", letraoNegritaMediana) : new Chunk(supervision + "\n SUPERINTENDENTE DE EQUIPO DE CONTROL DE TRÁNSITO\n SUPERVISÓ", letraoNegritaMediana);
                 var parrafonomAdministrador = new Paragraph();
                 parrafonomAdministrador.SetLeading(0, 1.8f);
                 parrafonomAdministrador.Add(nomAdministrador);
                 parrafonomAdministrador.Alignment = Element.ALIGN_CENTER;
 
-                Chunk nomSubg = new Chunk(_tableAnexo.Rows[0]["Vo.Bo."].ToString().ToUpper() + "\n Vo.Bo.", letraoNegritaMediana);
+                Chunk nomSubg = _tableAnexo.Rows[0]["DelegationId"].Equals(3) ? new Chunk(_tableAnexo.Rows[0]["Vo.Bo."].ToString().ToUpper() + "\n SUBGERENTE DE OPERACIÓN DE LA UNIDAD REGIONAL DE ESTADO DE MÉXICO \n Vo.Bo") : new Chunk(_tableAnexo.Rows[0]["Vo.Bo."].ToString().ToUpper() + "\n Vo.Bo.", letraoNegritaMediana);
                 var parrafonomSubg = new Paragraph();
                 parrafonomSubg.SetLeading(0, 1.8f);
                 parrafonomSubg.Add(nomSubg);
