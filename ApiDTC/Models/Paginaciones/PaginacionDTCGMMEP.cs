@@ -12,6 +12,6 @@ namespace ApiDTC.Models.Paginaciones
 
         public int PaginaActual { get; set; }
 
-        public List<DTCHeaderPaginacionView> Rows { get; set; }
+        public List<DTCHeaderWhitPdfValid> Rows { get; set; }
     }
 }

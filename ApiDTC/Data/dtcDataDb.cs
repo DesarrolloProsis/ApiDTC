@@ -673,7 +673,7 @@
 
 
         #region Paginacion GMEEP
-        public Response GetDTCGMEEP(int pagina, int registros, int userId, string squareId, string referenceDTC, string status, string fechaFilter, string disk, string folder)
+        public Response GetDTCGMEEP(int pagina, int registros, int userId, string squareId, string referenceDTC, string status, string fechaFilter, string disk, string folder, string clavePlaza)
         {
             try
             {
@@ -684,11 +684,11 @@
                     cmd.Parameters.Add("@NumPagina", SqlDbType.Int).Value = pagina;
                     cmd.Parameters.Add("@RegistroXPagina", SqlDbType.Int).Value = registros;
                     cmd.Parameters.Add("@UserId", SqlDbType.Int).Value = userId;
-                    //AddNullSPParameter(ref cmd, "@SquareId", SqlDbType.NVarChar, squareId);
+                    AddNullSPParameter(ref cmd, "@plaza", SqlDbType.NVarChar, squareId);
                     AddNullSPParameter(ref cmd, "@REFERENCIA", SqlDbType.NVarChar, referenceDTC);
                     AddNullSPParameter(ref cmd, "@StatusDTC", SqlDbType.NVarChar, status);
                     AddNullSPParameter(ref cmd, "@FECHA", SqlDbType.NVarChar, fechaFilter);                                 
-                    var gmmepList = _sqlResult.GetRows<DTCHeaderPaginacion>("USR", cmd, sql, "GetDTCGMEEP");
+                    var gmmepList = _sqlResult.GetRows<DTCHeaderPaginacion>(clavePlaza, cmd, sql, "GetDTCGMEEP");
 
 
                     MapDTCPdfExits mapDTCPdfExits = new MapDTCPdfExits(disk, folder);
@@ -703,19 +703,12 @@
                         };
                     }
 
-                    List<DTCHeaderPaginacionView> RowGMMEP = dtcValidList.Select(item => new DTCHeaderPaginacionView
-                    {
-                        FIlaIndex = item.DtcView.FIlaIndex,
-                        ReferenceNumber = item.DtcView.ReferenceNumber
-                  
-                    }).ToList();
-
                     PaginacionDTCGMMEP NewPaginaSesion = new PaginacionDTCGMMEP();
                     var totalRegistros = (gmmepList[0].FIlaIndex + gmmepList[0].FilaIndexAsc) - 1;
                     decimal totalPag = Convert.ToDecimal((totalRegistros * 1.0) / (registros * 1.0));
                     NewPaginaSesion.NumeroPaginas = (int)Math.Ceiling(totalPag);
                     NewPaginaSesion.PaginaActual = pagina;
-                    NewPaginaSesion.Rows = RowGMMEP;
+                    NewPaginaSesion.Rows = dtcValidList;
 
                     return new Response
                     {

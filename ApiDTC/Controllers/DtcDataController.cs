@@ -187,15 +187,15 @@
 
         #region Pagiancion vista GMMEP
 
-        [HttpGet("GMMEP/{pagina}/{registros}/{userId}/{squareId}/{referenceDTC}/{status}/{fecha}")]
-        public ActionResult<Response> GetSessionLog(int pagina, int registros, int userId, string squareId, string referenceDTC, string status, string fecha)
+        [HttpGet("GMMEP/{clavePlaza}/{pagina}/{registros}/{userId}/{nombrePlaza}/{referenceDTC}/{status}/{fecha}")]
+        public ActionResult<Response> GetSessionLog(string clavePlaza, int pagina, int registros, int userId, string nombrePlaza, string referenceDTC, string status, string fecha)
         {            
-            var _squareId = squareId != "null" ? squareId : null;
+            var _nombrePlaza = nombrePlaza != "null" ? nombrePlaza : null;
             var _referenceDTC = referenceDTC != "null" ? referenceDTC : null;
             var _status = fecha != "null" ? status : null;
             var _fecha = fecha != "null" ? fecha : null;
 
-            var get = _db.GetDTCGMEEP(pagina, registros, userId, _squareId, _referenceDTC, _status, _fecha, _disk, _folder);
+            var get = _db.GetDTCGMEEP(pagina, registros, userId, _nombrePlaza, _referenceDTC, _status, _fecha, _disk, _folder, clavePlaza);
             if (get.Result == null)
                 return NotFound(get);
             else
