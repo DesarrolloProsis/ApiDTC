@@ -202,7 +202,6 @@
                 return Ok(get);
         }
 
-
         #endregion
 
         #region Equipo Dañado
