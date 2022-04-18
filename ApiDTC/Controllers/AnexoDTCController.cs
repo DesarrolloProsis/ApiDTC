@@ -6,9 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using Microsoft.Extensions.Configuration;
 using System.IO;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace ApiDTC.Controllers
 {
@@ -37,19 +34,6 @@ namespace ApiDTC.Controllers
 
         #endregion
 
-        //[HttpGet("Supervisor/{clavePlaza}/{plazaId}")]
-        //public ActionResult<Response> GetListaSupervisores(string clavePlaza, string plazaId)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        var get = _db.GetSupervisores(clavePlaza, plazaId);
-        //        if (get.Result == null)
-        //            return BadRequest(get);
-        //        else
-        //            return Ok(get);
-        //    }
-        //    return BadRequest(ModelState);
-        //}
         [HttpGet("Testigos/{clavePlaza}/{plazaId}")]
         public ActionResult<Response> GetListaTestigos(string clavePlaza, string plazaId)
         {
@@ -63,32 +47,6 @@ namespace ApiDTC.Controllers
             }
             return BadRequest(ModelState);
         }
-        //[HttpPost("Supervisor/{clavePlaza}")]
-        //public ActionResult<Response> InsertSupervisor(string clavePlaza, [FromBody] InsertUsuarioAnexo insertSupervision)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        var get = _db.InsertSupervisor(clavePlaza, insertSupervision);
-        //        if (get.Result == null)
-        //            return BadRequest(get);
-        //        else
-        //            return Ok(get);
-        //    }
-        //    return BadRequest(ModelState);
-        //}
-        //[HttpPost("Testigos/{clavePlaza}")]
-        //public ActionResult<Response> InsertTestigo(string clavePlaza, [FromBody] InsertUsuarioAnexo insertTestigos)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        var get = _db.InsertTestigo(clavePlaza, insertTestigos);
-        //        if (get.Result == null)
-        //            return BadRequest(get);
-        //        else
-        //            return Ok(get);
-        //    }
-        //    return BadRequest(ModelState);
-        //}
 
         [HttpGet("ComponentesRequest/{clavePlaza}/{referenceNumber}")]
         public ActionResult<Response> GetComponentRequested(string clavePlaza, string referenceNumber)
@@ -158,6 +116,17 @@ namespace ApiDTC.Controllers
                     return Ok(get);
             }
             return BadRequest(ModelState);
+        }
+        
+        [HttpPost("CambiarStatus/{clavePlaza}")]
+        public ActionResult<Response> CambiarStatusAnexo(string clavePlaza, [FromBody] CambiarStatusAnexo cambiarStatusAnexo)
+        {            
+            
+           var get = _db.UpdateStatusAnexo(clavePlaza, cambiarStatusAnexo);
+           if (get.Message == null)
+                return BadRequest(get);
+           else
+                return Ok(get);                            
         }
 
         [HttpGet("AnexoA/{clavePlaza}/{referenceNumber}/{referenciaAnexo}/{isSubAnexo}")]

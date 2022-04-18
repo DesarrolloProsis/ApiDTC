@@ -265,8 +265,7 @@ namespace ApiDTC.Data
                                 return (referenceAnexo + '-' + (listCount.Count + 1), listCount.FirstOrDefault().AnexoReference);
                             }
                             else
-                            {
-                                //return (referenceDTC + '-' + tipoAnexo + (listCount.Count + 1).ToString(), listCount.FirstOrDefault().AnexoReference);
+                            {                                
                                 return (referenceDTC + '-' + tipoAnexo + (listCount.Count + 1).ToString(), string.Empty);
                             }
                         }
@@ -330,11 +329,6 @@ namespace ApiDTC.Data
                                 cmd.Parameters.Add("@fechaOficioInicio", SqlDbType.DateTime).Value = anexoDTCInsert.FechaOficioInicio;
 
 
-                            //if (anexoDTCInsert.FechaOficioFin == null)
-                            //    cmd.Parameters.Add("@fechaOficioFin", SqlDbType.DateTime).Value = DBNull.Value;
-                            //else
-                            //    cmd.Parameters.Add("@fechaOficioFin", SqlDbType.DateTime).Value = anexoDTCInsert.FechaOficioFin;
-
                             if (anexoDTCInsert.Solicitud == string.Empty)
                                 cmd.Parameters.Add("@solicitud", SqlDbType.NVarChar).Value = DBNull.Value;
                             else
@@ -353,11 +347,6 @@ namespace ApiDTC.Data
                                 cmd.Parameters.Add("@observaciones", SqlDbType.NVarChar).Value = anexoDTCInsert.Observaciones;
 
 
-                            //if (anexoDTCInsert.FechaSolicitudFin == null)
-                            //    cmd.Parameters.Add("@fechaSolicitudFin", SqlDbType.DateTime).Value = DBNull.Value;
-                            //else
-                            //    cmd.Parameters.Add("@fechaSolicitudFin", SqlDbType.DateTime).Value = anexoDTCInsert.FechaSolicitudFin;
-                            //cmd.Parameters.Add("@supervisorId", SqlDbType.Int).Value = anexoDTCInsert.SupervisorId;
                             cmd.Parameters.Add("@testigo1", SqlDbType.Int).Value = anexoDTCInsert.Testigo1Id;
                             cmd.Parameters.Add("@testigo2", SqlDbType.Int).Value = anexoDTCInsert.Testigo2Id;
                             cmd.Parameters.Add("@tipoAnexo", SqlDbType.Char).Value = anexoDTCInsert.TipoAnexo;
@@ -414,6 +403,35 @@ namespace ApiDTC.Data
             catch (SqlException ex)
             {
                 _apiLogger.WriteLog(clavePlaza, ex, "CalendarioDb: InsertComment", 1);
+                return new Response { Message = $"Error: {ex.Message}", Result = null };
+            }
+        }
+
+        public Response UpdateStatusAnexo(string clavePlaza, CambiarStatusAnexo cambiarStatusAnexo)
+        {
+            try
+            {
+                using (SqlConnection sql = new SqlConnection(_connectionString))
+                {
+                    SqlCommand cmd = new SqlCommand("dbo.UpdateAnexoDTCStatus", sql);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.Add("@referenceAnexo", SqlDbType.NVarChar).Value = cambiarStatusAnexo.anexoReference;
+                    cmd.Parameters.Add("@statusId", SqlDbType.Int).Value = cambiarStatusAnexo.statusId;
+                    cmd.Parameters.Add("@userId", SqlDbType.Int).Value = cambiarStatusAnexo.userId;
+                    cmd.Parameters.Add("@comment", SqlDbType.NVarChar).Value = cambiarStatusAnexo.comentario;
+
+                    var updateStatus = _sqlResult.Post(clavePlaza, cmd, sql, "UpdateAnexoDTCStatus");
+
+                    return new Response
+                    {
+                        Message = "Ok",
+                        Result = updateStatus
+                    };
+                }
+            }
+            catch (SqlException ex)
+            {
+                _apiLogger.WriteLog("UpdateAnexo", ex, "LoginDb: GetSesionLog", 1);
                 return new Response { Message = $"Error: {ex.Message}", Result = null };
             }
         }

@@ -211,6 +211,7 @@ AS
 		A.IsSubVersion, 
 		A.PDFFirmardo, 
 		A.PDFFotografico, 
+		A.StatusId,
 		D.UserId, 
 		U.UserName
 	FROM AnexosDTC A 
@@ -291,8 +292,8 @@ AS
 BEGIN TRY
 	IF @tipoAnexo = 'A'
 	BEGIN
-		INSERT INTO AnexosDTC(DTCReference, AnexoReference, FechaApertura, FechaCierre, Solicitud, FechaSolicitudInicio, FolioOficio, FechaOficioInicio, Observaciones, Testigo1Id, Testigo2Id, Activo, TipoAnexo, FechaUltimoCambio, IsSubVersion, PDFFirmardo, PDFFotografico) 
-		VALUES(@referenceDTC, @referenceAnexo, @fechaApertura, @fechaCierre, @solicitud, @fechaSolicitudInicio, @folioOficio, @fechaOficioInicio, @observaciones, @testigo1, @testigo2, 1, 'A', GETDATE(), @isSubVersion, 0 , 0)	
+		INSERT INTO AnexosDTC(DTCReference, AnexoReference, FechaApertura, FechaCierre, Solicitud, FechaSolicitudInicio, FolioOficio, FechaOficioInicio, Observaciones, Testigo1Id, Testigo2Id, Activo, TipoAnexo, FechaUltimoCambio, IsSubVersion, PDFFirmardo, PDFFotografico, StatusId) 
+		VALUES(@referenceDTC, @referenceAnexo, @fechaApertura, @fechaCierre, @solicitud, @fechaSolicitudInicio, @folioOficio, @fechaOficioInicio, @observaciones, @testigo1, @testigo2, 1, 'A', GETDATE(), @isSubVersion, 0 , 0, 5)	
 		
 		IF @@ROWCOUNT = 1
 		BEGIN 
@@ -312,8 +313,8 @@ BEGIN TRY
 	END
 	ELSE
 	BEGIN	
-		INSERT INTO AnexosDTC(DTCReference, AnexoReference, FechaApertura, FechaCierre, Solicitud, FechaSolicitudInicio, FolioOficio, FechaOficioInicio, Observaciones, Testigo1Id, Testigo2Id, Activo, TipoAnexo, FechaUltimoCambio, IsSubVersion, PDFFirmardo, PDFFotografico) 
-		VALUES(@referenceDTC, @referenceAnexo, @fechaApertura, @fechaCierre, @solicitud, @fechaSolicitudInicio, @folioOficio, @fechaOficioInicio, @observaciones, @testigo1, @testigo2, 1, 'B', GETDATE(), @isSubVersion, 0, 0)	
+		INSERT INTO AnexosDTC(DTCReference, AnexoReference, FechaApertura, FechaCierre, Solicitud, FechaSolicitudInicio, FolioOficio, FechaOficioInicio, Observaciones, Testigo1Id, Testigo2Id, Activo, TipoAnexo, FechaUltimoCambio, IsSubVersion, PDFFirmardo, PDFFotografico, StatusId) 
+		VALUES(@referenceDTC, @referenceAnexo, @fechaApertura, @fechaCierre, @solicitud, @fechaSolicitudInicio, @folioOficio, @fechaOficioInicio, @observaciones, @testigo1, @testigo2, 1, 'B', GETDATE(), @isSubVersion, 0, 0, 5)	
 
 		IF @@ROWCOUNT = 1
 		BEGIN
@@ -1152,15 +1153,22 @@ CREATE TABLE AnexosDTCStatusLog(
 	DateStamp DATETIME NOT NULL DEFAULT GETDATE()	
 )
 
-CREATE PROCEDURE UpdateAnexoDTCStatus
+ALTER PROCEDURE UpdateAnexoDTCStatus
 	@referenceAnexo NVARCHAR(20),
 	@statusId INT,
 	@userId INT,
 	@comment NVARCHAR(300)
 AS
 BEGIN TRY
+
+	--OBTENEMOS EL USERID ORIGINAL PARA REGRESAR LOS SERIAL NUMBER DEL STATUS 7 AL 5
+	--DECLARE @statusOriginal INT		
+	--SELECT TOP 1 @statusOriginal = StatusId FROM AnexosDTC WHERE SUBSTRING(AnexoReference, 0, LEN(@referenceAnexo) + 1) = @referenceAnexo
+
 	UPDATE AnexosDTC SET StatusId = @statusId WHERE SUBSTRING(AnexoReference, 0, LEN(@referenceAnexo) + 1) = @referenceAnexo
-	INSERT INTO UpdateAnexoDTCStatus VALUES(@referenceAnexo, @statusId, @userId, @comment)
+	INSERT INTO AnexosDTCStatusLog(ReferenceAnexo, StatusId, UserId, Comment) VALUES (@referenceAnexo, @statusId, @userId, @comment)
+
+	SELECT 'Actualizado' SqlMessage, 'Estatus de Anexo '+ @referenceAnexo + ' actualizado' SqlResul
 
 	IF @statusId = 7
 	BEGIN 
@@ -1191,10 +1199,11 @@ BEGIN TRY
 		CLOSE ComponentesCursor
 		DEALLOCATE ComponentesCursor
 	END 
-	SELECT 'Actualizado' SqlMessage, 'Estatus de Anexo '+ @referenceAnexo + ' actualizado' SqlResult
+	--RETURN SELECT 'Actualizado' SqlMessage, 'Estatus de Anexo '+ @referenceAnexo + ' actualizado' SqlResult	
 END TRY
 BEGIN CATCH
 	SELECT NULL SqlMessage,  CAST(@@ERROR AS NVARCHAR) SqlResult
+	RETURN;
 END CATCH
 GO
 

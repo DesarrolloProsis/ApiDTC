@@ -192,7 +192,7 @@
         {            
             var _nombrePlaza = nombrePlaza != "null" ? nombrePlaza : null;
             var _referenceDTC = referenceDTC != "null" ? referenceDTC : null;
-            var _status = fecha != "null" ? status : null;
+            var _status = status != "null" ? status : null;
             var _fecha = fecha != "null" ? fecha : null;
 
             var get = _db.GetDTCGMEEP(pagina, registros, userId, _nombrePlaza, _referenceDTC, _status, _fecha, _disk, _folder, clavePlaza);

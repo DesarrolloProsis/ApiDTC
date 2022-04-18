@@ -28,6 +28,7 @@ namespace ApiDTC.Models.AnexoDTC
         public bool IsSubVersion { get; set; }
         public bool PDFFirmardo { get; set; }
         public bool PDFFotografico { get; set; }
+        public int StatusId { get; set; }
         public int UserId { get; set; }
         public string UserName { get; set; }
         

@@ -14,6 +14,7 @@
     using ApiDTC.Models.DTCGMMEP;
     using System.Linq;
     using ApiDTC.Models.Paginaciones;
+    using ApiDTC.Models.AnexoDTC;
 
     public class DtcDataDb
     {
@@ -724,7 +725,6 @@
             }
 
         }
-
         private void AddNullSPParameter<T>(ref SqlCommand SqlCmd, string Name, SqlDbType dbType, T value)
         {
             if (value == null)
