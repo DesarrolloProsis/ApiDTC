@@ -62,7 +62,7 @@ CREATE TABLE [dbo].[ComponentAnexo](
 	[Id] [int] IDENTITY(1,1) NOT NULL,
 	[AnexoId] [nvarchar](20) NOT NULL,
 	[ComponentDTCId] [int] NOT NULL,
-	[NumeroSerie] [nvarchar](30) NOT NULL
+	[NumeroSerie] [nvarchar](70) NOT NULL
 	FOREIGN KEY(AnexoId) REFERENCES AnexosDTC(AnexoReference),
 	FOREIGN KEY(ComponentDTCId) REFERENCES RequestedComponents(RequestedComponentId)
 )
@@ -248,7 +248,7 @@ CREATE OR ALTER PROCEDURE [dbo].[InsertComponentesAnexo]
 	@referenceNumber NVARCHAR(20),	
 	@AnexoId NVARCHAR(20),
 	@ComponentDTCId INT,
-	@NumeroSerie NVARCHAR(30)
+	@NumeroSerie NVARCHAR(70)
 AS
 	BEGIN TRY
 		INSERT INTO ComponentAnexo VALUES(@AnexoId, @ComponentDTCId, @NumeroSerie)
@@ -293,7 +293,9 @@ BEGIN TRY
 	IF @tipoAnexo = 'A'
 	BEGIN
 		INSERT INTO AnexosDTC(DTCReference, AnexoReference, FechaApertura, FechaCierre, Solicitud, FechaSolicitudInicio, FolioOficio, FechaOficioInicio, Observaciones, Testigo1Id, Testigo2Id, Activo, TipoAnexo, FechaUltimoCambio, IsSubVersion, PDFFirmardo, PDFFotografico, StatusId) 
-		VALUES(@referenceDTC, @referenceAnexo, @fechaApertura, @fechaCierre, @solicitud, @fechaSolicitudInicio, @folioOficio, @fechaOficioInicio, @observaciones, @testigo1, @testigo2, 1, 'A', GETDATE(), @isSubVersion, 0 , 0, 5)	
+		VALUES(@referenceDTC, @referenceAnexo, @fechaApertura, @fechaCierre, @solicitud, @fechaSolicitudInicio, @folioOficio, @fechaOficioInicio, @observaciones, @testigo1, @testigo2, 1, 'A', GETDATE(), @isSubVersion, 0 , 0, 6)	
+
+		UPDATE AnexosDTC SET StatusId = 6 WHERE SUBSTRING(AnexoReference, 0, LEN(@referenceAnexo) + 1) = @referenceAnexo
 		
 		IF @@ROWCOUNT = 1
 		BEGIN 
@@ -314,7 +316,7 @@ BEGIN TRY
 	ELSE
 	BEGIN	
 		INSERT INTO AnexosDTC(DTCReference, AnexoReference, FechaApertura, FechaCierre, Solicitud, FechaSolicitudInicio, FolioOficio, FechaOficioInicio, Observaciones, Testigo1Id, Testigo2Id, Activo, TipoAnexo, FechaUltimoCambio, IsSubVersion, PDFFirmardo, PDFFotografico, StatusId) 
-		VALUES(@referenceDTC, @referenceAnexo, @fechaApertura, @fechaCierre, @solicitud, @fechaSolicitudInicio, @folioOficio, @fechaOficioInicio, @observaciones, @testigo1, @testigo2, 1, 'B', GETDATE(), @isSubVersion, 0, 0, 5)	
+		VALUES(@referenceDTC, @referenceAnexo, @fechaApertura, @fechaCierre, @solicitud, @fechaSolicitudInicio, @folioOficio, @fechaOficioInicio, @observaciones, @testigo1, @testigo2, 1, 'B', GETDATE(), @isSubVersion, 0, 0, 6)	
 
 		IF @@ROWCOUNT = 1
 		BEGIN
@@ -1162,31 +1164,57 @@ AS
 BEGIN TRY
 
 	--OBTENEMOS EL USERID ORIGINAL PARA REGRESAR LOS SERIAL NUMBER DEL STATUS 7 AL 5
-	--DECLARE @statusOriginal INT		
-	--SELECT TOP 1 @statusOriginal = StatusId FROM AnexosDTC WHERE SUBSTRING(AnexoReference, 0, LEN(@referenceAnexo) + 1) = @referenceAnexo
+	DECLARE @statusOriginal INT		
+	SELECT TOP 1 @statusOriginal = StatusId FROM AnexosDTC WHERE SUBSTRING(AnexoReference, 0, LEN(@referenceAnexo) + 1) = @referenceAnexo
+
+	PRINT(@statusOriginal)
 
 	UPDATE AnexosDTC SET StatusId = @statusId WHERE SUBSTRING(AnexoReference, 0, LEN(@referenceAnexo) + 1) = @referenceAnexo
 	INSERT INTO AnexosDTCStatusLog(ReferenceAnexo, StatusId, UserId, Comment) VALUES (@referenceAnexo, @statusId, @userId, @comment)
 
 	SELECT 'Actualizado' SqlMessage, 'Estatus de Anexo '+ @referenceAnexo + ' actualizado' SqlResul
 
+	--VARIABLES PARA LOS SIGUIETES DOS CASOS
+	DECLARE @referenceDTC NVARCHAR(20)		
+	DECLARE @LenDTC NVARCHAR(20)
+	DECLARE @ultimoAnexoCreado NVARCHAR(20)	
+	DECLARE @capufeLaneNum NVARCHAR(10)		
+	DECLARE @idGare NVARCHAR(3)
+	DECLARE @tableFolio INT
+	DECLARE @oldNumeroSerie NVARCHAR(70)
+	DECLARE @newNumeroSerie NVARCHAR(70)
+
+	IF @statusOriginal = 7 AND @statusId < 7
+	BEGIN 
+		SELECT TOP 1 @referenceDTC = DTCReference FROM AnexosDTC WHERE AnexoReference = @referenceAnexo
+		SET @LenDTC = (SELECT LEN(@referenceDTC))
+		SElECT TOP 1 @ultimoAnexoCreado = AnexoReference FROM AnexosDTC WHERE DTCReference = @referenceDTC AND SUBSTRING(AnexoReference, 0, LEN(@referenceAnexo) + 1) = @referenceAnexo ORDER BY CAST(SUBSTRING(AnexoReference,(@LenDTC + 5),2) AS int) DESC 
+
+
+		SELECT CapufeLaneNum, IdGare, TableFolio, R.SerialNumber FROM RequestedComponents R JOIN ComponentAnexo C ON  R.RequestedComponentId = C.ComponentDTCId WHERE R.RequestedComponentId IN (SELECT ComponentDTCId FROM ComponentAnexo WHERE AnexoId = @ultimoAnexoCreado) AND AnexoId = @ultimoAnexoCreado
+		DECLARE ComponentesCursor CURSOR FOR SELECT R.CapufeLaneNum, R.IdGare, R.TableFolio, R.SerialNumber FROM RequestedComponents R JOIN ComponentAnexo C ON  R.RequestedComponentId = C.ComponentDTCId WHERE RequestedComponentId IN (SELECT ComponentDTCId FROM ComponentAnexo WHERE AnexoId = @ultimoAnexoCreado) AND AnexoId = @ultimoAnexoCreado
+
+		OPEN ComponentesCursor
+		FETCH NEXT FROM ComponentesCursor INTO @capufeLaneNum, @idGare, @tableFolio, @oldNumeroSerie
+			WHILE @@FETCH_STATUS = 0
+			BEGIN
+				UPDATE SquareInventory SET SerialNumber = @oldNumeroSerie  WHERE CapufeLaneNum = @capufeLaneNum AND IdGare = @idGare AND TableFolio = @tableFolio
+				--SELECT * FROM SquareInventory WHERE CapufeLaneNum = @capufeLaneNum AND IdGare = @idGare AND TableFolio = @tableFolio
+				FETCH NEXT FROM ComponentesCursor INTO @capufeLaneNum, @idGare, @tableFolio, @oldNumeroSerie
+			END
+		CLOSE ComponentesCursor
+		DEALLOCATE ComponentesCursor
+	END
+
 	IF @statusId = 7
 	BEGIN 
-		DECLARE @referenceDTC NVARCHAR(20)		
-		DECLARE @LenDTC NVARCHAR(20)
-		DECLARE @ultimoAnexoCreado NVARCHAR(20)
-		SELECT TOP 1 @referenceDTC = DTCReference FROM AnexosDTC WHERE AnexoReference = 'ALP-22087-A1'
+		SELECT TOP 1 @referenceDTC = DTCReference FROM AnexosDTC WHERE AnexoReference = @referenceAnexo
 		SET @LenDTC = (SELECT LEN(@referenceDTC))
-		SElECT TOP 1 @ultimoAnexoCreado = AnexoReference FROM AnexosDTC WHERE DTCReference = @referenceDTC AND SUBSTRING(AnexoReference, 0, LEN('ALP-22087-A1') + 1) = 'ALP-22087-A1' AND IsSubVersion = 1 ORDER BY CAST(SUBSTRING(AnexoReference,(@LenDTC + 5),2) AS int) DESC 
+		SElECT TOP 1 @ultimoAnexoCreado = AnexoReference FROM AnexosDTC WHERE DTCReference = @referenceDTC AND SUBSTRING(AnexoReference, 0, LEN(@referenceAnexo) + 1) = @referenceAnexo ORDER BY CAST(SUBSTRING(AnexoReference,(@LenDTC + 5),2) AS int) DESC 
 
 
-		SELECT CapufeLaneNum, IdGare, TableFolio, C.NumeroSerie FROM RequestedComponents R JOIN ComponentAnexo C ON  R.RequestedComponentId = C.ComponentDTCId WHERE R.RequestedComponentId IN (SELECT ComponentDTCId FROM ComponentAnexo WHERE AnexoId = @ultimoAnexoCreado) AND AnexoId = @ultimoAnexoCreado
+		SELECT CapufeLaneNum, IdGare, TableFolio, C.NumeroSerie FROM RequestedComponents R JOIN ComponentAnexo C ON  R.RequestedComponentId = C.ComponentDTCId WHERE R.RequestedComponentId IN (SELECT ComponentDTCId FROM ComponentAnexo WHERE AnexoId = @ultimoAnexoCreado) AND AnexoId = @ultimoAnexoCreado 
 		DECLARE ComponentesCursor CURSOR FOR SELECT R.CapufeLaneNum, R.IdGare, R.TableFolio, C.NumeroSerie FROM RequestedComponents R JOIN ComponentAnexo C ON  R.RequestedComponentId = C.ComponentDTCId WHERE RequestedComponentId IN (SELECT ComponentDTCId FROM ComponentAnexo WHERE AnexoId = @ultimoAnexoCreado) AND AnexoId = @ultimoAnexoCreado
-
-		DECLARE @capufeLaneNum NVARCHAR(10)		
-		DECLARE @idGare NVARCHAR(3)
-		DECLARE @tableFolio INT
-		DECLARE @newNumeroSerie NVARCHAR(30)
 
 		OPEN ComponentesCursor
 		FETCH NEXT FROM ComponentesCursor INTO @capufeLaneNum, @idGare, @tableFolio, @newNumeroSerie
