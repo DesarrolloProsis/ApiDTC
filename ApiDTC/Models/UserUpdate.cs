@@ -16,5 +16,7 @@
 
         public int Rol { get; set; }
 
+        public int UserChange { get; set; }
+
     }
 }

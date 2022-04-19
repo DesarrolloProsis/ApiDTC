@@ -162,6 +162,7 @@
                         cmd.Parameters.Add("@Name", SqlDbType.NVarChar).Value = userUpdate.Name;
                         cmd.Parameters.Add("@Mail", SqlDbType.NVarChar).Value = userUpdate.Mail;
                         cmd.Parameters.Add("@Rol", SqlDbType.Int).Value = userUpdate.Rol;
+                        cmd.Parameters.Add("@User", SqlDbType.Int).Value = userUpdate.UserChange;
 
                         var reader = _sqlResult.Put("USR", cmd, sql, "PutUser");
                         if (reader.SqlResult == null)
