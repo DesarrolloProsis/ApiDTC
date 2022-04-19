@@ -38,6 +38,9 @@ CREATE TABLE [dbo].[AnexosDTC](
 ALTER TABLE AnexosDTC
 ADD Observaciones NVARCHAR(300) NULL
 
+ALTER TABLE AnexosDTC
+ADD StatusId INT FOREIGN KEY(StatusId) REFERENCES DTCStatusCatalog
+
 
 --AGREGAMOS LOS ROLLES QUE FALTAN PARA DISTINGUIR LOS OPERADORES Y LOS ADMIN EN LA TABLA DE AdminsSquares PARA USAR COMO TESTIGOS EN LOS ANEXOS
 
@@ -158,17 +161,23 @@ AS
 	DECLARE @ultimaVersionAnexo NVARCHAR(20)
 	DECLARE @conteoVersion INT
 	DECLARE @userId INT
-	DECLARE @userName NVARCHAR(25)	
+	DECLARE @userName NVARCHAR(25)		
+	DECLARE @referenceDTC NVARCHAR(20)
 	
 	SELECT @userId = UserId FROM DTCData WHERE ReferenceNumber = (SELECT ReferenceNumber FROM AnexosDTC WHERE AnexoReference = @referenceAnexo)
 	SELECT @userName = U.UserName FROM DTCData D INNER JOIN DTCUsers U ON D.UserId = U.UserId WHERE D.ReferenceNumber = (SELECT ReferenceNumber FROM AnexosDTC WHERE AnexoReference = @referenceAnexo)
 	SELECT @conteoVersion = COUNT(*) FROM AnexosDTC WHERE SUBSTRING(AnexoReference, 0, LEN(@referenceAnexo) + 1) = @referenceAnexo AND IsSubVersion = 1
+	
+	SELECT TOP 1 @referenceDTC = DTCReference FROM AnexosDTC WHERE AnexoReference = @referenceAnexo
+
+	DECLARE @LenDTC NVARCHAR(20)
+	SET @LenDTC = (SELECT LEN(@referenceDTC))
 
 	--SI ES MAYOR A 0 ES QUE TIENE SUBVERSION SE DEBE BUSCAR LA ULTIMA SUBVERSION
 	IF @conteoVersion > 0
-	BEGIN		
-		--SElECT TOP 1 @ultimaVersionAnexo = AnexoReference FROM AnexosDTC WHERE SUBSTRING(AnexoReference, 0, LEN(@referenceAnexo) + 1) = @referenceAnexo AND IsSubVersion = 1 ORDER BY AnexoReference DESC 	
-		SElECT TOP 1 @ultimaVersionAnexo = AnexoReference FROM AnexosDTC WHERE SUBSTRING(AnexoReference, 0, LEN(@referenceAnexo) + 1) = @referenceAnexo AND IsSubVersion = 1 ORDER BY AnexoReference DESC
+	BEGIN				
+		--SElECT TOP 1 @ultimaVersionAnexo = AnexoReference FROM AnexosDTC WHERE SUBSTRING(AnexoReference, 0, LEN(@referenceAnexo) + 1) = @referenceAnexo AND IsSubVersion = 1 ORDER BY AnexoReference DESC
+		SElECT TOP 1 @ultimaVersionAnexo = AnexoReference FROM AnexosDTC WHERE DTCReference = @referenceDTC AND SUBSTRING(AnexoReference, 0, LEN(@referenceAnexo) + 1) = @referenceAnexo AND IsSubVersion = 1 ORDER BY CAST(SUBSTRING(AnexoReference,(@LenDTC + 5),2) AS int) DESC 
 		SELECT *, @userId AS UserId, @userName AS UserName FROM AnexosDTC WHERE AnexoReference = @ultimaVersionAnexo
 	END
 	ELSE 
@@ -1061,9 +1070,7 @@ begin
 end
 GO
 
-
 --NUEVA COLUMNA CATALOGO DE PLAZAS
-
 ALTER TABLE SquaresCatalog 
 ADD Ciudad NVARCHAR(35)
 
@@ -1106,7 +1113,6 @@ UpdatedUser int,
 UpdateDate datetime
 )
 
-
 CREATE TABLE AdminsSquares_Log
 (
 AdminId INT,
@@ -1117,8 +1123,6 @@ NewMail nvarchar(100),
 UpdatedUser int,
 UpdateDate datetime
 )
-
-
 
 CREATE TABLE [dbo].[COMPONENTES_LOG](
         [ComponentID] [int] NULL,
@@ -1136,3 +1140,64 @@ CREATE TABLE [dbo].[COMPONENTES_LOG](
         [FechaActualizacion] [datetime] NULL
 ) ON [PRIMARY]
 GO
+
+
+--TABLA PRA LOS LOG DE CAMBIO DE STATUS DE LOS ANEXOS
+
+CREATE TABLE AnexosDTCStatusLog(
+	ReferenceAnexo NVARCHAR(20) NOT NULL,
+	StatusId INT NOT NULL,
+	UserId INT NOT NULL,
+	Comment NVARCHAR(300) NOT NULL,
+	DateStamp DATETIME NOT NULL DEFAULT GETDATE()	
+)
+
+CREATE PROCEDURE UpdateAnexoDTCStatus
+	@referenceAnexo NVARCHAR(20),
+	@statusId INT,
+	@userId INT,
+	@comment NVARCHAR(300)
+AS
+BEGIN TRY
+	UPDATE AnexosDTC SET StatusId = @statusId WHERE SUBSTRING(AnexoReference, 0, LEN(@referenceAnexo) + 1) = @referenceAnexo
+	INSERT INTO UpdateAnexoDTCStatus VALUES(@referenceAnexo, @statusId, @userId, @comment)
+
+	IF @statusId = 7
+	BEGIN 
+		DECLARE @referenceDTC NVARCHAR(20)		
+		DECLARE @LenDTC NVARCHAR(20)
+		DECLARE @ultimoAnexoCreado NVARCHAR(20)
+		SELECT TOP 1 @referenceDTC = DTCReference FROM AnexosDTC WHERE AnexoReference = 'ALP-22087-A1'
+		SET @LenDTC = (SELECT LEN(@referenceDTC))
+		SElECT TOP 1 @ultimoAnexoCreado = AnexoReference FROM AnexosDTC WHERE DTCReference = @referenceDTC AND SUBSTRING(AnexoReference, 0, LEN('ALP-22087-A1') + 1) = 'ALP-22087-A1' AND IsSubVersion = 1 ORDER BY CAST(SUBSTRING(AnexoReference,(@LenDTC + 5),2) AS int) DESC 
+
+
+		SELECT CapufeLaneNum, IdGare, TableFolio, C.NumeroSerie FROM RequestedComponents R JOIN ComponentAnexo C ON  R.RequestedComponentId = C.ComponentDTCId WHERE R.RequestedComponentId IN (SELECT ComponentDTCId FROM ComponentAnexo WHERE AnexoId = @ultimoAnexoCreado) AND AnexoId = @ultimoAnexoCreado
+		DECLARE ComponentesCursor CURSOR FOR SELECT R.CapufeLaneNum, R.IdGare, R.TableFolio, C.NumeroSerie FROM RequestedComponents R JOIN ComponentAnexo C ON  R.RequestedComponentId = C.ComponentDTCId WHERE RequestedComponentId IN (SELECT ComponentDTCId FROM ComponentAnexo WHERE AnexoId = @ultimoAnexoCreado) AND AnexoId = @ultimoAnexoCreado
+
+		DECLARE @capufeLaneNum NVARCHAR(10)		
+		DECLARE @idGare NVARCHAR(3)
+		DECLARE @tableFolio INT
+		DECLARE @newNumeroSerie NVARCHAR(30)
+
+		OPEN ComponentesCursor
+		FETCH NEXT FROM ComponentesCursor INTO @capufeLaneNum, @idGare, @tableFolio, @newNumeroSerie
+			WHILE @@FETCH_STATUS = 0
+			BEGIN
+				UPDATE SquareInventory SET SerialNumber = @newNumeroSerie  WHERE CapufeLaneNum = @capufeLaneNum AND IdGare = @idGare AND TableFolio = @tableFolio
+				--SELECT * FROM SquareInventory WHERE CapufeLaneNum = @capufeLaneNum AND IdGare = @idGare AND TableFolio = @tableFolio
+				FETCH NEXT FROM ComponentesCursor INTO @capufeLaneNum, @idGare, @tableFolio, @newNumeroSerie
+			END
+		CLOSE ComponentesCursor
+		DEALLOCATE ComponentesCursor
+	END 
+	SELECT 'Actualizado' SqlMessage, 'Estatus de Anexo '+ @referenceAnexo + ' actualizado' SqlResult
+END TRY
+BEGIN CATCH
+	SELECT NULL SqlMessage,  CAST(@@ERROR AS NVARCHAR) SqlResult
+END CATCH
+GO
+
+
+
+

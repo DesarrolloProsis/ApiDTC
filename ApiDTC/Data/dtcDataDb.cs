@@ -10,6 +10,10 @@
     using System.Data.SqlTypes;
     using System.IO;
     using ApiDTC.Models.Logs;
+    using ApiDTC.Services.DTC;
+    using ApiDTC.Models.DTCGMMEP;
+    using System.Linq;
+    using ApiDTC.Models.Paginaciones;
 
     public class DtcDataDb
     {
@@ -664,6 +668,69 @@
                 _apiLogger.WriteLog(ClavePlaza, ex, "DtcDataDb: GetDTCBorrado", 1);
                 return new Response { Message = $"Error: {ex.Message}", Result = null };
             }
+        }
+        #endregion
+
+
+        #region Paginacion GMEEP
+        public Response GetDTCGMEEP(int pagina, int registros, int userId, string squareId, string referenceDTC, string status, string fechaFilter, string disk, string folder, string clavePlaza)
+        {
+            try
+            {
+                using (SqlConnection sql = new SqlConnection(_connectionString))
+                {
+                    SqlCommand cmd = new SqlCommand("dbo.spGetGMMEPConcentrateView", sql);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.Add("@NumPagina", SqlDbType.Int).Value = pagina;
+                    cmd.Parameters.Add("@RegistroXPagina", SqlDbType.Int).Value = registros;
+                    cmd.Parameters.Add("@UserId", SqlDbType.Int).Value = userId;
+                    AddNullSPParameter(ref cmd, "@plaza", SqlDbType.NVarChar, squareId);
+                    AddNullSPParameter(ref cmd, "@REFERENCIA", SqlDbType.NVarChar, referenceDTC);
+                    AddNullSPParameter(ref cmd, "@StatusDTC", SqlDbType.NVarChar, status);
+                    AddNullSPParameter(ref cmd, "@FECHA", SqlDbType.NVarChar, fechaFilter);                                 
+                    var gmmepList = _sqlResult.GetRows<DTCHeaderPaginacion>(clavePlaza, cmd, sql, "GetDTCGMEEP");
+
+
+                    MapDTCPdfExits mapDTCPdfExits = new MapDTCPdfExits(disk, folder);
+                    var dtcValidList =  mapDTCPdfExits.ValidarPdf(gmmepList);
+
+                    if (dtcValidList == null || dtcValidList.Count == 0)
+                    {
+                        return new Response
+                        {
+                            Message = "Bad",
+                            Result = null
+                        };
+                    }
+
+                    PaginacionDTCGMMEP NewPaginaSesion = new PaginacionDTCGMMEP();
+                    var totalRegistros = (gmmepList[0].FIlaIndex + gmmepList[0].FilaIndexAsc) - 1;
+                    decimal totalPag = Convert.ToDecimal((totalRegistros * 1.0) / (registros * 1.0));
+                    NewPaginaSesion.NumeroPaginas = (int)Math.Ceiling(totalPag);
+                    NewPaginaSesion.PaginaActual = pagina;
+                    NewPaginaSesion.Rows = dtcValidList;
+
+                    return new Response
+                    {
+                        Message = "Ok",
+                        Result = NewPaginaSesion
+                    };
+                }
+            }
+            catch (SqlException ex)
+            {
+                _apiLogger.WriteLog("INIT", ex, "LoginDb: GetSesionLog", 1);
+                return new Response { Message = $"Error: {ex.Message}", Result = null };
+            }
+
+        }
+
+        private void AddNullSPParameter<T>(ref SqlCommand SqlCmd, string Name, SqlDbType dbType, T value)
+        {
+            if (value == null)
+                SqlCmd.Parameters.Add(Name, dbType).Value = DBNull.Value;
+            else
+                SqlCmd.Parameters.Add(Name, dbType).Value = value;
         }
         #endregion
     }

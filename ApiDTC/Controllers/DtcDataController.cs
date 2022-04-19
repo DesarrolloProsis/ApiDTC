@@ -44,7 +44,7 @@
         #region Methods
 
         #region Operaciones DTC
-        //TODO mandar si tiene pdf y fotos
+        //Lista de DTC´s
         [HttpGet("{clavePlaza}/{IdUser}/{SquareCatalog}")]
         public ActionResult<Response> Get(string clavePlaza, int IdUser, string SquareCatalog)
         {
@@ -183,6 +183,25 @@
                 return NotFound();
             return Ok(get);
         }
+        #endregion
+
+        #region Pagiancion vista GMMEP
+
+        [HttpGet("GMMEP/{clavePlaza}/{pagina}/{registros}/{userId}/{nombrePlaza}/{referenceDTC}/{status}/{fecha}")]
+        public ActionResult<Response> GetSessionLog(string clavePlaza, int pagina, int registros, int userId, string nombrePlaza, string referenceDTC, string status, string fecha)
+        {            
+            var _nombrePlaza = nombrePlaza != "null" ? nombrePlaza : null;
+            var _referenceDTC = referenceDTC != "null" ? referenceDTC : null;
+            var _status = fecha != "null" ? status : null;
+            var _fecha = fecha != "null" ? fecha : null;
+
+            var get = _db.GetDTCGMEEP(pagina, registros, userId, _nombrePlaza, _referenceDTC, _status, _fecha, _disk, _folder, clavePlaza);
+            if (get.Result == null)
+                return NotFound(get);
+            else
+                return Ok(get);
+        }
+
         #endregion
 
         #region Equipo Dañado
@@ -599,6 +618,8 @@
 
         }
         #endregion
+        
+        
         #endregion
     }
 }
