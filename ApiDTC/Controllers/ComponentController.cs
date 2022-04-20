@@ -128,10 +128,10 @@ namespace ApiDTC.Controllers
 
 
         //[HttpPut("updateInventoryList")]
-        [HttpPut("updateInventoryList/{clavePlaza}")]
-        public ActionResult<Response> Put(string clavePlaza, [FromBody] List<ComponentsInventoryList> componentsInventoryList)
+        [HttpPut("updateInventoryList/{clavePlaza}/{userId}")]
+        public ActionResult<Response> Put(string clavePlaza, int userId, [FromBody] List<ComponentsInventoryList> componentsInventoryList)
         {
-            var put = _db.InventoryListUpdate(clavePlaza, componentsInventoryList);
+            var put = _db.InventoryListUpdate(clavePlaza, userId, componentsInventoryList);
             if (put.Result == null)
                 return NotFound(put);
             return Ok(put);

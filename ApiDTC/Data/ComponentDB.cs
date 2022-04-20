@@ -190,7 +190,7 @@
             }
         }
 
-        public Response InventoryListUpdate(string clavePlaza, List<ComponentsInventoryList> componentsInventoryList)
+        public Response InventoryListUpdate(string clavePlaza, int userId, List<ComponentsInventoryList> componentsInventoryList)
         {
             try
             {
@@ -206,6 +206,7 @@
                             cmd.Parameters.Add("@strMaintenanceFolio", SqlDbType.NVarChar).Value = register.MaintenanceFolio;
                             cmd.Parameters.Add("@strSerialNumber", SqlDbType.NVarChar).Value = register.SerialNumber;
                             cmd.Parameters.Add("@strInstallationDate", SqlDbType.NVarChar).Value = register.InstallationDate;
+                            cmd.Parameters.Add("@intUserId", SqlDbType.Int).Value = userId;
 
                             var reader = _sqlResult.Put(clavePlaza, cmd, sql, "InventoryListUpdate");
                             if (reader.SqlResult == null)
