@@ -1246,6 +1246,130 @@ BEGIN CATCH
 END CATCH
 GO
 
+--MODIFCACION DE CRUD ADMINISTRADR PLAZA
+ALTER PROCEDURE [dbo].[spAdminsSquareCrud]
+@UserId INT --IdUsuario
+AS
+BEGIN	
+	-- Los admnistradores de las plaza a las que pertenece el usuario.
+	SELECT a.AdminSquareId,
+			a.Name,
+			a.LastName1,
+			a.LastName2,
+			a.Mail,
+			b.SquareName,
+			a.SquareCatalogId,
+			a.StatusAdmin,
+			a.IdRoll
+	FROM AdminsSquares a 
+		JOIN SquaresCatalog b
+	ON a.SquareCatalogId = b.SquareCatalogId
+	WHERE b.SquareCatalogId 
+		IN (
+			SELECT SquareCatalogId 
+			FROM UserSquare 
+			WHERE UserId = @UserId)
+	ORDER BY a.SquareCatalogId
+END
+GO
 
 
 
+ALTER PROCEDURE [dbo].[spInsertAdminSquareCrud] 
+@Nombre NVARCHAR(30),
+@ApellidoP NVARCHAR(20),
+@ApellidoM NVARCHAR(20),
+@Mail NVARCHAR(30),
+@Plaza NVARCHAR(4),
+@IdRoll INT
+AS
+BEGIN
+	BEGIN TRY
+	
+		INSERT INTO AdminsSquares(Name,LastName1,LastName2,Mail,SquareCatalogId, IdRoll)
+		VALUES(@Nombre,@ApellidoP,@ApellidoM,@Mail,@Plaza, @IdRoll)
+
+		SELECT 'spInsertAdminSquareCrud' AS SqlResult, @Nombre +' '+@ApellidoP+' agergado.' AS SqlMessage
+
+	END TRY
+	BEGIN CATCH	
+		SELECT NULL AS SqlResult, CAST(ERROR_MESSAGE() AS nvarchar) AS SqlMessage
+		RETURN
+	END CATCH
+END
+GO
+
+ALTER PROCEDURE [dbo].[spUpdateAdminSquareCrud]
+@Nombre NVARCHAR(30),
+@ApellidoP NVARCHAR(20),
+@ApellidoM NVARCHAR(20),
+@Mail NVARCHAR(30),
+@Plaza NVARCHAR(4),
+@AdminId INT,
+@User INT,
+@IdRoll INT
+AS
+BEGIN
+	BEGIN TRY	
+		DECLARE
+		@OldName nvarchar(60),
+		@OldMail nvarchar(100)
+		SELECT @OldName = Name +' '+ LastName1 +' '+ LastName2 FROM AdminsSquares WHERE AdminSquareId = @AdminId
+		SELECT @OldMail = Mail FROM AdminsSquares WHERE AdminSquareId = @AdminId
+
+		UPDATE AdminsSquares 
+		SET Name = @Nombre,
+				LastName1 = @ApellidoP, 
+				LastName2 = @ApellidoM , 
+				Mail = @Mail, 
+				SquareCatalogId = @Plaza,
+				IdRoll = @IdRoll
+		WHERE AdminSquareId = @AdminId
+			
+		INSERT INTO AdminsSquares_Log
+			(AdminId, OldName, NewName, OldMail, NewMail, UpdatedUser, UpdateDate)
+		VALUES(@AdminId, @OldName, @Nombre+' '+@ApellidoP+' '+@ApellidoM, @OldMail, @Mail, @User, GETDATE())
+
+		SELECT 'spUpdateAdminSquareCrud' AS SqlResult, @Nombre +' '+@ApellidoP+' agregado.' AS SqlMessage
+	END TRY
+	BEGIN CATCH
+	
+		SELECT null AS SqlResult, CAST(ERROR_MESSAGE() AS NVARCHAR) AS SqlMessage
+		RETURN
+	END CATCH
+END
+GO
+
+
+ALTER PROCEDURE [dbo].[spGetSquaresDTC]
+@UserId INT
+AS
+BEGIN
+		SELECT a.UserId,
+				b.SquareCatalogId,
+				a.RollId,
+				c.SquareName,
+				c.ReferenceSquare,
+				f.AdminSquareId,
+				c.SquareCatalogId+' '+c.SquareName+ '('+f.Name+' '+f.LastName1+' '+f.LastName2+')' PlazaAdministrador,
+				f.StatusAdmin,
+				f.IdRoll
+		FROM DTCUsers a  
+			JOIN UserSquare b ON a.UserId = b.UserId
+			JOIN SquaresCatalog c ON c.SquareCatalogId = b.SquareCatalogId
+			JOIN DelegationCatalog d ON d.DelegationId = c.DelegationId 
+			JOIN AgreementInfo e ON e.DelegationId = c.DelegationId
+			JOIN AdminsSquares f  ON c.SquareCatalogId  = f.SquareCatalogId 
+		WHERE	a.UserId = @UserId
+			AND e.AgremmentInfoId 
+			IN (SELECT AgremmentInfoId 
+				FROM AgreementInfo 
+				WHERE DelegationId 
+					IN (SELECT DelegationId 
+						FROM SquaresCatalog 
+						WHERE SquareCatalogId 
+							IN(SELECT SquareCatalogId FROM UserSquare WHERE UserId = @UserId)
+						GROUP BY DelegationId)
+					AND Status = 1)	
+			ORDER BY PlazaAdministrador
+END
