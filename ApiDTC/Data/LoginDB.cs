@@ -63,7 +63,7 @@
         {
             try
             {
-                List<Cookie> cookies;
+                List<CookieRollId> cookies;
                 using (SqlConnection sql = new SqlConnection(_connectionString))
                 {
 
@@ -72,7 +72,7 @@
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.Add("@UserId", SqlDbType.Int).Value = userRefreshToken.UserId;
 
-                        cookies = _sqlResult.GetRows<Cookie>("USR", cmd, sql, "GetStoreLogin");
+                        cookies = _sqlResult.GetRows<CookieRollId>("USR", cmd, sql, "GetStoreLogin");
                         if(cookies is null)
                             return new Response { Message = $"Error", Result = null };                        
                     }
@@ -138,7 +138,7 @@
                             return new Response { Message = $"Error", Result = null };                        
                     }
                     return new Response{
-                        Result = new LoginValido{LoginList = loginList },
+                        Result = new LoginValido { LoginList = loginList },
                         Message = "Ok"
                     };
                 }
@@ -149,6 +149,7 @@
                 return new Response { Message = $"Error: {ex.Message}", Result = null };
             }
         }
+
 
         public Response GetStoreLogin(LoginUserInfo loginUserInfo)
         {

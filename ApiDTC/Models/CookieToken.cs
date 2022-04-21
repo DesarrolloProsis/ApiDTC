@@ -5,7 +5,7 @@ namespace ApiDTC.Models
     public class CookieToken
     {
         #region Properties        
-        public List<Cookie> Cookie { get; set; }
+        public List<CookieRollId> Cookie { get; set; }
 
         public UserToken UserToken { get; set; }
         #endregion

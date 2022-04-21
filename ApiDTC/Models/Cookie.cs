@@ -20,4 +20,9 @@ namespace ApiDTC.Models
         public bool StatusAdmin { get; set; }
         #endregion
     }
+
+    public class CookieRollId : Cookie
+    {
+        public int IdRoll { get; set; }
+    }
 }
