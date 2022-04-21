@@ -272,6 +272,7 @@ GO
 --INSERTA LOS COMPONETE CONTIENE LOGICA PARA LIBERAR ESPACIOS DE LOS DTC
 CREATE OR ALTER PROCEDURE [dbo].[InsertHeaderAnexo]
 	@referenceDTC NVARCHAR(20),
+	@referenceAnexoPrincipal NVARCHAR(20),
 	@referenceAnexoAnterior NVARCHAR(20),
 	@referenceAnexo NVARCHAR(20),
 	@fechaApertura DATETIME,
@@ -294,9 +295,7 @@ BEGIN TRY
 	BEGIN
 		INSERT INTO AnexosDTC(DTCReference, AnexoReference, FechaApertura, FechaCierre, Solicitud, FechaSolicitudInicio, FolioOficio, FechaOficioInicio, Observaciones, Testigo1Id, Testigo2Id, Activo, TipoAnexo, FechaUltimoCambio, IsSubVersion, PDFFirmardo, PDFFotografico, StatusId) 
 		VALUES(@referenceDTC, @referenceAnexo, @fechaApertura, @fechaCierre, @solicitud, @fechaSolicitudInicio, @folioOficio, @fechaOficioInicio, @observaciones, @testigo1, @testigo2, 1, 'A', GETDATE(), @isSubVersion, 0 , 0, 6)	
-
-		UPDATE AnexosDTC SET StatusId = 6 WHERE SUBSTRING(AnexoReference, 0, LEN(@referenceAnexo) + 1) = @referenceAnexo
-		
+	
 		IF @@ROWCOUNT = 1
 		BEGIN 
 			IF (@referenceAnexoAnterior IS NOT NULL)
@@ -312,12 +311,19 @@ BEGIN TRY
 			END
 			SELECT 'NEWANEXO!' As SqlResult, 'Anexo con Id' + @referenceAnexo + 'agregado con exito' as SqlMessage
 		END		
+
+		IF (@referenceAnexoPrincipal IS NOT NULL)
+		BEGIN
+			SELECT * FROM AnexosDTC WHERE SUBSTRING(AnexoReference, 0, LEN(@referenceAnexoPrincipal) + 1) = @referenceAnexoPrincipal
+			UPDATE AnexosDTC SET StatusId = 6 WHERE SUBSTRING(AnexoReference, 0, LEN(@referenceAnexoPrincipal) + 1) = @referenceAnexoPrincipal
+		END		
+	
 	END
 	ELSE
 	BEGIN	
 		INSERT INTO AnexosDTC(DTCReference, AnexoReference, FechaApertura, FechaCierre, Solicitud, FechaSolicitudInicio, FolioOficio, FechaOficioInicio, Observaciones, Testigo1Id, Testigo2Id, Activo, TipoAnexo, FechaUltimoCambio, IsSubVersion, PDFFirmardo, PDFFotografico, StatusId) 
 		VALUES(@referenceDTC, @referenceAnexo, @fechaApertura, @fechaCierre, @solicitud, @fechaSolicitudInicio, @folioOficio, @fechaOficioInicio, @observaciones, @testigo1, @testigo2, 1, 'B', GETDATE(), @isSubVersion, 0, 0, 6)	
-
+				
 		IF @@ROWCOUNT = 1
 		BEGIN
 			IF (@referenceAnexoAnterior IS NOT NULL)
@@ -332,6 +338,11 @@ BEGIN TRY
 					WHERE RequestedComponentId IN(SELECT ComponentDTCId FROM ComponentAnexo WHERE AnexoId = @referenceAnexoAnterior)				
 			END
 			SELECT 'NEWANEXO!' As SqlResult, 'Anexo con Id' + @referenceAnexo + 'agregado con exito' as SqlMessage
+		END			
+		IF (@referenceAnexoPrincipal IS NOT NULL)
+		BEGIN
+		SELECT * FROM AnexosDTC WHERE SUBSTRING(AnexoReference, 0, LEN(@referenceAnexoPrincipal) + 1) = @referenceAnexoPrincipal
+			UPDATE AnexosDTC SET StatusId = 6 WHERE SUBSTRING(AnexoReference, 0, LEN(@referenceAnexoPrincipal) + 1) = @referenceAnexoPrincipal
 		END		
 	END	
 END TRY

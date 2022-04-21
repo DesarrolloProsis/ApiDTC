@@ -674,7 +674,7 @@
 
 
         #region Paginacion GMEEP
-        public Response GetDTCGMEEP(int pagina, int registros, int userId, string squareId, string referenceDTC, string status, string fechaFilter, string disk, string folder, string clavePlaza)
+        public Response GetDTCGMEEP(int pagina, int registros, int userId, string nombreUsuario, string tipoFalla, string squareId, string referenceDTC, string status, string fechaFilter, string disk, string folder, string clavePlaza)
         {
             try
             {
@@ -685,6 +685,8 @@
                     cmd.Parameters.Add("@NumPagina", SqlDbType.Int).Value = pagina;
                     cmd.Parameters.Add("@RegistroXPagina", SqlDbType.Int).Value = registros;
                     cmd.Parameters.Add("@UserId", SqlDbType.Int).Value = userId;
+                    AddNullSPParameter(ref cmd, "@UserName", SqlDbType.NVarChar, nombreUsuario);
+                    AddNullSPParameter(ref cmd, "@typefault", SqlDbType.NVarChar, tipoFalla);
                     AddNullSPParameter(ref cmd, "@plaza", SqlDbType.NVarChar, squareId);
                     AddNullSPParameter(ref cmd, "@REFERENCIA", SqlDbType.NVarChar, referenceDTC);
                     AddNullSPParameter(ref cmd, "@StatusDTC", SqlDbType.NVarChar, status);

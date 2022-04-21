@@ -119,6 +119,8 @@
                         cmd.Parameters.Add("@Plaza", SqlDbType.NVarChar).Value = updateAdmin.Plaza;
                         cmd.Parameters.Add("@AdminId", SqlDbType.Int).Value = updateAdmin.AdminId;
                         cmd.Parameters.Add("@User", SqlDbType.Int).Value = updateAdmin.UserId;
+                        cmd.Parameters.Add("@IdRoll", SqlDbType.Int).Value = updateAdmin.IdRoll;
+
                         var response = _sqlResult.Put("USR", cmd, sql, "UpdateAdmin");
                         return new Response
                         {
@@ -149,7 +151,8 @@
                         cmd.Parameters.Add("@ApellidoM", SqlDbType.NVarChar).Value = insertAdmin.ApellidoM;
                         cmd.Parameters.Add("@Mail", SqlDbType.NVarChar).Value = insertAdmin.Mail;
                         cmd.Parameters.Add("@Plaza", SqlDbType.NVarChar).Value = insertAdmin.Plaza;
-                        
+                        cmd.Parameters.Add("@IdRoll", SqlDbType.NVarChar).Value = insertAdmin.IdRoll;
+
                         var storedResult = _sqlResult.Post("USR", cmd, sql, "InsertAdmin");
                         if (storedResult.SqlResult == null)
                             return new Response { Message = "Error: " + storedResult.SqlMessage, Result = null };
@@ -175,7 +178,7 @@
                 using (SqlConnection sql = new SqlConnection(_connectionString))
                 {
                     using (SqlCommand cmd = new SqlCommand("dbo.spAdminsSquareCrud", sql))
-                    {
+                    { 
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.Add("@UserId", SqlDbType.Int).Value = userId;
                         var storedResult = _sqlResult.GetList<AdminInfo>("USR", cmd, sql, "GetLanes");

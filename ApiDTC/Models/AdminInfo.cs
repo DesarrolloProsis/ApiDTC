@@ -17,5 +17,6 @@ namespace ApiDTC.Models
         public string SquareCatalogId { get; set; }
 
         public bool StatusAdmin { get; set; }
+        public int IdRoll { get; set; }
     }
 }

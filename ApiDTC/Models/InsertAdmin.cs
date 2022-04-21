@@ -17,5 +17,6 @@ namespace ApiDTC.Models
 
         [StringLength(4)]
         public string Plaza { get; set; }
+        public int IdRoll { get; set; }
     }
 }

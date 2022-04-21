@@ -310,6 +310,12 @@ namespace ApiDTC.Data
                                 cmd.Parameters.Add("@referenceAnexoAnterior", SqlDbType.NVarChar).Value = DBNull.Value;
                             else
                                 cmd.Parameters.Add("@referenceAnexoAnterior", SqlDbType.NVarChar).Value = valueNewId.idUltimaVersion;
+
+                            if (anexoDTCInsert.AnexoReference == string.Empty)
+                                cmd.Parameters.Add("@referenceAnexoPrincipal", SqlDbType.NVarChar).Value = DBNull.Value;
+                            else
+                                cmd.Parameters.Add("@referenceAnexoPrincipal", SqlDbType.NVarChar).Value = anexoDTCInsert.AnexoReference;
+
                             cmd.Parameters.Add("@referenceAnexo", SqlDbType.NVarChar).Value = valueNewId.newId;
                             cmd.Parameters.Add("@fechaApertura", SqlDbType.DateTime).Value = anexoDTCInsert.FechaApertura;
                             if(anexoDTCInsert.FechaCierre == null)
