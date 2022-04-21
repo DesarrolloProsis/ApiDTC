@@ -1063,7 +1063,7 @@ namespace ApiDTC.Services
                     default:
                         break;
                 }
-                Chunk nomAdministrador = _tableAnexo.Rows[0]["DelegationId"].Equals(3)? new Chunk(supervision + "\n SUPERVISIÓN DE OPERACIÓN UNIDAD REGIONAL DE ESTADO DE MÉXICO\n SUPERVISÓ", letraoNegritaMediana) : new Chunk(supervision + "\n SUPERINTENDENTE DE EQUIPO DE CONTROL DE TRÁNSITO\n SUPERVISÓ", letraoNegritaMediana);
+                Chunk nomAdministrador = _tableAnexo.Rows[0]["DelegationId"].Equals(3)? new Chunk(supervision + "\n SUPERINTENDENTE DE EQUIPO DE CONTROL DE TRÁNSITO\n SUPERVISÓ", letraoNegritaMediana) : new Chunk(supervision + "\n SUPERVISÓ", letraoNegritaMediana);
                 var parrafonomAdministrador = new Paragraph();
                 parrafonomAdministrador.SetLeading(0, 1.8f);
                 parrafonomAdministrador.Add(nomAdministrador);
