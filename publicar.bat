@@ -38,7 +38,7 @@ goto :EOF
 
 copy %cd%\ApiDTC\bin\Debug\netcoreapp2.1\publish\* C:\inetpub\wwwroot\%pagina%\
 
-FOR /d %%i IN (%cd%\ApiDTC\bin\Debug\netcoreapp2.1\publish\) DO copy "%%i" C:\inetpub\wwwroot\%pagina%\%%~ni
+FOR /d %%i IN (%cd%\ApiDTC\bin\Debug\netcoreapp2.1\publish\*) DO move "%%i" C:\inetpub\wwwroot\%pagina%\%%~ni
 
 echo Publicado con exito
 
