@@ -1057,7 +1057,7 @@ namespace ApiDTC.Services
                         break;
 
                     case 3:
-                        supervision = "LIC. ANTONIO SÁNCHEZ CRUZ";
+                        supervision = "LIC. ANTONIO ESTEBAN SÁNCHEZ CRUZ";
                         break;
 
                     default:
@@ -1069,7 +1069,7 @@ namespace ApiDTC.Services
                 parrafonomAdministrador.Add(nomAdministrador);
                 parrafonomAdministrador.Alignment = Element.ALIGN_CENTER;
 
-                Chunk nomSubg = _tableAnexo.Rows[0]["DelegationId"].Equals(3) ? new Chunk(_tableAnexo.Rows[0]["Vo.Bo."].ToString().ToUpper() + "\n SUBGERENTE DE OPERACIÓN DE LA UNIDAD REGIONAL DE ESTADO DE MÉXICO \n Vo.Bo") : new Chunk(_tableAnexo.Rows[0]["Vo.Bo."].ToString().ToUpper() + "\n Vo.Bo.", letraoNegritaMediana);
+                Chunk nomSubg = _tableAnexo.Rows[0]["DelegationId"].Equals(3) ? new Chunk(_tableAnexo.Rows[0]["Vo.Bo."].ToString().ToUpper() + "\n SUBGERENTE DE OPERACIÓN DE LA UNIDAD REGIONAL DE ESTADO DE MÉXICO \n Vo.Bo", letraoNegritaMediana) : new Chunk(_tableAnexo.Rows[0]["Vo.Bo."].ToString().ToUpper() + "\n Vo.Bo.", letraoNegritaMediana);
                 var parrafonomSubg = new Paragraph();
                 parrafonomSubg.SetLeading(0, 1.8f);
                 parrafonomSubg.Add(nomSubg);
@@ -1152,7 +1152,7 @@ namespace ApiDTC.Services
                 CeldasVacias(1, tablaCuatroFirmas);
                 tablaCuatroFirmas.AddCell(nombreSubgerente);
 
-                tablaCuatroFirmas.AddCell(espacioVacio);
+                //tablaCuatroFirmas.AddCell(espacioVacio);
 
                 PdfPTable tablaDosFirmas = new PdfPTable(new float[] { 13.33f, 30f, 13.33f, 30f, 13.33f }) { WidthPercentage = 100f };
 
