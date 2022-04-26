@@ -66,6 +66,7 @@ CREATE TABLE [dbo].[ComponentAnexo](
 	FOREIGN KEY(AnexoId) REFERENCES AnexosDTC(AnexoReference),
 	FOREIGN KEY(ComponentDTCId) REFERENCES RequestedComponents(RequestedComponentId)
 )
+GO
 
 --ULTIMOS COMPONENTES DEL SUB ANEXO
 CREATE OR ALTER PROCEDURE GetComponentesAnexo
@@ -241,7 +242,7 @@ AS
 	SELECT AdminSquareId AS Id, Name + ' ' + LastName1 + ' ' + LastName2 AS Nombre, SquareCatalogId AS SquareId, IdRoll AS RollId  FROM AdminsSquares WHERE SquareCatalogId = @plazaId AND IdRoll = 12
 GO
 
-SELECT * from AdminsSquares
+SELECT * from AdminsSquares GO
 
 --INSERTA LOS COMPONETE CONTIENE LOGICA PARA OCUPAR LOS COMPONENTES DE UN DTC CAMBIO DE BANDERA
 CREATE OR ALTER PROCEDURE [dbo].[InsertComponentesAnexo]
@@ -265,7 +266,7 @@ AS
 				AND B.ReferenceNumber = @referenceNumber
 	END TRY
 	BEGIN CATCH
-		SELECT NULL AS SqlResult, 'Línea: ' + CAST(ERROR_LINE() AS VARCHAR) + ' ' + CAST(@@ERROR AS VARCHAR) AS SqlMessage
+		SELECT NULL AS SqlResult, 'Lï¿½nea: ' + CAST(ERROR_LINE() AS VARCHAR) + ' ' + CAST(@@ERROR AS VARCHAR) AS SqlMessage
 	END CATCH
 GO
 
@@ -349,7 +350,7 @@ END TRY
 BEGIN CATCH
 -- Error
 PRINT(CAST(@@ERROR AS VARCHAR))
-	SELECT NULL AS SqlResult, 'Línea: ' + CAST(ERROR_LINE() AS VARCHAR) + ' ' + CAST(@@ERROR AS VARCHAR) AS SqlMessage
+	SELECT NULL AS SqlResult, 'Lï¿½nea: ' + CAST(ERROR_LINE() AS VARCHAR) + ' ' + CAST(@@ERROR AS VARCHAR) AS SqlMessage
 END CATCH
 GO
 
@@ -362,7 +363,7 @@ GO
 --		SELECT 'Insertado' SqlMessage, 'Se inserto el usuario anexo: '+  @nombreSupervisor + 'en la plaza' + @numeroPlaza  SqlResult
 --	END TRY
 --	BEGIN CATCH
---		SELECT NULL AS SqlResult, 'Línea: ' + CAST(ERROR_LINE() AS VARCHAR) + ' ' + CAST(@@ERROR AS VARCHAR) AS SqlMessage
+--		SELECT NULL AS SqlResult, 'Lï¿½nea: ' + CAST(ERROR_LINE() AS VARCHAR) + ' ' + CAST(@@ERROR AS VARCHAR) AS SqlMessage
 --	END CATCH
 --GO
 
@@ -375,7 +376,7 @@ GO
 --		SELECT 'Insertado' SqlMessage, 'Se inserto el usuario anexo: '+  @nombreTestigo + 'en la plaza' + @numeroPlaza  SqlResult
 --	END TRY
 --	BEGIN CATCH
---		SELECT NULL AS SqlResult, 'Línea: ' + CAST(ERROR_LINE() AS VARCHAR) + ' ' + CAST(@@ERROR AS VARCHAR) AS SqlMessage
+--		SELECT NULL AS SqlResult, 'Lï¿½nea: ' + CAST(ERROR_LINE() AS VARCHAR) + ' ' + CAST(@@ERROR AS VARCHAR) AS SqlMessage
 --	END CATCH
 --GO
 
@@ -1091,7 +1092,7 @@ ADD Ciudad NVARCHAR(35)
 ALTER TABLE SquaresCatalog 
 ADD Estado NVARCHAR(35)
 
-UPDATE SquaresCatalog SET Ciudad = 'Tlalpan', Estado = 'Ciudad de México' WHERE SquareCatalogId = '001' 
+UPDATE SquaresCatalog SET Ciudad = 'Tlalpan', Estado = 'Ciudad de Mï¿½xico' WHERE SquareCatalogId = '001' 
 UPDATE SquaresCatalog SET Ciudad = 'Huitzilac', Estado = 'Morelos' WHERE SquareCatalogId = '1Bis' 
 UPDATE SquaresCatalog SET Ciudad = 'Temixco', Estado = 'Morelos' WHERE SquareCatalogId = '107' 
 UPDATE SquaresCatalog SET Ciudad = 'Alpuyeca', Estado = 'Morelos' WHERE SquareCatalogId = '105' 
@@ -1101,9 +1102,9 @@ UPDATE SquaresCatalog SET Ciudad = 'Ahuehuetzingo', Estado = 'Morelos' WHERE Squ
 UPDATE SquaresCatalog SET Ciudad = 'Huitzuco de los Figueroa', Estado = 'Guerrero' WHERE SquareCatalogId = '102'
 UPDATE SquaresCatalog SET Ciudad = 'Mazatlan', Estado = 'Guerrero' WHERE SquareCatalogId = '103'
 UPDATE SquaresCatalog SET Ciudad = 'Acapulco', Estado = 'Guerrero' WHERE SquareCatalogId = '104'
-UPDATE SquaresCatalog SET Ciudad = 'Tepotzotlan', Estado = 'Estado de México' WHERE SquareCatalogId = '004' 
-UPDATE SquaresCatalog SET Ciudad = 'Huehuetoca', Estado = 'Estado de México' WHERE SquareCatalogId = '069' 
-UPDATE SquaresCatalog SET Ciudad = 'Polotitlan', Estado = 'Estado de México' WHERE SquareCatalogId = '070' 
+UPDATE SquaresCatalog SET Ciudad = 'Tepotzotlan', Estado = 'Estado de Mï¿½xico' WHERE SquareCatalogId = '004' 
+UPDATE SquaresCatalog SET Ciudad = 'Huehuetoca', Estado = 'Estado de Mï¿½xico' WHERE SquareCatalogId = '069' 
+UPDATE SquaresCatalog SET Ciudad = 'Polotitlan', Estado = 'Estado de Mï¿½xico' WHERE SquareCatalogId = '070' 
 UPDATE SquaresCatalog SET Ciudad = 'San Juan de Rio', Estado = 'Queretaro' WHERE SquareCatalogId = '005' 
 UPDATE SquaresCatalog SET Ciudad = 'El Marques', Estado = 'Queretaro' WHERE SquareCatalogId = '127' 
 UPDATE SquaresCatalog SET Ciudad = 'Queretaro', Estado = 'Queretaro' WHERE SquareCatalogId = '006' 
@@ -1165,6 +1166,7 @@ CREATE TABLE AnexosDTCStatusLog(
 	Comment NVARCHAR(300) NOT NULL,
 	DateStamp DATETIME NOT NULL DEFAULT GETDATE()	
 )
+GO
 
 ALTER PROCEDURE UpdateAnexoDTCStatus
 	@referenceAnexo NVARCHAR(20),
@@ -1373,3 +1375,111 @@ BEGIN
 					AND Status = 1)	
 			ORDER BY PlazaAdministrador
 END
+GO
+
+
+--REFACTORIZACION SP STATUS UPDATE AUTOMATICO
+ALTER PROCEDURE [dbo].[spUpdateStatusDTC]
+@ReferenceNumber NVARCHAR(30),
+@status INT
+AS
+BEGIN
+	
+	DECLARE @intUser INT
+	BEGIN TRY
+		
+		BEGIN TRANSACTION;
+
+		SELECT @intUser = UserId FROM DTCData WHERE ReferenceNumber = @ReferenceNumber
+
+		UPDATE DTCData SET StatusId = @status WHERE ReferenceNumber = @ReferenceNumber
+		
+		INSERT INTO DTCStatusLog(ReferenceNumber,StatusId,UserId,Comment,DateStamp) 
+			VALUES(@ReferenceNumber,@status,@intUser,'ActualizaciÃ³n AutomÃ¡tica',GETDATE())		
+		
+		SELECT 'Actualizado' SqlMessage, 'Estatus de DTC '+ @ReferenceNumber + ' actualizado' SqlResult
+		
+		COMMIT TRANSACTION;
+	END TRY		
+	BEGIN CATCH
+		SELECT NULL SqlMessage,  CAST(@@ERROR as nvarchar) SqlResult
+	END CATCH
+END
+GO
+
+
+ALTER PROCEDURE [dbo].[spUpdateDTCStatusLog] 
+@ReferenceNumber NVARCHAR(20),
+@StatusId INT,
+@UserId INT,
+@Comment NVARCHAR(300)
+AS
+BEGIN		
+	DECLARE @statusOld INT 
+	DECLARE @LenDTC NVARCHAR(20)
+	DECLARE @ultimoAnexoCreado NVARCHAR(20)
+	DECLARE @anexoReferences NVARCHAR(20)
+	DECLARE @statusAnexo INT
+	DECLARE @oldNumeroSerie NVARCHAR(70)
+	DECLARE @capufeLaneNum NVARCHAR(10)		
+	DECLARE @idGare NVARCHAR(3)
+	DECLARE @tableFolio INT
+
+	BEGIN TRY
+		BEGIN TRANSACTION	
+		SET NOCOUNT ON;
+		SET @LenDTC = (SELECT LEN(@ReferenceNumber))
+		SELECT @statusOld = StatusId FROM DTCData WHERE ReferenceNumber = @ReferenceNumber			
+		IF @statusOld = 5 AND @StatusId < 4
+		BEGIN
+			--CURSOR QUE ITERA LOS ANEXOS PRINCIPALES DE LA REFERENCIA DEL DTC DADA
+			DECLARE AnexosPrincipalesCursor CURSOR FOR SELECT AnexoReference FROM AnexosDTC WHERE DTCReference = @ReferenceNumber AND IsSubVersion = 0			
+			OPEN AnexosPrincipalesCursor
+			FETCH NEXT FROM AnexosPrincipalesCursor INTO @anexoReferences
+				WHILE @@FETCH_STATUS = 0
+				BEGIN
+					PRINT @anexoReferences 
+					SELECT TOP 1 AnexoReference, StatusId FROM AnexosDTC WHERE DTCReference = @ReferenceNumber AND SUBSTRING(AnexoReference, 0, LEN(@anexoReferences) + 1) = @anexoReferences ORDER BY CAST(SUBSTRING(AnexoReference,(@LenDTC + 5),2) AS int) DESC 					
+					SElECT TOP 1 @ultimoAnexoCreado = AnexoReference, @statusAnexo = StatusId FROM AnexosDTC WHERE DTCReference = @ReferenceNumber AND SUBSTRING(AnexoReference, 0, LEN(@anexoReferences) + 1) = @anexoReferences ORDER BY CAST(SUBSTRING(AnexoReference,(@LenDTC + 5),2) AS int) DESC 					
+					PRINT @statusAnexo 
+					IF @statusAnexo = 7
+					BEGIN 				
+						PRINT @statusAnexo 
+						--SI ES STATUS 7 EL CURSOR ACTUALIZA LOS NUMEROS DE SERUE
+						DECLARE ComponentesCursor CURSOR FOR SELECT R.CapufeLaneNum, R.IdGare, R.TableFolio, R.SerialNumber FROM RequestedComponents R JOIN ComponentAnexo C ON  R.RequestedComponentId = C.ComponentDTCId WHERE RequestedComponentId IN (SELECT ComponentDTCId FROM ComponentAnexo WHERE AnexoId = @ultimoAnexoCreado) AND AnexoId = @ultimoAnexoCreado
+						OPEN ComponentesCursor
+						FETCH NEXT FROM ComponentesCursor INTO @capufeLaneNum, @idGare, @tableFolio, @oldNumeroSerie
+							WHILE @@FETCH_STATUS = 0
+							BEGIN
+								UPDATE SquareInventory SET SerialNumber = @oldNumeroSerie  WHERE CapufeLaneNum = @capufeLaneNum AND IdGare = @idGare AND TableFolio = @tableFolio					
+								FETCH NEXT FROM ComponentesCursor INTO @capufeLaneNum, @idGare, @tableFolio, @oldNumeroSerie
+							END
+						CLOSE ComponentesCursor
+						DEALLOCATE ComponentesCursor
+					END
+					FETCH NEXT FROM AnexosPrincipalesCursor INTO @anexoReferences
+				END
+			CLOSE AnexosPrincipalesCursor
+			DEALLOCATE AnexosPrincipalesCursor
+		END		
+		--SE ELIMINA TODOS LOS COMPONETES Y LOS ANEXO QUE CONCIDAN CON LA REFERENCIA
+		DELETE FROM ComponentAnexo WHERE AnexoId IN(SELECT AnexoReference FROM AnexosDTC WHERE DTCReference = @ReferenceNumber)
+		DELETE FROM AnexosDTC WHERE DTCReference = @ReferenceNumber
+		--REGRESA EL LA BANDERA DE LOS COMPONETES DE ESE DTC PARA QUE SE PUEDAN VOLVER A SELECCIONAR
+		UPDATE RequestedComponents SET UseInAnexo = 0 WHERE ReferenceNumber = @ReferenceNumber
+
+		UPDATE DTCData SET StatusId = @StatusId WHERE ReferenceNumber = @ReferenceNumber	
+		
+		INSERT INTO DTCStatusLog(ReferenceNumber,StatusId,UserId,Comment,[DateStamp])
+			VALUES(@ReferenceNumber,@StatusId,@UserId,@Comment,GETDATE())
+
+		SELECT 'UpdateDTCStatus' AS SqlResult, @referenceNumber + ' ACtualizado' AS SqlMessage
+		
+		COMMIT TRANSACTION				
+	END TRY
+	BEGIN CATCH
+		SELECT null AS SqlResult, 'Error de actualizaciÃ³n ' AS SqlMessage
+		RETURN;
+	END CATCH
+END
+GO

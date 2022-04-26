@@ -158,7 +158,7 @@
                 return NotFound(get);
             return Ok(get);
         }
-
+        [AllowAnonymous]
         [HttpPost("ActualizarDtcAdministratores/{clavePlaza}")]
         public ActionResult<Response> ActualizarDtcAdministradores(string clavePlaza, [FromBody] DtcStatusLog dtcStatusLog)
         {

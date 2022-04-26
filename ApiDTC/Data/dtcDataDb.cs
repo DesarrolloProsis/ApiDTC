@@ -701,8 +701,8 @@
                     {
                         return new Response
                         {
-                            Message = "Bad",
-                            Result = null
+                            Message = "Ok",
+                            Result = new PaginacionDTCGMMEP()
                         };
                     }
 
