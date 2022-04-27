@@ -957,7 +957,7 @@ namespace ApiDTC.Services
                 parrafoEmpresa.Add(porEmpresa);
                 parrafoEmpresa.Alignment = Element.ALIGN_CENTER;
 
-                Chunk admin = new Chunk("ADMINISTRADOR Y ENCARGADO DE LA SUPERINTENDENCIA DE OPERACIÓN", letraoNegritaMediana);
+                Chunk admin = _tableAnexo.Rows[0]["DelegationId"].Equals(2) ? new Chunk("SUPERINTENDENTE OPERACIÓN / SUPERVISIÓN", letraoNegritaMediana) : new Chunk("ADMINISTRADOR Y ENCARGADO DE LA SUPERINTENDENCIA DE OPERACIÓN", letraoNegritaMediana);
                 var parrafoAdmin = new Paragraph();
                 parrafoAdmin.SetLeading(0, 1.2f);
                 parrafoAdmin.Add(admin);
