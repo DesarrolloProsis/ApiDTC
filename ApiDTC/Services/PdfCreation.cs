@@ -653,7 +653,7 @@ namespace ApiDTC.Services
             var col29 = new PdfPCell(new Phrase("", letraNormalChica)) { Border = 0 };
             var col30 = new PdfPCell(new Phrase("", letraNormalChica)) { Border = 0 };
 
-            var col31 = new PdfPCell(new Phrase("Coordinación Regional: Ciudad de México", letraNormalChica)) { Border = 0 };
+            var col31 = new PdfPCell(new Phrase("Unidad Regional: Ciudad de México", letraNormalChica)) { Border = 0 };
             var col32 = new PdfPCell(new Phrase(Convert.ToString(_tableHeader.Rows[0]["RegionalCoordination"]), letraoNegritaChicaEncabezado)) { HorizontalAlignment = Element.ALIGN_RIGHT, Border = 0 };
 
             var col33 = new PdfPCell(new Phrase("", letraNormalChica)) { Border = 0 };
@@ -665,7 +665,7 @@ namespace ApiDTC.Services
             var col37 = new PdfPCell(new Phrase("", letraNormalChica)) { Border = 0 };
             var col38 = new PdfPCell(new Phrase("", letraNormalChica)) { Border = 0 };
 
-            var col39 = new PdfPCell(new Phrase("Centro de Servicio", letraNormalChica)) { Border = 0 };
+            var col39 = new PdfPCell(new Phrase("", letraNormalChica)) { Border = 0 };
             var col40 = new PdfPCell(new Phrase("", letraoNegritaChicaEncabezado)) { HorizontalAlignment = Element.ALIGN_RIGHT, Border = 0 };
 
             var col41 = new PdfPCell(new Phrase("", letraNormalChica)) { Border = 0 };

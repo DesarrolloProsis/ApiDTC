@@ -395,7 +395,7 @@ namespace ApiDTC.Services
             var col29 = new PdfPCell(new Phrase("", letraNormalChica)) { Border = 0 };
             var col30 = new PdfPCell(new Phrase("", letraNormalChica)) { Border = 0 };
 
-            string labelCordinacion = "Coordinación Regional";
+            string labelCordinacion = "Unidad Regional";
             if (_newConvenio.ConvenioNuevo) 
             {
                 labelCordinacion = "Unidad Regional";
@@ -414,7 +414,7 @@ namespace ApiDTC.Services
             var col37 = new PdfPCell(new Phrase("", letraNormalChica)) { Border = 0 };
             var col38 = new PdfPCell(new Phrase("", letraNormalChica)) { Border = 0 };
 
-            var col39 = new PdfPCell(new Phrase("Centro de Servicio", letraNormalChica)) { Border = 0 };
+            var col39 = new PdfPCell(new Phrase("", letraNormalChica)) { Border = 0 };
             var col40 = new PdfPCell(new Phrase("", letraoNegritaChicaEncabezado)) { HorizontalAlignment = Element.ALIGN_RIGHT, Border = 0 };
 
             var col41 = new PdfPCell(new Phrase("", letraNormalChica)) { Border = 0 };

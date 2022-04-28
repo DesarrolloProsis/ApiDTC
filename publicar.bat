@@ -2,7 +2,7 @@
 
 cd /d %~dp0
 
-set /p pagina=Nombre de la pagina:
+set /p pagina= Nombre de la pagina: 
 
 setlocal EnableDelayedExpansion 
 
@@ -41,6 +41,13 @@ copy %cd%\ApiDTC\bin\Debug\netcoreapp2.1\publish\* C:\inetpub\wwwroot\%pagina%\
 FOR /d %%i IN (%cd%\ApiDTC\bin\Debug\netcoreapp2.1\publish\*) DO move "%%i" C:\inetpub\wwwroot\%pagina%\%%~ni
 
 echo Publicado con exito
+
+echo
+echo          //
+echo        _//
+echo       (')---.
+echo        _/-_( )o
+echo 
 
 if defined condition (
 
