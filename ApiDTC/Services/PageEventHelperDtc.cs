@@ -374,7 +374,10 @@ namespace ApiDTC.Services
             //var col18 = new PdfPCell(new Phrase(_newConvenio.Email, letraSubAzulChica)) { Border = 0 };
 
             var col19 = new PdfPCell(new Phrase("Fecha de siniestro:", letraNormalChica)) { Border = 0 };
-            var col20 = new PdfPCell(new Phrase(Convert.ToDateTime(_tableDTCData.Rows[0]["SinisterDate"]).ToString("dd/MM/yyyy"), letraoNegritaDatos)) { Border = 0 };
+
+            PdfPCell col20 = new PdfPCell(new Phrase("", letraoNegritaDatos)) { Border = 0 }; ;
+            if (!(Convert.ToInt16(_tableDTCData.Rows[0]["TypeFaultId"].ToString()) == 3))
+                col20 = new PdfPCell(new Phrase(Convert.ToDateTime(_tableDTCData.Rows[0]["SinisterDate"]).ToString("dd/MM/yyyy"), letraoNegritaDatos)) { Border = 0 };
 
             var col21 = new PdfPCell(new Phrase("", letraNormalChica)) { Border = 0 };
             var col22 = new PdfPCell(new Phrase("", letraNormalChica)) { Border = 0 };
