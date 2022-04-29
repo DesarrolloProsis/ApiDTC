@@ -6,6 +6,9 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using Microsoft.Extensions.Configuration;
 using System.IO;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace ApiDTC.Controllers
 {
@@ -147,7 +150,7 @@ namespace ApiDTC.Controllers
             }
             catch (IOException ex)
             {
-                _apiLogger.WriteLog(referenciaAnexo, ex, "ReporteFotograficoController: GetReporteEqupoNuevo", 2);
+                _apiLogger.WriteLog(referenciaAnexo, ex, "AnexoDTCController: AnexoA", 2);
                 return NotFound(ex.ToString());
             }
         }
@@ -170,31 +173,48 @@ namespace ApiDTC.Controllers
             }
             catch (IOException ex)
             {
-                _apiLogger.WriteLog(referenciaAnexo, ex, "ReporteFotograficoController: GetReporteEqupoNuevo", 2);
+                _apiLogger.WriteLog(referenciaAnexo, ex, "AnexoDTCController: AnexoB", 2);
                 return NotFound(ex.ToString());
             }
         }
-        
-        [HttpGet("AnexoReporteFotografico/{clavePlaza}/{referenceNumber}/{ubicacion}")]
-        public IActionResult GetReporteFotografico(string clavePlaza, string referenceNumber, string ubicacion)
+
+        [HttpGet("DeleteAnexo/{clavePlaza}/{referenceNumber}")]
+        public ActionResult<string> DeleteEquipoNuevoImgs(string clavePlaza, string referenceNumber, string referenceAnexo)
         {
             try
             {
-                var dataSet = _db.GetAnexoPDFReporteFotografico(clavePlaza, referenceNumber);
-                if (dataSet.Tables[0].Rows.Count == 0)
-                    return NotFound("GetStoredPdf retorna tabla vacía");
-                ReporteFotograficoPdfCreation pdf = new ReporteFotograficoPdfCreation(clavePlaza, dataSet.Tables[0], new ApiLogger(), 4, referenceNumber, ubicacion);
-                var pdfResult = pdf.NewPdf($@"{this._disk}:\{this._folder}");
-                if (pdfResult.Result == null)
-                    return NotFound(pdfResult.Message);
-                return File(new FileStream(pdfResult.Result.ToString(), FileMode.Open, FileAccess.Read), "application/pdf");
+                string vecesBorrado = "1";
+                string path = $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\DTC\{referenceNumber}";
+
+                if (!Directory.Exists($@"{path}\Anexos"))
+                    return NotFound("Carpeta a borrar no encontrada " + $@"{path}\Anexos");
+
+                if (!Directory.Exists($@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\Borrado\DTC\{referenceNumber}\{vecesBorrado}"))
+                    Directory.CreateDirectory($@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\Borrado\DTC\{referenceNumber}\{vecesBorrado}");
+                else
+                {
+                    string[] subdirs = Directory.GetDirectories($@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\Borrado\DTC\{referenceNumber}\");
+                    var sorted = subdirs.OrderBy(x => x.Length)
+                                         .Reverse()
+                                         .ToArray()
+                                         .ToList();
+                    if (sorted.Count() >= 10)
+                        vecesBorrado = (Int16.Parse(sorted[0].ToString().Substring(sorted[0].ToString().Length - 2)) + 1).ToString();
+                    else
+                        vecesBorrado = (Int16.Parse(sorted[0].ToString().Substring(sorted[0].ToString().Length - 1)) + 1).ToString();
+                    Directory.CreateDirectory($@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\Borrado\DTC\{referenceNumber}\{vecesBorrado}");
+                }
+
+                Directory.Move($@"{path}\Anexos", $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\Borrado\DTC\{referenceNumber}\{vecesBorrado}\Anexos");
+                Directory.Move($@"{path}\Reportes Fotograficos Equipo Nuevo", $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\Borrado\DTC\{referenceNumber}\{vecesBorrado}\Reportes Fotograficos Equipo Nuevo");
+
+                return Ok("Los archivos se han movido exitosamente a la carpeta: " + $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\Borrado\DTC\{referenceNumber}\{vecesBorrado}");
             }
             catch (IOException ex)
             {
-                _apiLogger.WriteLog(clavePlaza, ex, "ReporteFotograficoController: GetReporteFotografico", 2);
+                _apiLogger.WriteLog(clavePlaza, ex, "AnexoDTCController: DeleteAnexo", 2);
                 return NotFound(ex.ToString());
             }
-
         }
     }
 }
