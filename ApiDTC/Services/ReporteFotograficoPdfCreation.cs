@@ -71,12 +71,14 @@
                 directory = $@"{folder}\{_clavePlaza.ToUpper()}\DTC\{_referenceNumber}\Reportes Fotograficos Equipo Nuevo";
             else
                 directory = $@"{folder}\{_clavePlaza.ToUpper()}\DTC\{_referenceNumber}";
-            if (!Directory.Exists(directory))
+            if (!Directory.Exists(directory) && _tipo != 2)
                 return new Response
                 {
                     Message = "Error: No existe el directorio",
                     Result = null
                 };
+            else
+                Directory.CreateDirectory($@"{folder}\{_clavePlaza.ToUpper()}\DTC\{_referenceNumber}\Reportes Fotograficos Equipo Nuevo");
 
             if (_tipo == 1)
                 filename = $"ReporteFotográfico-{_referenceNumber}.pdf";
