@@ -416,7 +416,7 @@
         {
             try
             {
-                string directoy = $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\DTC\{reportNumber}\imgs";
+                string directoy = $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\DTC\{reportNumber}\Reportes Fotograficos Equipo Nuevo\Imgs";
                 List<string> dtcImages = new List<string>();
                 if (!Directory.Exists(directoy))
                     return Ok(dtcImages);
