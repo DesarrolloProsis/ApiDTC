@@ -40,6 +40,8 @@ copy %cd%\ApiDTC\bin\Debug\netcoreapp2.1\publish\* C:\inetpub\wwwroot\%pagina%\
 
 FOR /d %%i IN (%cd%\ApiDTC\bin\Debug\netcoreapp2.1\publish\*) DO move "%%i" C:\inetpub\wwwroot\%pagina%\%%~ni
 
+XCOPY  /S /I /E /Y %cd%\ApiDTC\bin\Debug\netcoreapp2.1\publish\ C:\inetpub\wwwroot\%pagina%
+
 echo Publicado con exito
 
 echo
