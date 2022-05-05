@@ -23,6 +23,8 @@
         private readonly string _ubicacion;
 
         private readonly string _referenceNumber;
+
+        private readonly string _referenceAnexo;
         string directoryImageDiagnostico;   //las fotos del diagnostico son las mismas que en reporte equipo dañado
         #endregion
 
@@ -47,7 +49,7 @@
 
         #region Constructors
 
-        public ReporteFotograficoPdfCreation(string clavePlaza, DataTable tableHeader, ApiLogger apiLogger, int tipo, string referenceNumber, string ubicacion)
+        public ReporteFotograficoPdfCreation(string clavePlaza, DataTable tableHeader, ApiLogger apiLogger, int tipo, string referenceNumber, string ubicacion, string referenceAnexo = "")
         {
             _clavePlaza = clavePlaza;
             _apiLogger = apiLogger;
@@ -55,6 +57,7 @@
             _tipo = tipo;
             _referenceNumber = referenceNumber;
             _ubicacion = ubicacion;
+            _referenceAnexo = referenceAnexo;
         }
 
         #endregion
@@ -68,7 +71,7 @@
             if (_tipo == 1)
                 directory = $@"{folder}\{_clavePlaza.ToUpper()}\Reportes\{_referenceNumber}";
             else if (_tipo == 2)
-                directory = $@"{folder}\{_clavePlaza.ToUpper()}\DTC\{_referenceNumber}\Reportes Fotograficos Equipo Nuevo";
+                directory = $@"{folder}\{_clavePlaza.ToUpper()}\DTC\{_referenceNumber}\Reportes Fotograficos Equipo Nuevo\{_referenceAnexo}";
             else
                 directory = $@"{folder}\{_clavePlaza.ToUpper()}\DTC\{_referenceNumber}";
             if (!Directory.Exists(directory) && _tipo != 2)
@@ -78,7 +81,7 @@
                     Result = null
                 };
             else
-                Directory.CreateDirectory($@"{folder}\{_clavePlaza.ToUpper()}\DTC\{_referenceNumber}\Reportes Fotograficos Equipo Nuevo");
+                Directory.CreateDirectory($@"{folder}\{_clavePlaza.ToUpper()}\DTC\{_referenceNumber}\Reportes Fotograficos Equipo Nuevo\{_referenceAnexo}");
 
             if (_tipo == 1)
                 filename = $"ReporteFotográfico-{_referenceNumber}.pdf";

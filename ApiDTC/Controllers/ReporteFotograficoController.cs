@@ -411,12 +411,12 @@
         }
 
         #region Anexo
-        [HttpGet("Images/GetPaths/{clavePlaza}/{reportNumber}")]
-        public ActionResult<List<string>> GetImagesNuevo(string clavePlaza, string reportNumber)
+        [HttpGet("Images/GetPaths/{clavePlaza}/{reportNumber}/{referenceAnexo}")]
+        public ActionResult<List<string>> GetImagesNuevo(string clavePlaza, string reportNumber, string referenceAnexo)
         {
             try
             {
-                string directoy = $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\DTC\{reportNumber}\Reportes Fotograficos Equipo Nuevo\Imgs";
+                string directoy = $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\DTC\{reportNumber}\Reportes Fotograficos Equipo Nuevo\{referenceAnexo}\Imgs";
                 List<string> dtcImages = new List<string>();
                 if (!Directory.Exists(directoy))
                     return Ok(dtcImages);
@@ -431,14 +431,14 @@
             }
         }
 
-        [HttpPost("EquipoNuevo/Images/{clavePlaza}/{reportNumber}")]
-        public ActionResult<Response> InsertImageNuev(string clavePlaza, [FromForm(Name = "image")] IFormFile image, string reportNumber)
+        [HttpPost("EquipoNuevo/Images/{clavePlaza}/{reportNumber}/{referenceAnexo}")]
+        public ActionResult<Response> InsertImageNuev(string clavePlaza, [FromForm(Name = "image")] IFormFile image, string reportNumber, string referenceAnexo)
         {
             if (image.Length > 0 || image != null)
             {
                 int numberOfImages;
-                string dir = $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\DTC\{reportNumber}\Reportes Fotograficos Equipo Nuevo\Imgs";
-                string dirFull = $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\DTC\{reportNumber}\Reportes Fotograficos Equipo Nuevo\ImgsFullSize";
+                string dir = $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\DTC\{reportNumber}\Reportes Fotograficos Equipo Nuevo\{referenceAnexo}\Imgs";
+                string dirFull = $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\DTC\{reportNumber}\Reportes Fotograficos Equipo Nuevo\{referenceAnexo}\ImgsFullSize";
                 string filename;
                 try
                 {
@@ -492,12 +492,12 @@
         }
 
         [AllowAnonymous]
-        [HttpGet("EquipoNuevo/Images/{clavePlaza}/{reportNumber}/{fileName}")]
-        public ActionResult<DtcImage> DownloadEquipoNuevoImgs(string clavePlaza, string reportNumber, string fileName)
+        [HttpGet("EquipoNuevo/Images/{clavePlaza}/{reportNumber}/{fileName}/{referenceAnexo}")]
+        public ActionResult<DtcImage> DownloadEquipoNuevoImgs(string clavePlaza, string reportNumber, string fileName, string referenceAnexo)
         {
             try
             {
-                string path = $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\DTC\{reportNumber}\Reportes Fotograficos Equipo Nuevo\Imgs\{fileName}";
+                string path = $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\DTC\{reportNumber}\Reportes Fotograficos Equipo Nuevo\{referenceAnexo}\Imgs\{fileName}";
                 if (!System.IO.File.Exists(path))
                     return NotFound("No existe el archivo");
                 Byte[] bitMap = System.IO.File.ReadAllBytes(path);
@@ -512,17 +512,17 @@
         }
 
         [AllowAnonymous]
-        [HttpGet("EquipoNuevo/Images/DeleteImg/{clavePlaza}/{reportNumber}/{fileName}")]
-        public ActionResult<string> DeleteEquipoNuevoImgs(string clavePlaza, string reportNumber, string fileName)
+        [HttpGet("EquipoNuevo/Images/DeleteImg/{clavePlaza}/{reportNumber}/{fileName}/{referenceAnexo}")]
+        public ActionResult<string> DeleteEquipoNuevoImgs(string clavePlaza, string reportNumber, string fileName, string referenceAnexo)
         {
             try
             {
-                string path = $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\DTC\{reportNumber}\Reportes Fotograficos Equipo Nuevo\Imgs\{fileName}";
+                string path = $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\DTC\{reportNumber}\Reportes Fotograficos Equipo Nuevo\{referenceAnexo}\Imgs\{fileName}";
                 if (!System.IO.File.Exists(path))
                     return NotFound(path);
                 System.IO.File.Delete(path);
-                if (Directory.GetFiles($@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\DTC\{reportNumber}\Reportes Fotograficos Equipo Nuevo\Imgs").Length == 0)
-                    Directory.Delete($@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\DTC\{reportNumber}\Reportes Fotograficos Equipo Nuevo\Imgs");
+                if (Directory.GetFiles($@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\DTC\{reportNumber}\Reportes Fotograficos Equipo Nuevo\{referenceAnexo}\Imgs").Length == 0)
+                    Directory.Delete($@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\DTC\{reportNumber}\Reportes Fotograficos Equipo Nuevo\{referenceAnexo}\Imgs");
                 return Ok(path);
             }
             catch (IOException ex)
@@ -541,7 +541,7 @@
                 var dataSet = _db.GetStoreNuevoPDF(clavePlaza, referenceNumber, referenceAnexo);
                 if (dataSet.Tables[0].Rows.Count == 0)
                     return NotFound("GetStoredPdf retorna tabla vacía");
-                ReporteFotograficoPdfCreation pdf = new ReporteFotograficoPdfCreation(clavePlaza, dataSet.Tables[0], new ApiLogger(), 2, referenceNumber, ubicacion);
+                ReporteFotograficoPdfCreation pdf = new ReporteFotograficoPdfCreation(clavePlaza, dataSet.Tables[0], new ApiLogger(), 2, referenceNumber, ubicacion, referenceAnexo);
                 var pdfResult = pdf.NewPdf($@"{this._disk}:\{this._folder}");
                 if (pdfResult.Result == null)
                     return NotFound(pdfResult.Message);
