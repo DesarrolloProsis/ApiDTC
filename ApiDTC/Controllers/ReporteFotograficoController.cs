@@ -16,6 +16,7 @@
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Configuration;
+    using System.Data;
 
     [Route("api/[controller]")]
     [ApiController]
@@ -411,12 +412,19 @@
         }
 
         #region Anexo
-        [HttpGet("Images/GetPaths/{clavePlaza}/{reportNumber}/{referenceAnexo}")]
-        public ActionResult<List<string>> GetImagesNuevo(string clavePlaza, string reportNumber, string referenceAnexo)
+
+        [AllowAnonymous]
+        [HttpGet("Images/GetPaths/{clavePlaza}/{reportNumber}/{referenceAnexo}/{isSubAnexo}")]
+        public ActionResult<List<string>> GetImagesNuevo(string clavePlaza, string reportNumber, string referenceAnexo, bool isSubAnexo)
         {
             try
             {
-                string directoy = $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\DTC\{reportNumber}\Reportes Fotograficos Equipo Nuevo\{referenceAnexo}\Imgs";
+                var dataSet = _db.GetMostRecentAnexoReference(clavePlaza, referenceAnexo, isSubAnexo);
+                if (dataSet.Tables[0].Rows.Count == 0)
+                    return NotFound("spMostRecentSubAnexo retorna tabla vacía");
+                DataTable TableAnexo = dataSet.Tables[0];
+
+                string directoy = $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\DTC\{reportNumber}\Reportes Fotograficos Equipo Nuevo\{TableAnexo.Rows[0]["NewerReference"]}\Imgs";
                 List<string> dtcImages = new List<string>();
                 if (!Directory.Exists(directoy))
                     return Ok(dtcImages);
@@ -431,17 +439,24 @@
             }
         }
 
-        [HttpPost("EquipoNuevo/Images/{clavePlaza}/{reportNumber}/{referenceAnexo}")]
-        public ActionResult<Response> InsertImageNuev(string clavePlaza, [FromForm(Name = "image")] IFormFile image, string reportNumber, string referenceAnexo)
+        [AllowAnonymous]
+        [HttpPost("EquipoNuevo/Images/{clavePlaza}/{reportNumber}/{referenceAnexo}/{isSubAnexo}")]
+        public ActionResult<Response> InsertImageNuev(string clavePlaza, [FromForm(Name = "image")] IFormFile image, string reportNumber, string referenceAnexo, bool isSubAnexo)
         {
-            if (image.Length > 0 || image != null)
+            try
             {
-                int numberOfImages;
-                string dir = $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\DTC\{reportNumber}\Reportes Fotograficos Equipo Nuevo\{referenceAnexo}\Imgs";
-                string dirFull = $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\DTC\{reportNumber}\Reportes Fotograficos Equipo Nuevo\{referenceAnexo}\ImgsFullSize";
-                string filename;
-                try
+                var dataSet = _db.GetMostRecentAnexoReference(clavePlaza, referenceAnexo, isSubAnexo);
+                if (dataSet.Tables[0].Rows.Count == 0)
+                    return NotFound("spMostRecentSubAnexo retorna tabla vacía");
+                DataTable TableAnexo = dataSet.Tables[0];
+
+                if (image.Length > 0 || image != null)
                 {
+                    int numberOfImages;
+                    string dir = $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\DTC\{reportNumber}\Reportes Fotograficos Equipo Nuevo\{TableAnexo.Rows[0]["NewerReference"]}\Imgs";
+                    string dirFull = $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\DTC\{reportNumber}\Reportes Fotograficos Equipo Nuevo\{TableAnexo.Rows[0]["NewerReference"]}\ImgsFullSize";
+                    string filename;
+
                     if (!Directory.Exists(dir))
                         Directory.CreateDirectory(dir);
 
@@ -480,24 +495,31 @@
                         }
                     }
                     return Ok(Path.Combine(dir, filename));
+
                 }
-                catch (IOException ex)
-                {
-                    _apiLogger.WriteLog(clavePlaza, ex, "ReporteFotograficoController: InsertImage", 2);
-                    return NotFound(ex.ToString());
-                }
+                else
+                    return NotFound("Insert another image");
             }
-            else
-                return NotFound("Insert another image");
+            catch (IOException ex)
+            {
+                _apiLogger.WriteLog(clavePlaza, ex, "ReporteFotograficoController: InsertImage", 2);
+                return NotFound(ex.ToString());
+            }
+            
         }
 
         [AllowAnonymous]
-        [HttpGet("EquipoNuevo/Images/{clavePlaza}/{reportNumber}/{fileName}/{referenceAnexo}")]
-        public ActionResult<DtcImage> DownloadEquipoNuevoImgs(string clavePlaza, string reportNumber, string fileName, string referenceAnexo)
+        [HttpGet("EquipoNuevo/Images/{clavePlaza}/{reportNumber}/{fileName}/{referenceAnexo}/{isSubAnexo}")]
+        public ActionResult<DtcImage> DownloadEquipoNuevoImgs(string clavePlaza, string reportNumber, string fileName, string referenceAnexo, bool isSubAnexo)
         {
             try
             {
-                string path = $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\DTC\{reportNumber}\Reportes Fotograficos Equipo Nuevo\{referenceAnexo}\Imgs\{fileName}";
+                var dataSet = _db.GetMostRecentAnexoReference(clavePlaza, referenceAnexo, isSubAnexo);
+                if (dataSet.Tables[0].Rows.Count == 0)
+                    return NotFound("spMostRecentSubAnexo retorna tabla vacía");
+                DataTable TableAnexo = dataSet.Tables[0];
+
+                string path = $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\DTC\{reportNumber}\Reportes Fotograficos Equipo Nuevo\{TableAnexo.Rows[0]["NewerReference"]}\Imgs\{fileName}";
                 if (!System.IO.File.Exists(path))
                     return NotFound("No existe el archivo");
                 Byte[] bitMap = System.IO.File.ReadAllBytes(path);
@@ -512,17 +534,22 @@
         }
 
         [AllowAnonymous]
-        [HttpGet("EquipoNuevo/Images/DeleteImg/{clavePlaza}/{reportNumber}/{fileName}/{referenceAnexo}")]
-        public ActionResult<string> DeleteEquipoNuevoImgs(string clavePlaza, string reportNumber, string fileName, string referenceAnexo)
+        [HttpGet("EquipoNuevo/Images/DeleteImg/{clavePlaza}/{reportNumber}/{fileName}/{referenceAnexo}/{isSubAnexo}")]
+        public ActionResult<string> DeleteEquipoNuevoImgs(string clavePlaza, string reportNumber, string fileName, string referenceAnexo, bool isSubAnexo)
         {
             try
             {
-                string path = $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\DTC\{reportNumber}\Reportes Fotograficos Equipo Nuevo\{referenceAnexo}\Imgs\{fileName}";
+                var dataSet = _db.GetMostRecentAnexoReference(clavePlaza, referenceAnexo, isSubAnexo);
+                if (dataSet.Tables[0].Rows.Count == 0)
+                    return NotFound("spMostRecentSubAnexo retorna tabla vacía");
+                DataTable TableAnexo = dataSet.Tables[0];
+
+                string path = $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\DTC\{reportNumber}\Reportes Fotograficos Equipo Nuevo\{TableAnexo.Rows[0]["NewerReference"]}\Imgs\{fileName}";
                 if (!System.IO.File.Exists(path))
                     return NotFound(path);
                 System.IO.File.Delete(path);
-                if (Directory.GetFiles($@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\DTC\{reportNumber}\Reportes Fotograficos Equipo Nuevo\{referenceAnexo}\Imgs").Length == 0)
-                    Directory.Delete($@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\DTC\{reportNumber}\Reportes Fotograficos Equipo Nuevo\{referenceAnexo}\Imgs");
+                if (Directory.GetFiles($@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\DTC\{reportNumber}\Reportes Fotograficos Equipo Nuevo\{TableAnexo.Rows[0]["NewerReference"]}\Imgs").Length == 0)
+                    Directory.Delete($@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\DTC\{reportNumber}\Reportes Fotograficos Equipo Nuevo\{TableAnexo.Rows[0]["NewerReference"]}\Imgs");
                 return Ok(path);
             }
             catch (IOException ex)
@@ -533,12 +560,12 @@
         }
 
         [AllowAnonymous]
-        [HttpGet("Nuevo/{clavePlaza}/{ubicacion}/{referenceNumber}/{referenceAnexo}")]
-        public IActionResult GetReporteEquipoNuevo(string clavePlaza, string ubicacion, string referenceNumber, string referenceAnexo)
+        [HttpGet("Nuevo/{clavePlaza}/{ubicacion}/{referenceNumber}/{referenceAnexo}/{isSubAnexo}")]
+        public IActionResult GetReporteEquipoNuevo(string clavePlaza, string ubicacion, string referenceNumber, string referenceAnexo, bool isSubAnexo)
         {
             try
             {
-                var dataSet = _db.GetStoreNuevoPDF(clavePlaza, referenceNumber, referenceAnexo);
+                var dataSet = _db.GetStoreNuevoPDF(clavePlaza, referenceNumber, referenceAnexo, isSubAnexo);
                 if (dataSet.Tables[0].Rows.Count == 0)
                     return NotFound("GetStoredPdf retorna tabla vacía");
                 ReporteFotograficoPdfCreation pdf = new ReporteFotograficoPdfCreation(clavePlaza, dataSet.Tables[0], new ApiLogger(), 2, referenceNumber, ubicacion, referenceAnexo);
@@ -551,6 +578,76 @@
             {
                 _apiLogger.WriteLog(clavePlaza, ex, "ReporteFotograficoController: GetReporteEquipoDañado", 2);
                 return NotFound(ex.ToString());
+            }
+        }
+
+        [AllowAnonymous]
+        [HttpPost("CopyAnexoImages/{clavePlaza}/{referenceNumber}/{referenceAnexo}")]
+        public ActionResult<string> DeleteEquipoNuevoImgs(string clavePlaza, string referenceNumber, string referenceAnexo)
+        {
+            try
+            {
+                var dataSet = _db.GetMostRecentAnexoReference(clavePlaza, referenceAnexo, true);
+                if (dataSet.Tables[0].Rows.Count == 0)
+                    return NotFound("spMostRecentSubAnexo retorna tabla vacía");
+
+                string path = $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\DTC\{referenceNumber}\Reportes Fotograficos Equipo Nuevo";
+                DataTable TableAnexo = dataSet.Tables[0];
+                string subAnexoMasReciente = TableAnexo.Rows[0]["NewerReference"].ToString();
+
+                if (subAnexoMasReciente.Equals(referenceAnexo + "-2"))
+                {
+                    CopyDirectory($@"{path}\{referenceAnexo}\Imgs", $@"{path}\{subAnexoMasReciente}\Imgs", false);
+                    CopyDirectory($@"{path}\{referenceAnexo}\ImgsFullSize", $@"{path}\{subAnexoMasReciente}\ImgsFullSize", false);
+                }
+                else
+                {
+                    string carpetaPasada = subAnexoMasReciente.Substring(subAnexoMasReciente.Length - 2);
+                    if (carpetaPasada.Contains('-'))
+                        carpetaPasada = carpetaPasada.Replace("-", string.Empty);
+                    int numCarpetaPasada = Int16.Parse(carpetaPasada) - 1;
+
+                    CopyDirectory($@"{path}\{referenceAnexo}-{numCarpetaPasada}\Imgs", $@"{path}\{subAnexoMasReciente}\Imgs", false);
+                    CopyDirectory($@"{path}\{referenceAnexo}-{numCarpetaPasada}\ImgsFullSize", $@"{path}\{subAnexoMasReciente}\ImgsFullSize", false);
+                }
+                return Ok("Los archivos se han copiado exitosamente a la carpeta: " + $@"{path}\{subAnexoMasReciente}\Imgs");
+            }
+            catch (IOException ex)
+            {
+                _apiLogger.WriteLog(clavePlaza, ex, "AnexoDTCController: DeleteAnexo", 2);
+                return NotFound(ex.ToString());
+            }
+        }
+        static void CopyDirectory(string sourceDir, string destinationDir, bool recursive)
+        {
+            // Get information about the source directory
+            var dir = new DirectoryInfo(sourceDir);
+
+            // Check if the source directory exists
+            if (!dir.Exists)
+                throw new DirectoryNotFoundException($"Source directory not found: {dir.FullName}");
+
+            // Cache directories before we start copying
+            DirectoryInfo[] dirs = dir.GetDirectories();
+
+            // Create the destination directory
+            Directory.CreateDirectory(destinationDir);
+
+            // Get the files in the source directory and copy to the destination directory
+            foreach (FileInfo file in dir.GetFiles())
+            {
+                string targetFilePath = Path.Combine(destinationDir, file.Name);
+                file.CopyTo(targetFilePath);
+            }
+
+            // If recursive and copying subdirectories, recursively call this method
+            if (recursive)
+            {
+                foreach (DirectoryInfo subDir in dirs)
+                {
+                    string newDestinationDir = Path.Combine(destinationDir, subDir.Name);
+                    CopyDirectory(subDir.FullName, newDestinationDir, true);
+                }
             }
         }
 

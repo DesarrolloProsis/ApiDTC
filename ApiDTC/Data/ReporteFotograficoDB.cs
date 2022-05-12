@@ -64,14 +64,14 @@
             }
         }
 
-        public DataSet GetStoreNuevoPDF(string clavePlaza, string referenceNumber, string referenceAnexo)
+        public DataSet GetStoreNuevoPDF(string clavePlaza, string referenceNumber, string referenceAnexo, bool isSubAnexo)
         {
             try
             {
                 using (SqlConnection sql = new SqlConnection(_connectionString))
                 {
                     //spPhotoReport DEBE TRAER EL DIAGNOSTICO
-                    using (SqlCommand cmd = new SqlCommand("dbo.spPhotoReportNuevos", sql))
+                    using (SqlCommand cmd = new SqlCommand("dbo.spPhotoReportNuevosTemp", sql))
                     {
                         SqlDataAdapter sqlDataAdapter = new SqlDataAdapter();
                         DataSet dataSet = new DataSet();
@@ -79,6 +79,7 @@
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.Add("@ReferenceNumber", SqlDbType.NVarChar).Value = referenceNumber;
                         cmd.Parameters.Add("@ReferenceNumberAnexo", SqlDbType.NVarChar).Value = referenceAnexo;
+                        cmd.Parameters.Add("@isSubVersion", SqlDbType.Bit).Value = isSubAnexo;
 
                         sql.Open();
                         sqlDataAdapter = new SqlDataAdapter(cmd);
@@ -124,6 +125,38 @@
             catch (SqlException ex)
             {
                 _apiLogger.WriteLog(clavePlaza, ex, "ReporteFotograficoDb: GetStorePDF", 1);
+                return null;
+            }
+        }
+
+        public DataSet GetMostRecentAnexoReference(string clavePlaza, string referenceAnexo, bool isSubAnexo)
+        {
+            try
+            {
+                using (SqlConnection sql = new SqlConnection(_connectionString))
+                {
+                    using (SqlCommand cmd = new SqlCommand("dbo.spMostRecentSubAnexo", sql))
+                    {
+                        SqlDataAdapter sqlDataAdapter = new SqlDataAdapter();
+                        DataSet dataSet = new DataSet();
+
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.Add("@ReferenceNumberAnexo", SqlDbType.NVarChar).Value = referenceAnexo;
+                        cmd.Parameters.Add("@isSubVersion", SqlDbType.Bit).Value = isSubAnexo;
+
+                        sql.Open();
+                        sqlDataAdapter = new SqlDataAdapter(cmd);
+                        sqlDataAdapter.Fill(dataSet);
+
+                        sql.Close();
+
+                        return dataSet;
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                _apiLogger.WriteLog(clavePlaza, ex, "ReporteFotograficoDb: spMostRecentSubAnexo", 1);
                 return null;
             }
         }

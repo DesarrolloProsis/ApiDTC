@@ -754,16 +754,19 @@ namespace ApiDTC.Services
                                                 grpCount = grp.Count()
                                             };
 
-
+                string NoSerie = "Sin Número";
                 for (int i = 0; i < componentesGropuped.Count(); i++)
                 {
-                    var cantidad = new PdfPCell(new Phrase(componentesGropuped.ElementAt(i).grpCount.ToString(), letraoNegritaMediana)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, PaddingTop = 9, PaddingLeft = 3, PaddingRight = 3, PaddingBottom = 7 };
-                    var componente = new PdfPCell(new Phrase(componentesGropuped.ElementAt(i).grpComponente.ToString(), letraoNegritaMediana)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, PaddingTop = 9, PaddingLeft = 3, PaddingRight = 3, PaddingBottom = 7 };
-                    var marcaMod = new PdfPCell(new Phrase(componentesGropuped.ElementAt(i).grpMOD_MARCA.ToString(), letraoNegritaMediana)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, PaddingTop = 9, PaddingLeft = 3, PaddingRight = 3, PaddingBottom = 7 };
-                    var serie = new PdfPCell(new Phrase(componentesGropuped.ElementAt(i).grpSerie.ToString(), letraoNegritaMediana)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, PaddingTop = 9, PaddingLeft = 3, PaddingRight = 3, PaddingBottom = 7 };
-                    var inventario = new PdfPCell(new Phrase(componentesGropuped.ElementAt(i).grpInventario.ToString(), letraoNegritaMediana)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, PaddingTop = 9, PaddingLeft = 3, PaddingRight = 3, PaddingBottom = 7 };
-                    var ubicacion = new PdfPCell(new Phrase(componentesGropuped.ElementAt(i).grpCarril.ToString(), letraoNegritaMediana)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, PaddingTop = 9, PaddingLeft = 3, PaddingRight = 3, PaddingBottom = 7 };
-                    var Observaciones = new PdfPCell(new Phrase("Dañado", letraoNegritaMediana)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, PaddingTop = 9, PaddingLeft = 3, PaddingRight = 3, PaddingBottom = 7 };
+                    if (!DBNull.Value.Equals(componentesGropuped.ElementAt(i).grpSerie))
+                        NoSerie = componentesGropuped.ElementAt(i).grpSerie.ToString();
+
+                    var cantidad = new PdfPCell(new Phrase(componentesGropuped.ElementAt(i).grpCount.ToString(), letraNormalMediana)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, PaddingTop = 9, PaddingLeft = 3, PaddingRight = 3, PaddingBottom = 7 };
+                    var componente = new PdfPCell(new Phrase(componentesGropuped.ElementAt(i).grpComponente.ToString(), letraNormalMediana)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, PaddingTop = 9, PaddingLeft = 3, PaddingRight = 3, PaddingBottom = 7 };
+                    var marcaMod = new PdfPCell(new Phrase(componentesGropuped.ElementAt(i).grpMOD_MARCA.ToString(), letraNormalMediana)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, PaddingTop = 9, PaddingLeft = 3, PaddingRight = 3, PaddingBottom = 7 };
+                    var serie = new PdfPCell(new Phrase(NoSerie, letraNormalMediana)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, PaddingTop = 9, PaddingLeft = 3, PaddingRight = 3, PaddingBottom = 7 };
+                    var inventario = new PdfPCell(new Phrase(componentesGropuped.ElementAt(i).grpInventario.ToString(), letraNormalMediana)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, PaddingTop = 9, PaddingLeft = 3, PaddingRight = 3, PaddingBottom = 7 };
+                    var ubicacion = new PdfPCell(new Phrase(componentesGropuped.ElementAt(i).grpCarril.ToString(), letraNormalMediana)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, PaddingTop = 9, PaddingLeft = 3, PaddingRight = 3, PaddingBottom = 7 };
+                    var Observaciones = new PdfPCell(new Phrase("Dañado", letraNormalMediana)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, PaddingTop = 9, PaddingLeft = 3, PaddingRight = 3, PaddingBottom = 7 };
 
                     table.AddCell(cantidad);
                     table.AddCell(componente);
@@ -845,16 +848,19 @@ namespace ApiDTC.Services
                                                 grpCount = grp.Count()
                                             };
 
-
+                string NoSerie = "Sin Número";
                 for (int i = 0; i < componentesGropuped.Count(); i++)
                 {
-                    var cantidad = new PdfPCell(new Phrase(componentesGropuped.ElementAt(i).grpCount.ToString(), letraoNegritaMediana)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, PaddingTop = 9, PaddingLeft = 3, PaddingRight = 3, PaddingBottom = 7 };
-                    var componente = new PdfPCell(new Phrase(componentesGropuped.ElementAt(i).grpComponente.ToString(), letraoNegritaMediana)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, PaddingTop = 9, PaddingLeft = 3, PaddingRight = 3, PaddingBottom = 7 };
-                    var marcaMod = new PdfPCell(new Phrase(componentesGropuped.ElementAt(i).grpMOD_MARCA.ToString(), letraoNegritaMediana)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, PaddingTop = 9, PaddingLeft = 3, PaddingRight = 3, PaddingBottom = 7 };
-                    var serie = new PdfPCell(new Phrase(componentesGropuped.ElementAt(i).grpSerie.ToString(), letraoNegritaMediana)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, PaddingTop = 9, PaddingLeft = 3, PaddingRight = 3, PaddingBottom = 7 };
-                    var inventario = new PdfPCell(new Phrase(componentesGropuped.ElementAt(i).grpInventario.ToString(), letraoNegritaMediana)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, PaddingTop = 9, PaddingLeft = 3, PaddingRight = 3, PaddingBottom = 7 };
-                    var ubicacion = new PdfPCell(new Phrase(componentesGropuped.ElementAt(i).grpCarril.ToString(), letraoNegritaMediana)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, PaddingTop = 9, PaddingLeft = 3, PaddingRight = 3, PaddingBottom = 7 };
-                    var Observaciones = new PdfPCell(new Phrase("Nuevo", letraoNegritaMediana)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, PaddingTop = 9, PaddingLeft = 3, PaddingRight = 3, PaddingBottom = 7 };
+                    if (!DBNull.Value.Equals(componentesGropuped.ElementAt(i).grpSerie))
+                        NoSerie = componentesGropuped.ElementAt(i).grpSerie.ToString();
+
+                    var cantidad = new PdfPCell(new Phrase(componentesGropuped.ElementAt(i).grpCount.ToString(), letraNormalMediana)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, PaddingTop = 9, PaddingLeft = 3, PaddingRight = 3, PaddingBottom = 7 };
+                    var componente = new PdfPCell(new Phrase(componentesGropuped.ElementAt(i).grpComponente.ToString(), letraNormalMediana)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, PaddingTop = 9, PaddingLeft = 3, PaddingRight = 3, PaddingBottom = 7 };
+                    var marcaMod = new PdfPCell(new Phrase(componentesGropuped.ElementAt(i).grpMOD_MARCA.ToString(), letraNormalMediana)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, PaddingTop = 9, PaddingLeft = 3, PaddingRight = 3, PaddingBottom = 7 };
+                    var serie = new PdfPCell(new Phrase(NoSerie, letraNormalMediana)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, PaddingTop = 9, PaddingLeft = 3, PaddingRight = 3, PaddingBottom = 7 };
+                    var inventario = new PdfPCell(new Phrase(componentesGropuped.ElementAt(i).grpInventario.ToString(), letraNormalMediana)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, PaddingTop = 9, PaddingLeft = 3, PaddingRight = 3, PaddingBottom = 7 };
+                    var ubicacion = new PdfPCell(new Phrase(componentesGropuped.ElementAt(i).grpCarril.ToString(), letraNormalMediana)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, PaddingTop = 9, PaddingLeft = 3, PaddingRight = 3, PaddingBottom = 7 };
+                    var Observaciones = new PdfPCell(new Phrase("Nuevo", letraNormalMediana)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, PaddingTop = 9, PaddingLeft = 3, PaddingRight = 3, PaddingBottom = 7 };
 
                     table.AddCell(cantidad);
                     table.AddCell(componente);
@@ -957,7 +963,7 @@ namespace ApiDTC.Services
                 parrafoEmpresa.Add(porEmpresa);
                 parrafoEmpresa.Alignment = Element.ALIGN_CENTER;
 
-                Chunk admin = _tableAnexo.Rows[0]["DelegationId"].Equals(2) ? new Chunk("SUPERINTENDENTE OPERACIÓN / SUPERVISIÓN", letraoNegritaMediana) : new Chunk("ADMINISTRADOR Y ENCARGADO DE LA SUPERINTENDENCIA DE OPERACIÓN", letraoNegritaMediana);
+                Chunk admin = _tableAnexo.Rows[0]["DelegationId"].Equals(2) || _tableAnexo.Rows[0]["DelegationId"].Equals(3) ? new Chunk("SUPERINTENDENTE OPERACIÓN / SUPERVISIÓN", letraoNegritaMediana) : new Chunk("ADMINISTRADOR Y ENCARGADO DE LA SUPERINTENDENCIA DE OPERACIÓN", letraoNegritaMediana);
                 var parrafoAdmin = new Paragraph();
                 parrafoAdmin.SetLeading(0, 1.2f);
                 parrafoAdmin.Add(admin);
@@ -1063,7 +1069,7 @@ namespace ApiDTC.Services
                     default:
                         break;
                 }
-                Chunk nomAdministrador = _tableAnexo.Rows[0]["DelegationId"].Equals(3)? new Chunk(supervision + "\n SUPERINTENDENTE DE EQUIPO DE CONTROL DE TRÁNSITO\n SUPERVISÓ", letraoNegritaMediana) : new Chunk(supervision + "\n SUPERVISÓ", letraoNegritaMediana);
+                Chunk nomAdministrador = _tableAnexo.Rows[0]["DelegationId"].Equals(3)? new Chunk(supervision + "\n Superintendente de Equipo de Control de Tránsito Unidad Regional Estado de México\n SUPERVISÓ", letraoNegritaMediana) : new Chunk(supervision + "\n SUPERVISÓ", letraoNegritaMediana);
                 var parrafonomAdministrador = new Paragraph();
                 parrafonomAdministrador.SetLeading(0, 1.8f);
                 parrafonomAdministrador.Add(nomAdministrador);

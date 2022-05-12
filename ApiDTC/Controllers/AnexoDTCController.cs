@@ -189,7 +189,7 @@ namespace ApiDTC.Controllers
                 if (!Directory.Exists($@"{path}\Anexos"))
                     return NotFound("Carpeta a borrar no encontrada " + $@"{path}\Anexos");
 
-                if (!Directory.Exists($@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\Borrado\DTC\{referenceNumber}\{vecesBorrado}"))
+                if (!Directory.Exists($@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\Borrado\DTC\{referenceNumber}\Reporte Fotografico Equipo Nuevo\{referenceAnexo}\{vecesBorrado}"))
                     Directory.CreateDirectory($@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\Borrado\DTC\{referenceNumber}\{vecesBorrado}");
                 else
                 {

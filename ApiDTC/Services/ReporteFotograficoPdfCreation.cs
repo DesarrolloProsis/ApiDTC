@@ -71,7 +71,7 @@
             if (_tipo == 1)
                 directory = $@"{folder}\{_clavePlaza.ToUpper()}\Reportes\{_referenceNumber}";
             else if (_tipo == 2)
-                directory = $@"{folder}\{_clavePlaza.ToUpper()}\DTC\{_referenceNumber}\Reportes Fotograficos Equipo Nuevo\{_referenceAnexo}";
+                directory = $@"{folder}\{_clavePlaza.ToUpper()}\DTC\{_referenceNumber}\Reportes Fotograficos Equipo Nuevo\{_tableHeader.Rows[0]["AnexoReference"]}";
             else
                 directory = $@"{folder}\{_clavePlaza.ToUpper()}\DTC\{_referenceNumber}";
             if (!Directory.Exists(directory) && _tipo != 2)
@@ -81,7 +81,7 @@
                     Result = null
                 };
             else
-                Directory.CreateDirectory($@"{folder}\{_clavePlaza.ToUpper()}\DTC\{_referenceNumber}\Reportes Fotograficos Equipo Nuevo\{_referenceAnexo}");
+                Directory.CreateDirectory($@"{folder}\{_clavePlaza.ToUpper()}\DTC\{_referenceNumber}\Reportes Fotograficos Equipo Nuevo\{_tableHeader.Rows[0]["AnexoReference"]}");
 
             if (_tipo == 1)
                 filename = $"ReporteFotográfico-{_referenceNumber}.pdf";
