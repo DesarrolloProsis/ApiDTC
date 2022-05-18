@@ -132,8 +132,8 @@ namespace ApiDTC.Controllers
                 return Ok(get);                            
         }
 
-        [HttpGet("AnexoA/{clavePlaza}/{referenceNumber}/{referenciaAnexo}/{isSubAnexo}")]
-        public IActionResult GetAnexoA(string clavePlaza, string referenceNumber, string referenciaAnexo, bool isSubAnexo)
+        [HttpGet("AnexoA/{clavePlaza}/{referenceNumber}/{referenciaAnexo}/{isSubAnexo}/{mostrarMarcaDeAgua}")]
+        public IActionResult GetAnexoA(string clavePlaza, string referenceNumber, string referenciaAnexo, bool isSubAnexo, bool mostrarMarcaDeAgua)
         {
             try
             {
@@ -141,7 +141,7 @@ namespace ApiDTC.Controllers
                 var dataSet = _db.GetAnexoPDF(referenciaAnexo, isSubAnexo);
                 if (dataSet.Tables[0].Rows.Count == 0)
                     return NotFound("GetStorePdf retorna tabla vacía");
-                AnexosPdfCreation pdf = new AnexosPdfCreation(clavePlaza, referenciaAnexo, referenceNumber, dataSet.Tables[0], dataSet.Tables[1], dataSet.Tables[2], new ApiLogger());
+                AnexosPdfCreation pdf = new AnexosPdfCreation(clavePlaza, referenciaAnexo, referenceNumber, dataSet.Tables[0], dataSet.Tables[1], dataSet.Tables[2], new ApiLogger(), mostrarMarcaDeAgua);
                 var pdfResult = pdf.NewPdfA($@"{this._disk}:\{this._folder}");
                 if (pdfResult.Result == null)
                     return NotFound(pdfResult.Message);

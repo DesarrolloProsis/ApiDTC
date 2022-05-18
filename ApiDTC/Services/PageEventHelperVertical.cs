@@ -6,6 +6,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration.Json;
+using Microsoft.Extensions.Configuration.FileExtensions;
+using System.IO;
 
 namespace ApiDTC.Services
 {
@@ -21,6 +25,10 @@ namespace ApiDTC.Services
         DateTime PrintTime = DateTime.Now;
         #region Properties
         private string _Title;
+        public static IConfigurationRoot Configuration { get; set; }
+
+        public readonly string _connectionProductivo = "Server=10.1.1.10;Database=BitacoraProsis;User=sa;Password=CAPUFE;";
+
         public string Title
         {
             get { return _Title; }
@@ -107,6 +115,7 @@ namespace ApiDTC.Services
 
         public override void OnEndPage(PdfWriter writer, Document document)
         {
+
             base.OnEndPage(writer, document);
             int pageN = writer.PageNumber;
             String text = "Pág. " + pageN;
@@ -127,6 +136,24 @@ namespace ApiDTC.Services
                 pageSize.GetRight(580),
                 pageSize.GetBottom(20), 0);
             cb.EndText();
+
+            var builder = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory()) // <== compile failing here
+                .AddJsonFile("appsettings.json");
+
+            Configuration = builder.Build();
+            string currentConnetction = Configuration.GetConnectionString("defaultConnection");
+            if (!currentConnetction.Equals(_connectionProductivo))
+            {
+                iTextSharp.text.Image marcaDeAgua = iTextSharp.text.Image.GetInstance($@"{System.Environment.CurrentDirectory}\Media\marca de agua.png");
+                marcaDeAgua.ScalePercent(50f);
+                marcaDeAgua.RotationDegrees = 45;
+                marcaDeAgua.SetAbsolutePosition(document.PageSize.Width - 550f, document.PageSize.Height - 600f);
+                PdfGState state = new PdfGState();
+                state.FillOpacity = 0.2f;
+                cb.SetGState(state);
+                cb.AddImage(marcaDeAgua);
+            }
         }
 
         public override void OnCloseDocument(PdfWriter writer, Document document)

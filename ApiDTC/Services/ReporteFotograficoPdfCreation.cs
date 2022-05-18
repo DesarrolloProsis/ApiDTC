@@ -7,7 +7,6 @@
     using System.Collections.Generic;
     using System.Data;
     using System.IO;
-
     public class ReporteFotograficoPdfCreation
     {
         #region Attributes
@@ -26,6 +25,7 @@
 
         private readonly string _referenceAnexo;
         string directoryImageDiagnostico;   //las fotos del diagnostico son las mismas que en reporte equipo dañado
+
         #endregion
 
         #region Pdf Configuration

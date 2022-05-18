@@ -31,6 +31,8 @@
         private readonly string _disk;
 
         private readonly string _folder;
+
+        private readonly string _connectionString;
         #endregion
 
         #region Constructor
@@ -452,7 +454,6 @@
 
                 if (image.Length > 0 || image != null)
                 {
-                    int numberOfImages;
                     string dir = $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\DTC\{reportNumber}\Reportes Fotograficos Equipo Nuevo\{TableAnexo.Rows[0]["NewerReference"]}\Imgs";
                     string dirFull = $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\DTC\{reportNumber}\Reportes Fotograficos Equipo Nuevo\{TableAnexo.Rows[0]["NewerReference"]}\ImgsFullSize";
                     string filename;
@@ -463,13 +464,8 @@
                     if (!Directory.Exists(dirFull))
                         Directory.CreateDirectory(dirFull);
 
-                    numberOfImages = Directory.GetFiles(dir).Length + 1;
-                    filename = $"{reportNumber}_EquipoNuevoImgs_{numberOfImages}{image.FileName.Substring(image.FileName.LastIndexOf('.'))}";
-                    while (System.IO.File.Exists(Path.Combine(dir, filename)))
-                    {
-                        numberOfImages += 1;
-                        filename = $"{reportNumber}_EquipoNuevoImgs_{numberOfImages}{image.FileName.Substring(image.FileName.LastIndexOf('.'))}";
-                    }
+                    DateTime fechaImagen = DateTime.Now;
+                    filename = $"{reportNumber}_EquipoNuevoImgs_{fechaImagen.ToString("dd-MM-yyy-hh_mm_ssf")}{image.FileName.Substring(image.FileName.LastIndexOf('.'))}";
 
                     //full
                     using (FileStream fs = new FileStream(Path.Combine(dirFull, filename), FileMode.Create))

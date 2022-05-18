@@ -1,7 +1,11 @@
 ﻿using iTextSharp.text;
 using iTextSharp.text.pdf;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Data;
+using Microsoft.Extensions.Configuration.Json;
+using Microsoft.Extensions.Configuration.FileExtensions;
+using System.IO;
 
 namespace ApiDTC.Services
 {
@@ -20,7 +24,11 @@ namespace ApiDTC.Services
         public static string _tipo;
         //Why we are documenting in english??
         //Aahh, i get it, this is a template
-        public PageEventHelperVerticalAnexo(string Tipo, DataTable table)
+        public static IConfigurationRoot Configuration { get; set; }
+
+
+        public readonly string _connectionProductivo = "Server=10.1.1.10;Database=BitacoraProsis;User=sa;Password=CAPUFE;";
+        public PageEventHelperVerticalAnexo(string Tipo, DataTable table, bool mostrarMarcaDeAgua)
         {
             _tipo = Tipo;
             _table = table;
@@ -265,18 +273,27 @@ namespace ApiDTC.Services
 
             iTextSharp.text.Image logo_footer = iTextSharp.text.Image.GetInstance($@"{System.Environment.CurrentDirectory}\Media\Pie de Pagina Ricardo Flores Magon.png");
             logo_footer.ScalePercent(12.1f);
-
-            PdfPCell collogo_footer = new PdfPCell(logo_footer)
-            {
-                Border = 0,
-                Colspan = 1,
-                HorizontalAlignment = Element.ALIGN_MIDDLE,
-                VerticalAlignment = Element.ALIGN_MIDDLE,
-            };
-            logo_footer.SetAbsolutePosition(document.PageSize.Width -560f, document.PageSize.Height -775f);
+            logo_footer.SetAbsolutePosition(document.PageSize.Width - 560f, document.PageSize.Height - 775f);
             document.Add(logo_footer);
-            //table.AddCell(collogo_footer);
-            //table.WriteSelectedRows(0, 5, 550, 80, writer.DirectContent);
+
+            var builder = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory()) // <== compile failing here
+                .AddJsonFile("appsettings.json");
+
+            Configuration = builder.Build();
+            string currentConnetction = Configuration.GetConnectionString("defaultConnection");
+            if (!currentConnetction.Equals(_connectionProductivo))
+            {
+                iTextSharp.text.Image marcaDeAgua = iTextSharp.text.Image.GetInstance($@"{System.Environment.CurrentDirectory}\Media\marca de agua.png");
+                marcaDeAgua.ScalePercent(50f);
+                marcaDeAgua.RotationDegrees = 45;
+                marcaDeAgua.SetAbsolutePosition(document.PageSize.Width - 550f, document.PageSize.Height - 600f);
+                PdfGState state = new PdfGState();
+                state.FillOpacity = 0.2f;
+                cb.SetGState(state);
+                cb.AddImage(marcaDeAgua);
+            }
+
         }
 
         public override void OnCloseDocument(PdfWriter writer, Document document)

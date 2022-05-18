@@ -37,11 +37,13 @@ namespace ApiDTC.Services
         private readonly DateTime fechaInicio;
 
         private readonly DateTime fechaSolicitud;
+
+        private readonly bool _mostrarMarcaDeAgua;
         #endregion
 
         #region Constructors
 
-        public AnexosPdfCreation(string clavePlaza, string referenciaAnexo, string referenceNumber, DataTable tableAnexo, DataTable componentesDañados, DataTable componentesNuevos, ApiLogger apiLogger)
+        public AnexosPdfCreation(string clavePlaza, string referenciaAnexo, string referenceNumber, DataTable tableAnexo, DataTable componentesDañados, DataTable componentesNuevos, ApiLogger apiLogger, bool mostrarMarcaDeAgua = false)
         {
             _clavePlaza = clavePlaza;
             _apiLogger = apiLogger;
@@ -50,6 +52,7 @@ namespace ApiDTC.Services
             _tableComponentesDañados = componentesDañados;
             _referenciaAnexo = referenciaAnexo;
             _referenceNumber = referenceNumber;
+            _mostrarMarcaDeAgua = mostrarMarcaDeAgua;
 
             if (!DBNull.Value.Equals(_tableAnexo.Rows[0]["SinisterDate"]))
                 fechaSiniestro = Convert.ToDateTime(_tableAnexo.Rows[0]["SinisterDate"]);
@@ -172,7 +175,7 @@ namespace ApiDTC.Services
 
 
                     PdfWriter writer = PdfWriter.GetInstance(doc, myMemoryStream);
-                    writer.PageEvent = new PageEventHelperVerticalAnexo(Tipo, _tableAnexo);
+                    writer.PageEvent = new PageEventHelperVerticalAnexo(Tipo, _tableAnexo, _mostrarMarcaDeAgua);
                     writer.Open();
                     doc.Open();
 
@@ -278,7 +281,7 @@ namespace ApiDTC.Services
 
 
                     PdfWriter writer = PdfWriter.GetInstance(doc, myMemoryStream);
-                    writer.PageEvent = new PageEventHelperVerticalAnexo(Tipo, _tableAnexo);
+                    writer.PageEvent = new PageEventHelperVerticalAnexo(Tipo, _tableAnexo, _mostrarMarcaDeAgua);
                     writer.Open();
                     doc.Open();
 
@@ -757,7 +760,7 @@ namespace ApiDTC.Services
                 string NoSerie = "Sin Número";
                 for (int i = 0; i < componentesGropuped.Count(); i++)
                 {
-                    if (!DBNull.Value.Equals(componentesGropuped.ElementAt(i).grpSerie))
+                    if (!DBNull.Value.Equals(componentesGropuped.ElementAt(i).grpSerie) || componentesGropuped.ElementAt(i).grpSerie.Equals("S / N"))
                         NoSerie = componentesGropuped.ElementAt(i).grpSerie.ToString();
 
                     var cantidad = new PdfPCell(new Phrase(componentesGropuped.ElementAt(i).grpCount.ToString(), letraNormalMediana)) { BorderWidthTop = 1, BorderWidthBottom = 1, BorderWidthLeft = 1, BorderWidthRight = 1, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, PaddingTop = 9, PaddingLeft = 3, PaddingRight = 3, PaddingBottom = 7 };

@@ -2,11 +2,15 @@
 using iTextSharp.text.pdf;
 using Microsoft.AspNetCore.Hosting.Internal;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration.Json;
+using Microsoft.Extensions.Configuration.FileExtensions;
+using System.IO;
 
 namespace ApiDTC.Services
 {
@@ -24,7 +28,12 @@ namespace ApiDTC.Services
         BaseFont bf = null;
         // This keeps track of the creation time
         DateTime PrintTime = DateTime.Now;
+
+        public static IConfigurationRoot Configuration { get; set; }
+
+        public readonly string _connectionProductivo = "Server=10.1.1.10;Database=BitacoraProsis;User=sa;Password=CAPUFE;";
         #region Properties
+
         private string _Title;
         public string Title
         {
@@ -239,6 +248,24 @@ namespace ApiDTC.Services
                 pageSize.GetRight(580),
                 pageSize.GetBottom(20), 0);
             cb.EndText();
+
+            var builder = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory()) // <== compile failing here
+                .AddJsonFile("appsettings.json");
+
+            Configuration = builder.Build();
+            string currentConnetction = Configuration.GetConnectionString("defaultConnection");
+            if (!currentConnetction.Equals(_connectionProductivo))
+            {
+                iTextSharp.text.Image marcaDeAgua = iTextSharp.text.Image.GetInstance($@"{System.Environment.CurrentDirectory}\Media\marca de agua.png");
+                marcaDeAgua.ScalePercent(50f);
+                marcaDeAgua.RotationDegrees = 45;
+                marcaDeAgua.SetAbsolutePosition(document.PageSize.Width - 550f, document.PageSize.Height - 600f);
+                PdfGState state = new PdfGState();
+                state.FillOpacity = 0.2f;
+                cb.SetGState(state);
+                cb.AddImage(marcaDeAgua);
+            }
         }
 
         public override void OnCloseDocument(PdfWriter writer, Document document)
