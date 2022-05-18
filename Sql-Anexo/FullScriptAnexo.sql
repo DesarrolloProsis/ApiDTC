@@ -354,6 +354,127 @@ PRINT(CAST(@@ERROR AS VARCHAR))
 END CATCH
 GO
 
+ALTER PROCEDURE [dbo].[sp_ComponentInfoDTCVer2]
+@SquareId NVARCHAR(5) , --Plaza
+@AgreementInt INT, --IdContrato
+@AttachedId INT, --IdAnexo1.6
+@ComponentsRelationship INT, -- IdRelacion de Componentes
+@MainComponentsRelationship INT,  -- Id componente principal
+@ComponentsStockId INT -- Id del componente
+AS
+BEGIN
+	
+	DECLARE @Cont INT
+	--Cuantas veces esta en inventario
+	SELECT @Cont = COUNT(a.SerialNumber) 
+	FROM SquareInventory a 
+		JOIN LanesCatalog b 
+	ON (a.IdGare = b.IdGare AND a.CapufeLaneNum = b.CapufeLaneNum)	
+	WHERE b.SquareCatalogId = @SquareId
+		AND a.ComponentsStockId = @AttachedId
+
+	-- Es el principal o existe en inventario?
+	IF @ComponentsRelationship = @MainComponentsRelationship or @Cont > 0
+	BEGIN	
+		SELECT b.Unity,
+			   b.[Description],
+			   a.Brand,
+			   a.Model,
+			   a.SerialNumber,
+			   a.InstalationDate,
+			   b.[LifeTime],
+			   c.Lane + '-' +a.SerialNumber + '-' + a.Brand + '-' + a.Model Lane,
+			   c.IdGare,
+			   c.CapufeLaneNum,
+			   b.ComponentsStockId,
+			   b.UnitaryPrice,
+			   b.SelfAssignable,
+			   b.VitalComponent,
+			   b.Brand CatalogBrand,
+			   b.Model CatalogModel,
+			   a.MaintenanceDate,
+			   a.MaintenanceFolio,
+			   a.TableFolio
+		FROM SquareInventory a 
+			JOIN ComponentsStock b
+		ON a.ComponentsStockId = b.AttachedId 
+			JOIN LanesCatalog c  
+		ON (a.CapufeLaneNum = c.CapufeLaneNum AND a.IdGare = c.IdGare) 
+		where b.AgremmentInfoId = @AgreementInt AND 
+			a.ComponentsStockId = @AttachedId AND 
+			c.SquareCatalogId = @SquareId AND
+			b.ComponentsStockId = @ComponentsStockId
+		ORDER BY c.Lane		
+	END
+	ELSE
+	BEGIN --Entonces es un subcomponente no inventariado
+		
+		DECLARE @strName NVARCHAR(100),
+				@strUnity NVARCHAR(7),
+				@intLifetime INT,
+				@intCompnonentsStockId INT,
+				@DecUnitaryprice DECIMAL(9,2),
+				@bitSelfAssignable BIT,
+				@bitVitalComponent BIT,
+				@strBrand NVARCHAR(40),
+				@strModel NVARCHAR(40),
+				@intAttachedValue INT
+		
+		--Datos del subcomponente.
+		SELECT @strName = [Description],
+			   @strUnity = Unity,
+			   @intLifetime = [LifeTime],
+			   @intCompnonentsStockId = ComponentsStockId,
+			   @DecUnitaryprice = UnitaryPrice,
+			   @bitSelfAssignable = SelfAssignable,
+			   @bitVitalComponent = VitalComponent,
+			   @strBrand = Brand,
+			   @strModel = model 
+		FROM ComponentsStock 
+		WHERE AgremmentInfoId = @AgreementInt AND AttachedId = @AttachedId AND ComponentsStockId = @ComponentsStockId		
+		
+		SET @intAttachedValue = @AttachedId
+
+		--Id  del subcomponente
+		SELECT @AttachedId = AttachedId 
+		FROM ComponentsStock 
+		WHERE AgremmentInfoId = @AgreementInt 
+			AND ComponentsRelationship = @MainComponentsRelationship
+		
+		SELECT @strUnity Unity,
+			   @strName [Description],
+			   @strBrand Brand,
+			   @strModel Model,
+			   CASE 
+			   WHEN @intAttachedValue = 35 or @intAttachedValue = 45 THEN 'S/N' --Pluma aluminio/carbono
+			   ELSE 'Sin Número' 
+			   END SerialNumber,
+			   a.InstalationDate,
+			   @intLifetime [LifeTime],			   
+			   c.Lane + '-' +a.SerialNumber + '-' + a.Brand + '-' + a.Model Lane,
+			   c.IdGare,
+			   c.CapufeLaneNum,
+			   @intCompnonentsStockId ComponentsStockId,
+			   @DecUnitaryprice UnitaryPrice,
+			   @bitSelfAssignable SelfAssignable,
+			   @bitVitalComponent VitalComponent,
+			   @strBrand CatalogBrand,
+			   @strModel CatalogModel,
+			   a.MaintenanceDate,
+			   a.MaintenanceFolio MaintenanceFolio,
+			   a.TableFolio
+		FROM SquareInventory a join ComponentsStock b
+		ON a.ComponentsStockId = b.AttachedId 
+			JOIN LanesCatalog c  
+		ON (a.CapufeLaneNum = c.CapufeLaneNum AND a.IdGare = c.IdGare) 
+		WHERE b.AgremmentInfoId = @AgreementInt AND 
+		a.ComponentsStockId = @AttachedId AND 
+		c.SquareCatalogId = @SquareId 
+		ORDER BY c.Lane		
+	END
+END
+GO
+
 --CREATE PROCEDURE [dbo].[InsertSupervisor]
 --	@nombreSupervisor NVARCHAR(40),
 --	@numeroPlaza NVARCHAR(4)

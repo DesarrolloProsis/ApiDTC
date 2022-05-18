@@ -31,6 +31,7 @@ namespace ApiDTC.Models.AnexoDTC
         public int StatusId { get; set; }
         public int UserId { get; set; }
         public string UserName { get; set; }
+        public bool SubAnexo { get; set; }
         
     }
     public class HistoricoWhiFlag : AnexoDTCHistorico
