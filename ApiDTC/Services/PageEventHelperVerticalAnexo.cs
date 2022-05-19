@@ -26,9 +26,8 @@ namespace ApiDTC.Services
         //Aahh, i get it, this is a template
         public static IConfigurationRoot Configuration { get; set; }
 
-
         public readonly string _connectionProductivo = "Server=10.1.1.10;Database=BitacoraProsis;User=sa;Password=CAPUFE;";
-        public PageEventHelperVerticalAnexo(string Tipo, DataTable table, bool mostrarMarcaDeAgua)
+        public PageEventHelperVerticalAnexo(string Tipo, DataTable table)
         {
             _tipo = Tipo;
             _table = table;
@@ -277,7 +276,7 @@ namespace ApiDTC.Services
             document.Add(logo_footer);
 
             var builder = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory()) // <== compile failing here
+                .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json");
 
             Configuration = builder.Build();
@@ -287,7 +286,7 @@ namespace ApiDTC.Services
                 iTextSharp.text.Image marcaDeAgua = iTextSharp.text.Image.GetInstance($@"{System.Environment.CurrentDirectory}\Media\marca de agua.png");
                 marcaDeAgua.ScalePercent(50f);
                 marcaDeAgua.RotationDegrees = 45;
-                marcaDeAgua.SetAbsolutePosition(document.PageSize.Width - 550f, document.PageSize.Height - 600f);
+                marcaDeAgua.SetAbsolutePosition(document.PageSize.Width - 780f, document.PageSize.Height - 900f);
                 PdfGState state = new PdfGState();
                 state.FillOpacity = 0.2f;
                 cb.SetGState(state);

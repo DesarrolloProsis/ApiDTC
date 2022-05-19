@@ -2,9 +2,11 @@
 using iTextSharp.text.pdf;
 using Microsoft.AspNetCore.Hosting.Internal;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -57,8 +59,14 @@ namespace ApiDTC.Services
         DataTable _tableHeader;
 
         DataTable _tableDTCData;
+
         ConvenioData _newConvenio;
+
         string _refNum;
+
+        public static IConfigurationRoot Configuration { get; set; }
+
+        public readonly string _connectionProductivo = "Server=10.1.1.10;Database=BitacoraProsis;User=sa;Password=CAPUFE;";
 
         #region Properties
         private string _Title;
@@ -189,6 +197,24 @@ namespace ApiDTC.Services
                 pageSize.GetRight(700),
                 pageSize.GetBottom(20), 0);
             cb.EndText();
+
+            var builder = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json");
+
+            Configuration = builder.Build();
+            string currentConnetction = Configuration.GetConnectionString("defaultConnection");
+            if (!currentConnetction.Equals(_connectionProductivo))
+            {
+                iTextSharp.text.Image marcaDeAgua = iTextSharp.text.Image.GetInstance($@"{System.Environment.CurrentDirectory}\Media\marca de agua.png");
+                marcaDeAgua.ScalePercent(50f);
+                marcaDeAgua.RotationDegrees = 45;
+                marcaDeAgua.SetAbsolutePosition(document.PageSize.Width - 900f, document.PageSize.Height - 850f);
+                PdfGState state = new PdfGState();
+                state.FillOpacity = 0.2f;
+                cb.SetGState(state);
+                cb.AddImage(marcaDeAgua);
+            }
         }
 
         public override void OnCloseDocument(PdfWriter writer, Document document)

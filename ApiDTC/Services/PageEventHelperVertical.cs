@@ -138,7 +138,7 @@ namespace ApiDTC.Services
             cb.EndText();
 
             var builder = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory()) // <== compile failing here
+                .SetBasePath(Directory.GetCurrentDirectory()) 
                 .AddJsonFile("appsettings.json");
 
             Configuration = builder.Build();
@@ -147,8 +147,8 @@ namespace ApiDTC.Services
             {
                 iTextSharp.text.Image marcaDeAgua = iTextSharp.text.Image.GetInstance($@"{System.Environment.CurrentDirectory}\Media\marca de agua.png");
                 marcaDeAgua.ScalePercent(50f);
-                marcaDeAgua.RotationDegrees = 45;
-                marcaDeAgua.SetAbsolutePosition(document.PageSize.Width - 550f, document.PageSize.Height - 600f);
+                marcaDeAgua.RotationDegrees = 50;
+                marcaDeAgua.SetAbsolutePosition(document.PageSize.Width - 760f, document.PageSize.Height - 900f);
                 PdfGState state = new PdfGState();
                 state.FillOpacity = 0.2f;
                 cb.SetGState(state);

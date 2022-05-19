@@ -132,8 +132,8 @@ namespace ApiDTC.Controllers
                 return Ok(get);                            
         }
 
-        [HttpGet("AnexoA/{clavePlaza}/{referenceNumber}/{referenciaAnexo}/{isSubAnexo}/{mostrarMarcaDeAgua}")]
-        public IActionResult GetAnexoA(string clavePlaza, string referenceNumber, string referenciaAnexo, bool isSubAnexo, bool mostrarMarcaDeAgua)
+        [HttpGet("AnexoA/{clavePlaza}/{referenceNumber}/{referenciaAnexo}/{isSubAnexo}")]
+        public IActionResult GetAnexoA(string clavePlaza, string referenceNumber, string referenciaAnexo, bool isSubAnexo)
         {
             try
             {
@@ -141,7 +141,7 @@ namespace ApiDTC.Controllers
                 var dataSet = _db.GetAnexoPDF(referenciaAnexo, isSubAnexo);
                 if (dataSet.Tables[0].Rows.Count == 0)
                     return NotFound("GetStorePdf retorna tabla vacía");
-                AnexosPdfCreation pdf = new AnexosPdfCreation(clavePlaza, referenciaAnexo, referenceNumber, dataSet.Tables[0], dataSet.Tables[1], dataSet.Tables[2], new ApiLogger(), mostrarMarcaDeAgua);
+                AnexosPdfCreation pdf = new AnexosPdfCreation(clavePlaza, referenciaAnexo, referenceNumber, dataSet.Tables[0], dataSet.Tables[1], dataSet.Tables[2], new ApiLogger());
                 var pdfResult = pdf.NewPdfA($@"{this._disk}:\{this._folder}");
                 if (pdfResult.Result == null)
                     return NotFound(pdfResult.Message);
@@ -186,10 +186,10 @@ namespace ApiDTC.Controllers
                 string vecesBorrado = "1";
                 string path = $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\DTC\{referenceNumber}";
 
-                if (!Directory.Exists($@"{path}\Anexos"))
-                    return NotFound("Carpeta a borrar no encontrada " + $@"{path}\Anexos");
+                if (!Directory.Exists($@"{path}\Anexos") && !Directory.Exists($@"{path}\Reportes Fotograficos Equipo Nuevo"))
+                    return NotFound("Carpetas a borrar no encontradas " + $@"{path}\Anexos" + "  y  " + $@"{path}\Reportes Fotograficos Equipo Nuevo");
 
-                if (!Directory.Exists($@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\Borrado\DTC\{referenceNumber}\Reporte Fotografico Equipo Nuevo\{referenceAnexo}\{vecesBorrado}"))
+                if (!Directory.Exists($@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\Borrado\DTC\{referenceNumber}\{vecesBorrado}"))
                     Directory.CreateDirectory($@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\Borrado\DTC\{referenceNumber}\{vecesBorrado}");
                 else
                 {
@@ -205,8 +205,10 @@ namespace ApiDTC.Controllers
                     Directory.CreateDirectory($@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\Borrado\DTC\{referenceNumber}\{vecesBorrado}");
                 }
 
-                Directory.Move($@"{path}\Anexos", $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\Borrado\DTC\{referenceNumber}\{vecesBorrado}\Anexos");
-                Directory.Move($@"{path}\Reportes Fotograficos Equipo Nuevo", $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\Borrado\DTC\{referenceNumber}\{vecesBorrado}\Reportes Fotograficos Equipo Nuevo");
+                if (Directory.Exists($@"{path}\Anexos"))
+                    Directory.Move($@"{path}\Anexos", $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\Borrado\DTC\{referenceNumber}\{vecesBorrado}\Anexos");
+                if(Directory.Exists($@"{path}\Reportes Fotograficos Equipo Nuevo"))
+                    Directory.Move($@"{path}\Reportes Fotograficos Equipo Nuevo", $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\Borrado\DTC\{referenceNumber}\{vecesBorrado}\Reportes Fotograficos Equipo Nuevo");
 
                 return Ok("Los archivos se han movido exitosamente a la carpeta: " + $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\Borrado\DTC\{referenceNumber}\{vecesBorrado}");
             }

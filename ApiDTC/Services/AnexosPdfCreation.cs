@@ -37,13 +37,11 @@ namespace ApiDTC.Services
         private readonly DateTime fechaInicio;
 
         private readonly DateTime fechaSolicitud;
-
-        private readonly bool _mostrarMarcaDeAgua;
         #endregion
 
         #region Constructors
 
-        public AnexosPdfCreation(string clavePlaza, string referenciaAnexo, string referenceNumber, DataTable tableAnexo, DataTable componentesDañados, DataTable componentesNuevos, ApiLogger apiLogger, bool mostrarMarcaDeAgua = false)
+        public AnexosPdfCreation(string clavePlaza, string referenciaAnexo, string referenceNumber, DataTable tableAnexo, DataTable componentesDañados, DataTable componentesNuevos, ApiLogger apiLogger)
         {
             _clavePlaza = clavePlaza;
             _apiLogger = apiLogger;
@@ -52,7 +50,6 @@ namespace ApiDTC.Services
             _tableComponentesDañados = componentesDañados;
             _referenciaAnexo = referenciaAnexo;
             _referenceNumber = referenceNumber;
-            _mostrarMarcaDeAgua = mostrarMarcaDeAgua;
 
             if (!DBNull.Value.Equals(_tableAnexo.Rows[0]["SinisterDate"]))
                 fechaSiniestro = Convert.ToDateTime(_tableAnexo.Rows[0]["SinisterDate"]);
@@ -175,7 +172,7 @@ namespace ApiDTC.Services
 
 
                     PdfWriter writer = PdfWriter.GetInstance(doc, myMemoryStream);
-                    writer.PageEvent = new PageEventHelperVerticalAnexo(Tipo, _tableAnexo, _mostrarMarcaDeAgua);
+                    writer.PageEvent = new PageEventHelperVerticalAnexo(Tipo, _tableAnexo);
                     writer.Open();
                     doc.Open();
 
@@ -281,7 +278,7 @@ namespace ApiDTC.Services
 
 
                     PdfWriter writer = PdfWriter.GetInstance(doc, myMemoryStream);
-                    writer.PageEvent = new PageEventHelperVerticalAnexo(Tipo, _tableAnexo, _mostrarMarcaDeAgua);
+                    writer.PageEvent = new PageEventHelperVerticalAnexo(Tipo, _tableAnexo);
                     writer.Open();
                     doc.Open();
 

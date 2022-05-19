@@ -32,7 +32,6 @@
 
         private readonly string _folder;
 
-        private readonly string _connectionString;
         #endregion
 
         #region Constructor

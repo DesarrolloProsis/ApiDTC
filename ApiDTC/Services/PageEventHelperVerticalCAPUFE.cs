@@ -260,7 +260,7 @@ namespace ApiDTC.Services
                 iTextSharp.text.Image marcaDeAgua = iTextSharp.text.Image.GetInstance($@"{System.Environment.CurrentDirectory}\Media\marca de agua.png");
                 marcaDeAgua.ScalePercent(50f);
                 marcaDeAgua.RotationDegrees = 45;
-                marcaDeAgua.SetAbsolutePosition(document.PageSize.Width - 550f, document.PageSize.Height - 600f);
+                marcaDeAgua.SetAbsolutePosition(document.PageSize.Width - 900f, document.PageSize.Height - 850f);
                 PdfGState state = new PdfGState();
                 state.FillOpacity = 0.2f;
                 cb.SetGState(state);

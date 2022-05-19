@@ -80,7 +80,7 @@
                     Message = "Error: No existe el directorio",
                     Result = null
                 };
-            else
+            else if (_tipo == 2)
                 Directory.CreateDirectory($@"{folder}\{_clavePlaza.ToUpper()}\DTC\{_referenceNumber}\Reportes Fotograficos Equipo Nuevo\{_tableHeader.Rows[0]["AnexoReference"]}");
 
             if (_tipo == 1)
