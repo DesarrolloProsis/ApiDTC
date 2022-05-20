@@ -182,13 +182,16 @@
                     if (Directory.GetFiles(dir).Length >= 4)
                         return NotFound("Ya existen cuatro imágenes");
 
-                    numberOfImages = Directory.GetFiles(dir).Length + 1;
-                    filename = $"{reportNumber}_DiagnosticoFallaImgs_{numberOfImages}{image.FileName.Substring(image.FileName.LastIndexOf('.'))}";
-                    while (System.IO.File.Exists(Path.Combine(dir, filename)))
-                    {
-                        numberOfImages += 1;
-                        filename = $"{reportNumber}_Image_{numberOfImages}{image.FileName.Substring(image.FileName.LastIndexOf('.'))}";
-                    }
+                    DateTime fechaImagen = DateTime.Now;
+                    filename = $"{reportNumber}_DiagnosticoFallaImgs_{fechaImagen.ToString("dd-MM-yyy-hh_mm_ssf")}{image.FileName.Substring(image.FileName.LastIndexOf('.'))}";
+
+                    //numberOfImages = Directory.GetFiles(dir).Length + 1;
+                    //filename = $"{reportNumber}_DiagnosticoFallaImgs_{numberOfImages}{image.FileName.Substring(image.FileName.LastIndexOf('.'))}";
+                    //while (System.IO.File.Exists(Path.Combine(dir, filename)))
+                    //{
+                    //    numberOfImages += 1;
+                    //    filename = $"{reportNumber}_Image_{numberOfImages}{image.FileName.Substring(image.FileName.LastIndexOf('.'))}";
+                    //}
                     //full
                     using (FileStream fs = new FileStream(Path.Combine(dirFull, filename), FileMode.Create))
                     {

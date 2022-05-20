@@ -128,13 +128,16 @@
                     if (!Directory.Exists(dirFull))
                         Directory.CreateDirectory(dirFull);
 
-                    numberOfImages = Directory.GetFiles(dir).Length + 1;
-                    filename = $"{reportNumber}_MantenimientoPreventivoImgs_{numberOfImages}{image.FileName.Substring(image.FileName.LastIndexOf('.'))}";
-                    while (System.IO.File.Exists(Path.Combine(dir, filename)))
-                    {
-                        numberOfImages += 1;
-                        filename = $"{reportNumber}_MantenimientoPreventivoImgs_{numberOfImages}{image.FileName.Substring(image.FileName.LastIndexOf('.'))}";
-                    }
+                    DateTime fechaImagen = DateTime.Now;
+                    filename = $"{reportNumber}_MantenimientoPreventivoImgs_{fechaImagen.ToString("dd-MM-yyy-hh_mm_ssf")}{image.FileName.Substring(image.FileName.LastIndexOf('.'))}";
+
+                    //numberOfImages = Directory.GetFiles(dir).Length + 1;
+                    //filename = $"{reportNumber}_MantenimientoPreventivoImgs_{numberOfImages}{image.FileName.Substring(image.FileName.LastIndexOf('.'))}";
+                    //while (System.IO.File.Exists(Path.Combine(dir, filename)))
+                    //{
+                    //    numberOfImages += 1;
+                    //    filename = $"{reportNumber}_MantenimientoPreventivoImgs_{numberOfImages}{image.FileName.Substring(image.FileName.LastIndexOf('.'))}";
+                    //}
 
                     //full
                     using (FileStream fs = new FileStream(Path.Combine(dirFull, filename), FileMode.Create))
@@ -414,7 +417,6 @@
 
         #region Anexo
 
-        [AllowAnonymous]
         [HttpGet("Images/GetPaths/{clavePlaza}/{reportNumber}/{referenceAnexo}/{isSubAnexo}")]
         public ActionResult<List<string>> GetImagesNuevo(string clavePlaza, string reportNumber, string referenceAnexo, bool isSubAnexo)
         {
@@ -440,7 +442,7 @@
             }
         }
 
-        [AllowAnonymous]
+
         [HttpPost("EquipoNuevo/Images/{clavePlaza}/{reportNumber}/{referenceAnexo}/{isSubAnexo}")]
         public ActionResult<Response> InsertImageNuev(string clavePlaza, [FromForm(Name = "image")] IFormFile image, string reportNumber, string referenceAnexo, bool isSubAnexo)
         {
@@ -503,7 +505,7 @@
             
         }
 
-        [AllowAnonymous]
+
         [HttpGet("EquipoNuevo/Images/{clavePlaza}/{reportNumber}/{fileName}/{referenceAnexo}/{isSubAnexo}")]
         public ActionResult<DtcImage> DownloadEquipoNuevoImgs(string clavePlaza, string reportNumber, string fileName, string referenceAnexo, bool isSubAnexo)
         {
@@ -528,7 +530,7 @@
             }
         }
 
-        [AllowAnonymous]
+
         [HttpGet("EquipoNuevo/Images/DeleteImg/{clavePlaza}/{reportNumber}/{fileName}/{referenceAnexo}/{isSubAnexo}")]
         public ActionResult<string> DeleteEquipoNuevoImgs(string clavePlaza, string reportNumber, string fileName, string referenceAnexo, bool isSubAnexo)
         {
@@ -554,7 +556,7 @@
             }
         }
 
-        [AllowAnonymous]
+
         [HttpGet("Nuevo/{clavePlaza}/{ubicacion}/{referenceNumber}/{referenceAnexo}/{isSubAnexo}")]
         public IActionResult GetReporteEquipoNuevo(string clavePlaza, string ubicacion, string referenceNumber, string referenceAnexo, bool isSubAnexo)
         {
@@ -576,7 +578,7 @@
             }
         }
 
-        [AllowAnonymous]
+
         [HttpPost("CopyAnexoImages/{clavePlaza}/{referenceNumber}/{referenceAnexo}")]
         public ActionResult<string> DeleteEquipoNuevoImgs(string clavePlaza, string referenceNumber, string referenceAnexo)
         {

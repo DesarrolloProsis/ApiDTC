@@ -71,7 +71,7 @@
                 using (SqlConnection sql = new SqlConnection(_connectionString))
                 {
                     //spPhotoReport DEBE TRAER EL DIAGNOSTICO
-                    using (SqlCommand cmd = new SqlCommand("dbo.spPhotoReportNuevosTemp", sql))
+                    using (SqlCommand cmd = new SqlCommand("dbo.spPhotoReportNuevos", sql))
                     {
                         SqlDataAdapter sqlDataAdapter = new SqlDataAdapter();
                         DataSet dataSet = new DataSet();
