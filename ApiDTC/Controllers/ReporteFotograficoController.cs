@@ -416,7 +416,7 @@
         }
 
         #region Anexo
-
+        [AllowAnonymous]
         [HttpGet("Images/GetPaths/{clavePlaza}/{reportNumber}/{referenceAnexo}/{isSubAnexo}")]
         public ActionResult<List<string>> GetImagesNuevo(string clavePlaza, string reportNumber, string referenceAnexo, bool isSubAnexo)
         {
@@ -442,7 +442,7 @@
             }
         }
 
-
+        [AllowAnonymous]
         [HttpPost("EquipoNuevo/Images/{clavePlaza}/{reportNumber}/{referenceAnexo}/{isSubAnexo}")]
         public ActionResult<Response> InsertImageNuev(string clavePlaza, [FromForm(Name = "image")] IFormFile image, string reportNumber, string referenceAnexo, bool isSubAnexo)
         {
@@ -505,7 +505,7 @@
             
         }
 
-
+        [AllowAnonymous]
         [HttpGet("EquipoNuevo/Images/{clavePlaza}/{reportNumber}/{fileName}/{referenceAnexo}/{isSubAnexo}")]
         public ActionResult<DtcImage> DownloadEquipoNuevoImgs(string clavePlaza, string reportNumber, string fileName, string referenceAnexo, bool isSubAnexo)
         {
@@ -530,7 +530,7 @@
             }
         }
 
-
+        [AllowAnonymous]
         [HttpGet("EquipoNuevo/Images/DeleteImg/{clavePlaza}/{reportNumber}/{fileName}/{referenceAnexo}/{isSubAnexo}")]
         public ActionResult<string> DeleteEquipoNuevoImgs(string clavePlaza, string reportNumber, string fileName, string referenceAnexo, bool isSubAnexo)
         {
@@ -556,7 +556,7 @@
             }
         }
 
-
+        [AllowAnonymous]
         [HttpGet("Nuevo/{clavePlaza}/{ubicacion}/{referenceNumber}/{referenceAnexo}/{isSubAnexo}")]
         public IActionResult GetReporteEquipoNuevo(string clavePlaza, string ubicacion, string referenceNumber, string referenceAnexo, bool isSubAnexo)
         {
@@ -578,7 +578,7 @@
             }
         }
 
-
+        [AllowAnonymous]
         [HttpPost("CopyAnexoImages/{clavePlaza}/{referenceNumber}/{referenceAnexo}")]
         public ActionResult<string> DeleteEquipoNuevoImgs(string clavePlaza, string referenceNumber, string referenceAnexo)
         {
