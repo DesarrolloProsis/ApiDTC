@@ -10,6 +10,8 @@ set "condition="
 
 if exist C:\inetpub\wwwroot\%pagina%\ (
 
+    dotnet publish
+    echo publicado
     %windir%\system32\inetsrv\appcmd stop site /site.name:%pagina%
     set "condition=y"
     goto Fin
@@ -44,12 +46,12 @@ XCOPY  /S /I /E /Y %cd%\ApiDTC\bin\Debug\netcoreapp2.1\publish\ C:\inetpub\wwwro
 
 echo Publicado con exito
 
-echo
+echo \n
 echo          //
 echo        _//
 echo       (')---.
 echo        _/-_( )o
-echo 
+echo \n
 
 if defined condition (
 
