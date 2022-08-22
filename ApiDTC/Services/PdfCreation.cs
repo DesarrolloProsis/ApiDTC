@@ -74,6 +74,7 @@ namespace ApiDTC.Services
         public static iTextSharp.text.Font letraoNegritaDatos = new iTextSharp.text.Font(NegritaMediana, 6f, iTextSharp.text.Font.BOLD, BaseColor.Black);
         public static iTextSharp.text.Font letraoNegritaChicaEncabezado = new iTextSharp.text.Font(NegritaChica, 6f, iTextSharp.text.Font.BOLD, BaseColor.Black);
         public static iTextSharp.text.Font letraoNegritaChica = new iTextSharp.text.Font(NegritaChica, 5f, iTextSharp.text.Font.BOLD, BaseColor.Black);
+        public static iTextSharp.text.Font letraoNegritaChicaLegal = new iTextSharp.text.Font(NegritaChica, 4f, iTextSharp.text.Font.BOLD, BaseColor.Black);
         public static iTextSharp.text.Font letraNormalGrande = new iTextSharp.text.Font(NormalGrande, 15f, iTextSharp.text.Font.NORMAL, BaseColor.Black);
         public static iTextSharp.text.Font letraNormalMediana = new iTextSharp.text.Font(NormalMediana, 7f, iTextSharp.text.Font.NORMAL, BaseColor.Black);
         public static iTextSharp.text.Font letraNormalMedianaSub = new iTextSharp.text.Font(NormalMediana, 7f, iTextSharp.text.Font.UNDERLINE, BaseColor.Black);
@@ -137,13 +138,6 @@ namespace ApiDTC.Services
                         doc.Add(marcaDeAgua);
                     }
 
-                    //doc.Add(tablaEncabezado());
-                    //doc.Add(new Phrase(" "));
-                    //doc.Add(new Phrase(" "));
-                    //doc.Add(tablaSiniestro());
-                    //doc.Add(new Phrase(""));
-                    //doc.Add(new Phrase(""));
-                    //doc.Add(tablaSiniestroMore());
                     doc.Add(new Phrase("EQUIPO DAÑADO", letraoNegritaMediana));
                     doc.Add(tablaEquipoDañado());
                     doc.Add(tablaTituloPropuesto());
@@ -276,17 +270,53 @@ namespace ApiDTC.Services
         private IElement tablaEstatica()
         {
             var tablaEstatica = new PdfPTable(new float[] { 40f, 7f, 34f, 7f, 26f }) { WidthPercentage = 100f };
-            var colDatosEstaticos = new PdfPCell(new Phrase("Tiempo de entrega:\nVigencia de Cotizacion: 15 dias calendario, a partir de la fecha del presente\nForma de Pago: 100% al termino de los trabajos\nPrecios en M.N No incluye IVA, el cual se cargara al momento de facturarse\nEn caso de una variacion de la paridad Peso/Dolar mayor al 5% se revisaran los precios\nPrecios en USCY: Noincluyen IVA, el cual se cargara al momneto de facturarse\n\n", letraNormalChica)) { HorizontalAlignment = Element.ALIGN_LEFT, BorderWidthLeft = 1, BorderWidthRight = 1, BorderWidthTop = 1, BorderWidthBottom = 1, Padding = 2 };
+            var parrafoLegal = new Paragraph();
+            Chunk LegalUno = new Chunk("Costo unitario del componente con base en el ", letraNormalChica);
+            Chunk LegalDos = new Chunk("ANEXO 1.6 \"PRECIOS UNITARIOS REFACCIONAMIENTO Y MANTENIMIENTO CORRECTIVO\"", letraoNegritaChicaLegal);
+            Chunk LegalTres = new Chunk(". \nEl importe a considerar será sin el Impuesto al Valor Agregado.", letraNormalChica);
+            Chunk LegalCuatro = new Chunk("\nLos precios unitarios de las refacciones y servicios de mantenimiento correctivo son en ", letraNormalChica);
+            Chunk LegalCinco = new Chunk("PESOS MEXICANOS.", letraoNegritaChicaLegal);
+            Chunk LegalSeis = new Chunk("\nLos componentes relacionados en este formato son los ", letraNormalChica);
+            Chunk LegalSiete = new Chunk("MÍNIMOS ", letraoNegritaChicaLegal);
+            Chunk LegalOcho = new Chunk("requeridos.\nVigencia de la Oferta: ", letraNormalChica);
+            Chunk LegalNueve = new Chunk("90 días ", letraoNegritaChicaLegal);
+            Chunk LegalDiez = new Chunk("naturales a partir de la presentación de la misma.\n", letraNormalChica);
+            parrafoLegal.SetLeading(0, 1.4f);
+            parrafoLegal.Add(LegalUno);
+            parrafoLegal.Add(LegalDos);
+            parrafoLegal.Add(LegalTres);
+            parrafoLegal.Add(LegalCuatro);
+            parrafoLegal.Add(LegalCinco);
+            parrafoLegal.Add(LegalSeis);
+            parrafoLegal.Add(LegalSiete);
+            parrafoLegal.Add(LegalOcho);
+            parrafoLegal.Add(LegalNueve);
+            parrafoLegal.Add(LegalDiez);
+
+            var celLegal = new PdfPCell()
+            {
+                BorderWidthBottom = 0.5f,
+                BorderWidthTop = 0.5f,
+                BorderWidthLeft = 0.5f,
+                BorderWidthRight = 0.5f,
+                HorizontalAlignment = Element.ALIGN_LEFT,
+                VerticalAlignment = Element.ALIGN_CENTER,
+                Padding = 2,
+                PaddingBottom = 5
+            };
+            celLegal.AddElement(parrafoLegal);
+
             var colEmpy1 = new PdfPCell(new Phrase("")) { HorizontalAlignment = Element.ALIGN_LEFT };
             colEmpy1.Border = 0;
-            var colDatosObservaciones = new PdfPCell(new Phrase("Observaciones\n\n" + _tableDTCData.Rows[0]["Observation"].ToString().ToUpper(), letraoNegritaMediana)) { HorizontalAlignment = Element.ALIGN_CENTER, BorderWidthLeft = 1, BorderWidthRight = 1, BorderWidthTop = 1, BorderWidthBottom = 1 };
+            //var colDatosObservaciones = new PdfPCell(new Phrase("Observaciones\n\n" + _tableDTCData.Rows[0]["Observation"].ToString().ToUpper(), letraoNegritaMediana)) { HorizontalAlignment = Element.ALIGN_CENTER, BorderWidthLeft = 1, BorderWidthRight = 1, BorderWidthTop = 1, BorderWidthBottom = 1 };
+            var colDatosObservaciones = new PdfPCell(new Phrase("")) { HorizontalAlignment = Element.ALIGN_LEFT, Border = 0 };
 
             var colEmpy2 = new PdfPCell(new Phrase("")) { HorizontalAlignment = Element.ALIGN_LEFT };
             colEmpy2.Border = 0;
 
             var colEmpy3 = new PdfPCell(new Phrase("")) { HorizontalAlignment = Element.ALIGN_LEFT, BorderWidthLeft = 1, BorderWidthRight = 1, BorderWidthTop = 1, BorderWidthBottom = 1 };
 
-            tablaEstatica.AddCell(colDatosEstaticos);
+            tablaEstatica.AddCell(celLegal);
             tablaEstatica.AddCell(colEmpy1);
             tablaEstatica.AddCell(colDatosObservaciones);
             tablaEstatica.AddCell(colEmpy2);
@@ -636,7 +666,7 @@ namespace ApiDTC.Services
 
             PdfPCell col20 = new PdfPCell(new Phrase("", letraoNegritaDatos)) { Border = 0 }; ;
             if (!(Convert.ToInt16(_tableDTCData.Rows[0]["TypeFaultId"].ToString()) == 3))
-                col20 = new PdfPCell(new Phrase(Convert.ToDateTime(_tableDTCData.Rows[0]["SinisterDate"]).ToString("dd/MM/yyyy"), letraoNegritaDatos)) { Border = 0 };
+                col20 = new PdfPCell(new Phrase($"{Convert.ToDateTime(_tableDTCData.Rows[0]["SinisterDate"]).ToString("dd/MM/yyyy")} \n cbarcenas@capufe.gob.mx", letraoNegritaDatos)) { Border = 0 };
 
             var col21 = new PdfPCell(new Phrase("", letraNormalChica)) { Border = 0 };
             var col22 = new PdfPCell(new Phrase("", letraNormalChica)) { Border = 0 };
@@ -645,7 +675,7 @@ namespace ApiDTC.Services
             var col24 = new PdfPCell(new Phrase(Convert.ToString(_tableDTCData.Rows[0]["TecnicoResponsable"]), letraoNegritaChicaEncabezado)) { HorizontalAlignment = Element.ALIGN_RIGHT, Border = 0 };
 
             var col25 = new PdfPCell(new Phrase("Plaza de cobro:", letraNormalChica)) { Border = 0 };
-            var col26 = new PdfPCell(new Phrase(Convert.ToString(_tableHeader.Rows[0]["Plaza"]), letraNormalChica)) { Border = 0 };
+            var col26 = new PdfPCell(new Phrase(Convert.ToString(_tableHeader.Rows[0]["Plaza"]) == "184 FCO Velasco" ? "184 Francisco Velasco Durán": Convert.ToString(_tableHeader.Rows[0]["Plaza"] ), letraNormalChica)) { Border = 0 };
 
             var col27 = new PdfPCell(new Phrase("Folio(s) Fallas(s)", letraNormalChica)) { Border = 0 };
             var col28 = new PdfPCell(new Phrase(Convert.ToString(_tableDTCData.Rows[0]["FailureNumber"]), letraNormalChica)) { Border = 0 };
@@ -736,7 +766,7 @@ namespace ApiDTC.Services
         {
             var tablaSiniestro = new PdfPTable(new float[] { 30f, 40f, 30f }) { WidthPercentage = 100f };
             //Agregamos Chunk Para 2 letras
-            var contratoOferta = new Chunk("Contrato/Oferta:                           ", letraNormalChica);
+            var contratoOferta = new Chunk("No. Contrato/ No. Convenio:                           ", letraNormalChica);
             var numContratoOferta = new Chunk(Convert.ToString(Convert.ToString(_tableHeader.Rows[0]["Agrement"])), letraoNegritaChica);
 
             var ContratoOfertaCompleto = new Phrase(contratoOferta);
