@@ -432,7 +432,7 @@ namespace ApiDTC.Services
             var col32 = new PdfPCell(new Phrase("", letraNormalChica)) { Border = 0 };
 
             var col33 = new PdfPCell(new Phrase("Plaza de cobro:", letraNormalChica)) { Border = 0 };
-            var col34 = new PdfPCell(new Phrase(Convert.ToString(_tableHeader.Rows[0]["Plaza"]), letraNormalChica)) { Border = 0 };
+            var col34 = new PdfPCell(new Phrase(Convert.ToString(_tableHeader.Rows[0]["Plaza"]) == "184 FCO Velasco" ? "184 Francisco Velasco Durán" : Convert.ToString(_tableHeader.Rows[0]["Plaza"]), letraNormalChica)) { Border = 0 };
 
             var col35 = new PdfPCell(new Phrase("Folio(s) Fallas(s)", letraNormalChica)) { Border = 0 };
             var col36 = new PdfPCell(new Phrase(Convert.ToString(_tableDTCData.Rows[0]["FailureNumber"]), letraNormalChica)) { Border = 0 };
