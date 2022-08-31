@@ -158,13 +158,14 @@
                 LoginTrue loginTrue;
                 using (SqlConnection sql = new SqlConnection(_connectionString))
                 {
-                    using (SqlCommand cmd = new SqlCommand("dbo.sp_Login", sql))
+                    using (SqlCommand cmd = new SqlCommand("dbo.sp_LoginPrueba", sql))
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
-                        cmd.Parameters.Add("@NombreUsuario", SqlDbType.NVarChar).Value = loginUserInfo.Username;
+                        cmd.Parameters.Add("@Mail", SqlDbType.NVarChar).Value = loginUserInfo.Mail;
                         cmd.Parameters.Add("@Contraseña", SqlDbType.NVarChar).Value = loginUserInfo.Password;
                         
                         loginTrue = _sqlResult.GetRow<LoginTrue>("USR", cmd, sql, "GetStoreLogin");
+
                         if(loginTrue is null)
                             return new Response { Message = $"Error", Result = null };                        
                     }
