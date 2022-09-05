@@ -432,7 +432,7 @@
                     if (!File.Exists(fotoTemporal))
                         imageReview.Save(fotoTemporal);
                     var fileTemp = File.ReadAllBytes(fotoTemporal);
-                    var clone = WaterMark(SixLabors.ImageSharp.Image.Load(fileTemp), $"a");
+                    var clone = WaterMark(SixLabors.ImageSharp.Image.Load(fileTemp), $"{_tableHeader.Rows[0]["Latitude"]}, {_tableHeader.Rows[0]["Length"]}");
                     clone.SaveAsJpeg(fotoTemporal);
                     iTextSharp.text.Image img = iTextSharp.text.Image.GetInstance(fotoTemporal);
                     PlantillasImagenes(img, cuadros, pagina);
