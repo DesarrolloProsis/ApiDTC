@@ -3,10 +3,17 @@
     using ApiDTC.Models;
     using iTextSharp.text;
     using iTextSharp.text.pdf;
+    using SixLabors.Fonts;
+    using SixLabors.ImageSharp;
+    using SixLabors.ImageSharp.Drawing.Processing;
+    using SixLabors.ImageSharp.Processing;
     using System;
     using System.Collections.Generic;
     using System.Data;
     using System.IO;
+    using System.Runtime.Serialization.Formatters.Binary;
+    using Rectangle = iTextSharp.text.Rectangle;
+
     public class ReporteFotograficoPdfCreation
     {
         #region Attributes
@@ -68,7 +75,7 @@
         {
             string directory, filename, path;
 
-            if (_tipo == 1)
+            if (_tipo == 1 || _tipo == 4)
                 directory = $@"{folder}\{_clavePlaza.ToUpper()}\Reportes\{_referenceNumber}";
             else if (_tipo == 2)
                 directory = $@"{folder}\{_clavePlaza.ToUpper()}\DTC\{_referenceNumber}\Reportes Fotograficos Equipo Nuevo\{_tableHeader.Rows[0]["AnexoReference"]}";
@@ -83,15 +90,14 @@
             else if (_tipo == 2)
                 Directory.CreateDirectory($@"{folder}\{_clavePlaza.ToUpper()}\DTC\{_referenceNumber}\Reportes Fotograficos Equipo Nuevo\{_tableHeader.Rows[0]["AnexoReference"]}");
 
-            if (_tipo == 1)
+            if (_tipo == 1 || _tipo == 4)
                 filename = $"ReporteFotográfico-{_referenceNumber}.pdf";
             else if (_tipo == 2)
                 filename = $@"DTC-{_referenceNumber}-EquipoNuevo.pdf";
             else
                 filename = $@"DTC-{_referenceNumber}-EquipoDañado.pdf";
             if (_tipo == 3)
-            {
-                //usar el _referenceNumber para crear la estructura con DT
+            {             
                 directoryImageDiagnostico = $@"{folder}\{_clavePlaza.ToUpper()}\Reportes\" + _tableHeader.Rows[0]["DiagnosisReference"] + "\\";
             }
             path = Path.Combine(directory, filename);
@@ -141,6 +147,9 @@
                             break;
                         case 3:
                             doc.AddTitle("REPORTE FOTOGRÁFICO MANTENIMIENTO CORRECTIVO EQUIPO DAÑADO");
+                            break;
+                        case 4:
+                            doc.AddTitle("REPORTE FOTOGRÁFICO MANTENIMIENTO PREVENTIVO ANUAL TELEPEAJE PLAZA DE COBRO");
                             break;
                         default: break;
                     }
@@ -329,6 +338,9 @@
                     case 3:
                         textoTitulo = "REPORTE FOTOGRÁFICO MANTENIMIENTO CORRECTIVO EQUIPO DAÑADO";
                         break;
+                    case 4:
+                        textoTitulo = "REPORTE FOTOGRÁFICO MANTENIMIENTO PREVENTIVO ANUAL TELEPEAJE PLAZA DE COBRO";
+                        break;
                     default: break;
                 }
                 var colTitulo = new PdfPCell(new Phrase(textoTitulo, letraoNegritaGrande)) { Border = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_CENTER, Padding = 3, PaddingRight = 10, PaddingLeft = 10, Colspan = 6 };
@@ -419,14 +431,21 @@
                     }
                     if (!File.Exists(fotoTemporal))
                         imageReview.Save(fotoTemporal);
-                    Image img = Image.GetInstance(fotoTemporal);
+                    var fileTemp = File.ReadAllBytes(fotoTemporal);
+                    var clone = WaterMark(SixLabors.ImageSharp.Image.Load(fileTemp), $"a");
+                    clone.SaveAsJpeg(fotoTemporal);
+                    iTextSharp.text.Image img = iTextSharp.text.Image.GetInstance(fotoTemporal);
                     PlantillasImagenes(img, cuadros, pagina);
                     PdfPCell colFoto = new PdfPCell(img) { Border = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_MIDDLE, Padding = 2 };
                     table.AddCell(colFoto);
                 }
                 for (int i = 0; i < cuadros - rutas.Count; i++)
                 {
-                    Image logo = Image.GetInstance($@"{System.Environment.CurrentDirectory}\Media\sinImagen.png");
+                    //var fileLogo = File.ReadAllBytes($@"{System.Environment.CurrentDirectory}\Media\sinImagen.png");
+
+                    //Image logo = fileLogo;
+                    iTextSharp.text.Image logo = iTextSharp.text.Image.GetInstance($@"{System.Environment.CurrentDirectory}\Media\sinImagen.png");
+
                     logo.ScaleAbsolute(90f, 110f);
                     PlantillasImagenes(logo, cuadros, pagina);
                     PdfPCell colLogo = new PdfPCell(logo) { Border = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_MIDDLE, Padding = 2 };
@@ -446,7 +465,7 @@
             }
         }
 
-        private IElement PlantillasImagenes(Image img, int cuadros, int pagina)
+        private IElement PlantillasImagenes(iTextSharp.text.Image img, int cuadros, int pagina)
         {
             //Caso 1: Primera pagina con observaciones
             switch (pagina)
@@ -849,6 +868,31 @@
 
             return rotateFlipType;
         }
+
+        public SixLabors.ImageSharp.Image WaterMark(SixLabors.ImageSharp.Image input, string drawText)
+        {
+            //Clone will return a processed deep copy image object.
+            //Mutate=>Action for direct processing
+            return input.Clone(x =>
+            {
+                //Load font (ttf)
+                FontFamily fontfamily = SystemFonts.Get("Arial");
+                //20th, bold
+                var font = new SixLabors.Fonts.Font(fontfamily, 13, FontStyle.Bold);
+                var options = new TextOptions(font)
+                {
+                    Dpi = 72,
+                    KerningMode = KerningMode.Normal
+                };
+                //Get the size required for drawing the file
+                var size = TextMeasurer.Measure(drawText, options);
+                //Draw. Here is the lower right corner, you can also add parameters to dynamically handle the upper left/lower right/centered...
+                //Drawing pictures is similar
+                x.DrawText(drawText, font, Color.Yellow,
+                    new PointF(input.Width - size.Width - 3, input.Height - size.Height - 3));
+            });
+        }
+
         #endregion
     }
 }
