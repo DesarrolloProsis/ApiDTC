@@ -158,7 +158,7 @@
                 LoginTrue loginTrue;
                 using (SqlConnection sql = new SqlConnection(_connectionString))
                 {
-                    using (SqlCommand cmd = new SqlCommand("dbo.sp_LoginPrueba", sql))
+                    using (SqlCommand cmd = new SqlCommand("dbo.sp_Login", sql))
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.Add("@Mail", SqlDbType.NVarChar).Value = loginUserInfo.Mail;
