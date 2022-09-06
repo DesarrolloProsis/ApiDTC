@@ -4,6 +4,10 @@ using iTextSharp.text.pdf;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Drawing.Processing;
+using SixLabors.ImageSharp.Processing;
+using SixLabors.Fonts;
 
 
 namespace ApiDTC.Services
@@ -100,7 +104,7 @@ namespace ApiDTC.Services
             {
                 using (MemoryStream myMemoryStream = new MemoryStream())
                 {
-                    doc.SetPageSize(new Rectangle(609.4488f, 793.701f));
+                    doc.SetPageSize(new iTextSharp.text.Rectangle(609.4488f, 793.701f));
                     doc.SetMargins(35f, 35f, 30f, 30f);
                     doc.AddAuthor("PROSIS");
                     doc.AddTitle("FICHA TÉCNICA DE ATENCIÓN");
@@ -265,7 +269,10 @@ namespace ApiDTC.Services
                     }
                     if (!File.Exists(fotoTemporal))
                         imageReview.Save(fotoTemporal);
-                    Image img = Image.GetInstance(fotoTemporal);
+                    var fileTemp = File.ReadAllBytes(fotoTemporal);
+                    var clone = WaterMark(SixLabors.ImageSharp.Image.Load(fileTemp), $"{_fichaTecnicaInfo.Latitude}, {_fichaTecnicaInfo.Length}");
+                    clone.SaveAsJpeg(fotoTemporal);
+                    iTextSharp.text.Image img = iTextSharp.text.Image.GetInstance(fotoTemporal);
                     if (img.Width > img.Height)
                         img.ScaleAbsolute(110f, 90f);
                     else
@@ -273,10 +280,10 @@ namespace ApiDTC.Services
                     PdfPCell colFoto = new PdfPCell(img) { Border = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_MIDDLE, Padding = 2 };
                     table.AddCell(colFoto);
                 }
-
+                
                 for (int i = 0; i < 4 - rutas.Length; i++)
                 {
-                    Image logo = Image.GetInstance($@"{System.Environment.CurrentDirectory}\Media\sinImagen.png");
+                    iTextSharp.text.Image logo = iTextSharp.text.Image.GetInstance($@"{System.Environment.CurrentDirectory}\Media\sinImagen.png");
                     logo.ScaleAbsolute(90f, 110f);
                     PdfPCell colLogo = new PdfPCell(logo) { Border = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_MIDDLE, Padding = 2 };
                     table.AddCell(colLogo);
@@ -728,6 +735,30 @@ namespace ApiDTC.Services
             }
 
             return rotateFlipType;
+        }
+
+        public SixLabors.ImageSharp.Image WaterMark(SixLabors.ImageSharp.Image input, string drawText)
+        {
+            //Clone will return a processed deep copy image object.
+            //Mutate=>Action for direct processing
+            return input.Clone(x =>
+            {
+                //Load font (ttf)
+                FontFamily fontfamily = SystemFonts.Get("Arial");
+                //20th, bold
+                var font = new SixLabors.Fonts.Font(fontfamily, 13, FontStyle.Bold);
+                var options = new TextOptions(font)
+                {
+                    Dpi = 72,
+                    KerningMode = KerningMode.Normal
+                };
+                //Get the size required for drawing the file
+                var size = TextMeasurer.Measure(drawText, options);
+                //Draw. Here is the lower right corner, you can also add parameters to dynamically handle the upper left/lower right/centered...
+                //Drawing pictures is similar
+                x.DrawText(drawText, font, Color.Yellow,
+                    new PointF(input.Width - size.Width - 3, input.Height - size.Height - 3));
+            });
         }
         #endregion
     }
