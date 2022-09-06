@@ -50,6 +50,7 @@
         public bool IsAnexoCreate { get; set; }
         public bool IsValidCreate { get; set; }
         public string Name { get; set; }
+        public string Center { get; set; }
 
 
     }
