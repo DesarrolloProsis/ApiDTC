@@ -31,5 +31,9 @@ namespace ApiDTC.Models
         public string TipoFallo { get; set; }
 
         public string AdministradorPlaza { get; set; }
+
+        public string Latitude { get; set; }
+
+        public string Length { get; set; }
     }
 }
