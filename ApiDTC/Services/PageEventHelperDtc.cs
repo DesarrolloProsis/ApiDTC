@@ -449,7 +449,7 @@ namespace ApiDTC.Services
             //}
 
             var col39 = new PdfPCell(new Phrase("Centro de Servicio", letraNormalChica)) { Border = 0 };
-            var col40 = new PdfPCell(new Phrase(_tableHeader.Rows[0]["Center"].ToString(), letraoNegritaChicaEncabezado)) { Border = 0 };
+            var col40 = new PdfPCell(new Phrase(_tableHeader.Rows[0]["Center"].ToString(), letraoNegritaChicaEncabezado)) { Border = 0, HorizontalAlignment = Element.ALIGN_RIGHT };
 
             var col41= new PdfPCell(new Phrase("", letraNormalChica)) { Border = 0 };
             var col42 = new PdfPCell(new Phrase("", letraNormalChica)) { Border = 0 };
@@ -461,16 +461,17 @@ namespace ApiDTC.Services
             var col46 = new PdfPCell(new Phrase("", letraNormalChica)) { Border = 0 };
 
             string direccionCentro;
-            if (_tableHeader.Rows[0]["Center"].ToString().Equals("CUERNAVACA"))
-                direccionCentro = "Tramo México-Acapulco (P.C. 107 Emilinano Zapata, P.C. 106 Aereopuerto, P.C 105 Xochitepec y P.C. 101 Alpueyeca)";
-            else if (_tableHeader.Rows[0]["Center"].ToString().Equals("CHILPANCINGO"))
-                direccionCentro = "Tramo México-Acapulco (P.C. 184 Francisco Velasco Durán, P.C. 102 Paso Morelos, P.C 103 Palo Blanco y P.C. 104 La Venta)";
-            else if (_tableHeader.Rows[0]["Center"].ToString().Equals("CIUDAD DE MÉXICO"))
-                direccionCentro = "Tramo México-Acapulco (P.C. 001 Tlalpan, P.C. 001 Bis Tres Marías) y Tramo México-Irapuato (P.C. 004 Tepotzotlán y P.C. 069 Joróbas)";
-            else if (_tableHeader.Rows[0]["Center"].ToString().Equals("QUERÉTARO"))
-                direccionCentro = "Tramo México-Irapuato (P.C. 070 Polotitlán, P.C. 005 Palmillas, P.C. 127 Chichimequillas, P.C. 006 Querétaro, P.C. 061 Libramiento Sur Poniente, P.C. 183 Villagrán, P.C. 186 Cerro Gordo y P.C. 041 Salamanca)";
-            else
-                direccionCentro = "Direccion desconocida";
+            //if (_tableHeader.Rows[0]["Center"].ToString().Equals("CUERNAVACA"))
+            //    direccionCentro = "Tramo México-Acapulco (P.C. 107 Emilinano Zapata, P.C. 106 Aereopuerto, P.C 105 Xochitepec y P.C. 101 Alpueyeca)";
+            //else if (_tableHeader.Rows[0]["Center"].ToString().Equals("CHILPANCINGO"))
+            //    direccionCentro = "Tramo México-Acapulco (P.C. 184 Francisco Velasco Durán, P.C. 102 Paso Morelos, P.C 103 Palo Blanco y P.C. 104 La Venta)";
+            //else if (_tableHeader.Rows[0]["Center"].ToString().Equals("CIUDAD DE MÉXICO"))
+            //    direccionCentro = "Tramo México-Acapulco (P.C. 001 Tlalpan, P.C. 001 Bis Tres Marías) y Tramo México-Irapuato (P.C. 004 Tepotzotlán y P.C. 069 Joróbas)";
+            //else if (_tableHeader.Rows[0]["Center"].ToString().Equals("QUERÉTARO"))
+            //    direccionCentro = "Tramo México-Irapuato (P.C. 070 Polotitlán, P.C. 005 Palmillas, P.C. 127 Chichimequillas, P.C. 006 Querétaro, P.C. 061 Libramiento Sur Poniente, P.C. 183 Villagrán, P.C. 186 Cerro Gordo y P.C. 041 Salamanca)";
+            //else
+            //    direccionCentro = "Direccion desconocida";
+            direccionCentro = "";
 
             var col47Y48 = new PdfPCell(new Phrase(direccionCentro, letraNormalChica)) { Border = 0, Colspan = 2};
 
