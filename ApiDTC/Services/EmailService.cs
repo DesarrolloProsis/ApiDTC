@@ -1,4 +1,5 @@
-﻿using MailKit.Net.Smtp;
+﻿using ApiDTC.Models.Email;
+using MailKit.Net.Smtp;
 using Microsoft.Extensions.Configuration;
 using MimeKit;
 using System;
@@ -14,21 +15,27 @@ namespace ApiDTC.Services
             _apiLogger = apiLogger;
         }
 
-        public bool Send(string to, string subject, string name)
+        public bool Send(Email email)
         {
             try
             {
+                //var builder = new BodyBuilder();
+
+                //builder.LinkedResources.Add(email.file.Name, email.file);
+
+                //builder.TextBody = email.body;
+
                 var message = new MimeMessage();
                 //From address
                 message.From.Add(new MailboxAddress("PROSIS", "send1@grupo-prosis.com"));
                 //To address
-                message.To.Add(new MailboxAddress(name, to));
+                message.To.Add(new MailboxAddress(email.addressee));
                 //Subject
-                message.Subject = subject;
+                message.Subject = email.affair;
                 //Body
                 message.Body = new TextPart(MimeKit.Text.TextFormat.Html)
                 {
-                    Text = "<h1>HOLA</h1>"
+                    Text = email.body
                 };
 
                 //Configuration

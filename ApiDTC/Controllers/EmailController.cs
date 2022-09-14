@@ -1,4 +1,5 @@
 ﻿using ApiDTC.Data;
+using ApiDTC.Models.Email;
 using ApiDTC.Services;
 using MailKit.Net.Smtp;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -15,7 +16,7 @@ namespace ApiDTC.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class EmailController : Controller
     {
         #region Attributes
@@ -30,23 +31,23 @@ namespace ApiDTC.Controllers
         #endregion
 
         #region Methods
-        [HttpGet]
-        public IActionResult Index()
+        [HttpPost]
+        public IActionResult Index([FromBody] Email emailB)
         {
             EmailService email = new EmailService(new ApiLogger());
-            if (email.Send("rmendoza@grupo-prosis.com", "HOLA RODRIGO ;)", "rodrigo"))
-                return Ok();
-            return NotFound();;
-        }
-
-        [HttpGet("Axel")]
-        public IActionResult IndexAxel()
-        {
-            EmailService email = new EmailService(new ApiLogger());
-            if (email.Send("axel.frias257@gmail.com", "HOLA RODRIGO ;)", "rodrigo"))
+            if (email.Send(emailB))
                 return Ok();
             return NotFound(); ;
         }
+
+        //[HttpGet("Axel")]
+        //public IActionResult IndexAxel()
+        //{
+        //    EmailService email = new EmailService(new ApiLogger());
+        //    if (email.Send("axel.frias257@gmail.com", "HOLA RODRIGO ;)", "rodrigo"))
+        //        return Ok();
+        //    return NotFound(); ;
+        //}
         #endregion
     }
 }
