@@ -236,6 +236,65 @@
             }
         }
 
+        public Response UpdateDTCStatusLog(string clavePlaza, DtcStatusLog dtcStatusLog)
+        {
+            try
+            {
+                using (SqlConnection sql = new SqlConnection(_connectionString))
+                {
+                    using (SqlCommand cmd = new SqlCommand("spUpdateDTCStatusLog", sql))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.Add("@ReferenceNumber", SqlDbType.NVarChar).Value = dtcStatusLog.ReferenceNumber;
+                        cmd.Parameters.Add("@UserId", SqlDbType.Int).Value = dtcStatusLog.UserId;
+                        cmd.Parameters.Add("@StatusId", SqlDbType.Int).Value = dtcStatusLog.StatusId;
+                        cmd.Parameters.Add("@Comment", SqlDbType.NVarChar).Value = dtcStatusLog.Comment;
+                        var result = _sqlResult.Put(clavePlaza, cmd, sql, "spUpdateDTCStatusLog");
+                        return new Response
+                        {
+                            Message = result.SqlMessage,
+                            Result = result.SqlResult
+                        };
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                _apiLogger.WriteLog(clavePlaza, ex, "DtcDataDb: GetDTCStatusLog", 1);
+                return new Response { Message = $"Error: {ex.Message}", Result = null };
+            }
+        }
+
+        public Response GetDTCStatusLog(string clavePlaza, int[] statuses)
+        {
+            try
+            {
+                using (SqlConnection sql = new SqlConnection(_connectionString))
+                {
+                    using (SqlCommand cmd = new SqlCommand("dbo.spGetDTCStatusLog", sql))
+                    {
+                        List<DtcStatusLog> results = new List<DtcStatusLog>();
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        foreach (var status in statuses)
+                        {
+                            cmd.Parameters.Add("@StatusId", SqlDbType.Int).Value = status;
+                            results.AddRange(_sqlResult.GetRows<DtcStatusLog>(clavePlaza, cmd, sql, "DtcDataDb: GetDTC"));
+                        }
+                        return new Response
+                        {
+                            Message = "Ok",
+                            Result = results
+                        };
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                _apiLogger.WriteLog(clavePlaza, ex, "DtcDataDb: GetDTCStatusLog", 1);
+                return new Response { Message = $"Error: {ex.Message}", Result = null };
+            }
+        }
+
         public Response GetDTC(string clavePlaza, int idUser, string squareCatalog, string disk, string folder)
         {
             using (SqlConnection sql = new SqlConnection(_connectionString))

@@ -35,6 +35,7 @@
         public string AdminMail { get; set; }
         
         public int AdminSquareId { get; set; }
+        public string Center { get; set; }
         #endregion
     }
 }

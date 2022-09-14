@@ -15,6 +15,7 @@
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Configuration;
+    using Spire.License;
 
     [Route("api/[controller]")]
     [ApiController]
@@ -42,6 +43,25 @@
         #endregion
 
         #region Methods
+
+        //Lista de DTC´s
+        [HttpPost("GetNotificaciones")]
+        public ActionResult<Response> GetNotificaciones(int[] statuses)
+        {
+            var get = _db.GetDTCStatusLog("", statuses);
+            if (get.Result == null)
+                return NotFound(get);
+            return Ok(get);
+        }
+
+        [HttpPost("UpdateNotificaciones")]
+        public ActionResult<Response> PutNotificaciones(DtcStatusLog dtcStatusLog)
+        {
+            var get = _db.UpdateDTCStatusLog("", dtcStatusLog);
+            if (get.Result == null)
+                return NotFound(get);
+            return Ok(get);
+        }
 
         #region Operaciones DTC
         //Lista de DTC´s
