@@ -71,7 +71,20 @@
         public Response NewPdf(string folder)
         {
             DateTime now = DateTime.Now;
-            string directory = $@"{folder}\{_clavePlaza}\Reportes\{_noReporte}";
+            string directory = "";
+            if(_tipo <= 10)
+                directory = $@"{folder}\{_clavePlaza}\Reportes\{_noReporte}";
+            else if (_tipo >= 11 && _tipo <= 16)
+                directory = $@"{folder}\{_clavePlaza}\Reportes\Software\{_noReporte}";
+            else if(_tipo >= 17 && _tipo <= 22)
+                directory = $@"{folder}\{_clavePlaza}\Reportes\Telepeaje\{_noReporte}";
+            else
+                return new Response
+                {
+                    Message = $"Error: El tipo de reporte {_tipo} no existe",
+                    Result = null
+                };
+
             string filename = $"{_noReporte}.pdf";
             
             string path = Path.Combine(directory, filename);
@@ -143,6 +156,42 @@
                             break;
                         case 10:
                             doc.AddTitle("Mantenimiento preventivo anual nivel carril");
+                            break;
+                        case 11:
+                            doc.AddTitle("Mantenimiento preventivo diario software plaza de cobro");
+                            break;
+                        case 12:
+                            doc.AddTitle("Mantenimiento preventivo semanal software plaza de cobro");
+                            break;
+                        case 13:
+                            doc.AddTitle("Mantenimiento preventivo mensual software plaza de cobro");
+                            break;
+                        case 14:
+                            doc.AddTitle("Mantenimiento preventivo trimestral software plaza de cobro");
+                            break;
+                        case 15:
+                            doc.AddTitle("Mantenimiento preventivo semestral software plaza de cobro");
+                            break;
+                        case 16:
+                            doc.AddTitle("Mantenimiento preventivo anual software plaza de cobro");
+                            break;
+                        case 17:
+                            doc.AddTitle("Mantenimiento preventivo diario telepeaje plaza de cobro");
+                            break;
+                        case 18:
+                            doc.AddTitle("Mantenimiento preventivo semanal telepeaje plaza de cobro");
+                            break;
+                        case 19:
+                            doc.AddTitle("Mantenimiento preventivo mensual telepeaje plaza de cobro");
+                            break;
+                        case 20:
+                            doc.AddTitle("Mantenimiento preventivo trimestral telepeaje plaza de cobro");
+                            break;
+                        case 21:
+                            doc.AddTitle("Mantenimiento preventivo semestral telepeaje plaza de cobro");
+                            break;
+                        case 22:
+                            doc.AddTitle("Mantenimiento preventivo anual telepeaje plaza de cobro");
                             break;
                         default: break;
                     }
@@ -275,6 +324,42 @@
                         break;
                     case 10:
                         _textoTitulo = "MANTENIMIENTO PREVENTIVO ANUAL NIVEL CARRIL";
+                        break;
+                    case 11:
+                        _textoTitulo = "MANTENIMIENTO PREVENTIVO DIARIO SOFTWARE PLAZA DE COBRO";
+                        break;
+                    case 12:
+                        _textoTitulo = "MANTENIMIENTO PREVENTIVO SEMANAL SOFTWARE PLAZA DE COBRO";
+                        break;
+                    case 13:
+                        _textoTitulo = "MANTENIMIENTO PREVENTIVO MENSUAL SOFTWARE PLAZA DE COBRO";
+                        break;
+                    case 14:
+                        _textoTitulo = "MANTENIMIENTO PREVENTIVO TRIMESTRAL SOFTWARE PLAZA DE COBRO";
+                        break;
+                    case 15:
+                        _textoTitulo = "MANTENIMIENTO PREVENTIVO SEMESTRAL SOFTWARE PLAZA DE COBRO";
+                        break;
+                    case 16:
+                        _textoTitulo = "MANTENIMIENTO PREVENTIVO ANUAL SOFTWARE PLAZA DE COBRO";
+                        break;
+                    case 17:
+                        _textoTitulo = "MANTENIMIENTO PREVENTIVO DIARIO TELEPEAJE PLAZA DE COBRO";
+                        break;
+                    case 18:
+                        _textoTitulo = "MANTENIMIENTO PREVENTIVO SEMANAL TELEPEAJE PLAZA DE COBRO";
+                        break;
+                    case 19:
+                        _textoTitulo = "MANTENIMIENTO PREVENTIVO MENSUAL TELEPEAJE PLAZA DE COBRO";
+                        break;
+                    case 20:
+                        _textoTitulo = "MANTENIMIENTO PREVENTIVO TRIMESTRAL TELEPEAJE PLAZA DE COBRO";
+                        break;
+                    case 21:
+                        _textoTitulo = "MANTENIMIENTO PREVENTIVO SEMESTRAL TELEPEAJE PLAZA DE COBRO";
+                        break;
+                    case 22:
+                        _textoTitulo = "MANTENIMIENTO PREVENTIVO ANUAL TELEPEAJE PLAZA DE COBRO";
                         break;
                     default: break;
                 }
@@ -604,7 +689,7 @@
                 table.AddCell(colSello);
 
                 //Técnico
-                string valorTecnicoProsis = _tipo == 1 ? Convert.ToString(_tableHeader.Rows[0]["TecnicoProsis"]) : Convert.ToString(_tableHeader.Rows[0]["TecnicoProsis"]);
+                string valorTecnicoProsis = _tipo == 1 || _tipo >= 4 ? Convert.ToString(_tableHeader.Rows[0]["TecnicoProsis"]) : Convert.ToString(_tableHeader.Rows[0]["TecnicoProsis"]);
                 var colTecnico = new PdfPCell(new Phrase(valorTecnicoProsis, letraNormalChica))
                 {
                     Border = 0,
@@ -612,7 +697,7 @@
                     VerticalAlignment = Element.ALIGN_CENTER
                 };
 
-                string valorPersonalCapufe = _tipo == 1 ? Convert.ToString(_tableHeader.Rows[0]["PersonalCapufe"]) : Convert.ToString(_tableHeader.Rows[0]["PersonalCapufe"]);
+                string valorPersonalCapufe = _tipo == 1 || _tipo >= 4 ? Convert.ToString(_tableHeader.Rows[0]["PersonalCapufe"]) : Convert.ToString(_tableHeader.Rows[0]["PersonalCapufe"]);
                 var colPersonal = new PdfPCell(new Phrase(valorPersonalCapufe, letraNormalChica))
                 {
                     Border = 0,
