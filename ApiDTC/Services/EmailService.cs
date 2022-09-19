@@ -1,8 +1,10 @@
 ﻿using ApiDTC.Models.Email;
 using MailKit.Net.Smtp;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using MimeKit;
 using System;
+using System.IO;
 
 namespace ApiDTC.Services
 {
@@ -15,15 +17,23 @@ namespace ApiDTC.Services
             _apiLogger = apiLogger;
         }
 
-        public bool Send(Email email)
+        public bool Send(Email email, IFormFile file)
         {
             try
             {
-                //var builder = new BodyBuilder();
+                var builder = new BodyBuilder();
 
-                //builder.LinkedResources.Add(email.file.Name, email.file);
+                builder.HtmlBody = email.body;
 
-                //builder.TextBody = email.body;
+                byte[] fileBytes;
+
+                using (var ms = new MemoryStream())
+                {
+                    file.CopyTo(ms);
+                    fileBytes = ms.ToArray();
+                }
+
+                builder.Attachments.Add(file.FileName, fileBytes);
 
                 var message = new MimeMessage();
                 //From address
@@ -33,10 +43,8 @@ namespace ApiDTC.Services
                 //Subject
                 message.Subject = email.affair;
                 //Body
-                message.Body = new TextPart(MimeKit.Text.TextFormat.Html)
-                {
-                    Text = email.body
-                };
+                message.Body = builder.ToMessageBody();
+
 
                 //Configuration
 

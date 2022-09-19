@@ -4,6 +4,7 @@ using ApiDTC.Services;
 using MailKit.Net.Smtp;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MimeKit;
 using MimeKit.Text;
@@ -16,7 +17,7 @@ namespace ApiDTC.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class EmailController : Controller
     {
         #region Attributes
@@ -32,10 +33,10 @@ namespace ApiDTC.Controllers
 
         #region Methods
         [HttpPost]
-        public IActionResult Index([FromBody] Email emailB)
+        public IActionResult Index([FromForm] Email emailB, [FromForm(Name = "file")] IFormFile file)
         {
             EmailService email = new EmailService(new ApiLogger());
-            if (email.Send(emailB))
+            if (email.Send(emailB, file))
                 return Ok();
             return NotFound(); ;
         }
