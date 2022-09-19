@@ -265,6 +265,290 @@
                 return NotFound(ex.ToString());
             }
         }
+
+        #region Mantenimiento Telepeaje
+
+        [AllowAnonymous]
+        [HttpGet("MantenimientoPreventivoTelepeaje/{clavePlaza}/{referenceNumber}/{ubicacion}/{tipo}")]
+        public IActionResult GetReporteFotograficoTelepeaje(string clavePlaza, string referenceNumber, string ubicacion, int tipo)
+        {
+            try
+            {
+                var dataSet = _db.GetStorePDFReporteFotografico(clavePlaza, referenceNumber);
+                if (dataSet.Tables[0].Rows.Count == 0)
+                    return NotFound("GetStoredPdf retorna tabla vacía");
+                ReporteFotograficoPdfCreation pdf = new ReporteFotograficoPdfCreation(clavePlaza, dataSet.Tables[0], new ApiLogger(), tipo, referenceNumber, ubicacion);
+                var pdfResult = pdf.NewPdf($@"{this._disk}:\{this._folder}");
+                if (pdfResult.Result == null)
+                    return NotFound(pdfResult.Message);
+                return File(new FileStream(pdfResult.Result.ToString(), FileMode.Open, FileAccess.Read), "application/pdf");
+            }
+            catch (IOException ex)
+            {
+                _apiLogger.WriteLog(clavePlaza, ex, "ReporteFotograficoController: GetReporteFotograficoTelepeaje", 2);
+                return NotFound(ex.ToString());
+            }
+
+        }
+
+        [AllowAnonymous]
+        [HttpPost("MantenimientoPreventivoTelepeaje/Images/{clavePlaza}/{reportNumber}")]
+        public ActionResult<Response> InsertaImagenesMantenimientoTelepeaje(string clavePlaza, [FromForm(Name = "image")] IFormFile image, string reportNumber, int semana)
+        {
+            if (image.Length > 0 || image != null)
+            {
+                int numberOfImages;
+                string dir = $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\Reportes\Telepeaje\{reportNumber}\Imgs";
+                string dirFull = $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\Reportes\Telepeaje\{reportNumber}\ImgsFullSize";
+                string filename;
+                try
+                {
+                    if (!Directory.Exists(dir))
+                        Directory.CreateDirectory(dir);
+
+                    if (!Directory.Exists(dirFull))
+                        Directory.CreateDirectory(dirFull);
+
+                    DateTime fechaImagen = DateTime.Now;
+                    filename = $"{reportNumber}_MantenimientoPreventivoImgs_{fechaImagen.ToString("dd-MM-yyy-hh_mm_ssf")}{image.FileName.Substring(image.FileName.LastIndexOf('.'))}";
+
+                    using (FileStream fs = new FileStream(Path.Combine(dirFull, filename), FileMode.Create))
+                    {
+                        image.CopyTo(fs);
+                        fs.Close();
+                    }
+                    //full
+                    using (FileStream fs = new FileStream(Path.Combine(dir, filename), FileMode.Create))
+                    {
+                        image.CopyTo(fs);
+                        fs.Close();
+
+                        FileInfo fi = new FileInfo(Path.Combine(dir, filename));
+                        string temporal = Path.Combine(dir, filename) + "_temp";
+                        this.VaryQualityLevel(Path.Combine(dir, filename), temporal);
+                        if (System.IO.File.Exists(Path.Combine(dir, filename)))
+                        {
+                            //Se borra archivo grande
+                            System.IO.File.Delete(Path.Combine(dir, filename));
+                            //Archivo temporal actualiza su nombre al real
+                            System.IO.File.Move(Path.Combine(dir, temporal), Path.Combine(dir, filename));
+                        }
+                    }
+                    return Ok(Path.Combine(dir, filename));
+                }
+                catch (IOException ex)
+                {
+                    _apiLogger.WriteLog(clavePlaza, ex, "ReporteFotograficoController: InsertaImagenesMantenimientoTelepeaje", 2);
+                    return NotFound(ex.ToString());
+                }
+            }
+            else
+                return NotFound("Insert another image");
+        }
+
+        [AllowAnonymous]
+        [HttpGet("MantenimientoPreventivoTelepeaje/Images/{clavePlaza}/{reportNumber}/{fileName}")]
+        public ActionResult<DtcImage> DescargaImagenesMantnimientoTelepeaje(string clavePlaza, string reportNumber, string fileName)
+        {
+            try
+            {
+                string path = $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\Reportes\Telepeaje\{reportNumber}\Imgs\{fileName}";
+                if (!System.IO.File.Exists(path))
+                    return NotFound("No existe el archivo");
+                Byte[] bitMap = System.IO.File.ReadAllBytes(path);
+
+                return File(bitMap, "Image/jpg");
+            }
+            catch (IOException ex)
+            {
+                _apiLogger.WriteLog(clavePlaza, ex, "ReporteFotograficoController: DescargaImagenesMantnimientoTelepeaje", 2);
+                return NotFound(ex.ToString());
+            }
+        }
+
+        [AllowAnonymous]
+        [HttpGet("MantenimientoPreventivoTelepeaje/Images/GetPaths/{clavePlaza}/{reportNumber}")]
+        public ActionResult<List<string>> PathsImagenesMantnimientoTelepeaje(string clavePlaza, string reportNumber)
+        {
+            try
+            {
+                string directoy = $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\Reportes\Telepeaje\{reportNumber}\Imgs";
+                List<string> dtcImages = new List<string>();
+                if (!Directory.Exists(directoy))
+                    return Ok(dtcImages);
+                foreach (var item in Directory.GetFiles(directoy))
+                    dtcImages.Add(item.Substring(item.LastIndexOf('\\') + 1));
+                return Ok(dtcImages);
+            }
+            catch (IOException ex)
+            {
+                _apiLogger.WriteLog(clavePlaza, ex, "ReporteFotograficoController: PathsImagenesMantnimientoTelepeaje", 2);
+                return NotFound(ex.ToString());
+            }
+        }
+
+        [AllowAnonymous]
+        [HttpGet("MantenimientoPreventivoTelepeaje/Images/DeleteImg/{clavePlaza}/{reportNumber}/{fileName}")]
+        public ActionResult<string> BorradoImagenesMantnimientoTelepeaje(string clavePlaza, string reportNumber, string fileName)
+        {
+            try
+            {
+                string path = $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\Reportes\Telepeaje\{reportNumber}\Imgs\{fileName}";
+                if (!System.IO.File.Exists(path))
+                    return NotFound(path);
+                System.IO.File.Delete(path);
+                if (Directory.GetFiles($@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\Reportes\Telepeaje\{reportNumber}\Imgs").Length == 0)
+                    Directory.Delete($@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\Reportes\Telepeaje\{reportNumber}\Imgs");
+                return Ok(path);
+            }
+            catch (IOException ex)
+            {
+                _apiLogger.WriteLog(clavePlaza, ex, "ReporteFotograficoController: BorradoImagenesMantnimientoTelepeaje", 2);
+                return NotFound(ex.ToString());
+            }
+        }
+        #endregion
+        #region Mantenimiento Software
+        [AllowAnonymous]
+        [HttpGet("MantenimientoPreventivoSoftware/{clavePlaza}/{referenceNumber}/{ubicacion}/{tipo}")]
+        public IActionResult GetReporteFotograficoSoftware(string clavePlaza, string referenceNumber, string ubicacion, int tipo)
+        {
+            try
+            {
+                var dataSet = _db.GetStorePDFReporteFotografico(clavePlaza, referenceNumber);
+                if (dataSet.Tables[0].Rows.Count == 0)
+                    return NotFound("GetStoredPdf retorna tabla vacía");
+                ReporteFotograficoPdfCreation pdf = new ReporteFotograficoPdfCreation(clavePlaza, dataSet.Tables[0], new ApiLogger(), tipo, referenceNumber, ubicacion);
+                var pdfResult = pdf.NewPdf($@"{this._disk}:\{this._folder}");
+                if (pdfResult.Result == null)
+                    return NotFound(pdfResult.Message);
+                return File(new FileStream(pdfResult.Result.ToString(), FileMode.Open, FileAccess.Read), "application/pdf");
+            }
+            catch (IOException ex)
+            {
+                _apiLogger.WriteLog(clavePlaza, ex, "ReporteFotograficoController: GetReporteFotograficoSoftware", 2);
+                return NotFound(ex.ToString());
+            }
+
+        }
+
+        [AllowAnonymous]
+        [HttpPost("MantenimientoPreventivoSoftware/Images/{clavePlaza}/{reportNumber}")]
+        public ActionResult<Response> InsertaImagenesMantenimientoSoftware(string clavePlaza, [FromForm(Name = "image")] IFormFile image, string reportNumber, int semana)
+        {
+            if (image.Length > 0 || image != null)
+            {
+                int numberOfImages;
+                string dir = $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\Reportes\Software\{reportNumber}\Imgs";
+                string dirFull = $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\Reportes\software\{reportNumber}\ImgsFullSize";
+                string filename;
+                try
+                {
+                    if (!Directory.Exists(dir))
+                        Directory.CreateDirectory(dir);
+
+                    if (!Directory.Exists(dirFull))
+                        Directory.CreateDirectory(dirFull);
+
+                    DateTime fechaImagen = DateTime.Now;
+                    filename = $"{reportNumber}_MantenimientoPreventivoImgs_{fechaImagen.ToString("dd-MM-yyy-hh_mm_ssf")}{image.FileName.Substring(image.FileName.LastIndexOf('.'))}";
+
+                    using (FileStream fs = new FileStream(Path.Combine(dirFull, filename), FileMode.Create))
+                    {
+                        image.CopyTo(fs);
+                        fs.Close();
+                    }
+                    //full
+                    using (FileStream fs = new FileStream(Path.Combine(dir, filename), FileMode.Create))
+                    {
+                        image.CopyTo(fs);
+                        fs.Close();
+
+                        FileInfo fi = new FileInfo(Path.Combine(dir, filename));
+                        string temporal = Path.Combine(dir, filename) + "_temp";
+                        this.VaryQualityLevel(Path.Combine(dir, filename), temporal);
+                        if (System.IO.File.Exists(Path.Combine(dir, filename)))
+                        {
+                            //Se borra archivo grande
+                            System.IO.File.Delete(Path.Combine(dir, filename));
+                            //Archivo temporal actualiza su nombre al real
+                            System.IO.File.Move(Path.Combine(dir, temporal), Path.Combine(dir, filename));
+                        }
+                    }
+                    return Ok(Path.Combine(dir, filename));
+                }
+                catch (IOException ex)
+                {
+                    _apiLogger.WriteLog(clavePlaza, ex, "ReporteFotograficoController: InsertaImagenesMantenimientoSoftware", 2);
+                    return NotFound(ex.ToString());
+                }
+            }
+            else
+                return NotFound("Insert another image");
+        }
+
+        [AllowAnonymous]
+        [HttpGet("MantenimientoPreventivoSoftware/Images/{clavePlaza}/{reportNumber}/{fileName}")]
+        public ActionResult<DtcImage> DescargaImagenesMantnimientoSoftware(string clavePlaza, string reportNumber, string fileName)
+        {
+            try
+            {
+                string path = $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\Reportes\Software\{reportNumber}\Imgs\{fileName}";
+                if (!System.IO.File.Exists(path))
+                    return NotFound("No existe el archivo");
+                Byte[] bitMap = System.IO.File.ReadAllBytes(path);
+
+                return File(bitMap, "Image/jpg");
+            }
+            catch (IOException ex)
+            {
+                _apiLogger.WriteLog(clavePlaza, ex, "ReporteFotograficoController: DescargaImagenesMantnimientoSoftware", 2);
+                return NotFound(ex.ToString());
+            }
+        }
+
+        [AllowAnonymous]
+        [HttpGet("MantenimientoPreventivoSoftware/Images/GetPaths/{clavePlaza}/{reportNumber}")]
+        public ActionResult<List<string>> PathsImagenesMantnimientoSoftware(string clavePlaza, string reportNumber)
+        {
+            try
+            {
+                string directoy = $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\Reportes\Software\{reportNumber}\Imgs";
+                List<string> dtcImages = new List<string>();
+                if (!Directory.Exists(directoy))
+                    return Ok(dtcImages);
+                foreach (var item in Directory.GetFiles(directoy))
+                    dtcImages.Add(item.Substring(item.LastIndexOf('\\') + 1));
+                return Ok(dtcImages);
+            }
+            catch (IOException ex)
+            {
+                _apiLogger.WriteLog(clavePlaza, ex, "ReporteFotograficoController: PathsImagenesMantnimientoSoftware", 2);
+                return NotFound(ex.ToString());
+            }
+        }
+
+        [AllowAnonymous]
+        [HttpGet("MantenimientoPreventivoSoftware/Images/DeleteImg/{clavePlaza}/{reportNumber}/{fileName}")]
+        public ActionResult<string> BorradoImagenesMantnimientoSoftware(string clavePlaza, string reportNumber, string fileName)
+        {
+            try
+            {
+                string path = $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\Reportes\Software\{reportNumber}\Imgs\{fileName}";
+                if (!System.IO.File.Exists(path))
+                    return NotFound(path);
+                System.IO.File.Delete(path);
+                if (Directory.GetFiles($@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\Reportes\Software\{reportNumber}\Imgs").Length == 0)
+                    Directory.Delete($@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\Reportes\Software\{reportNumber}\Imgs");
+                return Ok(path);
+            }
+            catch (IOException ex)
+            {
+                _apiLogger.WriteLog(clavePlaza, ex, "ReporteFotograficoController: BorradoImagenesMantnimientoSoftware", 2);
+                return NotFound(ex.ToString());
+            }
+        }
+        #endregion
         #endregion
 
         #region Equipo nuevo y dañado
@@ -647,90 +931,6 @@
                 }
             }
         }
-
-        #region Reporte mantenimiento de Software
-
-        //REPORTE FOTOGRAFICO DE MANTENIMIENTO SOFTWARE
-        [HttpGet("MantenimientoSoftware/{clavePlaza}/{ubicacion}/{referenceNumber}")]
-        public IActionResult GetReporteFotograficoSoftware(string clavePlaza, string ubicacion, string referenceNumber)
-        {
-            try
-            {
-                var dataSet = _db.GetStorePDF(clavePlaza, referenceNumber);
-                if (dataSet.Tables[0].Rows.Count == 0)
-                    return NotFound("GetStoredPdf retorna tabla vacía");
-                ReporteFotograficoPdfCreation pdf = new ReporteFotograficoPdfCreation(clavePlaza, dataSet.Tables[0], new ApiLogger(), 4, referenceNumber, ubicacion);
-                var pdfResult = pdf.NewPdf($@"{this._disk}:\{this._folder}");
-                if (pdfResult.Result == null)
-                    return NotFound(pdfResult.Message);
-                return File(new FileStream(pdfResult.Result.ToString(), FileMode.Open, FileAccess.Read), "application/pdf");
-            }
-            catch (IOException ex)
-            {
-                _apiLogger.WriteLog(clavePlaza, ex, "ReporteFotograficoController: GetReporteEquipoDañado", 2);
-                return NotFound(ex.ToString());
-            }
-        }
-
-        [AllowAnonymous]
-        [HttpPost("InsertarImgagenesMantenimientoSoftware/Images/{clavePlaza}/{reportNumber}")]
-        public ActionResult<Response> InsertaImagenSoftware(string clavePlaza, [FromForm(Name = "image")] IFormFile image, string reportNumber)
-        {
-            try
-            {
-                if (image.Length > 0 || image != null)
-                {
-                    string dir = $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\Reportes\{reportNumber}\Imgs";
-                    string dirFull = $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\Reportes\{reportNumber}\ImgsFullSize";
-                    string filename;
-
-                    if (!Directory.Exists(dir))
-                        Directory.CreateDirectory(dir);
-
-                    if (!Directory.Exists(dirFull))
-                        Directory.CreateDirectory(dirFull);
-
-                    DateTime fechaImagen = DateTime.Now;
-                    filename = $"{reportNumber}_EquipoNuevoImgs_{fechaImagen.ToString("dd-MM-yyy-hh_mm_ssf")}{image.FileName.Substring(image.FileName.LastIndexOf('.'))}";
-
-                    //full
-                    using (FileStream fs = new FileStream(Path.Combine(dirFull, filename), FileMode.Create))
-                    {
-                        image.CopyTo(fs);
-                        fs.Close();
-                    }
-                    //full
-                    using (FileStream fs = new FileStream(Path.Combine(dir, filename), FileMode.Create))
-                    {
-                        image.CopyTo(fs);
-                        fs.Close();
-
-                        FileInfo fi = new FileInfo(Path.Combine(dir, filename));
-                        string temporal = Path.Combine(dir, filename) + "_temp";
-                        this.VaryQualityLevel(Path.Combine(dir, filename), temporal);
-                        if (System.IO.File.Exists(Path.Combine(dir, filename)))
-                        {
-                            //Se borra archivo grande
-                            System.IO.File.Delete(Path.Combine(dir, filename));
-                            //Archivo temporal actualiza su nombre al real
-                            System.IO.File.Move(Path.Combine(dir, temporal), Path.Combine(dir, filename));
-                        }
-                    }
-                    return Ok(Path.Combine(dir, filename));
-
-                }
-                else
-                    return NotFound("Insert another image");
-            }
-            catch (IOException ex)
-            {
-                _apiLogger.WriteLog(clavePlaza, ex, "ReporteFotograficoController: InsertImage", 2);
-                return NotFound(ex.ToString());
-            }
-
-        }
-
-        #endregion
 
         #endregion
 

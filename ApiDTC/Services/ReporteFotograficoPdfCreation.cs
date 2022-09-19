@@ -75,10 +75,14 @@
         {
             string directory, filename, path;
 
-            if (_tipo == 1 || _tipo == 4)
+            if (_tipo == 1 )
                 directory = $@"{folder}\{_clavePlaza.ToUpper()}\Reportes\{_referenceNumber}";
             else if (_tipo == 2)
                 directory = $@"{folder}\{_clavePlaza.ToUpper()}\DTC\{_referenceNumber}\Reportes Fotograficos Equipo Nuevo\{_tableHeader.Rows[0]["AnexoReference"]}";
+            else if (_tipo >= 4 && _tipo <= 9)
+                directory = $@"{folder}\{_clavePlaza.ToUpper()}\Reportes\Software\{_referenceNumber}";
+            else if (_tipo >= 10 && _tipo <= 15)
+                directory = $@"{folder}\{_clavePlaza.ToUpper()}\Reportes\Telepeaje\{_referenceNumber}";
             else
                 directory = $@"{folder}\{_clavePlaza.ToUpper()}\DTC\{_referenceNumber}";
             if (!Directory.Exists(directory) && _tipo != 2)
@@ -90,10 +94,14 @@
             else if (_tipo == 2)
                 Directory.CreateDirectory($@"{folder}\{_clavePlaza.ToUpper()}\DTC\{_referenceNumber}\Reportes Fotograficos Equipo Nuevo\{_tableHeader.Rows[0]["AnexoReference"]}");
 
-            if (_tipo == 1 || _tipo == 4)
+            if (_tipo == 1)
                 filename = $"ReporteFotográfico-{_referenceNumber}.pdf";
             else if (_tipo == 2)
                 filename = $@"DTC-{_referenceNumber}-EquipoNuevo.pdf";
+            else if (_tipo >= 4 && _tipo <= 9)
+                filename = $"ReporteFotográficoSoftware-{_referenceNumber}.pdf";
+            else if (_tipo >= 10 && _tipo <= 15)
+                filename = $"ReporteFotográficoTelepeaje-{_referenceNumber}.pdf";
             else
                 filename = $@"DTC-{_referenceNumber}-EquipoDañado.pdf";
             if (_tipo == 3)
@@ -149,6 +157,39 @@
                             doc.AddTitle("REPORTE FOTOGRÁFICO MANTENIMIENTO CORRECTIVO EQUIPO DAÑADO");
                             break;
                         case 4:
+                            doc.AddTitle("REPORTE FOTOGRÁFICO MANTENIMIENTO PREVENTIVO DIA SOFTWARE PLAZA DE COBRO");
+                            break;
+                        case 5:
+                            doc.AddTitle("REPORTE FOTOGRÁFICO MANTENIMIENTO PREVENTIVO SEMANA SOFTWARE PLAZA DE COBRO");
+                            break;
+                        case 6:
+                            doc.AddTitle("REPORTE FOTOGRÁFICO MANTENIMIENTO PREVENTIVO MES SOFTWARE PLAZA DE COBRO");
+                            break;
+                        case 7:
+                            doc.AddTitle("REPORTE FOTOGRÁFICO MANTENIMIENTO PREVENTIVO TRIMESTRAL SOFTWARE PLAZA DE COBRO");
+                            break;
+                        case 8:
+                            doc.AddTitle("REPORTE FOTOGRÁFICO MANTENIMIENTO PREVENTIVO SEMESTRAL SOFTWARE PLAZA DE COBRO");
+                            break;
+                        case 9:
+                            doc.AddTitle("REPORTE FOTOGRÁFICO MANTENIMIENTO PREVENTIVO ANUAL SOFTWARE PLAZA DE COBRO");
+                            break;
+                        case 10:
+                            doc.AddTitle("REPORTE FOTOGRÁFICO MANTENIMIENTO PREVENTIVO DIA TELEPEAJE PLAZA DE COBRO");
+                            break;
+                        case 11:
+                            doc.AddTitle("REPORTE FOTOGRÁFICO MANTENIMIENTO PREVENTIVO SEMANA TELEPEAJE PLAZA DE COBRO");
+                            break;
+                        case 12:
+                            doc.AddTitle("REPORTE FOTOGRÁFICO MANTENIMIENTO PREVENTIVO MES TELEPEAJE PLAZA DE COBRO");
+                            break;
+                        case 13:
+                            doc.AddTitle("REPORTE FOTOGRÁFICO MANTENIMIENTO PREVENTIVO TRIMESTRAL TELEPEAJE PLAZA DE COBRO");
+                            break;
+                        case 14:
+                            doc.AddTitle("REPORTE FOTOGRÁFICO MANTENIMIENTO PREVENTIVO SEMESTRAL TELEPEAJE PLAZA DE COBRO");
+                            break;
+                        case 15:
                             doc.AddTitle("REPORTE FOTOGRÁFICO MANTENIMIENTO PREVENTIVO ANUAL TELEPEAJE PLAZA DE COBRO");
                             break;
                         default: break;
@@ -168,6 +209,10 @@
                     if (_tipo == 1)
                         directoryImgs = Path.Combine(directory, "Imgs");
                     else if (_tipo == 2)
+                        directoryImgs = Path.Combine(directory, "Imgs");
+                    else if (_tipo >= 4 && _tipo <= 9)
+                        directoryImgs = Path.Combine(directory, "Imgs");
+                    else if (_tipo >= 10 && _tipo <= 15)
                         directoryImgs = Path.Combine(directory, "Imgs");
                     else
                         directoryImgs = Path.Combine(directoryImageDiagnostico, "DiagnosticoFallaImgs");//Misma carpeta que Diagnostico
@@ -253,7 +298,7 @@
                     }
                     PdfContentByte cb = writer.DirectContent;
 
-                    string textoObservaciones = Convert.ToString((_tipo == 1) ? Convert.ToString(_tableHeader.Rows[0]["Observaciones"]) : Convert.ToString(_tableHeader.Rows[0]["Observation"]));
+                    string textoObservaciones = _tipo == 1 || _tipo >= 4  ? Convert.ToString(_tableHeader.Rows[0]["Observaciones"]) : Convert.ToString(_tableHeader.Rows[0]["Observation"]);
                     //Pendiente introducir texto
                     string textoObservacionesNuevo = "";
                     if (_tipo == 2)
@@ -339,6 +384,39 @@
                         textoTitulo = "REPORTE FOTOGRÁFICO MANTENIMIENTO CORRECTIVO EQUIPO DAÑADO";
                         break;
                     case 4:
+                        textoTitulo = "REPORTE FOTOGRÁFICO MANTENIMIENTO PREVENTIVO DIA SOFTWARE PLAZA DE COBRO";
+                        break;
+                    case 5:
+                        textoTitulo = "REPORTE FOTOGRÁFICO MANTENIMIENTO PREVENTIVO SEMANA SOFTWARE PLAZA DE COBRO";
+                        break;
+                    case 6:
+                        textoTitulo = "REPORTE FOTOGRÁFICO MANTENIMIENTO PREVENTIVO MES SOFTWARE PLAZA DE COBRO";
+                        break;
+                    case 7:
+                        textoTitulo = "REPORTE FOTOGRÁFICO MANTENIMIENTO PREVENTIVO TRIMESTRAL SOFTWARE PLAZA DE COBRO";
+                        break;
+                    case 8:
+                        textoTitulo = "REPORTE FOTOGRÁFICO MANTENIMIENTO PREVENTIVO SEMESTRAL SOFTWARE PLAZA DE COBRO";
+                        break;
+                    case 9:
+                        textoTitulo = "REPORTE FOTOGRÁFICO MANTENIMIENTO PREVENTIVO ANUAL SOFTWARE PLAZA DE COBRO";
+                        break;
+                    case 10:
+                        textoTitulo = "REPORTE FOTOGRÁFICO MANTENIMIENTO PREVENTIVO DIA TELEPEAJE PLAZA DE COBRO";
+                        break;
+                    case 11:
+                        textoTitulo = "REPORTE FOTOGRÁFICO MANTENIMIENTO PREVENTIVO SEMANA TELEPEAJE PLAZA DE COBRO";
+                        break;
+                    case 12:
+                        textoTitulo = "REPORTE FOTOGRÁFICO MANTENIMIENTO PREVENTIVO MES TELEPEAJE PLAZA DE COBRO";
+                        break;
+                    case 13:
+                        textoTitulo = "REPORTE FOTOGRÁFICO MANTENIMIENTO PREVENTIVO TRIMESTRAL TELEPEAJE PLAZA DE COBRO";
+                        break;
+                    case 14:
+                        textoTitulo = "REPORTE FOTOGRÁFICO MANTENIMIENTO PREVENTIVO SEMESTRAL TELEPEAJE PLAZA DE COBRO";
+                        break;
+                    case 15:
                         textoTitulo = "REPORTE FOTOGRÁFICO MANTENIMIENTO PREVENTIVO ANUAL TELEPEAJE PLAZA DE COBRO";
                         break;
                     default: break;
@@ -579,7 +657,7 @@
 
                 var colTextoNoReporte = new PdfPCell(new Phrase("No. de Reporte: ", letraoNegritaChica)) { Border = 0, HorizontalAlignment = Element.ALIGN_RIGHT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 5 };
 
-                string valorReporte = _tipo == 1 ? Convert.ToString(_tableHeader.Rows[0]["NumeroReporte"]) : Convert.ToString(_tableHeader.Rows[0]["Referencia"]);
+                string valorReporte = _tipo == 1 || _tipo >= 4? Convert.ToString(_tableHeader.Rows[0]["NumeroReporte"]) : Convert.ToString(_tableHeader.Rows[0]["Referencia"]);
                 var colNoReporte = new PdfPCell(new Phrase(valorReporte, letraNormalChica)) { BorderWidthBottom = 1, BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_BOTTOM, Padding = 2, Colspan = 3 };
 
                 //TODO cambiar valor de fecha en Reporte fotográfico según el stored de Alex
@@ -599,7 +677,7 @@
 
                 var colPlazaDeCobro = new PdfPCell(new Phrase("Plaza de Cobro: ", letraoNegritaChica)) { Border = 0, HorizontalAlignment = Element.ALIGN_RIGHT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 5 };
 
-                string valorPlaza = _tipo == 1 ? Convert.ToString(_tableHeader.Rows[0]["Plaza"]) : Convert.ToString(_tableHeader.Rows[0]["Plaza"]);
+                string valorPlaza = _tipo == 1 || _tipo >= 4 ? Convert.ToString(_tableHeader.Rows[0]["Plaza"]) : Convert.ToString(_tableHeader.Rows[0]["Plaza"]);
                 var plazaDeCobro = new PdfPCell(new Phrase(valorPlaza, letraNormalChica)) { BorderWidthBottom = 1, BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_BOTTOM, Padding = 2, Colspan = 3 };
 
 
@@ -621,7 +699,7 @@
 
                 //Ubicación
 
-                string valorUbicacion = _tipo == 1 ? _ubicacion : Convert.ToString(_tableHeader.Rows[0]["Ubicacion"]);
+                string valorUbicacion = _tipo == 1 || _tipo >= 4 ? _ubicacion : Convert.ToString(_tableHeader.Rows[0]["Ubicacion"]);
                 var colUbicacion = new PdfPCell(new Phrase("Ubicación: ", letraoNegritaChica)) { Border = 0, HorizontalAlignment = Element.ALIGN_RIGHT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 5 };
 
                 var ubicacion = new PdfPCell(new Phrase(valorUbicacion, letraNormalChica)) { BorderWidthBottom = 1, BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_BOTTOM, Padding = 2, Colspan = 3 };
@@ -645,7 +723,7 @@
                 CeldasVacias(8, table);
                 //Técnico
                 var colTecnico = new PdfPCell(new Phrase("Técnico Responsable PROSIS: ", letraoNegritaChica)) { Border = 0, HorizontalAlignment = Element.ALIGN_RIGHT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 4, Colspan = 3 };
-                string valorTecnicoProsis = _tipo == 1 ? Convert.ToString(_tableHeader.Rows[0]["TecnicoProsis"]) : Convert.ToString(_tableHeader.Rows[0]["Tecnico"]);
+                string valorTecnicoProsis = _tipo == 1 || _tipo >= 4 ? Convert.ToString(_tableHeader.Rows[0]["TecnicoProsis"]) : Convert.ToString(_tableHeader.Rows[0]["Tecnico"]);
                 var tecnico = new PdfPCell(new Phrase(valorTecnicoProsis, letraNormalChica)) { BorderWidthBottom = 1, BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_BOTTOM, Padding = 2, Colspan = 3 };
 
                 table.AddCell(colTecnico);
@@ -655,7 +733,7 @@
 
                 //Personal CAPUFE
 
-                string valorCapufe = _tipo == 1 ? Convert.ToString(_tableHeader.Rows[0]["PersonalCapufe"]) : Convert.ToString(_tableHeader.Rows[0]["PersonalCapufe"]);
+                string valorCapufe = _tipo == 1 || _tipo >= 4 ? Convert.ToString(_tableHeader.Rows[0]["PersonalCapufe"]) : Convert.ToString(_tableHeader.Rows[0]["PersonalCapufe"]);
                 var colCapufe = new PdfPCell(new Phrase("Personal de Plaza de Cobro CAPUFE: ", letraoNegritaChica)) { Border = 0, HorizontalAlignment = Element.ALIGN_RIGHT, VerticalAlignment = Element.ALIGN_CENTER, Padding = 4, Colspan = 3 };
                 var capufe = new PdfPCell(new Phrase(valorCapufe, letraNormalChica)) { BorderWidthBottom = 1, BorderWidthTop = 0, BorderWidthLeft = 0, BorderWidthRight = 0, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_BOTTOM, Padding = 2, Colspan = 3 };
 
@@ -756,7 +834,7 @@
                 table.AddCell(colSello);
 
                 //Técnico
-                string valorTecnicoProsis = _tipo == 1 ? Convert.ToString(_tableHeader.Rows[0]["TecnicoProsis"]) : Convert.ToString(_tableHeader.Rows[0]["Tecnico"]);
+                string valorTecnicoProsis = _tipo == 1 || _tipo >= 4? Convert.ToString(_tableHeader.Rows[0]["TecnicoProsis"]) : Convert.ToString(_tableHeader.Rows[0]["Tecnico"]);
                 var colTecnico = new PdfPCell(new Phrase(valorTecnicoProsis, letraNormalChica))
                 {
                     Border = 0,
@@ -764,7 +842,7 @@
                     VerticalAlignment = Element.ALIGN_CENTER
                 };
 
-                string valorPersonalCapufe = _tipo == 1 ? Convert.ToString(_tableHeader.Rows[0]["PersonalCapufe"]) : Convert.ToString(_tableHeader.Rows[0]["PersonalCapufe"]);
+                string valorPersonalCapufe = _tipo == 1 || _tipo >= 4 ? Convert.ToString(_tableHeader.Rows[0]["PersonalCapufe"]) : Convert.ToString(_tableHeader.Rows[0]["PersonalCapufe"]);
                 var colPersonal = new PdfPCell(new Phrase(valorPersonalCapufe, letraNormalChica))
                 {
                     Border = 0,
