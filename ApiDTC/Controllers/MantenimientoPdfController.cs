@@ -58,6 +58,48 @@
             }
         }
 
+        [HttpGet("Software/{clavePlaza}/{tipo}/{noReporte}")]
+        public IActionResult GetMantenimientoSoftware(int tipo, string clavePlaza, string noReporte)
+        {
+            try
+            {
+                var get = _db.GetStorePDF(clavePlaza, noReporte);
+                if (get.Tables[0].Rows.Count == 0 || get.Tables[1].Rows.Count == 0)
+                    return NotFound();
+                MantenimientoPdfCreation pdf = new MantenimientoPdfCreation(clavePlaza, get.Tables[0], get.Tables[1], new ApiLogger(), tipo, noReporte);
+                var pdfResult = pdf.NewPdf($@"{this._disk}:\{this._folder}");
+                if (pdfResult.Result == null)
+                    return NotFound(pdfResult.Message);
+                return File(new FileStream(pdfResult.Result.ToString(), FileMode.Open, FileAccess.Read), "application/pdf");
+            }
+            catch (IOException ex)
+            {
+                _apiLogger.WriteLog(clavePlaza, ex, "MantenimientoPdf: GetMantenimiento", 2);
+                return NotFound(ex.ToString());
+            }
+        }
+
+        [HttpGet("Telepeaje/{clavePlaza}/{tipo}/{noReporte}")]
+        public IActionResult GetMantenimientoTelepeaje(int tipo, string clavePlaza, string noReporte)
+        {
+            try
+            {
+                var get = _db.GetStorePDF(clavePlaza, noReporte);
+                if (get.Tables[0].Rows.Count == 0 || get.Tables[1].Rows.Count == 0)
+                    return NotFound();
+                MantenimientoPdfCreation pdf = new MantenimientoPdfCreation(clavePlaza, get.Tables[0], get.Tables[1], new ApiLogger(), tipo, noReporte);
+                var pdfResult = pdf.NewPdf($@"{this._disk}:\{this._folder}");
+                if (pdfResult.Result == null)
+                    return NotFound(pdfResult.Message);
+                return File(new FileStream(pdfResult.Result.ToString(), FileMode.Open, FileAccess.Read), "application/pdf");
+            }
+            catch (IOException ex)
+            {
+                _apiLogger.WriteLog(clavePlaza, ex, "MantenimientoPdf: GetMantenimiento", 2);
+                return NotFound(ex.ToString());
+            }
+        }
+
         [HttpPost("TablaActEscaneado/{clavePlaza}/{reference}")]
         public ActionResult<Response> SubirPDFTablaActividadesMantenimiento([FromForm(Name = "file")] IFormFile file, string clavePlaza, string reference)
         {
