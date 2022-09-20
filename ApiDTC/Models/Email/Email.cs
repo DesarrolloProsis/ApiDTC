@@ -8,8 +8,8 @@ namespace ApiDTC.Models.Email
 {
     public class Email
     {
-        public string addressee { get; set; }
-        public string affair { get; set; }
-        public string body { get; set; }
+        public string To { get; set; }
+        public string Subject { get; set; }
+        public string Body { get; set; }
     }
 }

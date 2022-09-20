@@ -23,7 +23,7 @@ namespace ApiDTC.Services
             {
                 var builder = new BodyBuilder();
 
-                builder.HtmlBody = email.body;
+                builder.HtmlBody = email.Body;
 
                 byte[] fileBytes;
 
@@ -39,9 +39,9 @@ namespace ApiDTC.Services
                 //From address
                 message.From.Add(new MailboxAddress("PROSIS", "send1@grupo-prosis.com"));
                 //To address
-                message.To.Add(new MailboxAddress(email.addressee));
+                message.To.Add(new MailboxAddress(email.To));
                 //Subject
-                message.Subject = email.affair;
+                message.Subject = email.Subject;
                 //Body
                 message.Body = builder.ToMessageBody();
 
