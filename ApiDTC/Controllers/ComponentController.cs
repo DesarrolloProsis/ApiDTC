@@ -1,12 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing.Imaging;
+using System.IO;
 using ApiDTC.Data;
 using ApiDTC.Models;
 using ClosedXML.Excel;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using ApiDTC.Services;
 
 namespace ApiDTC.Controllers
 {
@@ -16,7 +20,10 @@ namespace ApiDTC.Controllers
     public class ComponentController : ControllerBase
     {
         #region Attributes
+        private readonly ApiLogger _apiLogger;
+
         private readonly ComponentDb _db;
+
         private readonly string _disk;
 
         private readonly string _folder;
@@ -28,6 +35,7 @@ namespace ApiDTC.Controllers
             this._disk = $@"{Convert.ToString(configuration.GetValue<string>("Path:Disk"))}";
             this._folder = $"{Convert.ToString(configuration.GetValue<string>("Path:Folder"))}";
             this._db = db ?? throw new ArgumentNullException(nameof(db));
+            _apiLogger = new ApiLogger();
 
         }
         #endregion
@@ -73,6 +81,158 @@ namespace ApiDTC.Controllers
                 return NotFound(get);
             return Ok(get);
         }
+
+        #region imagenes inventario
+        [AllowAnonymous]
+        [HttpPost("Inventario/Imagenes")]
+        public ActionResult<Response> InsertaImagenesInventario([FromForm(Name = "image")] IFormFile image, [FromForm] ImagenInventarioData imagenInventarioData)
+        {
+            if (image.Length > 0 || image != null)
+            {
+                int numberOfImages;
+                string dir = $@"{this._disk}:\{this._folder}\{imagenInventarioData.ClavePlaza.ToUpper()}\Almacén\{imagenInventarioData.Carril}\{imagenInventarioData.NumeroDeReferencia}\Imgs";
+                string dirFull = $@"{this._disk}:\{this._folder}\{imagenInventarioData.ClavePlaza.ToUpper()}\Almacén\{imagenInventarioData.Carril}\{imagenInventarioData.NumeroDeReferencia}\ImgsFullSize";
+                string filename;
+                try
+                {
+                    if (!Directory.Exists(dir))
+                        Directory.CreateDirectory(dir);
+
+                    if (!Directory.Exists(dirFull))
+                        Directory.CreateDirectory(dirFull);
+
+                    DateTime fechaImagen = DateTime.Now;
+                    filename = $"{imagenInventarioData.NumeroDeReferencia}_MantenimientoPreventivoImgs_{fechaImagen.ToString("dd-MM-yyy-hh_mm_ssf")}{image.FileName.Substring(image.FileName.LastIndexOf('.'))}";
+
+                    using (FileStream fs = new FileStream(Path.Combine(dirFull, filename), FileMode.Create))
+                    {
+                        image.CopyTo(fs);
+                        fs.Close();
+                    }
+                    //full
+                    using (FileStream fs = new FileStream(Path.Combine(dir, filename), FileMode.Create))
+                    {
+                        image.CopyTo(fs);
+                        fs.Close();
+
+                        FileInfo fi = new FileInfo(Path.Combine(dir, filename));
+                        string temporal = Path.Combine(dir, filename) + "_temp";
+                        this.VaryQualityLevel(Path.Combine(dir, filename), temporal);
+                        if (System.IO.File.Exists(Path.Combine(dir, filename)))
+                        {
+                            //Se borra archivo grande
+                            System.IO.File.Delete(Path.Combine(dir, filename));
+                            //Archivo temporal actualiza su nombre al real
+                            System.IO.File.Move(Path.Combine(dir, temporal), Path.Combine(dir, filename));
+                        }
+                    }
+                    return Ok(Path.Combine(dir, filename));
+                }
+                catch (IOException ex)
+                {
+                    _apiLogger.WriteLog(imagenInventarioData.ClavePlaza, ex, "ComponentController: InsertaImagenesInventario", 2);
+                    return NotFound(ex.ToString());
+                }
+            }
+            else
+                return NotFound("Insert another image");
+        }
+
+        public void VaryQualityLevel(string fileName, string fileTemporal)
+        {
+            // Get a bitmap.
+            System.Drawing.Bitmap bmp1 = new System.Drawing.Bitmap(fileName);
+            ImageCodecInfo jgpEncoder = GetEncoder(ImageFormat.Jpeg);
+            System.Drawing.Imaging.Encoder myEncoder =
+                System.Drawing.Imaging.Encoder.Quality;
+            EncoderParameters myEncoderParameters = new EncoderParameters(1);
+            EncoderParameter myEncoderParameter = new EncoderParameter(myEncoder,
+                100L);
+            myEncoderParameters.Param[0] = myEncoderParameter;
+            System.Drawing.Bitmap bmp2 = new System.Drawing.Bitmap(bmp1, 300, 300);
+            bmp2.Save(fileTemporal, jgpEncoder,
+                myEncoderParameters);
+            bmp1.Dispose();
+
+
+        }
+
+        private ImageCodecInfo GetEncoder(ImageFormat format)
+        {
+            ImageCodecInfo[] codecs = ImageCodecInfo.GetImageDecoders();
+            foreach (ImageCodecInfo codec in codecs)
+            {
+                if (codec.FormatID == format.Guid)
+                {
+                    return codec;
+                }
+            }
+            return null;
+        }
+
+        [AllowAnonymous]
+        [HttpGet("Inventario/Images/{clavePlaza}/{carril}/{reportNumber}/{fileName}")]
+        public ActionResult<DtcImage> DescargaImagenesInventario(string clavePlaza, string carril, string reportNumber, string fileName)
+        {
+            try
+            {
+                string path = $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\Almacén\{carril}\{reportNumber}\Imgs\{fileName}";
+                if (!System.IO.File.Exists(path))
+                    return NotFound("No existe el archivo");
+                Byte[] bitMap = System.IO.File.ReadAllBytes(path);
+
+                return File(bitMap, "Image/jpg");
+            }
+
+            catch (IOException ex)
+            {
+                _apiLogger.WriteLog(clavePlaza, ex, "ComponentController: DescargaImagenesInventario", 2);
+                return NotFound(ex.ToString());
+            }
+        }
+
+        [AllowAnonymous]
+        [HttpGet("Inventario/Images/GetPaths/{clavePlaza}/{carril}/{reportNumber}")]
+        public ActionResult<List<string>> PathsImagenesInventario(string clavePlaza, string carril, string reportNumber)
+        {
+            try
+            {
+                string directoy = $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\Almacén\{carril}\{reportNumber}\Imgs";
+                List<string> dtcImages = new List<string>();
+                if (!Directory.Exists(directoy))
+                    return Ok(dtcImages);
+                foreach (var item in Directory.GetFiles(directoy))
+                    dtcImages.Add(item.Substring(item.LastIndexOf('\\') + 1));
+                return Ok(dtcImages);
+            }
+            catch (IOException ex)
+            {
+                _apiLogger.WriteLog(clavePlaza, ex, "InventarioController: PathsImagenesInventario", 2);
+                return NotFound(ex.ToString());
+            }
+        }
+
+        [AllowAnonymous]
+        [HttpGet("Inventario/Imagenes/BorrarImg/{clavePlaza}/{carril}/{reportNumber}/{fileName}")]
+        public ActionResult<string> BorradoImagenesInventario(string clavePlaza, string carril, string reportNumber, string fileName)
+        {
+            try
+            {
+                string path = $@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\Almacén\{carril}\{reportNumber}\Imgs\{fileName}";
+                if (!System.IO.File.Exists(path))
+                    return NotFound(path);
+                System.IO.File.Delete(path);
+                if (Directory.GetFiles($@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\Almacén\{carril}\{reportNumber}\Imgs").Length == 0)
+                    Directory.Delete($@"{this._disk}:\{this._folder}\{clavePlaza.ToUpper()}\Almacén\{carril}\{reportNumber}\Imgs");
+                return Ok(path);
+            }
+            catch (IOException ex)
+            {
+                _apiLogger.WriteLog(clavePlaza, ex, "Inventario Controller: BorradoImagenesInventario", 2);
+                return NotFound(ex.ToString());
+            }
+        }
+        #endregion
 
         //[HttpGet("Inventario/{plaza}")]
         [HttpGet("Inventario/{clavePlaza}/{plaza}")]
