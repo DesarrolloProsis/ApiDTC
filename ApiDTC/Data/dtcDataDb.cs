@@ -236,20 +236,19 @@
             }
         }
 
-        public Response UpdateDTCStatusLog(string clavePlaza, DtcStatusLog dtcStatusLog)
+        public Response UpdateDTCStatusLog(string clavePlaza, DtcStatusLogView dtcStatusLog)
         {
             try
             {
                 using (SqlConnection sql = new SqlConnection(_connectionString))
                 {
-                    using (SqlCommand cmd = new SqlCommand("spUpdateDTCStatusLog", sql))
+                    using (SqlCommand cmd = new SqlCommand("spUpdateViewedDTCStatusLog", sql))
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.Add("@ReferenceNumber", SqlDbType.NVarChar).Value = dtcStatusLog.ReferenceNumber;
+                        cmd.Parameters.Add("@DateLog", SqlDbType.DateTime).Value = dtcStatusLog.DateStamp;
                         cmd.Parameters.Add("@UserId", SqlDbType.Int).Value = dtcStatusLog.UserId;
-                        cmd.Parameters.Add("@StatusId", SqlDbType.Int).Value = dtcStatusLog.StatusId;
-                        cmd.Parameters.Add("@Comment", SqlDbType.NVarChar).Value = dtcStatusLog.Comment;
-                        var result = _sqlResult.Put(clavePlaza, cmd, sql, "spUpdateDTCStatusLog");
+                        var result = _sqlResult.Put(clavePlaza, cmd, sql, "spUpdateViewedDTCStatusLog");
                         return new Response
                         {
                             Message = result.SqlMessage,
@@ -265,28 +264,34 @@
             }
         }
 
-        public Response GetDTCStatusLog(string clavePlaza, int[] statuses)
+        public Response GetDTCStatusLog(string clavePlaza, IEnumerable<int> statuses)
         {
             try
             {
-                using (SqlConnection sql = new SqlConnection(_connectionString))
+                List<DtcStatusLogView> results = new List<DtcStatusLogView>();
+                foreach (var status in statuses)
                 {
-                    using (SqlCommand cmd = new SqlCommand("dbo.spGetDTCStatusLog", sql))
+                    using (SqlConnection sql = new SqlConnection(_connectionString))
                     {
-                        List<DtcStatusLog> results = new List<DtcStatusLog>();
-                        cmd.CommandType = CommandType.StoredProcedure;
-                        foreach (var status in statuses)
+                        using (SqlCommand cmd = new SqlCommand("dbo.spGetDTCStatusLog", sql))
                         {
-                            cmd.Parameters.Add("@StatusId", SqlDbType.Int).Value = status;
-                            results.AddRange(_sqlResult.GetRows<DtcStatusLog>(clavePlaza, cmd, sql, "DtcDataDb: GetDTC"));
+                            cmd.CommandType = CommandType.StoredProcedure;
+                                cmd.Parameters.Add("@Status", SqlDbType.Int).Value = status;
+                                cmd.Parameters.Add("@ReferenceNumber", SqlDbType.NVarChar).Value = DBNull.Value;
+                                cmd.Parameters.Add("@UserId", SqlDbType.Int).Value = DBNull.Value;
+                                cmd.Parameters.Add("@Visto", SqlDbType.Int).Value = false;
+                                var res = _sqlResult.GetRows<DtcStatusLogView>(clavePlaza, cmd, sql, "DtcDataDb: GetDTC");
+                                results.AddRange(res);
                         }
-                        return new Response
-                        {
-                            Message = "Ok",
-                            Result = results
-                        };
                     }
+
                 }
+                return new Response
+                {
+                    Message = "Ok",
+                    Result = results,
+                    Rows = results.Count()
+                };
             }
             catch (SqlException ex)
             {

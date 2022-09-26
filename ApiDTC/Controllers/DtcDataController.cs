@@ -46,16 +46,16 @@
 
         //Lista de DTC´s
         [HttpPost("GetNotificaciones")]
-        public ActionResult<Response> GetNotificaciones(int[] statuses)
+        public ActionResult<Response> GetNotificaciones([FromBody] MyClass statuses)
         {
-            var get = _db.GetDTCStatusLog("", statuses);
+            var get = _db.GetDTCStatusLog("4", statuses.Statuses);
             if (get.Result == null)
                 return NotFound(get);
             return Ok(get);
         }
 
         [HttpPost("UpdateNotificaciones")]
-        public ActionResult<Response> PutNotificaciones(DtcStatusLog dtcStatusLog)
+        public ActionResult<Response> PutNotificaciones(DtcStatusLogView dtcStatusLog)
         {
             var get = _db.UpdateDTCStatusLog("", dtcStatusLog);
             if (get.Result == null)
@@ -640,8 +640,13 @@
 
         }
         #endregion
-        
-        
+
+
         #endregion
+        public class MyClass
+        {
+            public IEnumerable<int> Statuses { get; set; }
+            public string Name { get; set; }
+        }
     }
 }
